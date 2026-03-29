@@ -381,20 +381,20 @@ function GridView({ items, onSelect }: { items: Consultoria[]; onSelect: (c: Con
               </TableRow>
             ) : (
               items.map((c) => (
-                <TableRow
+                <tr
                   key={c.id}
                   onClick={() => onSelect(c)}
-                  className="cursor-pointer transition-colors hover:bg-emerald-500/[0.04]"
+                  className="cursor-pointer border-b border-white/[0.03] transition-colors hover:bg-emerald-500/[0.04]"
                 >
-                  <TableCell className="w-10 py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                  <td className="w-10 py-3 px-4" onClick={(e) => e.stopPropagation()}>
                     <input
                       type="checkbox"
                       checked={checked.has(c.id)}
                       onChange={() => toggle(c.id)}
                       className="h-4 w-4 rounded border-white/20 bg-transparent accent-emerald-500"
                     />
-                  </TableCell>
-                  <TableCell className="py-3 px-4">
+                  </td>
+                  <td className="py-3 px-4">
                     <div className="flex items-center gap-2.5">
                       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-xs font-bold text-emerald-500">
                         {c.nome?.charAt(0).toUpperCase() ?? "?"}
@@ -404,16 +404,16 @@ function GridView({ items, onSelect }: { items: Consultoria[]; onSelect: (c: Con
                         <p className="text-xs text-white/30">{c.numero_whatsapp ?? c.email ?? "—"}</p>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell className="py-3 px-4 text-sm text-white/50">
+                  </td>
+                  <td className="py-3 px-4 text-sm text-white/50">
                     {formatDate(c.criado_em_supabase)}
-                  </TableCell>
-                  <TableCell className="py-3 px-4">
+                  </td>
+                  <td className="py-3 px-4">
                     <Badge size="sm" color={statusColor(c.status_atendimento)}>
                       {c.status_atendimento ?? "—"}
                     </Badge>
-                  </TableCell>
-                  <TableCell className="py-3 px-4">
+                  </td>
+                  <td className="py-3 px-4">
                     {c.meet_link ? (
                       <a
                         href={c.meet_link}
@@ -428,8 +428,8 @@ function GridView({ items, onSelect }: { items: Consultoria[]; onSelect: (c: Con
                     ) : (
                       <span className="text-xs text-white/20">—</span>
                     )}
-                  </TableCell>
-                  <TableCell className="py-3 px-4">
+                  </td>
+                  <td className="py-3 px-4">
                     {c.status_pagamento ? (
                       <Badge size="sm" color={c.status_pagamento === "PAGO" ? "success" : "warning"}>
                         {c.status_pagamento}
@@ -437,8 +437,8 @@ function GridView({ items, onSelect }: { items: Consultoria[]; onSelect: (c: Con
                     ) : (
                       <span className="text-xs text-white/20">—</span>
                     )}
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))
             )}
           </TableBody>
