@@ -72,6 +72,26 @@ Chat, AIAssistant, CommandButton, ActionPanel
 - Café com Pam (design de interiores) → agente Nina
 - Jurema Brokers (imobiliária, João Pessoa) → agente Luana
 
+## Lei de Design — Sem Redundância Visual
+
+Cada tela tem UM componente principal diferente:
+- Dashboard → gráficos (KPIs + Line + Bar + Pie)
+- Leads → Data Table + Drawer lateral (nunca kanban)
+- Pipeline/CRM → Kanban Board + Drag & Drop (nunca tabela principal)
+- Task → Checklist + Calendar (nunca kanban principal)
+- Chat → Chat UI + thread (nunca tabela)
+- Radar → Score visual + tabela de oportunidades
+- Social → Calendário de conteúdo + grid de posts
+- Tráfego Pago → Funil + gráficos comparativos custo vs retorno
+
+Regras absolutas:
+- NUNCA repetir o mesmo componente principal em telas diferentes
+- Dashboard NUNCA tem tabela grande ou kanban
+- Leads NUNCA tem kanban — usa drawer lateral ao clicar
+- Pipeline NUNCA tem tabela como principal
+- Variedade visual = percepção de produto premium
+- Cada tela deve ser uma experiência diferente
+
 ## Metodologia
 1. Ler contexto e CLAUDE.md
 2. Planejar o step
