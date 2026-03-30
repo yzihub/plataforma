@@ -9,11 +9,10 @@ import type { Lead, LeadStatus, PipelineStage } from "@/lib/crm/types";
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const STAGE_ACTIONS: Record<LeadStatus, CrmAction[]> = {
-  new: ["qualify", "ai_takeover"],
-  contacted: ["qualify", "ai_takeover"],
-  qualified: ["send_proposal", "schedule", "ai_takeover"],
-  proposal: ["schedule", "close", "ai_takeover"],
-  negotiation: ["close", "ai_takeover"],
+  new: ["contact"],
+  contacted: ["schedule"],
+  meeting: ["send_proposal", "lose"],
+  proposal: ["close", "lose"],
   won: [],
   lost: [],
 };
@@ -23,9 +22,8 @@ type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light"
 const STATUS_BADGE: Record<LeadStatus, { color: BadgeColor; label: string }> = {
   new: { color: "info", label: "Novo" },
   contacted: { color: "warning", label: "Contato" },
-  qualified: { color: "primary", label: "Qualificado" },
+  meeting: { color: "primary", label: "Reunião" },
   proposal: { color: "warning", label: "Proposta" },
-  negotiation: { color: "error", label: "Negociação" },
   won: { color: "success", label: "Fechado" },
   lost: { color: "dark", label: "Perdido" },
 };
@@ -318,15 +316,14 @@ export default function PipelinePage() {
     const targetStage = stages.find((s) => s.id === stageId);
     if (!targetStage) return;
 
-    // Map stage to LeadStatus
+    // Map stage position to LeadStatus
     const statusMap: Record<number, LeadStatus> = {
       1: "new",
       2: "contacted",
-      3: "qualified",
+      3: "meeting",
       4: "proposal",
-      5: "negotiation",
-      6: "won",
-      7: "lost",
+      5: "won",
+      6: "lost",
     };
     const newStatus = statusMap[targetStage.position] ?? "new";
 

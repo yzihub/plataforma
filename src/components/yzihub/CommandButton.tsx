@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 
 export type CrmAction =
-  | "qualify"
-  | "send_proposal"
+  | "contact"
   | "schedule"
+  | "send_proposal"
   | "close"
-  | "ai_takeover";
+  | "lose";
 
 interface CommandButtonProps {
   action: CrmAction;
@@ -21,28 +21,28 @@ const ACTION_CONFIG: Record<
   CrmAction,
   { label: string; color: string; hoverColor: string }
 > = {
-  qualify: {
-    label: "QUALIFICAR",
+  contact: {
+    label: "ENTRAR EM CONTATO",
     color: "bg-brand-500",
     hoverColor: "hover:bg-brand-600",
   },
-  send_proposal: {
-    label: "ENVIAR PROPOSTA",
-    color: "bg-violet-500",
-    hoverColor: "hover:bg-violet-600",
-  },
   schedule: {
-    label: "AGENDAR",
+    label: "MARCAR REUNIÃO",
     color: "bg-amber-500",
     hoverColor: "hover:bg-amber-600",
+  },
+  send_proposal: {
+    label: "GERAR PROPOSTA",
+    color: "bg-violet-500",
+    hoverColor: "hover:bg-violet-600",
   },
   close: {
     label: "FECHAR",
     color: "bg-emerald-500",
     hoverColor: "hover:bg-emerald-600",
   },
-  ai_takeover: {
-    label: "IA ASSUMIR",
+  lose: {
+    label: "PERDER",
     color: "bg-rose-500",
     hoverColor: "hover:bg-rose-600",
   },

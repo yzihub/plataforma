@@ -25,11 +25,10 @@ const AVATAR_COLORS = [
 ] as const;
 
 const STATUS_ACTIONS: Record<LeadStatus, CrmAction[]> = {
-  new: ["qualify", "ai_takeover"],
-  contacted: ["qualify", "ai_takeover"],
-  qualified: ["send_proposal", "schedule", "ai_takeover"],
-  proposal: ["schedule", "close", "ai_takeover"],
-  negotiation: ["schedule", "close", "ai_takeover"],
+  new: ["contact"],
+  contacted: ["schedule"],
+  meeting: ["send_proposal", "lose"],
+  proposal: ["close", "lose"],
   won: [],
   lost: [],
 };
@@ -46,9 +45,8 @@ type BadgeColor =
 const STATUS_BADGE: Record<LeadStatus, { color: BadgeColor; label: string }> = {
   new: { color: "light", label: "Novo" },
   contacted: { color: "info", label: "Contato" },
-  qualified: { color: "primary", label: "Qualificado" },
+  meeting: { color: "primary", label: "Reunião" },
   proposal: { color: "warning", label: "Proposta" },
-  negotiation: { color: "warning", label: "Negociação" },
   won: { color: "success", label: "Fechado" },
   lost: { color: "error", label: "Perdido" },
 };
