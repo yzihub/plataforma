@@ -22,36 +22,28 @@ const stats = [
     value: "248",
     change: "+12,5%",
     up: true,
-    icon: <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />,
-    sparkline: [12, 18, 14, 22, 19, 25, 28, 24, 30, 27, 34, 32],
-    color: "#465FFF",
+    icon: <GroupIcon className="text-gray-800 size-7 dark:text-white/90" />,
   },
   {
     label: "Leads Convertidos",
     value: "61",
     change: "+8,2%",
     up: true,
-    icon: <CheckCircleIcon className="text-gray-800 size-6 dark:text-white/90" />,
-    sparkline: [4, 6, 5, 8, 7, 9, 10, 8, 11, 10, 13, 12],
-    color: "#17B26A",
+    icon: <CheckCircleIcon className="text-gray-800 size-7 dark:text-white/90" />,
   },
   {
     label: "Valor no Pipeline",
     value: "R$ 184.500",
     change: "+21,3%",
     up: true,
-    icon: <DollarLineIcon className="text-gray-800 size-6 dark:text-white/90" />,
-    sparkline: [8000, 12000, 10000, 15000, 13000, 18000, 20000, 17000, 22000, 19000, 25000, 23000],
-    color: "#F79009",
+    icon: <DollarLineIcon className="text-gray-800 size-7 dark:text-white/90" />,
   },
   {
     label: "Taxa de Conversão",
     value: "24,6%",
     change: "-1,8%",
     up: false,
-    icon: <PieChartIcon className="text-gray-800 size-6 dark:text-white/90" />,
-    sparkline: [28, 26, 29, 25, 27, 24, 26, 23, 25, 24, 25, 24],
-    color: "#F04438",
+    icon: <PieChartIcon className="text-gray-800 size-7 dark:text-white/90" />,
   },
 ];
 
@@ -73,59 +65,26 @@ const statusData = [40, 55, 70, 45, 38];
 const statusLabels = ["Novo", "Contato", "Qualificado", "Proposta", "Fechado"];
 const statusColors = ["#465FFF", "#F79009", "#17B26A", "#9B8AFB", "#F04438"];
 
-// ─── Sparkline ────────────────────────────────────────────────────────────────
-
-function sparklineOptions(color: string): ApexOptions {
-  return {
-    chart: {
-      type: "line",
-      sparkline: { enabled: true },
-      animations: { enabled: false },
-    },
-    stroke: { curve: "smooth", width: 2 },
-    colors: [color],
-    tooltip: { enabled: false },
-  };
-}
-
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 
-function StatCard({
-  label,
-  value,
-  change,
-  up,
-  icon,
-  sparkline,
-  color,
-}: (typeof stats)[0]) {
+function StatCard({ label, value, change, up, icon }: (typeof stats)[0]) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-      <div className="flex items-start justify-between">
-        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-          {icon}
-        </div>
-        <div className="w-20 h-10">
-          <ReactApexChart
-            options={sparklineOptions(color)}
-            series={[{ data: sparkline }]}
-            type="line"
-            height={40}
-            width={80}
-          />
-        </div>
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03] md:p-8">
+      <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-2xl dark:bg-gray-800">
+        {icon}
       </div>
-      <div className="flex items-end justify-between mt-5">
-        <div>
-          <span className="text-sm text-gray-500 dark:text-gray-400">{label}</span>
-          <h4 className="mt-1 font-bold text-gray-800 text-title-sm dark:text-white/90">
-            {value}
-          </h4>
+      <div className="mt-5">
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</span>
+        <h4 className="mt-2 text-3xl font-bold text-gray-800 dark:text-white/90">{value}</h4>
+        <div className="flex items-center gap-2 mt-3">
+          <Badge color={up ? "success" : "error"}>
+            {up ? <ArrowUpIcon /> : <ArrowDownIcon />}
+            {change}
+          </Badge>
+          <span className="text-xs text-gray-400 dark:text-gray-500">
+            Em comparação com o mês passado
+          </span>
         </div>
-        <Badge color={up ? "success" : "error"}>
-          {up ? <ArrowUpIcon /> : <ArrowDownIcon />}
-          {change}
-        </Badge>
       </div>
     </div>
   );
