@@ -257,11 +257,11 @@ function Avatar({ lead }: { lead: Lead }) {
 // ─── Drawer ───────────────────────────────────────────────────────────────────
 
 const COMMAND_ACTIONS: { action: CrmAction; label: string }[] = [
-  { action: "qualify", label: "QUALIFICAR" },
-  { action: "send_proposal", label: "ENVIAR PROPOSTA" },
-  { action: "schedule", label: "AGENDAR" },
+  { action: "contact", label: "ENTRAR EM CONTATO" },
+  { action: "schedule", label: "MARCAR REUNIÃO" },
+  { action: "send_proposal", label: "GERAR PROPOSTA" },
   { action: "close", label: "FECHAR" },
-  { action: "ai_takeover", label: "IA ASSUMIR" },
+  { action: "lose", label: "PERDER" },
 ];
 
 function LeadDrawer({
