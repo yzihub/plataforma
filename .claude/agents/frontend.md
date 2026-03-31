@@ -1,7 +1,7 @@
 ---
 name: frontend
 description: Use para criar telas, páginas e componentes. Segue padrão TailAdmin estrito. Nunca cria componentes fora do padrão.
-model: sonnet
+model: haiku
 tools: Read, Write, Edit, Glob, Grep
 ---
 

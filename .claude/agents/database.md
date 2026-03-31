@@ -1,7 +1,7 @@
 ---
 name: database
 description: Use para criar schemas Supabase, migrations e queries. Toda tabela deve ter tenant_id.
-model: sonnet
+model: haiku
 tools: Read, Write, Edit
 ---
 
