@@ -38,3 +38,59 @@
 - Nunca varrer projeto inteiro — ler apenas arquivos necessários
 - Sempre use context7 para documentação: Next.js, Supabase, Tailwind, n8n, React
 - Exemplo: "Como configurar middleware Next.js? use context7"
+
+<!-- GSD:project-start source:PROJECT.md -->
+## Project
+
+**YZIHUB: YZI-OS Growth Engine**
+
+YZI-OS é uma plataforma multi-tenant SaaS para automação comercial de alto ticket. Cada tenant recebe um cockpit privado com IA conversacional, CRM visual, pipeline kanban e agente de WhatsApp Business via Evolution API. Eric (admin) gerencia todos os tenants via YZI CONTROL. A plataforma é provisionada automaticamente via n8n em 1-5 dias.
+
+**Core Value:** Um cliente fecha contrato, recebe acesso ao Cockpit em 24h, e o agente de IA já está qualificando leads no WhatsApp — sem intervenção manual de infra.
+
+### Constraints
+
+- **Tech Stack**: Next.js 15 + Supabase + Tailwind v4 — não trocar sem decisão explícita
+- **Componentes**: Apenas em `src/components/yzihub/` — nunca em `src/components/` raiz
+- **Gatekeeper**: `/dashboard` exige e-mail em `profiles` — falha redireciona para `/unauthorized`
+- **Action Flow**: Botões de ação → POST /api/actions/execute → job_queue → webhook n8n (nunca chamar n8n diretamente do frontend)
+- **Tokens**: Subagentes de exploração usam haiku; sonnet apenas para arquitetura e automação
+<!-- GSD:project-end -->
+
+<!-- GSD:stack-start source:STACK.md -->
+## Technology Stack
+
+Technology stack not yet documented. Will populate after codebase mapping or first phase.
+<!-- GSD:stack-end -->
+
+<!-- GSD:conventions-start source:CONVENTIONS.md -->
+## Conventions
+
+Conventions not yet established. Will populate as patterns emerge during development.
+<!-- GSD:conventions-end -->
+
+<!-- GSD:architecture-start source:ARCHITECTURE.md -->
+## Architecture
+
+Architecture not yet mapped. Follow existing patterns found in the codebase.
+<!-- GSD:architecture-end -->
+
+<!-- GSD:workflow-start source:GSD defaults -->
+## GSD Workflow Enforcement
+
+Before using Edit, Write, or other file-changing tools, start work through a GSD command so planning artifacts and execution context stay in sync.
+
+Use these entry points:
+- `/gsd:quick` for small fixes, doc updates, and ad-hoc tasks
+- `/gsd:debug` for investigation and bug fixing
+- `/gsd:execute-phase` for planned phase work
+
+Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
+<!-- GSD:workflow-end -->
+
+<!-- GSD:profile-start -->
+## Developer Profile
+
+> Profile not yet configured. Run `/gsd:profile-user` to generate your developer profile.
+> This section is managed by `generate-claude-profile` -- do not edit manually.
+<!-- GSD:profile-end -->
