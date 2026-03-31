@@ -9,10 +9,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Badge from "@/components/ui/badge/Badge";
+import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 import type { ControlTenant, TenantPlan } from "@/lib/control/types";
-import { createTenant } from "@/lib/control/tenant-actions";
+import { createTenant, enqueueFactoryActivate } from "@/lib/control/tenant-actions";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -43,6 +44,70 @@ const PLAN_LABELS: Record<TenantPlan, string> = {
   growth: "Growth",
   enterprise: "Enterprise",
 };
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+
+const Spinner = () => (
+  <svg
+    className="size-4 animate-spin"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+    <path
+      className="opacity-75"
+      fill="currentColor"
+      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+    />
+  </svg>
+);
+
+// ── Activate Button ───────────────────────────────────────────────────────────
+
+function ActivateButton({ tenantId }: { tenantId: string }) {
+  const [isPending, startTransition] = useTransition();
+  const [feedback, setFeedback] = useState<"idle" | "ok" | "err">("idle");
+
+  function handleClick() {
+    setFeedback("idle");
+    startTransition(async () => {
+      const result = await enqueueFactoryActivate(tenantId);
+      setFeedback(result.success ? "ok" : "err");
+      // Reset label after 2.5 s
+      setTimeout(() => setFeedback("idle"), 2500);
+    });
+  }
+
+  if (feedback === "ok") {
+    return (
+      <Button size="sm" variant="outline" disabled className="text-success-600 dark:text-success-400 border-success-300 dark:border-success-700">
+        Enfileirado ✓
+      </Button>
+    );
+  }
+
+  if (feedback === "err") {
+    return (
+      <Button size="sm" variant="outline" disabled className="text-error-600 dark:text-error-400 border-error-300 dark:border-error-700">
+        Erro — tente novamente
+      </Button>
+    );
+  }
+
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={handleClick}
+      disabled={isPending}
+      startIcon={isPending ? <Spinner /> : undefined}
+    >
+      {isPending ? "Ativando…" : "Ativar Projeto"}
+    </Button>
+  );
+}
 
 // ── New Tenant Form ───────────────────────────────────────────────────────────
 
@@ -214,7 +279,7 @@ export default function TenantsTable({ initialTenants }: Props) {
     setTenants((prev) => [optimistic, ...prev]);
   }
 
-  const COLS = ["Nome", "Slug", "Plano", "Status", "Módulos", "Criado em"];
+  const COLS = ["Nome", "Slug", "Plano", "Status", "Módulos", "Criado em", "Ações"];
 
   return (
     <>
@@ -321,6 +386,11 @@ export default function TenantsTable({ initialTenants }: Props) {
                   {/* Criado em */}
                   <TableCell className="px-5 py-4 text-start text-theme-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     {new Date(t.created_at).toLocaleDateString("pt-BR")}
+                  </TableCell>
+
+                  {/* Ações */}
+                  <TableCell className="px-5 py-4 text-start whitespace-nowrap">
+                    <ActivateButton tenantId={t.id} />
                   </TableCell>
                 </TableRow>
               ))}

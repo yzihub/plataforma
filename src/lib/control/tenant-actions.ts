@@ -43,3 +43,20 @@ export async function createTenant(input: CreateTenantInput): Promise<ActionResu
   revalidatePath("/control/tenants");
   return { success: true };
 }
+
+export async function enqueueFactoryActivate(tenantId: string): Promise<ActionResult> {
+  if (!tenantId) return { success: false, error: "tenant_id ausente." };
+
+  const admin = createAdminClient();
+
+  const { error } = await admin.from("job_queue").insert({
+    tenant_id: tenantId,
+    action: "factory_activate",
+    status: "pending",
+  });
+
+  if (error) return { success: false, error: error.message };
+
+  revalidatePath("/control/tenants");
+  return { success: true };
+}
