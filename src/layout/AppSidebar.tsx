@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
-import { createClient } from "@/lib/supabase/client";
+import { useTenant } from "@/hooks/useTenant";
 import {
   GridIcon,
   GroupIcon,
@@ -24,7 +24,6 @@ import {
   PlugInIcon,
   DocsIcon,
   HorizontaLDots,
-  ChevronDownIcon,
 } from "../icons/index";
 
 // ── Settings icon (inline, no SVG file exists) ────────────────────────────────
@@ -58,49 +57,6 @@ type NavSection = {
   label: string;
   items: NavItem[];
 };
-
-// ── Hook: tenant modules + role ───────────────────────────────────────────────
-function useTenantModules() {
-  const [modules, setModules] = useState<string[]>([]);
-  const [isGlobalAdmin, setIsGlobalAdmin] = useState(false);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      const supabase = createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user || cancelled) return;
-
-      const admin = user.user_metadata?.role === "global_admin";
-      setIsGlobalAdmin(admin);
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("tenant_id")
-        .eq("id", user.id)
-        .single();
-
-      if (profile?.tenant_id && !cancelled) {
-        const { data: projects } = await supabase
-          .from("projects")
-          .select("type")
-          .eq("tenant_id", profile.tenant_id)
-          .eq("status", "active");
-
-        if (projects && !cancelled) {
-          setModules(projects.map((p) => p.type as string));
-        }
-      }
-
-      if (!cancelled) setReady(true);
-    }
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
-  return { modules, isGlobalAdmin, ready };
-}
 
 // ── Menu definition ───────────────────────────────────────────────────────────
 const SECTIONS: NavSection[] = [
@@ -148,7 +104,9 @@ const SECTIONS: NavSection[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
-  const { modules, isGlobalAdmin, ready } = useTenantModules();
+  const { tenant, isGlobalAdmin, loading } = useTenant();
+
+  const activeModules = tenant?.activeModules ?? [];
 
   const isActive = useCallback(
     (path: string) => pathname === path || (path !== "/cockpit" && pathname.startsWith(path)),
@@ -158,19 +116,20 @@ const AppSidebar: React.FC = () => {
   const isVisible = useCallback(
     (item: NavItem) => {
       if (item.adminOnly && !isGlobalAdmin) return false;
-      if (item.module && !modules.includes(item.module)) return false;
+      if (item.module && !activeModules.includes(item.module as import("@/context/TenantContext").ActiveModule)) return false;
       return true;
     },
-    [isGlobalAdmin, modules]
+    [isGlobalAdmin, activeModules]
   );
 
   const showLabel = isExpanded || isHovered || isMobileOpen;
 
-  // Filter sections — hide "Módulos" section entirely if none are active
-  // Hide "Admin" section entirely if not global_admin
+  // While loading, show non-module, non-admin items only
   const visibleSections = SECTIONS.map((section) => ({
     ...section,
-    items: section.items.filter(isVisible),
+    items: loading
+      ? section.items.filter((i) => !i.module && !i.adminOnly)
+      : section.items.filter(isVisible),
   })).filter((section) => section.items.length > 0);
 
   return (
@@ -200,47 +159,53 @@ const AppSidebar: React.FC = () => {
       <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-6">
-            {(!ready ? SECTIONS : visibleSections).map((section) => {
-              const sectionItems = ready ? section.items : section.items.filter((i) => !i.module && !i.adminOnly);
-              if (sectionItems.length === 0) return null;
-              return (
-                <div key={section.label}>
-                  <h2
-                    className={`mb-3 text-xs uppercase leading-[20px] text-gray-400 flex ${
-                      !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
-                    }`}
-                  >
-                    {showLabel ? section.label : <HorizontaLDots />}
-                  </h2>
-                  <ul className="flex flex-col gap-1">
-                    {sectionItems.map((item) => (
-                      <li key={item.path}>
-                        <Link
-                          href={item.path}
-                          className={`menu-item group ${
-                            isActive(item.path) ? "menu-item-active" : "menu-item-inactive"
-                          } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
+            {visibleSections.map((section) => (
+              <div key={section.label}>
+                <h2
+                  className={`mb-3 text-xs uppercase leading-[20px] text-gray-400 flex ${
+                    !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
+                  }`}
+                >
+                  {showLabel ? section.label : <HorizontaLDots />}
+                </h2>
+                <ul className="flex flex-col gap-1">
+                  {section.items.map((item) => (
+                    <li key={item.path}>
+                      <Link
+                        href={item.path}
+                        className={`menu-item group ${
+                          isActive(item.path) ? "menu-item-active" : "menu-item-inactive"
+                        } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
+                      >
+                        <span
+                          className={
+                            isActive(item.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
+                          }
                         >
-                          <span
-                            className={
-                              isActive(item.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
-                            }
-                          >
-                            {item.icon}
-                          </span>
-                          {showLabel && (
-                            <span className="menu-item-text">{item.name}</span>
-                          )}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
+                          {item.icon}
+                        </span>
+                        {showLabel && (
+                          <span className="menu-item-text">{item.name}</span>
+                        )}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </nav>
       </div>
+
+      {/* Tenant badge (collapsed = hidden) */}
+      {showLabel && tenant && (
+        <div className="mt-auto pb-6">
+          <div className="rounded-xl border border-gray-200 dark:border-gray-800 px-3 py-2">
+            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">{tenant.name}</p>
+            <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-wider">{tenant.plan}</p>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };

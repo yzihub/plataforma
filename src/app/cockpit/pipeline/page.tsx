@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import Badge from "@/components/ui/badge/Badge";
 import CommandButton, { CrmAction } from "@/components/yzihub/CommandButton";
+import LeadDrawer from "@/components/yzihub/LeadDrawer";
 import { cafePamData } from "@/lib/crm/mock-data";
 import type { Lead, LeadStatus, PipelineStage } from "@/lib/crm/types";
 
@@ -111,9 +112,11 @@ function ScoreBar({ score }: { score: number }) {
 function PipelineLeadCard({
   lead,
   onDragStart,
+  onClick,
 }: {
   lead: Lead;
   onDragStart: (e: React.DragEvent, leadId: string) => void;
+  onClick: (lead: Lead) => void;
 }) {
   const actions = STAGE_ACTIONS[lead.status];
   const badge = STATUS_BADGE[lead.status];
@@ -122,6 +125,7 @@ function PipelineLeadCard({
     <div
       draggable
       onDragStart={(e) => onDragStart(e, lead.id)}
+      onClick={() => onClick(lead)}
       className="rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm dark:border-gray-700 dark:bg-gray-800 cursor-grab active:cursor-grabbing hover:border-brand-300 hover:shadow-md transition-all space-y-2.5"
     >
       {/* Row 1: Avatar + Nome + Status */}
@@ -186,6 +190,7 @@ function PipelineColumn({
   onDragOver,
   onDrop,
   isDragOver,
+  onClickLead,
 }: {
   stage: PipelineStage;
   leads: Lead[];
@@ -194,6 +199,7 @@ function PipelineColumn({
   onDragOver: (e: React.DragEvent) => void;
   onDrop: (e: React.DragEvent, stageId: string) => void;
   isDragOver: boolean;
+  onClickLead: (lead: Lead) => void;
 }) {
   const totalValue = leads.reduce((s, l) => s + (l.value ?? 0), 0);
   const pct = totalLeads > 0 ? Math.round((leads.length / totalLeads) * 100) : 0;
@@ -257,7 +263,7 @@ function PipelineColumn({
           </div>
         )}
         {leads.map((lead) => (
-          <PipelineLeadCard key={lead.id} lead={lead} onDragStart={onDragStart} />
+          <PipelineLeadCard key={lead.id} lead={lead} onDragStart={onDragStart} onClick={onClickLead} />
         ))}
       </div>
 
@@ -279,6 +285,7 @@ export default function PipelinePage() {
   const [leads, setLeads] = useState<Lead[]>(cafePamData.leads);
   const [search, setSearch] = useState("");
   const [dragOverStageId, setDragOverStageId] = useState<string | null>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const dragLeadId = useRef<string | null>(null);
 
   const stages = [...cafePamData.stages].sort((a, b) => a.position - b.position);
@@ -405,10 +412,22 @@ export default function PipelinePage() {
               onDragOver={(e) => handleDragOver(e, stage.id)}
               onDrop={handleDrop}
               isDragOver={dragOverStageId === stage.id}
+              onClickLead={setSelectedLead}
             />
           );
         })}
       </div>
+
+      {/* Lead Drawer */}
+      <LeadDrawer
+        lead={selectedLead}
+        onClose={() => setSelectedLead(null)}
+        onStageChange={(leadId, newStatus) => {
+          setLeads((prev) =>
+            prev.map((l) => l.id === leadId ? { ...l, status: newStatus } : l)
+          );
+        }}
+      />
     </div>
   );
 }

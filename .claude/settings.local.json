@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "Bash(npx plugins:*)",
+      "Bash(where claude:*)",
+      "Bash(\"C:/Users/Eric/.local/bin/claude.exe\" plugin:*)",
+      "Bash(git merge:*)",
+      "Bash(curl -s \"https://api.github.com/repos/yzihub/plataforma/commits/main\")",
+      "Bash(curl:*)",
+      "Bash(git remote:*)",
+      "Bash(vercel:*)",
+      "Bash(printf \"\\\\n\\\\n\")",
+      "Bash(mkdir -p .vercel)",
+      "Bash(.vercel/project.json:*)",
+      "Read(//c/Users/Eric/AppData/Roaming/com.vercel.cli/**)",
+      "Read(//c/Users/Eric/AppData/Local/com.vercel.cli/**)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\(''''token'''',''''''''\\) or list\\(d.values\\(\\)\\)[0]\\)\")",
+      "Bash(node -e \"const d=require\\(''''fs''''\\).readFileSync\\(''''/dev/stdin'''',''''utf8''''\\); const p=JSON.parse\\(d\\); console.log\\(''''id:'''',p.id,''''orgId:'''',p.accountId\\)\")",
+      "Bash(node -e \"const d=require\\(''''fs''''\\).readFileSync\\(''''C:/tmp/patch.json'''',''''utf8''''\\); const p=JSON.parse\\(d\\); console.log\\(p.error || p.link || ''''ok''''\\)\")",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}
