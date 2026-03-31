@@ -30,3 +30,11 @@
 1. Ler este CLAUDE.md.
 2. Validar tenant_id e feature_flags.
 3. Step -> Executar -> Validar -> Commit.
+
+## ⚡ Otimização de Tokens e Contexto
+- Usar /compact quando contexto passar de 50%
+- Subagentes de exploração usar model: haiku
+- Sonnet apenas para architect e automation
+- Nunca varrer projeto inteiro — ler apenas arquivos necessários
+- Sempre use context7 para documentação: Next.js, Supabase, Tailwind, n8n, React
+- Exemplo: "Como configurar middleware Next.js? use context7"
