@@ -301,23 +301,19 @@ Cada interface usa um padrão visual único e diferente:
 
 ## Próximos Steps
 
-### Crítico (backend real)
-- [ ] Conectar `/cockpit` a queries Supabase reais (substituir mocks de leads/pipeline)
-- [ ] Implementar `POST /api/actions/execute` completo (hoje só enfileira, falta validação de tenant)
-- [ ] Criar migrations Supabase para todas as tabelas (tenants, profiles, projects, job_queue, action_logs)
+### 🔴 SEXTA — Crítico (bloqueante para entrega)
+- [ ] Criar migrations Supabase 004 e 005 (leads + pipeline_stages com tenant_id)
+- [ ] Conectar `/cockpit/leads` ao Supabase (substituir mock)
+- [ ] Conectar `/cockpit/pipeline` ao Supabase (substituir `cafePamData`)
+- [ ] Deploy Vercel funcionando com variáveis de ambiente de produção
+- [ ] Configurar webhook n8n (`FACTORY_N8N_WEBHOOK_URL`) em produção
+
+### 🟡 DEPOIS — Não bloqueante
+- [ ] Conectar `/cockpit` (Dashboard KPIs) a queries Supabase reais
+- [ ] Conectar `/cockpit/crm` ao Supabase (substituir `cafePamData`)
+- [ ] Implementar `POST /api/actions/execute` completo (validação de tenant)
 - [ ] Configurar RLS (Row Level Security) por `tenant_id`
-
-### COCKPIT
-- [ ] `/cockpit/leads` — conectar a Supabase (hoje usa mock)
-- [ ] `/cockpit/crm` — conectar a Supabase (hoje usa `cafePamData`)
-- [ ] `/cockpit/pipeline` — conectar a Supabase (hoje usa `cafePamData`)
 - [ ] `/cockpit/ai-agent` — conectar a Evolution API (hoje simulado)
-
-### CONTROL
 - [ ] `ControlDashboard` — conectar jobs/logs em tempo real (Supabase Realtime)
 - [ ] Filtros e paginação em `/control/tenants`
-
-### Infra
-- [ ] Configurar webhook n8n (`FACTORY_N8N_WEBHOOK_URL`) em produção
 - [ ] Configurar Evolution API (instância WhatsApp por tenant)
-- [ ] Deploy Vercel + variáveis de ambiente de produção

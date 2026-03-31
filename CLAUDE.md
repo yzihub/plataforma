@@ -8,7 +8,7 @@
 
 ## 🛠️ Stack Técnica (DNA YZI)
 - **Frontend:** Next.js 15 + TS + Tailwind v4 + TailAdmin (Base).
-- **UI de Impacto:** React Bits em `src/components/yzihub/`.
+- **UI de Impacto:** Componentes customizados no padrão TailAdmin dark em `src/components/yzihub/`.
 - **Backend/Auth:** Supabase (Fonte única de verdade).
 - **Engine:** n8n + Evolution API (WhatsApp Business Cloud).
 
@@ -22,9 +22,9 @@
 3. **Padrão de Pasta:** Novos componentes APENAS em `src/components/yzihub/`.
 4. **Action Flow:** Botões (`QUALIFICAR`, `IA ASSUMIR`, etc) disparam `POST /api/actions/execute` -> `job_queue` no Supabase -> Webhook n8n.
 
-## 🧠 Brain Integration (Obsidian)
-- Documentação e briefings em `D:\dev\YZI-OS-Docs`.
-- Sempre validar contexto de cliente antes de novas features.
+## 👥 Clientes Ativos
+- **Café com Pam** → agente Nina | pipeline: Lead→Agendado→Atendimento→Pago→Concluído
+- **Jurema Brokers** → agente Luana | pipeline: Lead→Agendado→Visita→Proposta→Contrato→Fechado
 
 ## 🚀 Metodologia CLI
 1. Ler este CLAUDE.md.
