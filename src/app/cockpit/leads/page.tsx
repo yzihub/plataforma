@@ -1,328 +1,46 @@
-"use client";
-
-import { useState, useMemo } from "react";
-import Badge from "@/components/ui/badge/Badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import LeadDrawer from "@/components/yzihub/LeadDrawer";
+import { createClient } from "@/lib/supabase/server";
 import { cafePamData } from "@/lib/crm/mock-data";
-import type { Lead, LeadStatus } from "@/lib/crm/types";
-import { PlusIcon, UserCircleIcon } from "@/icons";
+import type { Lead } from "@/lib/crm/types";
+import LeadsClient from "@/components/yzihub/LeadsClient";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Busca leads do tenant autenticado ───────────────────────────────────────
 
-type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light" | "dark";
+async function fetchLeads(): Promise<Lead[]> {
+  try {
+    const supabase = await createClient();
 
-const STATUS_BADGE: Record<LeadStatus, { color: BadgeColor; label: string }> = {
-  new:       { color: "info",    label: "🔥 Novo Lead" },
-  contacted: { color: "warning", label: "📞 Contato" },
-  meeting:   { color: "primary", label: "📅 Reunião" },
-  proposal:  { color: "warning", label: "💰 Proposta" },
-  won:       { color: "success", label: "✅ Fechado" },
-  lost:      { color: "dark",    label: "❌ Perdido" },
-};
+    // Usuário autenticado
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return cafePamData.leads;
 
-const ALL_STATUS: { value: LeadStatus; label: string }[] = [
-  { value: "new",       label: "🔥 Novo Lead" },
-  { value: "contacted", label: "📞 Contato" },
-  { value: "meeting",   label: "📅 Reunião" },
-  { value: "proposal",  label: "💰 Proposta" },
-  { value: "won",       label: "✅ Fechado" },
-  { value: "lost",      label: "❌ Perdido" },
-];
+    // Tenant do usuário
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .single();
 
-const ALL_SOURCES = ["Instagram", "Site", "Indicação", "WhatsApp", "Zap Imóveis", "OLX"];
+    if (!profile?.tenant_id) return cafePamData.leads;
 
-const AVATAR_COLORS = [
-  "bg-blue-500", "bg-violet-500", "bg-emerald-500",
-  "bg-amber-500", "bg-rose-500", "bg-cyan-500",
-];
+    // Leads filtrados por tenant
+    const { data: leads, error } = await supabase
+      .from("leads")
+      .select("id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, notes, assigned_to, last_action_at, created_at")
+      .eq("tenant_id", profile.tenant_id)
+      .order("created_at", { ascending: false });
 
-function getInitials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
+    if (error || !leads) return cafePamData.leads;
+
+    return leads as Lead[];
+  } catch {
+    // Supabase não configurado — usa mock para dev local
+    return cafePamData.leads;
+  }
 }
 
-function avatarColor(id: string) {
-  return AVATAR_COLORS[id.charCodeAt(id.length - 1) % AVATAR_COLORS.length];
-}
+// ─── Page (Server Component) ─────────────────────────────────────────────────
 
-function formatCurrency(v: number) {
-  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "2-digit",
-  });
-}
-
-// ─── ScoreBar ─────────────────────────────────────────────────────────────────
-
-function ScoreBar({ score }: { score: number }) {
-  const color =
-    score >= 80 ? "bg-emerald-500" :
-    score >= 50 ? "bg-amber-500" :
-    "bg-rose-500";
-
-  return (
-    <div className="flex items-center gap-2 min-w-[80px]">
-      <div className="flex-1 h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
-        <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
-      </div>
-      <span className="text-xs font-medium text-gray-500 dark:text-gray-400 w-6 text-right">
-        {score}
-      </span>
-    </div>
-  );
-}
-
-// ─── Avatar ───────────────────────────────────────────────────────────────────
-
-function Avatar({ lead }: { lead: Lead }) {
-  return (
-    <div
-      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white ${avatarColor(lead.id)}`}
-    >
-      {getInitials(lead.name)}
-    </div>
-  );
-}
-
-// ─── Search + Filters ─────────────────────────────────────────────────────────
-
-function SearchBar({
-  search,
-  status,
-  source,
-  onSearch,
-  onStatus,
-  onSource,
-}: {
-  search: string;
-  status: string;
-  source: string;
-  onSearch: (v: string) => void;
-  onStatus: (v: string) => void;
-  onSource: (v: string) => void;
-}) {
-  return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      {/* Busca */}
-      <div className="relative flex-1">
-        <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="M21 21l-4.35-4.35" />
-        </svg>
-        <input
-          type="text"
-          placeholder="Buscar lead por nome, email..."
-          value={search}
-          onChange={(e) => onSearch(e.target.value)}
-          className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder-gray-500"
-        />
-      </div>
-
-      {/* Filtro status */}
-      <select
-        value={status}
-        onChange={(e) => onStatus(e.target.value)}
-        className="rounded-xl border border-gray-200 bg-white py-2.5 px-3 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90"
-      >
-        <option value="">Todos os status</option>
-        {ALL_STATUS.map((s) => (
-          <option key={s.value} value={s.value}>{s.label}</option>
-        ))}
-      </select>
-
-      {/* Filtro origem */}
-      <select
-        value={source}
-        onChange={(e) => onSource(e.target.value)}
-        className="rounded-xl border border-gray-200 bg-white py-2.5 px-3 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90"
-      >
-        <option value="">Todas as origens</option>
-        {ALL_SOURCES.map((o) => (
-          <option key={o} value={o}>{o}</option>
-        ))}
-      </select>
-    </div>
-  );
-}
-
-// ─── Leads Table ──────────────────────────────────────────────────────────────
-
-function LeadsTable({
-  leads,
-  onSelect,
-}: {
-  leads: Lead[];
-  onSelect: (lead: Lead) => void;
-}) {
-  return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
-      <div className="max-w-full overflow-x-auto">
-        <Table>
-          <TableHeader className="border-b border-gray-100 dark:border-gray-800">
-            <TableRow className="bg-gray-50 dark:bg-gray-800/40">
-              {["Lead", "Origem", "Status", "Score", "Valor", "Data", ""].map((h) => (
-                <TableCell
-                  key={h}
-                  isHeader
-                  className="py-3 px-5 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 text-left"
-                >
-                  {h}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHeader>
-
-          <TableBody className="divide-y divide-gray-50 dark:divide-gray-800">
-            {leads.length === 0 ? (
-              <TableRow>
-                <TableCell className="py-16 px-5 text-center text-sm text-gray-400">
-                  <div className="flex flex-col items-center gap-2">
-                    <UserCircleIcon className="size-10 text-gray-200 dark:text-gray-700" />
-                    <span>Nenhum lead encontrado</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : (
-              leads.map((lead) => (
-                <tr
-                  key={lead.id}
-                  onClick={() => onSelect(lead)}
-                  className="cursor-pointer hover:bg-gray-50/80 dark:hover:bg-white/[0.02] transition-colors"
-                >
-                  {/* Avatar + Nome */}
-                  <td className="py-3.5 px-5">
-                    <div className="flex items-center gap-3">
-                      <Avatar lead={lead} />
-                      <div>
-                        <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                          {lead.name}
-                        </p>
-                        <p className="text-xs text-gray-400">{lead.email}</p>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Origem */}
-                  <td className="py-3.5 px-5 text-sm text-gray-500 dark:text-gray-400">
-                    {lead.source ?? "—"}
-                  </td>
-
-                  {/* Status */}
-                  <td className="py-3.5 px-5">
-                    <Badge size="sm" color={STATUS_BADGE[lead.status].color}>
-                      {STATUS_BADGE[lead.status].label}
-                    </Badge>
-                  </td>
-
-                  {/* Score */}
-                  <td className="py-3.5 px-5">
-                    <ScoreBar score={lead.score} />
-                  </td>
-
-                  {/* Valor */}
-                  <td className="py-3.5 px-5 text-sm font-medium text-gray-700 dark:text-gray-200">
-                    {formatCurrency(lead.value)}
-                  </td>
-
-                  {/* Data */}
-                  <td className="py-3.5 px-5 text-sm text-gray-400">
-                    {formatDate(lead.created_at)}
-                  </td>
-
-                  {/* Ações */}
-                  <td className="py-3.5 px-5">
-                    <span className="text-xs text-brand-500 font-medium hover:underline">
-                      Ver detalhes →
-                    </span>
-                  </td>
-                </tr>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-const allLeads = cafePamData.leads;
-
-export default function LeadsPage() {
-  const [search, setSearch] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [filterSource, setFilterSource] = useState("");
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-
-  const filteredLeads = useMemo(() => {
-    return allLeads.filter((l) => {
-      const matchSearch =
-        !search ||
-        l.name.toLowerCase().includes(search.toLowerCase()) ||
-        (l.email ?? "").toLowerCase().includes(search.toLowerCase());
-      const matchStatus = !filterStatus || l.status === filterStatus;
-      const matchSource = !filterSource || l.source === filterSource;
-      return matchSearch && matchStatus && matchSource;
-    });
-  }, [search, filterStatus, filterSource]);
-
-  return (
-    <>
-      <div className="space-y-5">
-        {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-white/90">Leads</h1>
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {filteredLeads.length} de {allLeads.length} leads
-            </p>
-          </div>
-          <button className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors self-start sm:self-auto">
-            <PlusIcon className="size-4" />
-            Novo Lead
-          </button>
-        </div>
-
-        {/* Busca e filtros */}
-        <SearchBar
-          search={search}
-          status={filterStatus}
-          source={filterSource}
-          onSearch={setSearch}
-          onStatus={setFilterStatus}
-          onSource={setFilterSource}
-        />
-
-        {/* Tabela */}
-        <LeadsTable leads={filteredLeads} onSelect={setSelectedLead} />
-      </div>
-
-      {/* Drawer lateral */}
-      <LeadDrawer lead={selectedLead} onClose={() => setSelectedLead(null)} />
-    </>
-  );
+export default async function LeadsPage() {
+  const leads = await fetchLeads();
+  return <LeadsClient initialLeads={leads} />;
 }
