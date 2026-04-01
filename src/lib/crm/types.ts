@@ -1,11 +1,13 @@
 // Fluxo YZIHUB: lead chega qualificado pela IA — pipeline é para o time humano fechar
 export type LeadStatus =
-  | 'new'        // 🔥 Novo Lead
-  | 'contacted'  // 📞 Contato
-  | 'meeting'    // 📅 Reunião
-  | 'proposal'   // 💰 Proposta
-  | 'won'        // ✅ Fechado
-  | 'lost'       // ❌ Perdido
+  | 'new'         // 🔥 Novo Lead
+  | 'contacted'   // 📞 Contato
+  | 'qualified'   // 📅 Agendado
+  | 'meeting'     // 📅 Reunião
+  | 'proposal'    // 💰 Proposta
+  | 'negotiation' // 📋 Contrato / Negociação
+  | 'won'         // ✅ Fechado
+  | 'lost'        // ❌ Perdido
 
 export type CrmAction =
   | 'contact'        // Entrar em contato

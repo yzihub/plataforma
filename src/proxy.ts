@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const PUBLIC_ROUTES = ['/signin', '/signup', '/reset-password']
+const PUBLIC_ROUTES = ['/signin', '/signup', '/reset-password', '/auth/callback', '/unauthorized', '/error-404']
 const CONTROL_ROUTE = '/control'
 
 export async function proxy(request: NextRequest) {
@@ -55,6 +55,23 @@ export async function proxy(request: NextRequest) {
     const isGlobalAdmin = user.user_metadata?.role === 'global_admin'
     if (!isGlobalAdmin) {
       return NextResponse.redirect(new URL('/cockpit', request.url))
+    }
+  }
+
+  // /cockpit exige perfil na tabela profiles (Gatekeeper)
+  const isCockpitRoute = pathname.startsWith('/cockpit')
+  if (user && isCockpitRoute) {
+    const isGlobalAdmin = user.user_metadata?.role === 'global_admin'
+    if (!isGlobalAdmin) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id, tenant_id')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      if (!profile) {
+        return NextResponse.redirect(new URL('/unauthorized', request.url))
+      }
     }
   }
 

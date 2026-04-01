@@ -10,6 +10,7 @@ interface KanbanColumnProps {
   stage: PipelineStage;
   leads: Lead[];
   onActionSuccess?: (leadId: string, jobId: string, action: string) => void;
+  onLeadSelect?: (lead: Lead) => void;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -67,6 +68,7 @@ export default function KanbanColumn({
   stage,
   leads,
   onActionSuccess,
+  onLeadSelect,
 }: KanbanColumnProps) {
   const totalValue = leads.reduce((sum, lead) => sum + (lead.value ?? 0), 0);
 
@@ -118,6 +120,7 @@ export default function KanbanColumn({
                 key={lead.id}
                 lead={lead}
                 onActionSuccess={onActionSuccess}
+                onLeadSelect={onLeadSelect}
               />
             ))}
           </div>

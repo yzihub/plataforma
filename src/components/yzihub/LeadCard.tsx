@@ -10,6 +10,7 @@ import { Lead, LeadStatus } from "@/lib/crm/types";
 interface LeadCardProps {
   lead: Lead;
   onActionSuccess?: (leadId: string, jobId: string, action: string) => void;
+  onLeadSelect?: (lead: Lead) => void;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -25,12 +26,14 @@ const AVATAR_COLORS = [
 ] as const;
 
 const STATUS_ACTIONS: Record<LeadStatus, CrmAction[]> = {
-  new: ["contact"],
-  contacted: ["schedule"],
-  meeting: ["send_proposal", "lose"],
-  proposal: ["close", "lose"],
-  won: [],
-  lost: [],
+  new:         ["contact"],
+  contacted:   ["schedule"],
+  qualified:   ["schedule"],
+  meeting:     ["send_proposal", "lose"],
+  proposal:    ["close", "lose"],
+  negotiation: ["close", "lose"],
+  won:         [],
+  lost:        [],
 };
 
 type BadgeColor =
@@ -43,12 +46,14 @@ type BadgeColor =
   | "dark";
 
 const STATUS_BADGE: Record<LeadStatus, { color: BadgeColor; label: string }> = {
-  new: { color: "light", label: "Novo" },
-  contacted: { color: "info", label: "Contato" },
-  meeting: { color: "primary", label: "Reunião" },
-  proposal: { color: "warning", label: "Proposta" },
-  won: { color: "success", label: "Fechado" },
-  lost: { color: "error", label: "Perdido" },
+  new:         { color: "light",   label: "Novo" },
+  contacted:   { color: "info",    label: "Contato" },
+  qualified:   { color: "primary", label: "Agendado" },
+  meeting:     { color: "primary", label: "Reunião" },
+  proposal:    { color: "warning", label: "Proposta" },
+  negotiation: { color: "warning", label: "Contrato" },
+  won:         { color: "success", label: "Fechado" },
+  lost:        { color: "error",   label: "Perdido" },
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -166,7 +171,7 @@ function EmailIcon() {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function LeadCard({ lead, onActionSuccess }: LeadCardProps) {
+export default function LeadCard({ lead, onActionSuccess, onLeadSelect }: LeadCardProps) {
   const avatarColor = getAvatarColor(lead.name);
   const initials = getInitials(lead.name);
   const scoreColor = getScoreColor(lead.score);
@@ -180,11 +185,12 @@ export default function LeadCard({ lead, onActionSuccess }: LeadCardProps) {
 
   return (
     <article
+      onClick={() => onLeadSelect?.(lead)}
       className="
         rounded-xl border border-gray-200 bg-white p-4 shadow-theme-xs
         dark:border-gray-700 dark:bg-gray-800
         hover:border-brand-300 hover:shadow-sm
-        transition-all cursor-grab active:cursor-grabbing
+        transition-all cursor-pointer
         flex flex-col gap-3
       "
     >

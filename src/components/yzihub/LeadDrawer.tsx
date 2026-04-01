@@ -89,12 +89,14 @@ function formatCurrency(v: number) {
 type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light" | "dark";
 
 const STATUS_BADGE: Record<LeadStatus, { color: BadgeColor; label: string }> = {
-  new: { color: "info", label: "🔥 Novo Lead" },
-  contacted: { color: "warning", label: "📞 Contato" },
-  meeting: { color: "primary", label: "📅 Reunião" },
-  proposal: { color: "warning", label: "💰 Proposta" },
-  won: { color: "success", label: "✅ Fechado" },
-  lost: { color: "dark", label: "❌ Perdido" },
+  new:         { color: "info",    label: "🔥 Novo Lead" },
+  contacted:   { color: "warning", label: "📞 Contato" },
+  qualified:   { color: "primary", label: "📅 Agendado" },
+  meeting:     { color: "primary", label: "📅 Reunião" },
+  proposal:    { color: "warning", label: "💰 Proposta" },
+  negotiation: { color: "warning", label: "📋 Contrato" },
+  won:         { color: "success", label: "✅ Fechado" },
+  lost:        { color: "dark",    label: "❌ Perdido" },
 };
 
 const ACTIVITY_ICON: Record<Atividade["tipo"], string> = {
