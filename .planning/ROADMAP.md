@@ -90,6 +90,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. A tenant can only read their own rows across all tables (RLS verified by cross-tenant query attempt)
 **Plans**: TBD
 
+**Deploy Checklist:**
+  - Set `NEXT_PUBLIC_APP_URL` to the production Vercel URL in Vercel Environment Variables
+  - Run `node scripts/check-env.js` before each deploy (validates all required env vars)
+  - Ensure Supabase Auth > URL Configuration > Site URL matches `NEXT_PUBLIC_APP_URL`
+  - Ensure Supabase Auth > URL Configuration > Redirect URLs includes `{NEXT_PUBLIC_APP_URL}/auth/callback`
+
 ## Progress
 
 **Execution Order:**

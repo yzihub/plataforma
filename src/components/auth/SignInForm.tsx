@@ -6,6 +6,7 @@ import Button from "@/components/ui/button/Button";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import { signIn } from "@/lib/auth/actions";
 import { createClient } from "@/lib/supabase/client";
+import { sendMagicLink } from "@/lib/supabase/auth";
 import Link from "next/link";
 import React, { useState } from "react";
 
@@ -15,6 +16,9 @@ export default function SignInForm() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [magicLinkEmail, setMagicLinkEmail] = useState('');
+  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
@@ -23,7 +27,7 @@ export default function SignInForm() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/auth/callback`,
       },
     });
     if (error) {
@@ -41,6 +45,18 @@ export default function SignInForm() {
       setError(result.error);
       setLoading(false);
     }
+  }
+
+  async function handleMagicLink() {
+    setMagicLinkLoading(true);
+    setError(null);
+    const { error } = await sendMagicLink(magicLinkEmail);
+    if (error) {
+      setError(error.message);
+    } else {
+      setMagicLinkSent(true);
+    }
+    setMagicLinkLoading(false);
   }
 
   return (
@@ -84,7 +100,44 @@ export default function SignInForm() {
               {googleLoading ? "Redirecionando..." : "Entrar com Google"}
             </button>
 
-            {/* Divider */}
+            {/* Divider: Magic Link */}
+            <div className="relative py-3 sm:py-5">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2">
+                  ou entre com link magico
+                </span>
+              </div>
+            </div>
+
+            {/* Magic Link section */}
+            {magicLinkSent ? (
+              <div className="px-4 py-3 text-sm text-green-700 bg-green-50 rounded-lg dark:bg-green-900/20 dark:text-green-400">
+                Link enviado! Verifique seu e-mail e clique no link para entrar.
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <input
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={magicLinkEmail}
+                  onChange={(e) => setMagicLinkEmail(e.target.value)}
+                  className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:border-gray-700 dark:focus:border-brand-800"
+                />
+                <Button
+                  className="w-full"
+                  size="sm"
+                  disabled={magicLinkLoading || !magicLinkEmail}
+                  onClick={handleMagicLink}
+                >
+                  {magicLinkLoading ? "Enviando..." : "Enviar Link Magico"}
+                </Button>
+              </div>
+            )}
+
+            {/* Divider: email/password */}
             <div className="relative py-3 sm:py-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
