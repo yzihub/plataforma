@@ -13,7 +13,7 @@ import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import { useModal } from "@/hooks/useModal";
 import type { ControlTenant, TenantPlan } from "@/lib/control/types";
-import { createTenant, enqueueFactoryActivate } from "@/lib/control/tenant-actions";
+import { createTenant, enqueueFactoryActivate, updateTenantBrain } from "@/lib/control/tenant-actions";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -106,6 +106,138 @@ function ActivateButton({ tenantId }: { tenantId: string }) {
     >
       {isPending ? "Ativando…" : "Ativar Projeto"}
     </Button>
+  );
+}
+
+// ── Edit Brain Modal ──────────────────────────────────────────────────────────
+
+type BrainFormState = { system_prompt: string; knowledge_rag_xml: string };
+
+function EditBrainModal({
+  tenant,
+  isOpen,
+  onClose,
+  onSaved,
+}: {
+  tenant: { id: string; name: string; system_prompt: string | null; knowledge_rag_xml: string | null } | null;
+  isOpen: boolean;
+  onClose: () => void;
+  onSaved: (tenantId: string, data: BrainFormState) => void;
+}) {
+  const [form, setForm] = useState<BrainFormState>({
+    system_prompt: "",
+    knowledge_rag_xml: "",
+  });
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  // Sync form when tenant changes
+  React.useEffect(() => {
+    if (tenant) {
+      setForm({
+        system_prompt: tenant.system_prompt ?? "",
+        knowledge_rag_xml: tenant.knowledge_rag_xml ?? "",
+      });
+      setError(null);
+    }
+  }, [tenant]);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!tenant) return;
+    setError(null);
+    startTransition(async () => {
+      const result = await updateTenantBrain({
+        tenantId: tenant.id,
+        system_prompt: form.system_prompt,
+        knowledge_rag_xml: form.knowledge_rag_xml,
+      });
+      if (!result.success) {
+        setError(result.error);
+        return;
+      }
+      onSaved(tenant.id, form);
+      onClose();
+    });
+  }
+
+  function handleClose() {
+    setError(null);
+    onClose();
+  }
+
+  const inputClass =
+    "w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm text-gray-800 dark:text-white placeholder:text-gray-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 font-mono";
+
+  const labelClass = "block mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300";
+
+  return (
+    <Modal isOpen={isOpen} onClose={handleClose} className="max-w-2xl mx-4 p-6 sm:p-8">
+      <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">
+        Cérebro do Tenant
+      </h2>
+      {tenant && (
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+          {tenant.name}
+        </p>
+      )}
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        {/* System Prompt */}
+        <div>
+          <label className={labelClass}>System Prompt</label>
+          <textarea
+            value={form.system_prompt}
+            onChange={(e) => setForm((f) => ({ ...f, system_prompt: e.target.value }))}
+            placeholder="Instruções de comportamento do agente IA..."
+            rows={8}
+            className={inputClass}
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            Prompt de sistema enviado ao n8n na ativação da factory.
+          </p>
+        </div>
+
+        {/* Knowledge RAG XML */}
+        <div>
+          <label className={labelClass}>Knowledge / RAG (XML)</label>
+          <textarea
+            value={form.knowledge_rag_xml}
+            onChange={(e) => setForm((f) => ({ ...f, knowledge_rag_xml: e.target.value }))}
+            placeholder="<knowledge>...</knowledge>"
+            rows={10}
+            className={inputClass}
+          />
+          <p className="mt-1 text-xs text-gray-400">
+            Base de conhecimento em XML para indexação RAG no n8n.
+          </p>
+        </div>
+
+        {error && (
+          <p className="rounded-lg bg-error-50 dark:bg-error-500/10 px-3 py-2 text-sm text-error-600 dark:text-error-400">
+            {error}
+          </p>
+        )}
+
+        <div className="flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            onClick={handleClose}
+            disabled={isPending}
+            className="rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 disabled:opacity-50"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={isPending}
+            className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-50 transition-colors"
+          >
+            {isPending ? "Salvando…" : "Salvar Cérebro"}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }
 
@@ -257,6 +389,26 @@ type Props = {
 export default function TenantsTable({ initialTenants }: Props) {
   const { isOpen, openModal, closeModal } = useModal();
   const [tenants, setTenants] = useState<ControlTenant[]>(initialTenants);
+  const [editingTenant, setEditingTenant] = useState<ControlTenant | null>(null);
+  const [isBrainModalOpen, setIsBrainModalOpen] = useState(false);
+
+  function openBrainModal(tenant: ControlTenant) {
+    setEditingTenant(tenant);
+    setIsBrainModalOpen(true);
+  }
+
+  function closeBrainModal() {
+    setIsBrainModalOpen(false);
+    setEditingTenant(null);
+  }
+
+  function handleBrainSaved(tenantId: string, data: { system_prompt: string; knowledge_rag_xml: string }) {
+    setTenants((prev) =>
+      prev.map((t) =>
+        t.id === tenantId ? { ...t, ...data } : t
+      )
+    );
+  }
 
   function handleTenantCreated(t: { name: string; slug: string; plan: TenantPlan }) {
     // Optimistic update: add a skeleton row immediately
@@ -266,6 +418,8 @@ export default function TenantsTable({ initialTenants }: Props) {
       slug: t.slug,
       plan: t.plan,
       status: "active",
+      system_prompt: null,
+      knowledge_rag_xml: null,
       projects: [],
       stats: {
         total_leads: 0,
@@ -390,7 +544,19 @@ export default function TenantsTable({ initialTenants }: Props) {
 
                   {/* Ações */}
                   <TableCell className="px-5 py-4 text-start whitespace-nowrap">
-                    <ActivateButton tenantId={t.id} />
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => openBrainModal(t)}
+                        title="Editar Cérebro (system_prompt / RAG)"
+                        className="inline-flex items-center gap-1 rounded-lg border border-gray-300 dark:border-gray-700 px-2.5 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors"
+                      >
+                        <svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                        Cérebro
+                      </button>
+                      <ActivateButton tenantId={t.id} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -403,6 +569,13 @@ export default function TenantsTable({ initialTenants }: Props) {
         isOpen={isOpen}
         onClose={closeModal}
         onCreated={handleTenantCreated}
+      />
+
+      <EditBrainModal
+        tenant={editingTenant}
+        isOpen={isBrainModalOpen}
+        onClose={closeBrainModal}
+        onSaved={handleBrainSaved}
       />
     </>
   );

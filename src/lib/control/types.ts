@@ -21,6 +21,8 @@ export interface ControlTenant {
   slug: string
   plan: TenantPlan
   status: TenantStatus
+  system_prompt: string | null
+  knowledge_rag_xml: string | null
   projects: ControlProject[]
   stats: {
     total_leads: number

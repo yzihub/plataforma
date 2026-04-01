@@ -12,7 +12,7 @@ export async function getControlDashboard(): Promise<ControlDashboardData | null
   const [tenantsRes, projectsRes, leadsRes, jobsRes, logsRes] = await Promise.all([
     admin
       .from("tenants")
-      .select("id, name, slug, plan, status, created_at")
+      .select("id, name, slug, plan, status, system_prompt, knowledge_rag_xml, created_at")
       .order("created_at", { ascending: false }),
 
     admin
@@ -90,6 +90,8 @@ export async function getControlDashboard(): Promise<ControlDashboardData | null
       slug: t.slug,
       plan: t.plan,
       status: t.status,
+      system_prompt: t.system_prompt ?? null,
+      knowledge_rag_xml: t.knowledge_rag_xml ?? null,
       projects: tProjects,
       stats: {
         total_leads: tLeads.length,

@@ -19,32 +19,37 @@ interface CommandButtonProps {
 
 const ACTION_CONFIG: Record<
   CrmAction,
-  { label: string; color: string; hoverColor: string }
+  { label: string; border: string; text: string; hover: string }
 > = {
   contact: {
     label: "ENTRAR EM CONTATO",
-    color: "bg-brand-500",
-    hoverColor: "hover:bg-brand-600",
+    border: "border-brand-400 dark:border-brand-500",
+    text: "text-brand-600 dark:text-brand-400",
+    hover: "hover:bg-brand-50 dark:hover:bg-brand-500/10",
   },
   schedule: {
     label: "MARCAR REUNIÃO",
-    color: "bg-amber-500",
-    hoverColor: "hover:bg-amber-600",
+    border: "border-amber-400 dark:border-amber-500",
+    text: "text-amber-600 dark:text-amber-400",
+    hover: "hover:bg-amber-50 dark:hover:bg-amber-500/10",
   },
   send_proposal: {
     label: "GERAR PROPOSTA",
-    color: "bg-violet-500",
-    hoverColor: "hover:bg-violet-600",
+    border: "border-violet-400 dark:border-violet-500",
+    text: "text-violet-600 dark:text-violet-400",
+    hover: "hover:bg-violet-50 dark:hover:bg-violet-500/10",
   },
   close: {
     label: "FECHAR",
-    color: "bg-emerald-500",
-    hoverColor: "hover:bg-emerald-600",
+    border: "border-emerald-400 dark:border-emerald-500",
+    text: "text-emerald-600 dark:text-emerald-400",
+    hover: "hover:bg-emerald-50 dark:hover:bg-emerald-500/10",
   },
   lose: {
     label: "PERDER",
-    color: "bg-rose-500",
-    hoverColor: "hover:bg-rose-600",
+    border: "border-rose-400 dark:border-rose-500",
+    text: "text-rose-600 dark:text-rose-400",
+    hover: "hover:bg-rose-50 dark:hover:bg-rose-500/10",
   },
 };
 
@@ -94,23 +99,25 @@ export default function CommandButton({
   const isSuccess = state === "success";
   const isError = state === "error";
 
+  const stateClasses = isError
+    ? "border-rose-400 dark:border-rose-500 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10"
+    : isSuccess
+    ? "border-emerald-400 dark:border-emerald-500 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+    : `${config.border} ${config.text} ${config.hover}`;
+
   return (
     <button
       onClick={handleClick}
       disabled={isLoading}
       className={[
-        "inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-semibold tracking-wide text-white transition-all duration-150",
-        isError
-          ? "bg-red-500 hover:bg-red-600"
-          : isSuccess
-          ? "bg-emerald-500 hover:bg-emerald-600"
-          : `${config.color} ${config.hoverColor}`,
-        isLoading ? "opacity-70 cursor-not-allowed" : "cursor-pointer",
+        "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold tracking-wide border bg-transparent transition-all duration-150",
+        stateClasses,
+        isLoading ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
       ].join(" ")}
       title={config.label}
     >
       {isLoading && (
-        <span className="inline-block w-3 h-3 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+        <span className="inline-block w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
       )}
       {isSuccess && <CheckIcon />}
       {isError && <XIcon />}

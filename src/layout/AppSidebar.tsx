@@ -61,14 +61,19 @@ type NavSection = {
 // ── Menu definition ───────────────────────────────────────────────────────────
 const SECTIONS: NavSection[] = [
   {
-    label: "Principal",
+    label: "YZI CONTROL",
     items: [
       { name: "Dashboard",       icon: <GridIcon />,         path: "/cockpit" },
-      { name: "Leads",           icon: <GroupIcon />,        path: "/cockpit/leads" },
-      { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,      path: "/cockpit/crm" },
       { name: "Calendar",        icon: <CalenderIcon />,     path: "/calendar" },
       { name: "Tasks",           icon: <TaskIcon />,         path: "/cockpit/tasks" },
       { name: "Chat",            icon: <ChatIcon />,         path: "/cockpit/chat" },
+    ],
+  },
+  {
+    label: "CRM",
+    items: [
+      { name: "Leads",           icon: <GroupIcon />,        path: "/cockpit/leads" },
+      { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,      path: "/cockpit/crm" },
     ],
   },
   {
