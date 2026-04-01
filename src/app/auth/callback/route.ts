@@ -18,11 +18,11 @@ export async function GET(req: NextRequest) {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("id")
+        .select("id, tenant_id")
         .eq("id", user.id)
         .maybeSingle();
 
-      return NextResponse.redirect(`${origin}${profile ? "/cockpit" : "/unauthorized"}`);
+      return NextResponse.redirect(`${origin}${profile?.tenant_id ? "/cockpit" : "/unauthorized"}`);
     }
   }
 

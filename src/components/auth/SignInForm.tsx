@@ -1,24 +1,12 @@
 "use client";
-import Checkbox from "@/components/form/input/Checkbox";
-import Input from "@/components/form/input/InputField";
-import Label from "@/components/form/Label";
-import Button from "@/components/ui/button/Button";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
-import { signIn } from "@/lib/auth/actions";
+import { ChevronLeftIcon } from "@/icons";
 import { createClient } from "@/lib/supabase/client";
-import { sendMagicLink } from "@/lib/supabase/auth";
 import Link from "next/link";
 import React, { useState } from "react";
 
 export default function SignInForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [magicLinkEmail, setMagicLinkEmail] = useState('');
-  const [magicLinkLoading, setMagicLinkLoading] = useState(false);
-  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
@@ -34,29 +22,6 @@ export default function SignInForm() {
       setError(error.message);
       setGoogleLoading(false);
     }
-    // Se ok, o browser redireciona automaticamente para o Google
-  }
-
-  async function handleSubmit(formData: FormData) {
-    setError(null);
-    setLoading(true);
-    const result = await signIn(formData);
-    if (result?.error) {
-      setError(result.error);
-      setLoading(false);
-    }
-  }
-
-  async function handleMagicLink() {
-    setMagicLinkLoading(true);
-    setError(null);
-    const { error } = await sendMagicLink(magicLinkEmail);
-    if (error) {
-      setError(error.message);
-    } else {
-      setMagicLinkSent(true);
-    }
-    setMagicLinkLoading(false);
   }
 
   return (
@@ -77,11 +42,15 @@ export default function SignInForm() {
               Sign In
             </h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Entre com Google ou email e senha.
+              Entre com sua conta Google.
             </p>
           </div>
           <div>
-            {/* Google OAuth */}
+            {error && (
+              <div className="mb-4 px-4 py-3 text-sm text-red-700 bg-red-50 rounded-lg dark:bg-red-900/20 dark:text-red-400">
+                {error}
+              </div>
+            )}
             <button
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
@@ -99,125 +68,6 @@ export default function SignInForm() {
               )}
               {googleLoading ? "Redirecionando..." : "Entrar com Google"}
             </button>
-
-            {/* Divider: Magic Link */}
-            <div className="relative py-3 sm:py-5">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2">
-                  ou entre com link magico
-                </span>
-              </div>
-            </div>
-
-            {/* Magic Link section */}
-            {magicLinkSent ? (
-              <div className="px-4 py-3 text-sm text-green-700 bg-green-50 rounded-lg dark:bg-green-900/20 dark:text-green-400">
-                Link enviado! Verifique seu e-mail e clique no link para entrar.
-              </div>
-            ) : (
-              <div className="flex flex-col gap-3">
-                <input
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={magicLinkEmail}
-                  onChange={(e) => setMagicLinkEmail(e.target.value)}
-                  className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/10 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:border-gray-700 dark:focus:border-brand-800"
-                />
-                <Button
-                  className="w-full"
-                  size="sm"
-                  disabled={magicLinkLoading || !magicLinkEmail}
-                  onClick={handleMagicLink}
-                >
-                  {magicLinkLoading ? "Enviando..." : "Enviar Link Magico"}
-                </Button>
-              </div>
-            )}
-
-            {/* Divider: email/password */}
-            <div className="relative py-3 sm:py-5">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200 dark:border-gray-800"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="p-2 text-gray-400 bg-white dark:bg-gray-900 sm:px-5 sm:py-2">
-                  ou entre com email
-                </span>
-              </div>
-            </div>
-
-            {/* Email/password form */}
-            <form action={handleSubmit}>
-              <div className="space-y-6">
-                {error && (
-                  <div className="px-4 py-3 text-sm text-red-700 bg-red-50 rounded-lg dark:bg-red-900/20 dark:text-red-400">
-                    {error}
-                  </div>
-                )}
-                <div>
-                  <Label>
-                    Email <span className="text-error-500">*</span>
-                  </Label>
-                  <Input name="email" placeholder="seu@email.com" type="email" />
-                </div>
-                <div>
-                  <Label>
-                    Senha <span className="text-error-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      name="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Digite sua senha"
-                    />
-                    <span
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    >
-                      {showPassword ? (
-                        <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-                      ) : (
-                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-                      )}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Checkbox checked={isChecked} onChange={setIsChecked} />
-                    <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
-                      Manter conectado
-                    </span>
-                  </div>
-                  <Link
-                    href="/reset-password"
-                    className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                  >
-                    Esqueci a senha
-                  </Link>
-                </div>
-                <div>
-                  <Button className="w-full" size="sm" disabled={loading}>
-                    {loading ? "Entrando..." : "Entrar"}
-                  </Button>
-                </div>
-              </div>
-            </form>
-
-            <div className="mt-5">
-              <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-                Não tem conta?{" "}
-                <Link
-                  href="/signup"
-                  className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-                >
-                  Criar conta
-                </Link>
-              </p>
-            </div>
           </div>
         </div>
       </div>
