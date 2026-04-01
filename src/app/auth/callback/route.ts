@@ -1,3 +1,6 @@
+// IMPORTANTE: Todos os redirects usam `origin` extraído do request.url
+// para funcionar corretamente em localhost, staging e produção.
+// NÃO substituir por process.env.NEXT_PUBLIC_APP_URL aqui.
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
