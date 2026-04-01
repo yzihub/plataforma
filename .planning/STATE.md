@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-31)
 Phase: 1 of 6 (Access & Auth)
 Plan: 0 of TBD in current phase
 Status: Ready to plan
-Last activity: 2026-03-31 — Roadmap created, project initialized
+Last activity: 2026-04-01 - Completed quick task 260401-669: Configurar URL de produção para Magic Links e Auth
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -49,6 +49,12 @@ Recent decisions affecting current work:
 ### Pending Todos
 
 None yet.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260401-669 | Configurar URL de produção para Magic Links e Auth | 2026-04-01 | f35be4b | [260401-669-configurar-url-de-produ-o-para-magic-lin](./quick/260401-669-configurar-url-de-produ-o-para-magic-lin/) |
 
 ### Blockers/Concerns
 
