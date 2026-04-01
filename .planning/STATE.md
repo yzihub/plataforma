@@ -69,6 +69,7 @@ None yet.
 | 260401-669 | Configurar URL de produção para Magic Links e Auth | 2026-04-01 | f35be4b | [260401-669-configurar-url-de-produ-o-para-magic-lin](./quick/260401-669-configurar-url-de-produ-o-para-magic-lin/) |
 | 260401-hen | Corrigir redirecionamento de Magic Link (profile-aware callback) | 2026-04-01 | 41c440f | [260401-hen-corrigir-redirecionamento-de-magic-link-](./quick/260401-hen-corrigir-redirecionamento-de-magic-link-/) |
 | 260401-n0w | Criar pagina de Gestao Financeira com alertas e formatacao BRL | 2026-04-01 | b824104 | [260401-n0w-criar-p-gina-de-gest-o-financeira-com-al](./quick/260401-n0w-criar-p-gina-de-gest-o-financeira-com-al/) |
+| 260401-qan | Restaurar layout TailAdmin e corrigir OAuth redirect no localhost | 2026-04-01 | 0c69e53 | [260401-qan-restaurar-layout-original-tailadmin-e-co](./quick/260401-qan-restaurar-layout-original-tailadmin-e-co/) |
 
 ### Blockers/Concerns
 
@@ -78,5 +79,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-01
-Stopped at: Completed quick task 260401-n0w: Gestao Financeira page at /cockpit/financeiro
+Stopped at: Completed quick task 260401-qan: Restaurar layout TailAdmin e corrigir OAuth redirect no localhost
 Resume file: None
