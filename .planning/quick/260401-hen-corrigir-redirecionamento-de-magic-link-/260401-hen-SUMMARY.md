@@ -19,7 +19,7 @@ decisions:
 metrics:
   duration: "~5 minutes"
   completed: "2026-04-01T15:35:47Z"
-  tasks_completed: 1
+  tasks_completed: 2
   tasks_total: 2
   files_changed: 1
 ---
@@ -46,7 +46,7 @@ Added a `profiles` table query in `src/app/auth/callback/route.ts` after success
 | Task | Name | Status | Commit |
 |------|------|--------|--------|
 | 1 | Add profile check to auth callback route | Complete | 41c440f |
-| 2 | Human verify magic link flow | Awaiting verification | - |
+| 2 | Human verify magic link flow | Approved | - |
 
 ## Deviations from Plan
 
