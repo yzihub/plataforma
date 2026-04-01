@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { KanbanData, Lead, PipelineStage } from "@/lib/crm/types";
 import KanbanColumn from "@/components/yzihub/KanbanColumn";
+import LeadDrawer from "@/components/yzihub/LeadDrawer";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -204,6 +205,7 @@ export default function KanbanBoard({ data }: KanbanBoardProps) {
   const [leads, setLeads] = useState<Lead[]>(data.leads);
   const [searchTerm, setSearchTerm] = useState("");
   const [toast, setToast] = useState<Toast | null>(null);
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   // ── Metrics ──
   const totalLeads = leads.length;
@@ -347,10 +349,16 @@ export default function KanbanBoard({ data }: KanbanBoardProps) {
               stage={stage}
               leads={stageLeads}
               onActionSuccess={handleActionSuccess}
+              onLeadSelect={setSelectedLead}
             />
           );
         })}
       </div>
+
+      <LeadDrawer
+        lead={selectedLead}
+        onClose={() => setSelectedLead(null)}
+      />
     </div>
   );
 }
