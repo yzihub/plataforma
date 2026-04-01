@@ -11,7 +11,18 @@ export async function GET(req: NextRequest) {
 
     if (!error && user) {
       const isGlobalAdmin = user.user_metadata?.role === "global_admin";
-      return NextResponse.redirect(`${origin}${isGlobalAdmin ? "/control" : "/cockpit"}`);
+
+      if (isGlobalAdmin) {
+        return NextResponse.redirect(`${origin}/control`);
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", user.id)
+        .maybeSingle();
+
+      return NextResponse.redirect(`${origin}${profile ? "/cockpit" : "/unauthorized"}`);
     }
   }
 
