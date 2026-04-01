@@ -23,7 +23,7 @@ const STAGE_ACTIONS: Record<string, CrmAction[]> = {
 type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light" | "dark";
 
 const STATUS_BADGE: Record<string, { color: BadgeColor; label: string }> = {
-  new:         { color: "info",    label: "🔥 Novo Lead" },
+  new:         { color: "info",    label: "🔥 Novo Cliente" },
   contacted:   { color: "warning", label: "📅 Agendado" },
   qualified:   { color: "warning", label: "📅 Agendado" },
   meeting:     { color: "primary", label: "💬 Em Atendimento" },

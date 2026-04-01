@@ -24,8 +24,8 @@ const stagesCafePam: PipelineStage[] = [
   {
     id: 'stage-cafepam-02',
     tenant_id: 'tenant-cafepam-0001',
-    name: '📞 Contato',
-    color: '#3b82f6',
+    name: '📅 Agendado',
+    color: '#f59e0b',
     position: 2,
     is_won: false,
     is_lost: false,
@@ -33,8 +33,8 @@ const stagesCafePam: PipelineStage[] = [
   {
     id: 'stage-cafepam-03',
     tenant_id: 'tenant-cafepam-0001',
-    name: '📅 Reunião',
-    color: '#f59e0b',
+    name: '💬 Em Atendimento',
+    color: '#8b5cf6',
     position: 3,
     is_won: false,
     is_lost: false,
@@ -42,8 +42,8 @@ const stagesCafePam: PipelineStage[] = [
   {
     id: 'stage-cafepam-04',
     tenant_id: 'tenant-cafepam-0001',
-    name: '💰 Proposta',
-    color: '#8b5cf6',
+    name: '💳 Pagamento Confirmado',
+    color: '#10b981',
     position: 4,
     is_won: false,
     is_lost: false,
@@ -51,8 +51,8 @@ const stagesCafePam: PipelineStage[] = [
   {
     id: 'stage-cafepam-05',
     tenant_id: 'tenant-cafepam-0001',
-    name: '✅ Fechado',
-    color: '#10b981',
+    name: '✅ Concluído',
+    color: '#059669',
     position: 5,
     is_won: true,
     is_lost: false,
@@ -60,7 +60,7 @@ const stagesCafePam: PipelineStage[] = [
   {
     id: 'stage-cafepam-06',
     tenant_id: 'tenant-cafepam-0001',
-    name: '❌ Perdido',
+    name: '❌ Cancelado',
     color: '#ef4444',
     position: 6,
     is_won: false,

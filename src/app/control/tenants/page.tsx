@@ -13,7 +13,7 @@ async function fetchTenants(): Promise<ControlTenant[]> {
   const [tenantsRes, projectsRes] = await Promise.all([
     admin
       .from("tenants")
-      .select("id, name, slug, plan, status, created_at")
+      .select("id, name, slug, plan, status, system_prompt, knowledge_rag_xml, created_at")
       .order("created_at", { ascending: false }),
 
     admin
@@ -31,6 +31,8 @@ async function fetchTenants(): Promise<ControlTenant[]> {
     slug: t.slug,
     plan: t.plan,
     status: t.status,
+    system_prompt: t.system_prompt ?? null,
+    knowledge_rag_xml: t.knowledge_rag_xml ?? null,
     projects: rawProjects.filter((p) => p.tenant_id === t.id) as ControlProject[],
     stats: {
       total_leads: 0,

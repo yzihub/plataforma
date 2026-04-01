@@ -21,6 +21,8 @@ const tenantCafePam: ControlTenant = {
   slug: 'cafepam',
   plan: 'growth',
   status: 'active',
+  system_prompt: null,
+  knowledge_rag_xml: null,
   projects: [
     {
       id: 'proj-cafepam-crm-001',
@@ -66,6 +68,8 @@ const tenantJurema: ControlTenant = {
   slug: 'jurema',
   plan: 'growth',
   status: 'active',
+  system_prompt: null,
+  knowledge_rag_xml: null,
   projects: [
     {
       id: 'proj-jurema-crm-001',
@@ -111,6 +115,8 @@ const tenantNexus: ControlTenant = {
   slug: 'nexus',
   plan: 'starter',
   status: 'active',
+  system_prompt: null,
+  knowledge_rag_xml: null,
   projects: [
     {
       id: 'proj-nexus-crm-001',

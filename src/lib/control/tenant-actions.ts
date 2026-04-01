@@ -44,15 +44,51 @@ export async function createTenant(input: CreateTenantInput): Promise<ActionResu
   return { success: true };
 }
 
+export type UpdateTenantBrainInput = {
+  tenantId: string;
+  system_prompt: string;
+  knowledge_rag_xml: string;
+};
+
+export async function updateTenantBrain(input: UpdateTenantBrainInput): Promise<ActionResult> {
+  const { tenantId, system_prompt, knowledge_rag_xml } = input;
+  if (!tenantId) return { success: false, error: "tenant_id ausente." };
+
+  const admin = createAdminClient();
+
+  const { error } = await admin
+    .from("tenants")
+    .update({ system_prompt, knowledge_rag_xml })
+    .eq("id", tenantId);
+
+  if (error) return { success: false, error: error.message };
+
+  revalidatePath("/control/tenants");
+  return { success: true };
+}
+
 export async function enqueueFactoryActivate(tenantId: string): Promise<ActionResult> {
   if (!tenantId) return { success: false, error: "tenant_id ausente." };
 
   const admin = createAdminClient();
 
+  // Fetch brain fields to include in the job payload
+  const { data: tenant, error: fetchError } = await admin
+    .from("tenants")
+    .select("system_prompt, knowledge_rag_xml")
+    .eq("id", tenantId)
+    .single();
+
+  if (fetchError) return { success: false, error: fetchError.message };
+
   const { error } = await admin.from("job_queue").insert({
     tenant_id: tenantId,
     action: "factory_activate",
     status: "pending",
+    payload: {
+      system_prompt: tenant?.system_prompt ?? null,
+      knowledge_rag_xml: tenant?.knowledge_rag_xml ?? null,
+    },
   });
 
   if (error) return { success: false, error: error.message };

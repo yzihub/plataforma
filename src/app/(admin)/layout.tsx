@@ -1,6 +1,7 @@
 "use client";
 
 import { useSidebar } from "@/context/SidebarContext";
+import { TenantProvider } from "@/context/TenantContext";
 import AppHeader from "@/layout/AppHeader";
 import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
@@ -21,6 +22,7 @@ export default function AdminLayout({
     : "lg:ml-[90px]";
 
   return (
+    <TenantProvider>
     <div className="min-h-screen xl:flex">
       {/* Sidebar and Backdrop */}
       <AppSidebar />
@@ -35,5 +37,6 @@ export default function AdminLayout({
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">{children}</div>
       </div>
     </div>
+    </TenantProvider>
   );
 }
