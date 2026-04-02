@@ -47,17 +47,39 @@ const SettingsIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// ── Chevron icon for submenus ──────────────────────────────────────────────────
+const ChevronDownIcon = ({ open }: { open: boolean }) => (
+  <svg
+    className={`size-3 ml-auto transition-transform duration-200 ${open ? "rotate-180" : "rotate-0"}`}
+    viewBox="0 0 12 12"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M2 4l4 4 4-4" />
+  </svg>
+);
+
 // ── Plan hierarchy ────────────────────────────────────────────────────────────
 const PLAN_RANK: Record<TenantPlan, number> = { starter: 0, growth: 1, enterprise: 2 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
+type NavChild = {
+  name: string;
+  path: string;
+};
+
 type NavItem = {
   name: string;
   icon: React.ReactNode;
-  path: string;
+  path?: string;            // optional for parent items with children
   module?: string;          // required module key — omit = always visible
   adminOnly?: true;
   requiredPlan?: 'growth' | 'enterprise';  // two-level plan gating
+  children?: NavChild[];    // submenu items
+  submenuKey?: string;      // unique key for tracking open state
 };
 
 type NavSection = {
@@ -79,18 +101,48 @@ const SECTIONS: NavSection[] = [
   {
     label: "CRM",
     items: [
-      { name: "Leads",           icon: <GroupIcon />,        path: "/cockpit/leads" },
+      {
+        name: "Leads",
+        icon: <GroupIcon />,
+        submenuKey: "leads",
+        children: [
+          { name: "Lista",   path: "/cockpit/leads" },
+          { name: "Kanban",  path: "/cockpit/leads?view=kanban" },
+        ],
+      },
       { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,      path: "/cockpit/crm" },
+      {
+        name: "Imoveis",
+        icon: <BoxIcon />,
+        submenuKey: "imoveis",
+        children: [
+          { name: "Catalogo", path: "/cockpit/imoveis" },
+        ],
+      },
     ],
   },
   {
-    label: "Módulos",
+    label: "Gestao",
+    items: [
+      {
+        name: "Financeiro",
+        icon: <DollarLineIcon />,
+        submenuKey: "financeiro",
+        children: [
+          { name: "Comissoes", path: "/cockpit/financeiro?tab=comissoes" },
+          { name: "Geral",     path: "/cockpit/financeiro" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Modulos",
     items: [
       { name: "Radar",           icon: <ShootingStarIcon />, path: "/cockpit/radar",     module: "radar",        requiredPlan: 'growth' },
       { name: "Social",          icon: <PaperPlaneIcon />,   path: "/cockpit/social",    module: "social" },
-      { name: "Tráfego Pago",    icon: <PieChartIcon />,     path: "/cockpit/traffic",   module: "paid_traffic", requiredPlan: 'growth' },
+      { name: "Trafego Pago",    icon: <PieChartIcon />,     path: "/cockpit/traffic",   module: "paid_traffic", requiredPlan: 'growth' },
       { name: "AI Assistant",    icon: <BoltIcon />,         path: "/cockpit/ai",        module: "ia_onboarding" },
-      { name: "Conteúdo IA",     icon: <DocsIcon />,         path: "/cockpit/conteudo",  module: "ia_content",   requiredPlan: 'enterprise' },
+      { name: "Conteudo IA",     icon: <DocsIcon />,         path: "/cockpit/conteudo",  module: "ia_content",   requiredPlan: 'enterprise' },
       { name: "E-commerce",      icon: <DollarLineIcon />,   path: "/cockpit/ecommerce", module: "ecommerce" },
     ],
   },
@@ -100,7 +152,7 @@ const SECTIONS: NavSection[] = [
       { name: "Forms",           icon: <ListIcon />,         path: "/form-elements" },
       { name: "Tables",          icon: <TableIcon />,        path: "/basic-tables" },
       { name: "Perfil",          icon: <UserCircleIcon />,   path: "/profile" },
-      { name: "Configurações",   icon: <SettingsIcon />,     path: "/settings" },
+      { name: "Configuracoes",   icon: <SettingsIcon />,     path: "/settings" },
     ],
   },
   {
@@ -120,11 +172,36 @@ const AppSidebar: React.FC = () => {
   const { tenant, isGlobalAdmin, loading } = useTenant();
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeTarget, setUpgradeTarget] = useState<'growth' | 'enterprise' | null>(null);
+  const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>(() => {
+    // Auto-open submenus whose child matches current pathname
+    const initial: Record<string, boolean> = {};
+    SECTIONS.forEach((section) => {
+      section.items.forEach((item) => {
+        if (item.submenuKey && item.children) {
+          const hasActiveChild = item.children.some((child) =>
+            pathname === child.path || pathname.startsWith(child.path.split("?")[0])
+          );
+          if (hasActiveChild) {
+            initial[item.submenuKey] = true;
+          }
+        }
+      });
+    });
+    return initial;
+  });
 
   const activeModules = tenant?.activeModules ?? [];
 
   const isActive = useCallback(
     (path: string) => pathname === path || (path !== "/cockpit" && pathname.startsWith(path)),
+    [pathname]
+  );
+
+  const isChildActive = useCallback(
+    (children: NavChild[]) => children.some((c) => {
+      const basePath = c.path.split("?")[0];
+      return pathname === basePath || (basePath !== "/cockpit" && pathname.startsWith(basePath));
+    }),
     [pathname]
   );
 
@@ -145,6 +222,10 @@ const AppSidebar: React.FC = () => {
   );
 
   const showLabel = isExpanded || isHovered || isMobileOpen;
+
+  const toggleSubmenu = (key: string) => {
+    setOpenSubmenus((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   // While loading, show non-module, non-admin items only
   const visibleSections = SECTIONS.map((section) => ({
@@ -191,51 +272,120 @@ const AppSidebar: React.FC = () => {
                   {showLabel ? section.label : <HorizontaLDots />}
                 </h2>
                 <ul className="flex flex-col gap-1">
-                  {section.items.map((item) => (
-                    <li key={item.path}>
-                      {isLockedForPlan(item) ? (
-                        <button
-                          onClick={() => {
-                            setUpgradeTarget(item.requiredPlan!);
-                            setUpgradeModalOpen(true);
-                          }}
-                          className={`menu-item group menu-item-inactive w-full ${
-                            !isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"
-                          }`}
-                        >
-                          <span className="menu-item-icon-inactive">
-                            {item.icon}
-                          </span>
-                          {showLabel && (
-                            <>
-                              <span className="menu-item-text">{item.name}</span>
-                              <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
-                                {item.requiredPlan === 'enterprise' ? 'GROWTH' : 'PRO'}
-                              </span>
-                            </>
-                          )}
-                        </button>
-                      ) : (
-                        <Link
-                          href={item.path}
-                          className={`menu-item group ${
-                            isActive(item.path) ? "menu-item-active" : "menu-item-inactive"
-                          } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
-                        >
-                          <span
-                            className={
-                              isActive(item.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
-                            }
+                  {section.items.map((item) => {
+                    // ── Submenu parent item ──────────────────────────────────
+                    if (item.children && item.submenuKey) {
+                      const key = item.submenuKey;
+                      const isOpen = openSubmenus[key] ?? false;
+                      const parentActive = isChildActive(item.children);
+
+                      return (
+                        <li key={key}>
+                          {/* Parent toggle button */}
+                          <button
+                            onClick={() => showLabel && toggleSubmenu(key)}
+                            className={`menu-item group w-full ${
+                              parentActive ? "menu-item-active" : "menu-item-inactive"
+                            } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
                           >
-                            {item.icon}
-                          </span>
+                            <span
+                              className={
+                                parentActive ? "menu-item-icon-active" : "menu-item-icon-inactive"
+                              }
+                              style={parentActive ? { color: "var(--color-brand-500, #465fff)" } : undefined}
+                            >
+                              {item.icon}
+                            </span>
+                            {showLabel && (
+                              <>
+                                <span className="menu-item-text">{item.name}</span>
+                                <ChevronDownIcon open={isOpen} />
+                              </>
+                            )}
+                          </button>
+
+                          {/* Submenu children — animated max-height */}
                           {showLabel && (
-                            <span className="menu-item-text">{item.name}</span>
+                            <div
+                              className="overflow-hidden transition-all duration-200 ease-in-out"
+                              style={{
+                                maxHeight: isOpen ? `${item.children.length * 40}px` : "0px",
+                              }}
+                            >
+                              <ul className="mt-0.5 flex flex-col gap-0.5">
+                                {item.children.map((child) => {
+                                  const basePath = child.path.split("?")[0];
+                                  const childActive = pathname === basePath || (basePath !== "/cockpit" && pathname.startsWith(basePath));
+                                  return (
+                                    <li key={child.path}>
+                                      <Link
+                                        href={child.path}
+                                        className={`flex items-center gap-2 rounded-lg pl-10 pr-3 py-2 text-xs transition-colors ${
+                                          childActive
+                                            ? "font-medium text-brand-500 bg-brand-500/5"
+                                            : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-white/[0.04]"
+                                        }`}
+                                      >
+                                        {child.name}
+                                      </Link>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            </div>
                           )}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
+                        </li>
+                      );
+                    }
+
+                    // ── Regular item (flat) ───────────────────────────────────
+                    const itemPath = item.path!;
+                    return (
+                      <li key={itemPath}>
+                        {isLockedForPlan(item) ? (
+                          <button
+                            onClick={() => {
+                              setUpgradeTarget(item.requiredPlan!);
+                              setUpgradeModalOpen(true);
+                            }}
+                            className={`menu-item group menu-item-inactive w-full ${
+                              !isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"
+                            }`}
+                          >
+                            <span className="menu-item-icon-inactive">
+                              {item.icon}
+                            </span>
+                            {showLabel && (
+                              <>
+                                <span className="menu-item-text">{item.name}</span>
+                                <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
+                                  {item.requiredPlan === 'enterprise' ? 'GROWTH' : 'PRO'}
+                                </span>
+                              </>
+                            )}
+                          </button>
+                        ) : (
+                          <Link
+                            href={itemPath}
+                            className={`menu-item group ${
+                              isActive(itemPath) ? "menu-item-active" : "menu-item-inactive"
+                            } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
+                          >
+                            <span
+                              className={
+                                isActive(itemPath) ? "menu-item-icon-active" : "menu-item-icon-inactive"
+                              }
+                            >
+                              {item.icon}
+                            </span>
+                            {showLabel && (
+                              <span className="menu-item-text">{item.name}</span>
+                            )}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}

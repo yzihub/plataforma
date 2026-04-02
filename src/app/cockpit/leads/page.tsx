@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { cafePamData, juremaLeads } from "@/lib/crm/mock-data";
 import type { Lead } from "@/lib/crm/types";
@@ -42,5 +43,9 @@ async function fetchLeads(): Promise<Lead[]> {
 
 export default async function LeadsPage() {
   const leads = await fetchLeads();
-  return <LeadsClient initialLeads={leads} />;
+  return (
+    <Suspense fallback={null}>
+      <LeadsClient initialLeads={leads} />
+    </Suspense>
+  );
 }
