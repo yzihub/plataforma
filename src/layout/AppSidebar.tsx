@@ -7,6 +7,7 @@ import { useSidebar } from "../context/SidebarContext";
 import { useTenant } from "@/hooks/useTenant";
 import UpgradeCard from "@/components/yzihub/UpgradeCard";
 import UpgradeModal from "@/components/yzihub/UpgradeModal";
+import type { TenantPlan } from "@/lib/control/types";
 import {
   GridIcon,
   GroupIcon,
@@ -46,14 +47,17 @@ const SettingsIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+// ── Plan hierarchy ────────────────────────────────────────────────────────────
+const PLAN_RANK: Record<TenantPlan, number> = { starter: 0, growth: 1, enterprise: 2 };
+
 // ── Types ─────────────────────────────────────────────────────────────────────
 type NavItem = {
   name: string;
   icon: React.ReactNode;
   path: string;
-  module?: string;   // required module key — omit = always visible
+  module?: string;          // required module key — omit = always visible
   adminOnly?: true;
-  proOnly?: true;    // shows with PRO badge and blocks navigation for starter plan
+  requiredPlan?: 'growth' | 'enterprise';  // two-level plan gating
 };
 
 type NavSection = {
@@ -82,11 +86,11 @@ const SECTIONS: NavSection[] = [
   {
     label: "Módulos",
     items: [
-      { name: "Radar",           icon: <ShootingStarIcon />, path: "/cockpit/radar",     module: "radar",        proOnly: true },
+      { name: "Radar",           icon: <ShootingStarIcon />, path: "/cockpit/radar",     module: "radar",        requiredPlan: 'growth' },
       { name: "Social",          icon: <PaperPlaneIcon />,   path: "/cockpit/social",    module: "social" },
-      { name: "Tráfego Pago",    icon: <PieChartIcon />,     path: "/cockpit/traffic",   module: "paid_traffic", proOnly: true },
+      { name: "Tráfego Pago",    icon: <PieChartIcon />,     path: "/cockpit/traffic",   module: "paid_traffic", requiredPlan: 'growth' },
       { name: "AI Assistant",    icon: <BoltIcon />,         path: "/cockpit/ai",        module: "ia_onboarding" },
-      { name: "Conteúdo IA",     icon: <DocsIcon />,         path: "/cockpit/conteudo",  module: "ia_content",   proOnly: true },
+      { name: "Conteúdo IA",     icon: <DocsIcon />,         path: "/cockpit/conteudo",  module: "ia_content",   requiredPlan: 'enterprise' },
       { name: "E-commerce",      icon: <DollarLineIcon />,   path: "/cockpit/ecommerce", module: "ecommerce" },
     ],
   },
@@ -115,20 +119,25 @@ const AppSidebar: React.FC = () => {
   const pathname = usePathname();
   const { tenant, isGlobalAdmin, loading } = useTenant();
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeTarget, setUpgradeTarget] = useState<'growth' | 'enterprise' | null>(null);
 
   const activeModules = tenant?.activeModules ?? [];
-  const isStarterPlan = tenant?.plan === "starter";
 
   const isActive = useCallback(
     (path: string) => pathname === path || (path !== "/cockpit" && pathname.startsWith(path)),
     [pathname]
   );
 
+  const isLockedForPlan = (item: NavItem): boolean => {
+    if (!item.requiredPlan || !tenant) return false;
+    return PLAN_RANK[tenant.plan] < PLAN_RANK[item.requiredPlan];
+  };
+
   const isVisible = useCallback(
     (item: NavItem) => {
       if (item.adminOnly && !isGlobalAdmin) return false;
-      // proOnly items are always visible (shown with PRO badge for starter)
-      if (item.proOnly) return true;
+      // requiredPlan items are always visible (shown with tier badge when locked)
+      if (item.requiredPlan) return true;
       if (item.module && !activeModules.includes(item.module as import("@/context/TenantContext").ActiveModule)) return false;
       return true;
     },
@@ -144,9 +153,6 @@ const AppSidebar: React.FC = () => {
       ? section.items.filter((i) => !i.module && !i.adminOnly)
       : section.items.filter(isVisible),
   })).filter((section) => section.items.length > 0);
-
-  const isLockedForStarter = (item: NavItem) =>
-    item.proOnly === true && isStarterPlan;
 
   return (
     <aside
@@ -187,9 +193,12 @@ const AppSidebar: React.FC = () => {
                 <ul className="flex flex-col gap-1">
                   {section.items.map((item) => (
                     <li key={item.path}>
-                      {isLockedForStarter(item) ? (
+                      {isLockedForPlan(item) ? (
                         <button
-                          onClick={() => setUpgradeModalOpen(true)}
+                          onClick={() => {
+                            setUpgradeTarget(item.requiredPlan!);
+                            setUpgradeModalOpen(true);
+                          }}
                           className={`menu-item group menu-item-inactive w-full ${
                             !isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"
                           }`}
@@ -201,7 +210,7 @@ const AppSidebar: React.FC = () => {
                             <>
                               <span className="menu-item-text">{item.name}</span>
                               <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
-                                PRO
+                                {item.requiredPlan === 'enterprise' ? 'GROWTH' : 'PRO'}
                               </span>
                             </>
                           )}
@@ -234,16 +243,19 @@ const AppSidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Upgrade Card — visible only for starter plan when sidebar is expanded */}
-      {showLabel && tenant && isStarterPlan && (
+      {/* Upgrade Card — visible for starter and growth plans when sidebar is expanded */}
+      {showLabel && tenant && tenant.plan !== 'enterprise' && (
         <div className="mt-auto px-0 pb-3">
-          <UpgradeCard onUpgradeClick={() => setUpgradeModalOpen(true)} />
+          <UpgradeCard
+            onUpgradeClick={() => setUpgradeModalOpen(true)}
+            tenantPlan={tenant.plan as 'starter' | 'growth'}
+          />
         </div>
       )}
 
       {/* Tenant badge (collapsed = hidden) */}
       {showLabel && tenant && (
-        <div className={isStarterPlan ? "pb-6" : "mt-auto pb-6"}>
+        <div className={tenant.plan !== 'enterprise' ? "pb-6" : "mt-auto pb-6"}>
           <div className="rounded-xl border border-gray-200 dark:border-gray-800 px-3 py-2">
             <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">{tenant.name}</p>
             <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-wider">{tenant.plan}</p>
@@ -252,7 +264,11 @@ const AppSidebar: React.FC = () => {
       )}
 
       {/* Upgrade Modal */}
-      <UpgradeModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
+      <UpgradeModal
+        isOpen={upgradeModalOpen}
+        onClose={() => { setUpgradeModalOpen(false); setUpgradeTarget(null); }}
+        requiredPlan={upgradeTarget ?? 'growth'}
+      />
     </aside>
   );
 };
