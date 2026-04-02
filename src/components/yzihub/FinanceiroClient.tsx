@@ -30,6 +30,21 @@ function BellIcon({ className }: { className?: string }) {
   );
 }
 
+// ─── Status bar config ─────────────────────────────────────────────────────────
+
+type StatusKey = "concluido" | "em_andamento" | "pendente" | "atrasado";
+
+const STATUS_BAR: Record<StatusKey, { barClass: string; labelClass: string }> = {
+  concluido:    { barClass: "bg-emerald-500",              labelClass: "text-emerald-600 dark:text-emerald-400" },
+  em_andamento: { barClass: "bg-amber-400",                labelClass: "text-amber-600 dark:text-amber-400" },
+  pendente:     { barClass: "bg-blue-500",                 labelClass: "text-blue-600 dark:text-blue-400" },
+  atrasado:     { barClass: "bg-red-500 animate-pulse",    labelClass: "text-red-600 dark:text-red-400" },
+};
+
+function statusConfig(status: string | undefined) {
+  return STATUS_BAR[(status as StatusKey) ?? "pendente"] ?? STATUS_BAR.pendente;
+}
+
 // ─── SearchBar ─────────────────────────────────────────────────────────────────
 
 function SearchBar({
@@ -81,6 +96,33 @@ export default function FinanceiroClient({
     );
   }, [initialRecords, search]);
 
+  // ─── Summary metrics ───────────────────────────────────────────────────────
+
+  const totalComissoes = useMemo(
+    () => initialRecords.reduce((s, r) => s + r.final_amount, 0),
+    [initialRecords]
+  );
+
+  const aReceber = useMemo(
+    () =>
+      initialRecords
+        .filter((r) => r.status === "pendente" || r.status === "em_andamento")
+        .reduce((s, r) => s + r.final_amount, 0),
+    [initialRecords]
+  );
+
+  const atrasadosCount = useMemo(
+    () => initialRecords.filter((r) => r.status === "atrasado").length,
+    [initialRecords]
+  );
+
+  // ─── Bar chart data ────────────────────────────────────────────────────────
+
+  const maxAmount = useMemo(
+    () => Math.max(...initialRecords.map((r) => r.final_amount), 1),
+    [initialRecords]
+  );
+
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -95,6 +137,60 @@ export default function FinanceiroClient({
         </div>
       </div>
 
+      {/* Summary strip */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Total Comissoes</p>
+          <p className="mt-1.5 text-xl font-bold text-gray-800 dark:text-white/90">{brlFormatter.format(totalComissoes)}</p>
+        </div>
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">A Receber</p>
+          <p className="mt-1.5 text-xl font-bold text-blue-600 dark:text-blue-400">{brlFormatter.format(aReceber)}</p>
+        </div>
+        <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] p-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">Atrasados</p>
+          <div className="mt-1.5 flex items-center gap-2">
+            <span className="relative flex h-3 w-3">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500" />
+            </span>
+            <p className="text-xl font-bold text-red-500">{atrasadosCount}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Bar chart — Comissoes por Status */}
+      <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] p-5">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+          Comissoes por Status
+        </h2>
+        <div className="space-y-3">
+          {initialRecords.map((record) => {
+            const cfg = statusConfig(record.status ?? undefined);
+            const widthPct = Math.max(4, Math.round((record.final_amount / maxAmount) * 100));
+            return (
+              <div key={record.id} className="flex items-center gap-3">
+                {/* Label */}
+                <span className="w-52 shrink-0 truncate text-xs text-gray-600 dark:text-gray-400">
+                  {record.description ?? record.id.slice(0, 8)}
+                </span>
+                {/* Bar */}
+                <div className="flex-1 h-5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${cfg.barClass}`}
+                    style={{ width: `${widthPct}%` }}
+                  />
+                </div>
+                {/* Amount */}
+                <span className={`w-32 shrink-0 text-right text-xs font-semibold ${cfg.labelClass}`}>
+                  {brlFormatter.format(record.final_amount)}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Search */}
       <SearchBar search={search} onSearch={setSearch} />
 
@@ -104,7 +200,7 @@ export default function FinanceiroClient({
           <thead>
             <tr className="bg-gray-50 dark:bg-white/[0.02]">
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                ID
+                Descricao
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Valor
@@ -115,7 +211,6 @@ export default function FinanceiroClient({
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Prioridade
               </th>
-              {/* optional columns */}
               <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                 Status
               </th>
@@ -137,9 +232,9 @@ export default function FinanceiroClient({
                   key={record.id}
                   className="bg-white transition-colors hover:bg-gray-50 dark:bg-white/[0.03] dark:hover:bg-white/[0.05]"
                 >
-                  {/* ID — truncated */}
-                  <td className="px-4 py-3 text-xs font-mono text-gray-500 dark:text-gray-400">
-                    {record.id.slice(0, 8)}…
+                  {/* Descricao */}
+                  <td className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                    {record.description ?? <span className="font-mono text-xs text-gray-400">{record.id.slice(0, 8)}…</span>}
                   </td>
 
                   {/* Valor — BRL formatted */}
@@ -170,8 +265,16 @@ export default function FinanceiroClient({
                   </td>
 
                   {/* Status */}
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300">
-                    {record.status ?? "—"}
+                  <td className="px-4 py-3">
+                    {record.status === "atrasado" ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-red-500/10 px-3 py-1 text-xs font-bold text-red-500 animate-pulse">
+                        ATRASADO
+                      </span>
+                    ) : (
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        {record.status ?? "—"}
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))
