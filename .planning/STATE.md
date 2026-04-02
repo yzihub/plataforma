@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: Roadmap created — ready to plan Phase 1
 last_updated: "2026-04-02T19:09:58.594Z"
-last_activity: "2026-04-02 - Completed quick task 260402-mgb: Ignorar Auth Temporário e Construir Telas de Alta Densidade"
+last_activity: "2026-04-02 - Completed quick task 260402-mwy: Collapsible sidebar submenus, Leads Kanban, Financeiro Comissoes donut chart"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -74,6 +74,7 @@ None yet.
 | 260402-fab | Implementar sidebar upsell card e logica PRO para tenants starter | 2026-04-02 | 664c555 | [260402-fab-implementar-sidebar-upsell-card-e-logica](./quick/260402-fab-implementar-sidebar-upsell-card-e-logica/) |
 | 260402-foe | Implementar estrategia de planos no sidebar com dois niveis PRO/GROWTH | 2026-04-02 | 7dd3067 | [260402-foe-implementar-estrategia-de-planos-no-side](./quick/260402-foe-implementar-estrategia-de-planos-no-side/) |
 | 260402-mgb | Dev auth bypass + high-density screens: Leads DataTable e Financeiro bar chart | 2026-04-02 | a00d6e2 | [260402-mgb-ignorar-auth-tempor-rio-e-construir-tela](./quick/260402-mgb-ignorar-auth-tempor-rio-e-construir-tela/) |
+| 260402-mwy | Submenus colapsaveis sidebar + Kanban Leads + tab Comissoes Financeiro | 2026-04-02 | 4b1460d | [260402-mwy-implementar-submenus-e-vis-o-kanban-de-a](./quick/260402-mwy-implementar-submenus-e-vis-o-kanban-de-a/) |
 
 ### Blockers/Concerns
 
@@ -83,5 +84,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-02
-Stopped at: Completed quick task 260402-mgb: Dev auth bypass + high-density Leads and Financeiro screens
+Stopped at: Completed quick task 260402-mwy: Collapsible sidebar submenus + Leads Kanban + Financeiro Comissoes tab
 Resume file: None
