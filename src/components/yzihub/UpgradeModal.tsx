@@ -5,21 +5,42 @@ import React from "react";
 interface UpgradeModalProps {
   isOpen: boolean;
   onClose: () => void;
+  requiredPlan: 'growth' | 'enterprise';
 }
 
-const BENEFITS = [
-  "Radar de Oportunidades",
-  "Gestão de Tráfego Pago",
-  "Conteúdo IA Automatizado",
-  "Suporte Prioritário",
-];
+const TIER_CONFIG = {
+  growth: {
+    title: 'Desbloqueie o Plano Pro',
+    benefits: [
+      'Radar de Oportunidades',
+      'Gestao de Trafego Pago',
+      'Relatorios de Performance',
+      'Suporte Prioritario',
+    ],
+    cta: 'Quero o Plano Pro',
+    whatsappText: 'Quero%20conhecer%20o%20Plano%20Pro',
+  },
+  enterprise: {
+    title: 'Desbloqueie o Plano Growth',
+    benefits: [
+      'Automacao de Conteudo IA',
+      'Social Media Manager',
+      'Todas as features Pro incluidas',
+      'Suporte Dedicado',
+    ],
+    cta: 'Quero o Plano Growth',
+    whatsappText: 'Quero%20conhecer%20o%20Plano%20Growth',
+  },
+} as const;
 
-const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) => {
+const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose, requiredPlan }) => {
   if (!isOpen) return null;
+
+  const config = TIER_CONFIG[requiredPlan];
 
   const handleCTA = () => {
     window.open(
-      "https://wa.me/5511999999999?text=Quero%20conhecer%20o%20Plano%20Pro",
+      `https://wa.me/5511999999999?text=${config.whatsappText}`,
       "_blank"
     );
   };
@@ -34,11 +55,11 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="mb-4 text-xl font-bold text-gray-900 dark:text-white">
-          Desbloqueie o Plano Pro
+          {config.title}
         </h2>
 
         <ul className="mb-6 flex flex-col gap-3">
-          {BENEFITS.map((benefit) => (
+          {config.benefits.map((benefit) => (
             <li key={benefit} className="flex items-center gap-3">
               <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-green-500/15">
                 <svg
@@ -67,13 +88,13 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({ isOpen, onClose }) => {
             onClick={handleCTA}
             className="w-full rounded-lg bg-brand-500 px-6 py-3 text-sm font-medium text-white hover:bg-brand-600 transition-colors"
           >
-            Falar com Consultor
+            {config.cta}
           </button>
           <button
             onClick={onClose}
             className="text-sm text-gray-400 hover:text-gray-300 transition-colors"
           >
-            Agora não
+            Agora nao
           </button>
         </div>
       </div>
