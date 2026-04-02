@@ -1,10 +1,12 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import { useTenant } from "@/hooks/useTenant";
+import UpgradeCard from "@/components/yzihub/UpgradeCard";
+import UpgradeModal from "@/components/yzihub/UpgradeModal";
 import {
   GridIcon,
   GroupIcon,
@@ -51,6 +53,7 @@ type NavItem = {
   path: string;
   module?: string;   // required module key — omit = always visible
   adminOnly?: true;
+  proOnly?: true;    // shows with PRO badge and blocks navigation for starter plan
 };
 
 type NavSection = {
@@ -79,10 +82,11 @@ const SECTIONS: NavSection[] = [
   {
     label: "Módulos",
     items: [
-      { name: "Radar",           icon: <ShootingStarIcon />, path: "/cockpit/radar",   module: "radar" },
-      { name: "Social",          icon: <PaperPlaneIcon />,   path: "/cockpit/social",  module: "social" },
-      { name: "Tráfego Pago",    icon: <PieChartIcon />,     path: "/cockpit/traffic", module: "paid_traffic" },
-      { name: "AI Assistant",    icon: <BoltIcon />,         path: "/cockpit/ai",      module: "ia_onboarding" },
+      { name: "Radar",           icon: <ShootingStarIcon />, path: "/cockpit/radar",     module: "radar",        proOnly: true },
+      { name: "Social",          icon: <PaperPlaneIcon />,   path: "/cockpit/social",    module: "social" },
+      { name: "Tráfego Pago",    icon: <PieChartIcon />,     path: "/cockpit/traffic",   module: "paid_traffic", proOnly: true },
+      { name: "AI Assistant",    icon: <BoltIcon />,         path: "/cockpit/ai",        module: "ia_onboarding" },
+      { name: "Conteúdo IA",     icon: <DocsIcon />,         path: "/cockpit/conteudo",  module: "ia_content",   proOnly: true },
       { name: "E-commerce",      icon: <DollarLineIcon />,   path: "/cockpit/ecommerce", module: "ecommerce" },
     ],
   },
@@ -110,8 +114,10 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
   const { tenant, isGlobalAdmin, loading } = useTenant();
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
 
   const activeModules = tenant?.activeModules ?? [];
+  const isStarterPlan = tenant?.plan === "starter";
 
   const isActive = useCallback(
     (path: string) => pathname === path || (path !== "/cockpit" && pathname.startsWith(path)),
@@ -121,6 +127,8 @@ const AppSidebar: React.FC = () => {
   const isVisible = useCallback(
     (item: NavItem) => {
       if (item.adminOnly && !isGlobalAdmin) return false;
+      // proOnly items are always visible (shown with PRO badge for starter)
+      if (item.proOnly) return true;
       if (item.module && !activeModules.includes(item.module as import("@/context/TenantContext").ActiveModule)) return false;
       return true;
     },
@@ -136,6 +144,9 @@ const AppSidebar: React.FC = () => {
       ? section.items.filter((i) => !i.module && !i.adminOnly)
       : section.items.filter(isVisible),
   })).filter((section) => section.items.length > 0);
+
+  const isLockedForStarter = (item: NavItem) =>
+    item.proOnly === true && isStarterPlan;
 
   return (
     <aside
@@ -176,23 +187,44 @@ const AppSidebar: React.FC = () => {
                 <ul className="flex flex-col gap-1">
                   {section.items.map((item) => (
                     <li key={item.path}>
-                      <Link
-                        href={item.path}
-                        className={`menu-item group ${
-                          isActive(item.path) ? "menu-item-active" : "menu-item-inactive"
-                        } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
-                      >
-                        <span
-                          className={
-                            isActive(item.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
-                          }
+                      {isLockedForStarter(item) ? (
+                        <button
+                          onClick={() => setUpgradeModalOpen(true)}
+                          className={`menu-item group menu-item-inactive w-full ${
+                            !isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"
+                          }`}
                         >
-                          {item.icon}
-                        </span>
-                        {showLabel && (
-                          <span className="menu-item-text">{item.name}</span>
-                        )}
-                      </Link>
+                          <span className="menu-item-icon-inactive">
+                            {item.icon}
+                          </span>
+                          {showLabel && (
+                            <>
+                              <span className="menu-item-text">{item.name}</span>
+                              <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
+                                PRO
+                              </span>
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <Link
+                          href={item.path}
+                          className={`menu-item group ${
+                            isActive(item.path) ? "menu-item-active" : "menu-item-inactive"
+                          } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
+                        >
+                          <span
+                            className={
+                              isActive(item.path) ? "menu-item-icon-active" : "menu-item-icon-inactive"
+                            }
+                          >
+                            {item.icon}
+                          </span>
+                          {showLabel && (
+                            <span className="menu-item-text">{item.name}</span>
+                          )}
+                        </Link>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -202,15 +234,25 @@ const AppSidebar: React.FC = () => {
         </nav>
       </div>
 
+      {/* Upgrade Card — visible only for starter plan when sidebar is expanded */}
+      {showLabel && tenant && isStarterPlan && (
+        <div className="mt-auto px-0 pb-3">
+          <UpgradeCard onUpgradeClick={() => setUpgradeModalOpen(true)} />
+        </div>
+      )}
+
       {/* Tenant badge (collapsed = hidden) */}
       {showLabel && tenant && (
-        <div className="mt-auto pb-6">
+        <div className={isStarterPlan ? "pb-6" : "mt-auto pb-6"}>
           <div className="rounded-xl border border-gray-200 dark:border-gray-800 px-3 py-2">
             <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">{tenant.name}</p>
             <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-wider">{tenant.plan}</p>
           </div>
         </div>
       )}
+
+      {/* Upgrade Modal */}
+      <UpgradeModal isOpen={upgradeModalOpen} onClose={() => setUpgradeModalOpen(false)} />
     </aside>
   );
 };
