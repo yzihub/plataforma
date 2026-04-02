@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { FinanceRecord } from "@/types/finance";
 import FinanceiroClient from "@/components/yzihub/FinanceiroClient";
@@ -148,5 +149,9 @@ async function fetchFinanceRecords(): Promise<FinanceRecord[]> {
 
 export default async function FinanceiroPage() {
   const records = await fetchFinanceRecords();
-  return <FinanceiroClient initialRecords={records} />;
+  return (
+    <Suspense fallback={null}>
+      <FinanceiroClient initialRecords={records} />
+    </Suspense>
+  );
 }
