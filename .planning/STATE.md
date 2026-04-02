@@ -71,6 +71,7 @@ None yet.
 | 260401-n0w | Criar pagina de Gestao Financeira com alertas e formatacao BRL | 2026-04-01 | b824104 | [260401-n0w-criar-p-gina-de-gest-o-financeira-com-al](./quick/260401-n0w-criar-p-gina-de-gest-o-financeira-com-al/) |
 | 260401-qan | Restaurar layout TailAdmin e corrigir OAuth redirect no localhost | 2026-04-01 | 0c69e53 | [260401-qan-restaurar-layout-original-tailadmin-e-co](./quick/260401-qan-restaurar-layout-original-tailadmin-e-co/) |
 | 260402-fab | Implementar sidebar upsell card e logica PRO para tenants starter | 2026-04-02 | 664c555 | [260402-fab-implementar-sidebar-upsell-card-e-logica](./quick/260402-fab-implementar-sidebar-upsell-card-e-logica/) |
+| 260402-foe | Implementar estrategia de planos no sidebar com dois niveis PRO/GROWTH | 2026-04-02 | 7dd3067 | [260402-foe-implementar-estrategia-de-planos-no-side](./quick/260402-foe-implementar-estrategia-de-planos-no-side/) |
 
 ### Blockers/Concerns
 
@@ -80,5 +81,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-02
-Stopped at: Completed quick task 260402-fab: Implementar sidebar upsell card e logica PRO para tenants starter
+Stopped at: Completed quick task 260402-foe: Implementar estrategia de planos no sidebar com dois niveis PRO/GROWTH
 Resume file: None
