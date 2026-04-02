@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { cafePamData } from "@/lib/crm/mock-data";
+import { cafePamData, juremaLeads } from "@/lib/crm/mock-data";
 import type { Lead } from "@/lib/crm/types";
 import LeadsClient from "@/components/yzihub/LeadsClient";
 
@@ -11,7 +11,7 @@ async function fetchLeads(): Promise<Lead[]> {
 
     // Usuário autenticado
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return cafePamData.leads;
+    if (!user) return [...cafePamData.leads, ...juremaLeads];
 
     // Tenant do usuário
     const { data: profile } = await supabase
@@ -20,7 +20,7 @@ async function fetchLeads(): Promise<Lead[]> {
       .eq("id", user.id)
       .single();
 
-    if (!profile?.tenant_id) return cafePamData.leads;
+    if (!profile?.tenant_id) return [...cafePamData.leads, ...juremaLeads];
 
     // Leads filtrados por tenant
     const { data: leads, error } = await supabase
@@ -29,12 +29,12 @@ async function fetchLeads(): Promise<Lead[]> {
       .eq("tenant_id", profile.tenant_id)
       .order("created_at", { ascending: false });
 
-    if (error || !leads) return cafePamData.leads;
+    if (error || !leads) return [...cafePamData.leads, ...juremaLeads];
 
     return leads as Lead[];
   } catch {
     // Supabase não configurado — usa mock para dev local
-    return cafePamData.leads;
+    return [...cafePamData.leads, ...juremaLeads];
   }
 }
 

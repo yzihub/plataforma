@@ -60,6 +60,19 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       } = await supabase.auth.getUser();
 
       if (!user) {
+        // DEV_BYPASS: remove when auth is re-enabled
+        if (process.env.NODE_ENV === "development") {
+          setTenant({
+            id: "dev-tenant",
+            name: "Jurema Brokers (DEV)",
+            plan: "growth",
+            activeModules: ["crm", "sdr", "ia_onboarding"],
+            settings: { agent_name: "Luana", primary_color: "#465FFF" },
+          });
+          setIsGlobalAdmin(false);
+          setLoading(false);
+          return;
+        }
         setTenant(null);
         setIsGlobalAdmin(false);
         return;
