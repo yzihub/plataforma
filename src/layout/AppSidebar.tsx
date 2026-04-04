@@ -129,7 +129,8 @@ const SECTIONS: NavSection[] = [
         icon: <DollarLineIcon />,
         submenuKey: "financeiro",
         children: [
-          { name: "Comissoes", path: "/cockpit/financeiro?tab=comissoes" },
+          { name: "Comissoes",  path: "/cockpit/financeiro?tab=comissoes" },
+          { name: "Contratos", path: "/cockpit/contratos" },
           { name: "Geral",     path: "/cockpit/financeiro" },
         ],
       },
