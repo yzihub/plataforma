@@ -59,9 +59,19 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         data: { user },
       } = await supabase.auth.getUser();
 
+      console.log("[DIAG] REMOVE AFTER VALIDATION — getUser result:", user?.id ?? "no user"); // [DIAG] REMOVE AFTER VALIDATION
+
+      const isDevBypass =
+        process.env.NEXT_PUBLIC_DEV_BYPASS === "true";
+
+      // 🚨 proteção: nunca permitir bypass em produção
+      if (process.env.NODE_ENV === "production" && isDevBypass) {
+        throw new Error("DEV_BYPASS ATIVO EM PRODUÇÃO ❌");
+      }
+
       if (!user) {
-        // DEV_BYPASS: remove when auth is re-enabled
-        if (process.env.NODE_ENV === "development") {
+        // DEV_BYPASS controlado
+        if (isDevBypass) {
           setTenant({
             id: "dev-tenant",
             name: "Jurema Brokers (DEV)",
@@ -73,6 +83,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
           setLoading(false);
           return;
         }
+
         setTenant(null);
         setIsGlobalAdmin(false);
         return;
@@ -80,7 +91,8 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
 
       setIsGlobalAdmin(user.user_metadata?.role === "global_admin");
 
-      // Busca profile + tenant em uma única requisição (embedded select = JOIN via FK)
+      // ─── PROFILE + TENANT (JOIN) ─────────────────────────────
+
       const { data: profile, error: profileErr } = await supabase
         .from("profiles")
         .select(
@@ -98,26 +110,36 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         .eq("id", user.id)
         .single();
 
+      console.log("[DIAG] REMOVE AFTER VALIDATION — profiles query result:", profileErr?.message ?? `tenant_id=${profile?.tenant_id}`); // [DIAG] REMOVE AFTER VALIDATION
+
       if (profileErr || !profile) {
+        console.log("[DIAG] REMOVE AFTER VALIDATION — profiles error:", profileErr); // [DIAG] REMOVE AFTER VALIDATION
         setError(profileErr?.message ?? "Perfil não encontrado");
         return;
       }
 
-      // profiles.tenant_id é FK → tenants.id (many-to-one): Supabase retorna objeto,
-      // mas sem tipos gerados o TS infere array — cast via unknown para corrigir.
-      const raw = profile.tenants;
-      const t = (Array.isArray(raw) ? raw[0] : raw) as {
-        id: string;
-        name: string;
-        plan: TenantPlan;
-        settings: Record<string, unknown>;
-      };
+      if (!profile.tenants) {
+        setError("Tenant não encontrado");
+        return;
+      }
 
-      // Busca módulos ativos do tenant
+      const tenantData = Array.isArray(profile.tenants)
+        ? profile.tenants[0]
+        : profile.tenants;
+
+      if (!tenantData) {
+        setError("Tenant inválido");
+        return;
+      }
+
+      console.log("[DIAG] REMOVE AFTER VALIDATION — tenant resolved:", { id: tenantData.id, name: tenantData.name, plan: tenantData.plan }); // [DIAG] REMOVE AFTER VALIDATION
+
+      // ─── ACTIVE MODULES (PROJECTS) ───────────────────────────
+
       const { data: projects, error: projectsErr } = await supabase
         .from("projects")
         .select("type")
-        .eq("tenant_id", t.id)
+        .eq("tenant_id", tenantData.id)
         .eq("status", "active");
 
       if (projectsErr) {
@@ -125,14 +147,22 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      const activeModules =
+        projects && projects.length > 0
+          ? projects.map((p) => p.type as ActiveModule)
+          : ["crm" as ActiveModule]; // fallback seguro
+
+      console.log("[DIAG] REMOVE AFTER VALIDATION — activeModules:", activeModules); // [DIAG] REMOVE AFTER VALIDATION
+
       setTenant({
-        id: t.id,
-        name: t.name,
-        plan: t.plan,
-        activeModules: (projects ?? []).map((p) => p.type as ActiveModule),
-        settings: t.settings ?? {},
+        id: tenantData.id,
+        name: tenantData.name,
+        plan: tenantData.plan,
+        activeModules,
+        settings: tenantData.settings ?? {},
       });
     } catch (err) {
+      console.log("[DIAG] REMOVE AFTER VALIDATION — caught error:", err); // [DIAG] REMOVE AFTER VALIDATION
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
@@ -144,13 +174,21 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
   }, [fetchTenant]);
 
   return (
-    <TenantContext.Provider value={{ tenant, isGlobalAdmin, loading, error, refresh: fetchTenant }}>
+    <TenantContext.Provider
+      value={{
+        tenant,
+        isGlobalAdmin,
+        loading,
+        error,
+        refresh: fetchTenant,
+      }}
+    >
       {children}
     </TenantContext.Provider>
   );
 }
 
-// ─── Internal hook (use via useTenant from hooks/) ───────────────────────────
+// ─── Hook ────────────────────────────────────────────────────────────────────
 
 export function useTenantContext(): TenantContextType {
   const ctx = useContext(TenantContext);
