@@ -83,6 +83,7 @@ None yet.
 | 260407-ktd | Ajustar Sidebar Jurema — remover rotas quebradas e seções template | 2026-04-07 | 125525b | [260407-ktd-ajustar-sidebar-jurema](./quick/260407-ktd-ajustar-sidebar-jurema/) |
 | 260407-qwm | Padronizar POST /api/contracts para retornar N8nEnvelope — paridade com GET | 2026-04-07 | 4f28619 | [260407-qwm-padronizar-payload-para-n8n](./quick/260407-qwm-padronizar-payload-para-n8n/) |
 | 260407-r8a | Ajustar workflow consultar_imoveis — patch n8n para tabela properties com tenant_id | 2026-04-07 | 3906ce4 | [260407-r8a-ajustar-workflow-consultar-imoveis-no-n8](./quick/260407-r8a-ajustar-workflow-consultar-imoveis-no-n8/) |
+| 260407-rnb | Corrigir patch workflow consultar_imoveis — tabela imoveis com campos reais (quartos, suites, vagas) | 2026-04-07 | bbcf1e9 | [260407-rnb-corrigir-patch-do-workflow-consultar-imo](./quick/260407-rnb-corrigir-patch-do-workflow-consultar-imo/) |
 
 ### Blockers/Concerns
 
@@ -91,7 +92,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-07T22:44:24Z
-Last activity: 2026-04-07 - Completed quick task 260407-r8a: Ajustar workflow consultar_imoveis com patch n8n para tabela properties
-Stopped at: Quick task 260407-r8a complete — workflow patch gerado com mapeamento correto properties + tenant_id filter
+Last session: 2026-04-07T23:00:00Z
+Last activity: 2026-04-07 - Completed quick task 260407-rnb: Corrigir patch workflow consultar_imoveis — tabela imoveis com campos reais
+Stopped at: Quick task 260407-rnb complete — patch corrigido com tabela imoveis, quartos/suites/vagas mapeados corretamente
 Resume file: None
