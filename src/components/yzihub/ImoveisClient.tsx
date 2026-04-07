@@ -35,7 +35,6 @@ function KanbanIcon() {
 
 export default function ImoveisClient() {
   const { tenant, loading: tenantLoading } = useTenant();
-  const supabase = createClient();
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,6 +57,7 @@ export default function ImoveisClient() {
 
     async function fetchProperties() {
       setLoading(true);
+      const supabase = createClient(); // instanciado aqui, não no render
       const { data, error } = await supabase
         .from("properties")
         .select("*")
