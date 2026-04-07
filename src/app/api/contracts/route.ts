@@ -1,0 +1,133 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+
+// ─── GET /api/contracts ───────────────────────────────────────────────────────
+// Retorna todos os contratos do tenant autenticado, ordenados por updated_at desc
+
+export async function GET() {
+  try {
+    const supabase = await createClient();
+
+    // Verificar autenticacao
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+    }
+
+    // Buscar tenant_id do usuario
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError || !profile?.tenant_id) {
+      return NextResponse.json({ error: "Perfil nao encontrado" }, { status: 401 });
+    }
+
+    const tenantId = profile.tenant_id as string;
+
+    // Buscar contratos do tenant
+    const { data: contracts, error: contractsError } = await supabase
+      .from("contracts")
+      .select("*")
+      .eq("tenant_id", tenantId)
+      .order("updated_at", { ascending: false });
+
+    if (contractsError) {
+      console.error("[GET /api/contracts] query error:", contractsError);
+      return NextResponse.json({ error: "Erro ao buscar contratos" }, { status: 500 });
+    }
+
+    return NextResponse.json(contracts ?? [], { status: 200 });
+  } catch (err) {
+    console.error("[GET /api/contracts] unexpected error:", err);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+  }
+}
+
+// ─── POST /api/contracts ──────────────────────────────────────────────────────
+// Cria um novo contrato vinculado ao tenant autenticado
+
+export async function POST(req: NextRequest) {
+  try {
+    const supabase = await createClient();
+
+    // Verificar autenticacao
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+    }
+
+    // Buscar tenant_id do usuario
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("tenant_id")
+      .eq("id", user.id)
+      .single();
+
+    if (profileError || !profile?.tenant_id) {
+      return NextResponse.json({ error: "Perfil nao encontrado" }, { status: 401 });
+    }
+
+    const tenantId = profile.tenant_id as string;
+
+    // Ler body
+    const body = await req.json();
+
+    // Validar campos obrigatorios
+    if (!body.lead_name || body.lead_name.trim() === "") {
+      return NextResponse.json({ error: "lead_name e obrigatorio" }, { status: 400 });
+    }
+
+    if (body.value === undefined || body.value === null || body.value === "") {
+      return NextResponse.json({ error: "value e obrigatorio" }, { status: 400 });
+    }
+
+    const numericValue = parseFloat(body.value);
+    if (isNaN(numericValue) || numericValue < 0) {
+      return NextResponse.json({ error: "value deve ser um numero positivo" }, { status: 400 });
+    }
+
+    // Montar payload de insercao
+    const insertPayload = {
+      tenant_id:     tenantId,
+      lead_id:       body.lead_id       || null,
+      lead_name:     body.lead_name.trim(),
+      project_id:    body.project_id    || null,
+      project_name:  body.project_name  || null,
+      corretor_id:   body.corretor_id   || null,
+      corretor_name: body.corretor_name || null,
+      title:         body.title         || null,
+      type:          body.type          || "venda",
+      status:        body.status        || "rascunho",
+      value:         numericValue,
+      notes:         body.notes         || null,
+      expires_at:    body.expires_at    || null,
+    };
+
+    const { data: contract, error: insertError } = await supabase
+      .from("contracts")
+      .insert(insertPayload)
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error("[POST /api/contracts] insert error:", insertError);
+      return NextResponse.json({ error: "Erro ao criar contrato" }, { status: 500 });
+    }
+
+    return NextResponse.json(contract, { status: 201 });
+  } catch (err) {
+    console.error("[POST /api/contracts] unexpected error:", err);
+    return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
+  }
+}
