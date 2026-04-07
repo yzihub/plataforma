@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { buildN8nEnvelope, toN8nContract } from "@/types/n8n-payloads";
 
 // ─── GET /api/contracts ───────────────────────────────────────────────────────
 // Retorna todos os contratos do tenant autenticado, ordenados por updated_at desc
@@ -34,7 +35,7 @@ export async function GET() {
     // Buscar contratos do tenant
     const { data: contracts, error: contractsError } = await supabase
       .from("contracts")
-      .select("*")
+      .select("id, tenant_id, lead_id, lead_name, project_name, corretor_name, title, type, status, value, signed_at, expires_at, created_at, updated_at")
       .eq("tenant_id", tenantId)
       .order("updated_at", { ascending: false });
 
@@ -43,7 +44,8 @@ export async function GET() {
       return NextResponse.json({ error: "Erro ao buscar contratos" }, { status: 500 });
     }
 
-    return NextResponse.json(contracts ?? [], { status: 200 });
+    const payload = buildN8nEnvelope("contracts", tenantId, (contracts ?? []).map(toN8nContract));
+    return NextResponse.json(payload, { status: 200 });
   } catch (err) {
     console.error("[GET /api/contracts] unexpected error:", err);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
@@ -125,7 +127,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Erro ao criar contrato" }, { status: 500 });
     }
 
-    return NextResponse.json(contract, { status: 201 });
+    const payload = buildN8nEnvelope("contracts", tenantId, [toN8nContract(contract)]);
+    return NextResponse.json(payload, { status: 201 });
   } catch (err) {
     console.error("[POST /api/contracts] unexpected error:", err);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
