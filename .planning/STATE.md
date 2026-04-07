@@ -3,9 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Roadmap created — ready to plan Phase 1
-last_updated: "2026-04-02T19:09:58.594Z"
-last_activity: "2026-04-04 - Completed quick task 260404-dyt: Validar Sistema de Autenticação, TenantContext e Supabase — 15/15 OK"
+stopped_at: Quick task 260407-eyq complete — Kanban de Leads com DnD real e persistencia Supabase via PATCH /api/leads/[id]
+last_updated: "2026-04-07T13:58:01.326Z"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -87,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-07
-Stopped at: Quick task 260407-ejm complete — DataTable view adicionada ao módulo Imóveis com filtros bairro/preço e badges de status.
+Last session: 2026-04-07T13:58:01.319Z
+Stopped at: Quick task 260407-eyq complete — Kanban de Leads com DnD real e persistencia Supabase via PATCH /api/leads/[id]
 Resume file: None
