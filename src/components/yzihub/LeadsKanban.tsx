@@ -15,9 +15,13 @@ const brlFormatter = new Intl.NumberFormat("pt-BR", {
 
 const STAGES: { id: string; label: string; status: LeadStatus; color: string }[] = [
   { id: "novo",        label: "Novo",        status: "new",         color: "#3B82F6" },
-  { id: "qualificado", label: "Qualificado",  status: "qualified",   color: "#F59E0B" },
-  { id: "visita",      label: "Visita",       status: "meeting",     color: "#8B5CF6" },
-  { id: "contrato",    label: "Contrato",     status: "negotiation", color: "#10B981" },
+  { id: "contato",     label: "Contato",     status: "contacted",   color: "#64748B" },
+  { id: "qualificado", label: "Qualificado", status: "qualified",   color: "#F59E0B" },
+  { id: "reuniao",     label: "Reunião",     status: "meeting",     color: "#8B5CF6" },
+  { id: "proposta",    label: "Proposta",    status: "proposal",    color: "#F97316" },
+  { id: "contrato",    label: "Contrato",    status: "negotiation", color: "#10B981" },
+  { id: "fechado",     label: "Fechado",     status: "won",         color: "#22C55E" },
+  { id: "perdido",     label: "Perdido",     status: "lost",        color: "#EF4444" },
 ];
 
 // ─── Score color helper ───────────────────────────────────────────────────────
