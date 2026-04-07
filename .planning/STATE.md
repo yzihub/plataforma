@@ -81,6 +81,7 @@ None yet.
 | 260407-eyq | Corrigir e Ativar Kanban de Leads com Persistência | 2026-04-07 | 6684d33 | [260407-eyq-corrigir-e-ativar-kanban-de-leads-com-pe](./quick/260407-eyq-corrigir-e-ativar-kanban-de-leads-com-pe/) |
 | 260407-k69 | Finalizar Sistema de Contratos com Ações Essenciais | 2026-04-07 | 95e9acd | [260407-k69-finalizar-sistema-de-contratos-com-a-es-](./quick/260407-k69-finalizar-sistema-de-contratos-com-a-es-/) |
 | 260407-ktd | Ajustar Sidebar Jurema — remover rotas quebradas e seções template | 2026-04-07 | 125525b | [260407-ktd-ajustar-sidebar-jurema](./quick/260407-ktd-ajustar-sidebar-jurema/) |
+| 260407-qwm | Padronizar POST /api/contracts para retornar N8nEnvelope — paridade com GET | 2026-04-07 | 4f28619 | [260407-qwm-padronizar-payload-para-n8n](./quick/260407-qwm-padronizar-payload-para-n8n/) |
 
 ### Blockers/Concerns
 
@@ -89,7 +90,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-07T15:10:00.000Z
-Last activity: 2026-04-07 - Completed quick task 260407-ktd: Ajustar Sidebar Jurema — remover rotas quebradas
-Stopped at: Quick task 260407-ktd complete — Sidebar limpa, rotas quebradas removidas, secao Sistema eliminada
+Last session: 2026-04-07T15:25:00.000Z
+Last activity: 2026-04-07 - Completed quick task 260407-qwm: Padronizar POST /api/contracts com N8nEnvelope
+Stopped at: Quick task 260407-qwm complete — POST /api/contracts retorna envelope padronizado N8n
 Resume file: None
