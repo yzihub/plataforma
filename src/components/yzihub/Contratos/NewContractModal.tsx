@@ -1,72 +1,69 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CloseIcon } from "@/icons";
-import type { ContractStatus, ContractType } from "@/types/contracts";
+import { useTenantContext } from "@/context/TenantContext";
+import { createClient } from "@/lib/supabase/client";
+import type { ContractStatus, ContractType, Contract } from "@/types/contracts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface NewContractForm {
-  lead_id: string;
-  lead_name: string;
-  project_id: string;
-  corretor_id: string;
-  value: string;
-  type: ContractType;
-  status: ContractStatus;
-  notes: string;
+  lead_id:      string;
+  lead_name:    string;
+  project_id:   string;
+  project_name: string;
+  corretor_id:  string;
+  corretor_name: string;
+  title:        string;
+  value:        string;
+  type:         ContractType;
+  status:       ContractStatus;
+  notes:        string;
+}
+
+interface LeadOption {
+  id:   string;
+  name: string;
+}
+
+interface PropertyOption {
+  id:   string;
+  name: string;
+}
+
+interface ProfileOption {
+  id:        string;
+  full_name: string | null;
 }
 
 const INITIAL_FORM: NewContractForm = {
-  lead_id: "",
-  lead_name: "",
-  project_id: "",
-  corretor_id: "",
-  value: "",
-  type: "venda",
-  status: "rascunho",
-  notes: "",
+  lead_id:       "",
+  lead_name:     "",
+  project_id:    "",
+  project_name:  "",
+  corretor_id:   "",
+  corretor_name: "",
+  title:         "",
+  value:         "",
+  type:          "venda",
+  status:        "rascunho",
+  notes:         "",
 };
 
-// ─── Mock select options (substituir por queries Supabase) ────────────────────
-
-const MOCK_LEADS = [
-  { id: "lead-jurema-001", name: "Adriana Fontenele" },
-  { id: "lead-jurema-002", name: "Carlos Henrique Lima" },
-  { id: "lead-jurema-003", name: "Patricia Vasconcelos" },
-  { id: "lead-pam-001", name: "Isabela Torres" },
-  { id: "lead-pam-002", name: "Ricardo Andrade" },
-  { id: "lead-pam-003", name: "Ana Ligia Saraiva" },
-];
-
-const MOCK_PROPERTIES = [
-  { id: "imovel-001", name: "Apto Vista Mar - Meireles" },
-  { id: "imovel-002", name: "Casa Duplex - Aldeota" },
-  { id: "imovel-003", name: "Studio Premium - Coco" },
-  { id: "imovel-004", name: "Cobertura Duplex - Papicu" },
-  { id: "projeto-pam-001", name: "Reforma Sala e Dois Quartos" },
-  { id: "projeto-pam-002", name: "Design Escritorio Corporativo" },
-];
-
-const MOCK_CORRETORES = [
-  { id: "corretor-luana", name: "Luana Azevedo" },
-  { id: "corretor-joao", name: "Joao Melo" },
-  { id: "corretor-pam", name: "Pamela Brandao" },
-];
-
 const CONTRACT_TYPE_OPTIONS: { value: ContractType; label: string }[] = [
-  { value: "venda", label: "Venda" },
-  { value: "locacao", label: "Locacao" },
-  { value: "servico", label: "Servico" },
-  { value: "parceria", label: "Parceria" },
+  { value: "venda",    label: "Venda"     },
+  { value: "locacao",  label: "Locacao"   },
+  { value: "servico",  label: "Servico"   },
+  { value: "parceria", label: "Parceria"  },
 ];
 
 const CONTRACT_STATUS_OPTIONS: { value: ContractStatus; label: string }[] = [
-  { value: "rascunho", label: "Rascunho" },
-  { value: "pendente", label: "Pendente" },
-  { value: "assinado", label: "Assinado" },
+  { value: "rascunho",  label: "Rascunho"  },
+  { value: "pendente",  label: "Pendente"  },
+  { value: "assinado",  label: "Assinado"  },
   { value: "cancelado", label: "Cancelado" },
-  { value: "expirado", label: "Expirado" },
+  { value: "expirado",  label: "Expirado"  },
 ];
 
 // ─── Input helper ─────────────────────────────────────────────────────────────
@@ -79,9 +76,9 @@ const labelCls = "block text-xs font-medium text-gray-500 dark:text-gray-400 mb-
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 interface NewContractModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave?: (form: NewContractForm) => void;
+  isOpen:   boolean;
+  onClose:  () => void;
+  onSave?:  (body: Record<string, unknown>) => Promise<Contract | null>;
 }
 
 export default function NewContractModal({
@@ -89,31 +86,134 @@ export default function NewContractModal({
   onClose,
   onSave,
 }: NewContractModalProps) {
-  const [form, setForm] = useState<NewContractForm>(INITIAL_FORM);
-  const [leadSearch, setLeadSearch] = useState("");
+  const { tenant } = useTenantContext();
 
-  function handleChange<K extends keyof NewContractForm>(
-    key: K,
-    value: NewContractForm[K]
-  ) {
+  const [form, setForm]             = useState<NewContractForm>(INITIAL_FORM);
+  const [leadSearch, setLeadSearch] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Supabase real data
+  const [leads, setLeads]           = useState<LeadOption[]>([]);
+  const [properties, setProperties] = useState<PropertyOption[]>([]);
+  const [corretores, setCorretores] = useState<ProfileOption[]>([]);
+  const [loadingData, setLoadingData] = useState(false);
+
+  // File attachment
+  const [attachedFile, setAttachedFile] = useState<File | null>(null);
+
+  // Fetch real data when modal opens
+  useEffect(() => {
+    if (!isOpen || !tenant?.id) return;
+
+    const supabase = createClient();
+    setLoadingData(true);
+
+    async function fetchData() {
+      try {
+        const [leadsRes, propsRes, profilesRes] = await Promise.all([
+          supabase
+            .from("leads")
+            .select("id, name")
+            .eq("tenant_id", tenant!.id)
+            .order("name"),
+          supabase
+            .from("properties")
+            .select("id, title")
+            .eq("tenant_id", tenant!.id)
+            .order("title"),
+          supabase
+            .from("profiles")
+            .select("id, full_name")
+            .eq("tenant_id", tenant!.id)
+            .order("full_name"),
+        ]);
+
+        if (leadsRes.data) {
+          setLeads(leadsRes.data.map((l: { id: string; name: string }) => ({ id: l.id, name: l.name })));
+        }
+        if (propsRes.data) {
+          setProperties(
+            propsRes.data.map((p: { id: string; title: string }) => ({ id: p.id, name: p.title }))
+          );
+        }
+        if (profilesRes.data) {
+          setCorretores(profilesRes.data as ProfileOption[]);
+        }
+      } catch {
+        // Non-fatal: user can still type manually
+      } finally {
+        setLoadingData(false);
+      }
+    }
+
+    fetchData();
+  }, [isOpen, tenant?.id]);
+
+  function handleChange<K extends keyof NewContractForm>(key: K, value: NewContractForm[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    onSave?.(form);
-    setForm(INITIAL_FORM);
-    setLeadSearch("");
-    onClose();
+
+    if (!form.lead_name.trim()) {
+      setSubmitError("Selecione ou informe o nome do lead");
+      return;
+    }
+    if (!form.value || parseFloat(form.value) < 0) {
+      setSubmitError("Informe um valor valido");
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const body: Record<string, unknown> = {
+        lead_id:       form.lead_id       || null,
+        lead_name:     form.lead_name.trim(),
+        project_id:    form.project_id    || null,
+        project_name:  form.project_name  || null,
+        corretor_id:   form.corretor_id   || null,
+        corretor_name: form.corretor_name || null,
+        title:         form.title.trim()  || null,
+        value:         parseFloat(form.value),
+        type:          form.type,
+        status:        form.status,
+        notes:         form.notes.trim()  || null,
+      };
+
+      const created = await onSave?.(body);
+
+      // If file attached and contract was created, upload it
+      if (created && attachedFile) {
+        const fileData = new FormData();
+        fileData.append("file", attachedFile);
+        await fetch(`/api/contracts/${created.id}`, {
+          method: "POST",
+          body: fileData,
+        });
+      }
+
+      handleClose();
+    } catch {
+      setSubmitError("Erro ao criar contrato. Tente novamente.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function handleClose() {
     setForm(INITIAL_FORM);
     setLeadSearch("");
+    setSubmitError(null);
+    setAttachedFile(null);
     onClose();
   }
 
-  const filteredLeads = MOCK_LEADS.filter((l) =>
+  // Lead search filter
+  const filteredLeads = leads.filter((l) =>
     l.name.toLowerCase().includes(leadSearch.toLowerCase())
   );
 
@@ -150,54 +250,78 @@ export default function NewContractModal({
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
-            {/* Lead (searchable) */}
+
+            {/* Titulo do contrato */}
             <div>
-              <label className={labelCls}>Lead *</label>
+              <label className={labelCls}>Titulo do Contrato</label>
+              <input
+                type="text"
+                placeholder="Ex: Compra e Venda - Apto Vista Mar"
+                value={form.title}
+                onChange={(e) => handleChange("title", e.target.value)}
+                className={inputCls}
+              />
+            </div>
+
+            {/* Lead (searchable com dados reais) */}
+            <div>
+              <label className={labelCls}>
+                Lead *
+                {loadingData && <span className="ml-1 text-gray-400">(carregando...)</span>}
+              </label>
               <input
                 type="text"
                 placeholder="Buscar lead pelo nome..."
                 value={leadSearch}
-                onChange={(e) => setLeadSearch(e.target.value)}
+                onChange={(e) => {
+                  setLeadSearch(e.target.value);
+                  // Se digitou algo que nao bate com selecao, limpar lead_id
+                  if (form.lead_name && e.target.value !== form.lead_name) {
+                    handleChange("lead_id", "");
+                    handleChange("lead_name", e.target.value);
+                  }
+                }}
                 className={inputCls}
               />
-              {leadSearch && (
-                <div className="mt-1 rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 overflow-hidden shadow-md">
-                  {filteredLeads.length === 0 ? (
-                    <p className="px-3 py-2 text-xs text-gray-400">Nenhum lead encontrado</p>
-                  ) : (
-                    filteredLeads.map((lead) => (
-                      <button
-                        key={lead.id}
-                        type="button"
-                        onClick={() => {
-                          handleChange("lead_id", lead.id);
-                          handleChange("lead_name", lead.name);
-                          setLeadSearch(lead.name);
-                        }}
-                        className={`w-full text-left px-3 py-2 text-sm transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.04] ${
-                          form.lead_id === lead.id
-                            ? "text-brand-500 font-medium bg-brand-50/30 dark:bg-brand-500/5"
-                            : "text-gray-700 dark:text-gray-300"
-                        }`}
-                      >
-                        {lead.name}
-                      </button>
-                    ))
-                  )}
+              {leadSearch && filteredLeads.length > 0 && !form.lead_id && (
+                <div className="mt-1 rounded-xl border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 overflow-hidden shadow-md max-h-40 overflow-y-auto">
+                  {filteredLeads.map((lead) => (
+                    <button
+                      key={lead.id}
+                      type="button"
+                      onClick={() => {
+                        handleChange("lead_id", lead.id);
+                        handleChange("lead_name", lead.name);
+                        setLeadSearch(lead.name);
+                      }}
+                      className="w-full text-left px-3 py-2 text-sm text-gray-700 dark:text-gray-300 transition-colors hover:bg-gray-50 dark:hover:bg-white/[0.04]"
+                    >
+                      {lead.name}
+                    </button>
+                  ))}
                 </div>
+              )}
+              {leadSearch && filteredLeads.length === 0 && !loadingData && (
+                <p className="mt-1 text-xs text-gray-400">
+                  Nenhum lead encontrado. O nome digitado sera usado diretamente.
+                </p>
               )}
             </div>
 
-            {/* Imovel */}
+            {/* Imovel / Projeto */}
             <div>
               <label className={labelCls}>Imovel / Projeto</label>
               <select
                 value={form.project_id}
-                onChange={(e) => handleChange("project_id", e.target.value)}
+                onChange={(e) => {
+                  const selected = properties.find((p) => p.id === e.target.value);
+                  handleChange("project_id", e.target.value);
+                  handleChange("project_name", selected?.name ?? "");
+                }}
                 className={inputCls}
               >
                 <option value="">Selecionar imovel...</option>
-                {MOCK_PROPERTIES.map((p) => (
+                {properties.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
@@ -210,13 +334,17 @@ export default function NewContractModal({
               <label className={labelCls}>Corretor</label>
               <select
                 value={form.corretor_id}
-                onChange={(e) => handleChange("corretor_id", e.target.value)}
+                onChange={(e) => {
+                  const selected = corretores.find((c) => c.id === e.target.value);
+                  handleChange("corretor_id", e.target.value);
+                  handleChange("corretor_name", selected?.full_name ?? "");
+                }}
                 className={inputCls}
               >
                 <option value="">Selecionar corretor...</option>
-                {MOCK_CORRETORES.map((c) => (
+                {corretores.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.name}
+                    {c.full_name ?? c.id}
                   </option>
                 ))}
               </select>
@@ -279,6 +407,28 @@ export default function NewContractModal({
                 className={`${inputCls} resize-none`}
               />
             </div>
+
+            {/* Arquivo (opcional) */}
+            <div>
+              <label className={labelCls}>Arquivo (opcional)</label>
+              <label className="flex items-center gap-3 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 px-4 py-3 cursor-pointer hover:border-brand-400 hover:bg-brand-50/20 dark:hover:bg-brand-500/5 transition-colors">
+                <span className="text-lg">📎</span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  {attachedFile ? attachedFile.name : "PDF ou DOCX (max 10MB)"}
+                </span>
+                <input
+                  type="file"
+                  accept=".pdf,.docx,.doc"
+                  className="hidden"
+                  onChange={(e) => setAttachedFile(e.target.files?.[0] ?? null)}
+                />
+              </label>
+            </div>
+
+            {/* Error */}
+            {submitError && (
+              <p className="text-xs text-red-500">{submitError}</p>
+            )}
           </form>
 
           {/* Footer */}
@@ -294,9 +444,10 @@ export default function NewContractModal({
               type="submit"
               form=""
               onClick={handleSubmit}
-              className="rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-600 active:scale-95 transition-all"
+              disabled={submitting}
+              className="rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-600 active:scale-95 disabled:opacity-50 transition-all"
             >
-              Criar Contrato
+              {submitting ? "Criando..." : "Criar Contrato"}
             </button>
           </div>
         </div>

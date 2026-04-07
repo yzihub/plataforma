@@ -1,190 +1,82 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useTenantContext } from "@/context/TenantContext";
-import { MOCK_CONTRACTS } from "@/lib/contracts/mock-data";
 import { CONTRACT_STATUS_CONFIG } from "@/types/contracts";
 import type { Contract, ContractStatus } from "@/types/contracts";
-import Badge from "@/components/ui/badge/Badge";
-import { CloseIcon } from "@/icons";
 import ContractsTable, {
   ContractsTableSkeleton,
   ContractsEmptyState,
 } from "./ContractsTable";
+import ContractDrawer from "./ContractDrawer";
 import NewContractModal from "./NewContractModal";
 
 // ─── useContracts hook ────────────────────────────────────────────────────────
-// Prepared for Supabase swap: replace mock with supabase query
 
 function useContracts(tenantId: string | null) {
-  const [contracts] = useState<Contract[]>(() => {
-    if (!tenantId) return [];
-    // DEV_BYPASS: dev-tenant shows Jurema Brokers data
-    return MOCK_CONTRACTS.filter((c) => c.tenant_id === tenantId);
-  });
+  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const isLoading = false;
-  const error: string | null = null;
+  const fetchContracts = useCallback(async () => {
+    if (!tenantId) {
+      setContracts([]);
+      return;
+    }
 
-  const refetch = useCallback(() => {
-    // TODO: replace with supabase.from('contracts').select('*').eq('tenant_id', tenantId)
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/contracts");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? "Erro ao buscar contratos");
+      }
+      const data: Contract[] = await res.json();
+      setContracts(data);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro desconhecido";
+      setError(msg);
+      setContracts([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [tenantId]);
+
+  useEffect(() => {
+    fetchContracts();
+  }, [fetchContracts]);
+
+  const createContract = useCallback(
+    async (body: Record<string, unknown>): Promise<Contract | null> => {
+      try {
+        const res = await fetch("/api/contracts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error ?? "Erro ao criar contrato");
+        }
+        const created: Contract = await res.json();
+        await fetchContracts();
+        return created;
+      } catch {
+        return null;
+      }
+    },
+    [fetchContracts]
+  );
+
+  const updateContractLocal = useCallback((updated: Contract) => {
+    setContracts((prev) =>
+      prev.map((c) => (c.id === updated.id ? updated : c))
+    );
   }, []);
 
-  return { contracts, isLoading, error, refetch };
-}
-
-// ─── Contract Detail Drawer ───────────────────────────────────────────────────
-
-function ContractDrawer({
-  contract,
-  onClose,
-}: {
-  contract: Contract | null;
-  onClose: () => void;
-}) {
-  function formatCurrency(value: number): string {
-    return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-  }
-
-  function formatDate(dateStr: string | null | undefined): string {
-    if (!dateStr) return "Pendente";
-    return new Date(dateStr).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    });
-  }
-
-  const statusCfg = contract ? CONTRACT_STATUS_CONFIG[contract.status] : null;
-
-  return (
-    <>
-      {/* Backdrop */}
-      <div
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
-          contract ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={onClose}
-      />
-
-      {/* Drawer */}
-      <div
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
-          contract ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        {contract && statusCfg && (
-          <>
-            {/* Header */}
-            <div className="flex items-start justify-between p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge size="sm" color="light">
-                    {contract.type.charAt(0).toUpperCase() + contract.type.slice(1)}
-                  </Badge>
-                  <Badge size="sm" color={statusCfg.color}>
-                    {statusCfg.label}
-                  </Badge>
-                </div>
-                <h2 className="text-base font-semibold text-gray-800 dark:text-white/90">
-                  {contract.lead_name}
-                </h2>
-                {contract.project_name && (
-                  <p className="text-xs text-gray-400 mt-0.5">{contract.project_name}</p>
-                )}
-              </div>
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg transition-colors"
-              >
-                <CloseIcon className="size-5" />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-5">
-              {/* Informacoes */}
-              <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
-                  Informacoes
-                </h3>
-                <div className="space-y-3">
-                  <InfoRow label="Lead vinculado" value={contract.lead_name} />
-                  <InfoRow
-                    label="Valor"
-                    value={
-                      <span className="font-semibold text-emerald-500">
-                        {formatCurrency(contract.value)}
-                      </span>
-                    }
-                  />
-                  <InfoRow label="Tipo" value={contract.type.charAt(0).toUpperCase() + contract.type.slice(1)} />
-                  <InfoRow label="Corretor" value={contract.corretor_name ?? "—"} />
-                  {contract.notes && (
-                    <div>
-                      <p className="text-xs text-gray-400 mb-1">Notas</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
-                        {contract.notes}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </section>
-
-              {/* Datas */}
-              <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
-                  Datas
-                </h3>
-                <div className="space-y-3">
-                  <InfoRow label="Criado em" value={formatDate(contract.created_at)} />
-                  <InfoRow label="Assinado em" value={formatDate(contract.signed_at)} />
-                  <InfoRow
-                    label="Vencimento"
-                    value={contract.expires_at ? formatDate(contract.expires_at) : "Sem vencimento"}
-                  />
-                </div>
-              </section>
-
-              {/* Acoes */}
-              <section>
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-3">
-                  Acoes
-                </h3>
-                <div className="space-y-2">
-                  <button className="w-full flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-brand-400 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-brand-50/30 dark:hover:bg-brand-500/5 transition-all group">
-                    <span>Enviar Contrato</span>
-                    <span className="text-gray-300 dark:text-gray-600 group-hover:text-brand-400">→</span>
-                  </button>
-                  <button className="w-full flex items-center justify-between rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-emerald-400 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50/30 dark:hover:bg-emerald-500/5 transition-all group">
-                    <span>Marcar como Assinado</span>
-                    <span className="text-gray-300 dark:text-gray-600 group-hover:text-emerald-400">→</span>
-                  </button>
-                </div>
-              </section>
-            </div>
-          </>
-        )}
-      </div>
-    </>
-  );
-}
-
-// ─── InfoRow helper ───────────────────────────────────────────────────────────
-
-function InfoRow({
-  label,
-  value,
-}: {
-  label: string;
-  value: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center justify-between">
-      <span className="text-xs text-gray-400">{label}</span>
-      <span className="text-sm text-gray-700 dark:text-gray-200">{value}</span>
-    </div>
-  );
+  return { contracts, isLoading, error, refetch: fetchContracts, createContract, updateContractLocal };
 }
 
 // ─── Pending Alert ────────────────────────────────────────────────────────────
@@ -208,7 +100,7 @@ function PendingAlert({ contracts }: { contracts: Contract[] }) {
   return (
     <div className="rounded-2xl border border-amber-200 bg-amber-50 dark:border-amber-500/20 dark:bg-amber-500/5 p-4">
       <div className="flex items-start gap-3">
-        <span className="text-xl shrink-0">⚠️</span>
+        <span className="text-xl shrink-0">⚠</span>
         <div>
           <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
             {overdue.length} contrato{overdue.length > 1 ? "s" : ""} pendente{overdue.length > 1 ? "s" : ""} ha mais de 7 dias
@@ -216,7 +108,7 @@ function PendingAlert({ contracts }: { contracts: Contract[] }) {
           <ul className="mt-2 space-y-1">
             {overdue.map((c) => (
               <li key={c.id} className="text-xs text-amber-700 dark:text-amber-400">
-                • {c.lead_name} — {daysSince(c.updated_at)} dias sem atualizacao
+                - {c.lead_name} — {daysSince(c.updated_at)} dias sem atualizacao
               </li>
             ))}
           </ul>
@@ -229,31 +121,55 @@ function PendingAlert({ contracts }: { contracts: Contract[] }) {
 // ─── Status Filter Dropdown ───────────────────────────────────────────────────
 
 const STATUS_OPTIONS: { value: ContractStatus | "all"; label: string }[] = [
-  { value: "all", label: "Todos os status" },
-  { value: "rascunho", label: "Rascunho" },
-  { value: "pendente", label: "Pendente" },
-  { value: "assinado", label: "Assinado" },
-  { value: "cancelado", label: "Cancelado" },
-  { value: "expirado", label: "Expirado" },
+  { value: "all",       label: "Todos os status" },
+  { value: "rascunho",  label: "Rascunho"        },
+  { value: "pendente",  label: "Pendente"         },
+  { value: "assinado",  label: "Assinado"         },
+  { value: "cancelado", label: "Cancelado"        },
+  { value: "expirado",  label: "Expirado"         },
 ];
 
 // ─── Main Client Component ────────────────────────────────────────────────────
 
 export default function ContractsClient() {
   const { tenant, loading: tenantLoading } = useTenantContext();
-  const { contracts, isLoading } = useContracts(tenant?.id ?? null);
+  const { contracts, isLoading, error, refetch, createContract, updateContractLocal } =
+    useContracts(tenant?.id ?? null);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch]           = useState("");
   const [statusFilter, setStatusFilter] = useState<ContractStatus | "all">("all");
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // When contract is updated (from drawer), update selectedContract too
+  function handleContractUpdated(updated: Contract) {
+    updateContractLocal(updated);
+    setSelectedContract(updated);
+  }
+
+  // Cancel contract from table action
+  async function handleCancelContract(id: string) {
+    try {
+      const res = await fetch(`/api/contracts/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelado" }),
+      });
+      if (!res.ok) return;
+      const updated: Contract = await res.json();
+      updateContractLocal(updated);
+    } catch {
+      // silent
+    }
+  }
 
   const filtered = useMemo(() => {
     return contracts.filter((c) => {
       const matchesSearch =
         !search ||
         c.lead_name.toLowerCase().includes(search.toLowerCase()) ||
-        (c.project_name ?? "").toLowerCase().includes(search.toLowerCase());
+        (c.project_name ?? "").toLowerCase().includes(search.toLowerCase()) ||
+        (c.title ?? "").toLowerCase().includes(search.toLowerCase());
 
       const matchesStatus = statusFilter === "all" || c.status === statusFilter;
 
@@ -264,9 +180,9 @@ export default function ContractsClient() {
   const hasFilters = search !== "" || statusFilter !== "all";
 
   // Summary stats
-  const totalVGV = contracts.reduce((sum, c) => sum + c.value, 0);
-  const assinados = contracts.filter((c) => c.status === "assinado").length;
-  const pendentes = contracts.filter((c) => c.status === "pendente").length;
+  const totalVGV   = contracts.reduce((sum, c) => sum + c.value, 0);
+  const assinados  = contracts.filter((c) => c.status === "assinado").length;
+  const pendentes  = contracts.filter((c) => c.status === "pendente").length;
 
   if (tenantLoading) {
     return (
@@ -316,6 +232,19 @@ export default function ContractsClient() {
 
       {/* Pending Alert */}
       <PendingAlert contracts={contracts} />
+
+      {/* Error state */}
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 dark:border-red-500/20 dark:bg-red-500/5 p-4">
+          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          <button
+            onClick={refetch}
+            className="mt-2 text-xs font-medium text-red-500 hover:text-red-600 underline"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      )}
 
       {/* Search + Filter */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -368,6 +297,7 @@ export default function ContractsClient() {
         <ContractsTable
           contracts={filtered}
           onRowClick={setSelectedContract}
+          onCancelContract={handleCancelContract}
         />
       )}
 
@@ -375,12 +305,14 @@ export default function ContractsClient() {
       <ContractDrawer
         contract={selectedContract}
         onClose={() => setSelectedContract(null)}
+        onContractUpdated={handleContractUpdated}
       />
 
       {/* New Contract Modal */}
       <NewContractModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSave={createContract}
       />
     </div>
   );
