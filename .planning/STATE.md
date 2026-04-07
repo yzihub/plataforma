@@ -77,6 +77,7 @@ None yet.
 | 260402-mwy | Submenus colapsaveis sidebar + Kanban Leads + tab Comissoes Financeiro | 2026-04-02 | 4b1460d | [260402-mwy-implementar-submenus-e-vis-o-kanban-de-a](./quick/260402-mwy-implementar-submenus-e-vis-o-kanban-de-a/) |
 | 260404-d6a | Contratos system: DataTable, drawer, modal, types, mock data, sidebar entry | 2026-04-04 | 557f59f | [260404-d6a-construir-sistema-de-contratos-integrado](./quick/260404-d6a-construir-sistema-de-contratos-integrado/) |
 | 260404-dyt | Auth system validation script + TenantContext diagnostic logs (checkpoint: human verify) | 2026-04-04 | 4d8454f | [260404-dyt-validar-sistema-de-autentica-o-tenantcon](./quick/260404-dyt-validar-sistema-de-autentica-o-tenantcon/) |
+| 260407-eau | Corrigir Erros Críticos do Sistema YZI OS | 2026-04-07 | 0de0803 | [260407-eau-corrigir-erros-cr-ticos-do-sistema-yzi-o](./quick/260407-eau-corrigir-erros-cr-ticos-do-sistema-yzi-o/) |
 
 ### Blockers/Concerns
 
@@ -85,6 +86,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-04
-Stopped at: Quick task 260404-dyt complete — 15/15 validações OK. Pronto para continuar com OAuth Google no browser.
+Last session: 2026-04-07
+Stopped at: Quick task 260407-eau complete — Corrigidos: ImoveisClient runtime error, LeadsKanban STAGES, rotas /tasks e /chat.
 Resume file: None
