@@ -1,0 +1,149 @@
+{
+  "_meta": {
+    "task": "260407-r8a",
+    "description": "Patch para atualizar nodes do workflow consultar_imoveis no n8n",
+    "instructions": [
+      "1. Abrir n8n e navegar ate o workflow 'consultar_imoveis'",
+      "2. Identificar o Supabase node (ou HTTP node) que faz a busca de imoveis",
+      "3. Substituir a configuracao de query conforme NODE_SUPABASE abaixo",
+      "4. Identificar o Set/Function node que mapeia os campos para o WhatsApp",
+      "5. Substituir o mapeamento de campos conforme NODE_SET abaixo",
+      "6. Salvar o workflow"
+    ]
+  },
+
+  "NODE_SUPABASE": {
+    "type": "n8n-nodes-base.supabase",
+    "operation": "getAll",
+    "tableId": "properties",
+    "comment": "TROCAR o nome da tabela de qualquer valor anterior (imoveis, mock, etc) para 'properties'",
+    "filters": {
+      "conditions": [
+        {
+          "column": "tenant_id",
+          "operator": "eq",
+          "value": "={{ $json.tenant_id }}",
+          "comment": "tenant_id vem do contexto da conversa — garantir que este filtro esta presente"
+        },
+        {
+          "column": "publication_status",
+          "operator": "eq",
+          "value": "published",
+          "comment": "Filtrar apenas imoveis publicados"
+        }
+      ]
+    },
+    "selectColumns": [
+      "id",
+      "title",
+      "photo_url",
+      "price",
+      "location",
+      "area_sqm",
+      "status",
+      "link",
+      "neighborhood",
+      "property_type",
+      "publication_status",
+      "tags",
+      "purpose"
+    ]
+  },
+
+  "NODE_SET": {
+    "type": "n8n-nodes-base.set",
+    "comment": "Substituir o mapeamento de campos atual por este. Remover campos que nao existem na tabela (quartos, vagas, suites).",
+    "fields": [
+      {
+        "name": "id_imovel",
+        "value": "={{ $json.id }}",
+        "comment": "UUID da tabela properties"
+      },
+      {
+        "name": "titulo",
+        "value": "={{ $json.title }}"
+      },
+      {
+        "name": "foto_principal",
+        "value": "={{ $json.photo_url }}"
+      },
+      {
+        "name": "valor",
+        "value": "={{ $json.price }}"
+      },
+      {
+        "name": "location",
+        "value": "={{ $json.location }}"
+      },
+      {
+        "name": "metragem",
+        "value": "={{ $json.area_sqm }}"
+      },
+      {
+        "name": "status",
+        "value": "={{ $json.status }}"
+      },
+      {
+        "name": "link_redes_sociais",
+        "value": "={{ $json.link }}"
+      },
+      {
+        "name": "bairro",
+        "value": "={{ $json.neighborhood }}"
+      },
+      {
+        "name": "tipo_de_imovel",
+        "value": "={{ $json.property_type }}"
+      },
+      {
+        "name": "status_publicacao",
+        "value": "={{ $json.publication_status }}"
+      },
+      {
+        "name": "tags",
+        "value": "={{ $json.tags }}"
+      },
+      {
+        "name": "quartos",
+        "value": "",
+        "comment": "NAO existe na tabela properties. Mantido como string vazia para nao quebrar template do WhatsApp."
+      },
+      {
+        "name": "vagas",
+        "value": "",
+        "comment": "NAO existe na tabela properties. Mantido como string vazia."
+      },
+      {
+        "name": "suites",
+        "value": "",
+        "comment": "NAO existe na tabela properties. Mantido como string vazia."
+      }
+    ],
+    "mode": "keepAllExistingFields"
+  },
+
+  "SCHEMA_REFERENCE": {
+    "table": "properties",
+    "supabase_url": "https://dwmbklfkrtumfaxrbxio.supabase.co",
+    "tenant_jurema": "aaaaaaaa-0002-0002-0002-000000000002",
+    "columns": {
+      "id": "UUID — mapear como id_imovel",
+      "tenant_id": "UUID — filtro obrigatorio WHERE tenant_id = contexto",
+      "title": "TEXT — titulo do imovel",
+      "photo_url": "TEXT — mapear como foto_principal",
+      "price": "NUMERIC(14,2) — mapear como valor",
+      "location": "TEXT — localizacao completa",
+      "area_sqm": "NUMERIC(8,2) — mapear como metragem",
+      "status": "TEXT: available/sold/reserved",
+      "link": "TEXT — mapear como link_redes_sociais",
+      "neighborhood": "TEXT — mapear como bairro (migration 009)",
+      "property_type": "TEXT — mapear como tipo_de_imovel (migration 009)",
+      "publication_status": "TEXT: published/draft/archived — mapear como status_publicacao (migration 009)",
+      "tags": "TEXT[] — array de tags (migration 009)",
+      "purpose": "TEXT — finalidade: Venda/Locacao (migration 009)",
+      "AUSENTE_quartos": "NAO EXISTE — usar string vazia ou omitir",
+      "AUSENTE_vagas": "NAO EXISTE — usar string vazia ou omitir",
+      "AUSENTE_suites": "NAO EXISTE — usar string vazia ou omitir"
+    }
+  }
+}
