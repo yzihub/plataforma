@@ -17,10 +17,13 @@ export interface Contract {
   project_name?: string | null
   corretor_id?: string | null
   corretor_name?: string | null
+  title?: string | null
   type: ContractType
   status: ContractStatus
   value: number
   notes?: string | null
+  file_url?: string | null
+  file_name?: string | null
   signed_at?: string | null
   expires_at?: string | null
   created_at: string
