@@ -78,6 +78,7 @@ None yet.
 | 260404-dyt | Auth system validation script + TenantContext diagnostic logs (checkpoint: human verify) | 2026-04-04 | 4d8454f | [260404-dyt-validar-sistema-de-autentica-o-tenantcon](./quick/260404-dyt-validar-sistema-de-autentica-o-tenantcon/) |
 | 260407-eau | Corrigir Erros Críticos do Sistema YZI OS | 2026-04-07 | 0de0803 | [260407-eau-corrigir-erros-cr-ticos-do-sistema-yzi-o](./quick/260407-eau-corrigir-erros-cr-ticos-do-sistema-yzi-o/) |
 | 260407-ejm | Implementar Módulo de Imóveis com Integração Supabase | 2026-04-07 | ef2c3a6 | [260407-ejm-implementar-m-dulo-de-im-veis-com-integr](./quick/260407-ejm-implementar-m-dulo-de-im-veis-com-integr/) |
+| 260407-eyq | Corrigir e Ativar Kanban de Leads com Persistência | 2026-04-07 | 6684d33 | [260407-eyq-corrigir-e-ativar-kanban-de-leads-com-pe](./quick/260407-eyq-corrigir-e-ativar-kanban-de-leads-com-pe/) |
 
 ### Blockers/Concerns
 
@@ -86,6 +87,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-07T13:58:01.319Z
+Last session: 2026-04-07T14:17:00.000Z
+Last activity: 2026-04-07 - Completed quick task 260407-eyq: Corrigir e Ativar Kanban de Leads com Persistência
 Stopped at: Quick task 260407-eyq complete — Kanban de Leads com DnD real e persistencia Supabase via PATCH /api/leads/[id]
 Resume file: None
