@@ -7,8 +7,20 @@ import type { Property } from "@/types/properties";
 import PropertyCard from "@/components/yzihub/PropertyCard";
 import PropertyDrawer from "@/components/yzihub/PropertyDrawer";
 import PropertyKanban from "@/components/yzihub/PropertyKanban";
+import PropertyTable from "@/components/yzihub/PropertyTable";
 
 // ─── View toggle icons ────────────────────────────────────────────────────────
+
+function TableIcon() {
+  return (
+    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <line x1="3" y1="9" x2="21" y2="9" />
+      <line x1="3" y1="15" x2="21" y2="15" />
+      <line x1="9" y1="9" x2="9" y2="21" />
+    </svg>
+  );
+}
 
 function GridIcon() {
   return (
@@ -42,7 +54,8 @@ export default function ImoveisClient() {
   const [filterType, setFilterType] = useState("all");
   const [filterNeighborhood, setFilterNeighborhood] = useState("all");
   const [filterPubStatus, setFilterPubStatus] = useState("all");
-  const [view, setView] = useState<"grid" | "kanban">("grid");
+  const [filterMaxPrice, setFilterMaxPrice] = useState("all");
+  const [view, setView] = useState<"table" | "grid" | "kanban">("table");
 
   // ── Fetch properties from Supabase filtered by tenant ──────────────────────
 
@@ -100,9 +113,10 @@ export default function ImoveisClient() {
       if (filterType !== "all" && p.property_type !== filterType) return false;
       if (filterNeighborhood !== "all" && p.neighborhood !== filterNeighborhood) return false;
       if (filterPubStatus !== "all" && p.publication_status !== filterPubStatus) return false;
+      if (filterMaxPrice !== "all" && p.price > Number(filterMaxPrice)) return false;
       return true;
     });
-  }, [properties, filterType, filterNeighborhood, filterPubStatus]);
+  }, [properties, filterType, filterNeighborhood, filterPubStatus, filterMaxPrice]);
 
   // ── Select class ────────────────────────────────────────────────────────────
 
@@ -174,11 +188,35 @@ export default function ImoveisClient() {
           <option value="archived">Arquivado</option>
         </select>
 
+        {/* Preço máximo */}
+        <select
+          value={filterMaxPrice}
+          onChange={(e) => setFilterMaxPrice(e.target.value)}
+          className={selectClass}
+        >
+          <option value="all">Qualquer Preço</option>
+          <option value="500000">Até R$ 500 mil</option>
+          <option value="1000000">Até R$ 1 milhão</option>
+          <option value="2000000">Até R$ 2 milhões</option>
+        </select>
+
         {/* Spacer */}
         <div className="flex-1" />
 
         {/* View toggle */}
         <div className="flex rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+          <button
+            onClick={() => setView("table")}
+            title="Visualização em tabela"
+            className={`flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
+              view === "table"
+                ? "bg-brand-500 text-white"
+                : "bg-white text-gray-500 hover:text-gray-700 dark:bg-white/[0.03] dark:text-gray-400 dark:hover:text-gray-200"
+            }`}
+          >
+            <TableIcon />
+            <span className="hidden sm:inline">Tabela</span>
+          </button>
           <button
             onClick={() => setView("grid")}
             title="Visualização em grade"
@@ -210,6 +248,14 @@ export default function ImoveisClient() {
       <p className="text-sm text-gray-500 dark:text-gray-400">
         {filtered.length} de {properties.length} imóveis
       </p>
+
+      {/* Table view */}
+      {view === "table" && (
+        <PropertyTable
+          properties={filtered}
+          onSelect={(p) => setSelectedProperty(p)}
+        />
+      )}
 
       {/* Grid view */}
       {view === "grid" && (
