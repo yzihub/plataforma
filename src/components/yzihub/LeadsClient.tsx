@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import LeadDrawer from "@/components/yzihub/LeadDrawer";
 import LeadsDataTable from "@/components/yzihub/LeadsDataTable";
 import LeadsKanban from "@/components/yzihub/LeadsKanban";
-import type { Lead } from "@/lib/crm/types";
+import type { Lead, PipelineStage } from "@/lib/crm/types";
 import { PlusIcon } from "@/icons";
 
 // ─── Filter options ───────────────────────────────────────────────────────────
@@ -121,18 +121,35 @@ function SearchBar({
 
 // ─── LeadsClient ──────────────────────────────────────────────────────────────
 
-export default function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) {
+export default function LeadsClient({
+  initialLeads,
+  stages,
+}: {
+  initialLeads: Lead[];
+  stages: PipelineStage[];
+}) {
   const searchParams = useSearchParams();
   const initialView = searchParams?.get("view") === "kanban" ? "kanban" : "table";
 
   const [view, setView] = useState<"table" | "kanban">(initialView);
+  const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSource, setFilterSource] = useState("");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
+  const handleMoveLead = (leadId: string, newStageId: string) => {
+    setLeads((prev) =>
+      prev.map((l) =>
+        l.id === leadId
+          ? { ...l, stage_id: newStageId, last_action_at: new Date().toISOString() }
+          : l
+      )
+    );
+  };
+
   const filteredLeads = useMemo(() => {
-    return initialLeads.filter((l) => {
+    return leads.filter((l) => {
       const matchSearch =
         !search ||
         l.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -141,7 +158,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) 
       const matchSource = !filterSource || l.source === filterSource;
       return matchSearch && matchStatus && matchSource;
     });
-  }, [initialLeads, search, filterStatus, filterSource]);
+  }, [leads, search, filterStatus, filterSource]);
 
   return (
     <>
@@ -151,7 +168,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) 
           <div>
             <h1 className="text-2xl font-bold text-gray-800 dark:text-white/90">Leads</h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {filteredLeads.length} de {initialLeads.length} leads
+              {filteredLeads.length} de {leads.length} leads
             </p>
           </div>
           <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -205,7 +222,7 @@ export default function LeadsClient({ initialLeads }: { initialLeads: Lead[] }) 
 
         {/* Kanban view */}
         {view === "kanban" && (
-          <LeadsKanban leads={filteredLeads} />
+          <LeadsKanban leads={filteredLeads} stages={stages} onMoveLead={handleMoveLead} />
         )}
       </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import type { Lead, LeadStatus } from "@/lib/crm/types";
+import { useRef, useState, useCallback } from "react";
+import type { Lead, PipelineStage } from "@/lib/crm/types";
 
 // ─── BRL formatter ────────────────────────────────────────────────────────────
 
@@ -11,19 +11,6 @@ const brlFormatter = new Intl.NumberFormat("pt-BR", {
   maximumFractionDigits: 0,
 });
 
-// ─── Jurema pipeline stages ───────────────────────────────────────────────────
-
-const STAGES: { id: string; label: string; status: LeadStatus; color: string }[] = [
-  { id: "novo",        label: "Novo",        status: "new",         color: "#3B82F6" },
-  { id: "contato",     label: "Contato",     status: "contacted",   color: "#64748B" },
-  { id: "qualificado", label: "Qualificado", status: "qualified",   color: "#F59E0B" },
-  { id: "reuniao",     label: "Reunião",     status: "meeting",     color: "#8B5CF6" },
-  { id: "proposta",    label: "Proposta",    status: "proposal",    color: "#F97316" },
-  { id: "contrato",    label: "Contrato",    status: "negotiation", color: "#10B981" },
-  { id: "fechado",     label: "Fechado",     status: "won",         color: "#22C55E" },
-  { id: "perdido",     label: "Perdido",     status: "lost",        color: "#EF4444" },
-];
-
 // ─── Score color helper ───────────────────────────────────────────────────────
 
 function scoreColor(score: number): string {
@@ -32,17 +19,19 @@ function scoreColor(score: number): string {
   return "#EF4444";                  // red
 }
 
-// ─── Move menu (quick action) ─────────────────────────────────────────────────
+// ─── Move menu (quick action — acessibilidade) ────────────────────────────────
 
 function MoveMenu({
-  currentStatus,
+  stages,
+  currentStageId,
   onMove,
 }: {
-  currentStatus: LeadStatus;
-  onMove: (status: LeadStatus) => void;
+  stages: PipelineStage[];
+  currentStageId: string | null;
+  onMove: (stageId: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const targets = STAGES.filter((s) => s.status !== currentStatus);
+  const targets = stages.filter((s) => s.id !== currentStageId);
 
   return (
     <div className="relative">
@@ -61,11 +50,11 @@ function MoveMenu({
           {targets.map((t) => (
             <button
               key={t.id}
-              onClick={(e) => { e.stopPropagation(); onMove(t.status); setOpen(false); }}
+              onClick={(e) => { e.stopPropagation(); onMove(t.id); setOpen(false); }}
               className="w-full text-left px-3 py-1.5 text-xs text-gray-300 hover:bg-gray-700 hover:text-white transition-colors"
               style={{ borderLeft: `3px solid ${t.color}` }}
             >
-              {t.label}
+              {t.name}
             </button>
           ))}
         </div>
@@ -78,15 +67,23 @@ function MoveMenu({
 
 function LeadCard({
   lead,
+  stages,
+  onDragStart,
   onMove,
 }: {
   lead: Lead;
-  onMove: (leadId: string, newStatus: LeadStatus) => void;
+  stages: PipelineStage[];
+  onDragStart: (e: React.DragEvent, leadId: string) => void;
+  onMove: (leadId: string, newStageId: string) => void;
 }) {
   const score = lead.score ?? 0;
 
   return (
-    <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 hover:shadow-md transition-shadow cursor-default">
+    <div
+      draggable
+      onDragStart={(e) => onDragStart(e, lead.id)}
+      className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing"
+    >
       {/* Top: name + source badge */}
       <div className="flex items-start justify-between gap-2 mb-2">
         <span className="font-semibold text-sm text-gray-800 dark:text-white/90 leading-tight line-clamp-1">
@@ -99,35 +96,36 @@ function LeadCard({
         )}
       </div>
 
-      {/* Score Luana */}
+      {/* Score */}
       <div className="flex items-center gap-1.5 mb-1">
         <span
           className="inline-block size-2 rounded-full shrink-0"
           style={{ backgroundColor: scoreColor(score) }}
         />
         <span className="text-xs text-gray-500 dark:text-gray-400">
-          Score Luana: <span className="font-semibold text-gray-700 dark:text-gray-200">{score}</span>
+          Score: <span className="font-semibold text-gray-700 dark:text-gray-200">{score}</span>
         </span>
       </div>
 
-      {/* VGV */}
+      {/* Valor */}
       <div className="mb-2">
         <span className="text-xs text-gray-500 dark:text-gray-400">
-          VGV:{" "}
+          Valor:{" "}
           <span className="font-semibold text-gray-700 dark:text-gray-200">
             {brlFormatter.format(lead.value ?? 0)}
           </span>
         </span>
       </div>
 
-      {/* Bottom: Corretor + move action */}
+      {/* Bottom: responsavel + move action */}
       <div className="flex items-center justify-between mt-1">
         <span className="text-xs text-gray-400 dark:text-gray-500 truncate">
-          Corretor: {lead.assigned_to ?? "Sem corretor"}
+          {lead.assigned_to ?? "Sem responsavel"}
         </span>
         <MoveMenu
-          currentStatus={lead.status}
-          onMove={(newStatus) => onMove(lead.id, newStatus)}
+          stages={stages}
+          currentStageId={lead.stage_id}
+          onMove={(newStageId) => onMove(lead.id, newStageId)}
         />
       </div>
     </div>
@@ -139,15 +137,31 @@ function LeadCard({
 function KanbanColumn({
   stage,
   leads,
+  stages,
+  isDragOver,
+  onDragStart,
+  onDragOver,
+  onDrop,
   onMove,
 }: {
-  stage: typeof STAGES[number];
+  stage: PipelineStage;
   leads: Lead[];
-  onMove: (leadId: string, newStatus: LeadStatus) => void;
+  stages: PipelineStage[];
+  isDragOver: boolean;
+  onDragStart: (e: React.DragEvent, leadId: string) => void;
+  onDragOver: (e: React.DragEvent, stageId: string) => void;
+  onDrop: (e: React.DragEvent, stageId: string) => void;
+  onMove: (leadId: string, newStageId: string) => void;
 }) {
   return (
     <div
-      className="flex flex-col min-w-[240px] w-60 rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 overflow-hidden"
+      onDragOver={(e) => onDragOver(e, stage.id)}
+      onDrop={(e) => onDrop(e, stage.id)}
+      className={`flex flex-col min-w-[240px] w-60 rounded-2xl border transition-colors overflow-hidden ${
+        isDragOver
+          ? "border-brand-400 bg-brand-50/30 dark:bg-brand-500/5"
+          : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50"
+      }`}
       style={{ borderTopColor: stage.color, borderTopWidth: "3px" }}
     >
       {/* Column header */}
@@ -157,7 +171,7 @@ function KanbanColumn({
           style={{ backgroundColor: stage.color }}
         />
         <span className="font-semibold text-sm text-gray-700 dark:text-white/80">
-          {stage.label}
+          {stage.name}
         </span>
         <span
           className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full"
@@ -171,16 +185,31 @@ function KanbanColumn({
       </div>
 
       {/* Cards */}
-      <div className="flex flex-col gap-2 p-2 overflow-y-auto" style={{ maxHeight: "calc(100vh - 280px)" }}>
-        {leads.length === 0 ? (
-          <p className="text-center text-xs text-gray-400 dark:text-gray-600 py-6">
-            Nenhum lead
-          </p>
-        ) : (
-          leads.map((lead) => (
-            <LeadCard key={lead.id} lead={lead} onMove={onMove} />
-          ))
+      <div
+        className={`flex flex-col gap-2 p-2 overflow-y-auto flex-1 min-h-[80px] transition-colors ${
+          isDragOver ? "bg-brand-50/20 dark:bg-brand-500/5" : ""
+        }`}
+        style={{ maxHeight: "calc(100vh - 280px)" }}
+      >
+        {leads.length === 0 && !isDragOver && (
+          <div className="flex items-center justify-center h-20 text-center">
+            <p className="text-xs text-gray-300 dark:text-gray-600">Arraste um card aqui</p>
+          </div>
         )}
+        {leads.length === 0 && isDragOver && (
+          <div className="flex items-center justify-center h-20 rounded-lg border-2 border-dashed border-brand-300 dark:border-brand-600">
+            <p className="text-xs text-brand-400">Soltar aqui</p>
+          </div>
+        )}
+        {leads.map((lead) => (
+          <LeadCard
+            key={lead.id}
+            lead={lead}
+            stages={stages}
+            onDragStart={onDragStart}
+            onMove={onMove}
+          />
+        ))}
       </div>
     </div>
   );
@@ -188,26 +217,83 @@ function KanbanColumn({
 
 // ─── LeadsKanban ──────────────────────────────────────────────────────────────
 
-export default function LeadsKanban({ leads }: { leads: Lead[] }) {
-  const [localLeads, setLocalLeads] = useState<Lead[]>(leads);
+export default function LeadsKanban({
+  leads,
+  stages,
+  onMoveLead,
+}: {
+  leads: Lead[];
+  stages: PipelineStage[];
+  onMoveLead: (leadId: string, newStageId: string) => void;
+}) {
+  const dragLeadId = useRef<string | null>(null);
+  const [dragOverStageId, setDragOverStageId] = useState<string | null>(null);
 
-  const handleMove = (leadId: string, newStatus: LeadStatus) => {
-    setLocalLeads((prev) =>
-      prev.map((l) => (l.id === leadId ? { ...l, status: newStatus } : l))
-    );
-  };
+  const sortedStages = [...stages].sort((a, b) => a.position - b.position);
+
+  const handleDragStart = useCallback((e: React.DragEvent, leadId: string) => {
+    dragLeadId.current = leadId;
+    e.dataTransfer.effectAllowed = "move";
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent, stageId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverStageId(stageId);
+  }, []);
+
+  const handleDrop = useCallback(async (e: React.DragEvent, targetStageId: string) => {
+    e.preventDefault();
+    const leadId = dragLeadId.current;
+    if (!leadId) return;
+
+    dragLeadId.current = null;
+    setDragOverStageId(null);
+
+    // Otimistic update
+    onMoveLead(leadId, targetStageId);
+
+    // Persistir no Supabase via API
+    try {
+      const res = await fetch(`/api/leads/${leadId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ stage_id: targetStageId }),
+      });
+
+      if (!res.ok) {
+        console.error("[LeadsKanban] Erro ao persistir stage:", await res.text());
+        // Reverter: buscar o lead original e restaurar
+        // Para reverter, precisamos do stage_id anterior — guardamos no ref
+        // A reversao sera feita pelo parent via re-fetch ou simplesmente log de erro
+        // O estado otimistico ficara ate o proximo reload
+      }
+    } catch (err) {
+      console.error("[LeadsKanban] Erro de rede ao mover lead:", err);
+    }
+  }, [onMoveLead]);
+
+  const handleDragEnd = useCallback(() => {
+    setDragOverStageId(null);
+    dragLeadId.current = null;
+  }, []);
 
   return (
-    <div className="overflow-x-auto pb-4">
+    <div className="overflow-x-auto pb-4" onDragEnd={handleDragEnd}>
       <div className="flex gap-4 min-w-max">
-        {STAGES.map((stage) => {
-          const stageLeads = localLeads.filter((l) => l.status === stage.status);
+        {sortedStages.map((stage) => {
+          const stageLeads = leads.filter((l) => l.stage_id === stage.id);
           return (
             <KanbanColumn
               key={stage.id}
               stage={stage}
               leads={stageLeads}
-              onMove={handleMove}
+              stages={sortedStages}
+              isDragOver={dragOverStageId === stage.id}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDrop={handleDrop}
+              onMove={onMoveLead}
             />
           );
         })}

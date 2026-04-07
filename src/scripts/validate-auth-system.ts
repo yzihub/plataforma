@@ -214,11 +214,14 @@ async function validateProfileTenantJoin(
 
   const firstProfileId = profiles[0].id;
 
-  const { data: profile, error: joinErr } = await supabase
+  const { data: profileRaw, error: joinErr } = await supabase
     .from("profiles")
     .select("id, tenant_id, tenants(id, name, plan, settings)")
     .eq("id", firstProfileId)
     .single();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const profile = profileRaw as any;
 
   if (joinErr) {
     fail("JOIN: profiles.select tenants", joinErr.message);
@@ -364,7 +367,8 @@ async function main() {
   const supabaseResult = await validateSupabaseConnectivity();
 
   if (supabaseResult?.supabase) {
-    const { supabase, profiles } = supabaseResult;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { supabase, profiles } = supabaseResult as any;
     await validateProfileTenantJoin(supabase, profiles);
     await validateMissingProfile(supabase);
   }
