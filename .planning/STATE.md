@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Quick task 260407-eyq complete — Kanban de Leads com DnD real e persistencia Supabase via PATCH /api/leads/[id]
-last_updated: "2026-04-07T13:58:01.326Z"
+stopped_at: Quick task 260407-ktd complete — Sidebar limpa, rotas quebradas removidas, secao Sistema eliminada
+last_updated: "2026-04-07T15:10:00.000Z"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -80,6 +80,7 @@ None yet.
 | 260407-ejm | Implementar Módulo de Imóveis com Integração Supabase | 2026-04-07 | ef2c3a6 | [260407-ejm-implementar-m-dulo-de-im-veis-com-integr](./quick/260407-ejm-implementar-m-dulo-de-im-veis-com-integr/) |
 | 260407-eyq | Corrigir e Ativar Kanban de Leads com Persistência | 2026-04-07 | 6684d33 | [260407-eyq-corrigir-e-ativar-kanban-de-leads-com-pe](./quick/260407-eyq-corrigir-e-ativar-kanban-de-leads-com-pe/) |
 | 260407-k69 | Finalizar Sistema de Contratos com Ações Essenciais | 2026-04-07 | 95e9acd | [260407-k69-finalizar-sistema-de-contratos-com-a-es-](./quick/260407-k69-finalizar-sistema-de-contratos-com-a-es-/) |
+| 260407-ktd | Ajustar Sidebar Jurema — remover rotas quebradas e seções template | 2026-04-07 | 125525b | [260407-ktd-ajustar-sidebar-jurema](./quick/260407-ktd-ajustar-sidebar-jurema/) |
 
 ### Blockers/Concerns
 
@@ -88,7 +89,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-07T14:17:00.000Z
-Last activity: 2026-04-07 - Completed quick task 260407-k69: Finalizar Sistema de Contratos com Ações Essenciais
-Stopped at: Quick task 260407-eyq complete — Kanban de Leads com DnD real e persistencia Supabase via PATCH /api/leads/[id]
+Last session: 2026-04-07T15:10:00.000Z
+Last activity: 2026-04-07 - Completed quick task 260407-ktd: Ajustar Sidebar Jurema — remover rotas quebradas
+Stopped at: Quick task 260407-ktd complete — Sidebar limpa, rotas quebradas removidas, secao Sistema eliminada
 Resume file: None
