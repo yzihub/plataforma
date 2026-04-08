@@ -45,6 +45,26 @@ export interface N8nProperty {
   updated_at: string;
 }
 
+export interface N8nImovel {
+  id: string;
+  tenant_id: string;
+  titulo_comercial: string;
+  bairro: string | null;
+  valor: number;
+  quartos: number;
+  suites: number;
+  vagas: number;
+  metragem: number | null;
+  descricao_imovel: string | null;
+  foto_principal: string | null;
+  tipo_de_imovel: string | null;
+  finalidade: string | null;
+  link_do_imovel: string | null;
+  status_publicacao: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface N8nContract {
   id: string;
   tenant_id: string;
@@ -112,6 +132,29 @@ export function toN8nProperty(row: any): N8nProperty {
     area_sqm: row.area_sqm ?? null,
     status: row.status,
     link: row.link ?? null,
+    created_at: row.created_at,
+    updated_at: row.updated_at,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function toN8nImovel(row: any): N8nImovel {
+  return {
+    id: row.id,
+    tenant_id: row.tenant_id,
+    titulo_comercial: row.titulo_comercial ?? "",
+    bairro: row.bairro ?? null,
+    valor: row.valor ?? 0,
+    quartos: row.quartos ?? 0,
+    suites: row.suites ?? 0,
+    vagas: row.vagas ?? 0,
+    metragem: row.metragem ?? null,
+    descricao_imovel: row.descricao_imovel ?? null,
+    foto_principal: row.foto_principal ?? null,
+    tipo_de_imovel: row.tipo_de_imovel ?? null,
+    finalidade: row.finalidade ?? null,
+    link_do_imovel: row.link_do_imovel ?? null,
+    status_publicacao: row.status_publicacao ?? "",
     created_at: row.created_at,
     updated_at: row.updated_at,
   };
