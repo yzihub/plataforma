@@ -1,0 +1,285 @@
+{
+  "_meta": {
+    "task": "260407-wba",
+    "workflow_name": "Ler Imoveis JetEngine",
+    "description": "Patch para migrar destino do workflow 'Ler Imoveis JetEngine' de Airtable para Supabase com upsert na tabela imoveis.",
+    "objetivo": "Centralizar dados de imoveis no Supabase (fonte unica de verdade) em vez do Airtable, permitindo que cockpit e agente WhatsApp consumam dados da mesma tabela.",
+    "tenant": "Jurema Brokers — tenant_id: aaaaaaaa-0002-0002-0002-000000000002",
+    "instructions": [
+      "1. Abrir n8n e navegar ate o workflow 'Ler Imoveis JetEngine' (ou nome similar com 'JetEngine' e 'Imoveis').",
+      "2. Localizar o node Airtable (destino atual) — sera completamente removido.",
+      "3. Localizar o node Set que transforma campos do JetEngine (NAO alterar este node).",
+      "4. Remover o node Airtable.",
+      "5. Adicionar novo node do tipo 'Supabase' e configurar conforme NODE_SUPABASE_UPSERT abaixo.",
+      "6. Reconectar conforme WIRING: a saida do node Set vai para a entrada do novo node Supabase.",
+      "7. Verificar que o node HTTP/WordPress de leitura JetEngine e o node Set permanecem inalterados.",
+      "8. Salvar o workflow.",
+      "9. Executar o workflow manualmente e verificar que registros aparecem na tabela imoveis do Supabase.",
+      "10. Verificar no Supabase: SELECT count(*) FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002'."
+    ]
+  },
+
+  "NODE_SUPABASE_UPSERT": {
+    "type": "n8n-nodes-base.supabase",
+    "name": "Supabase — Upsert Imovel",
+    "operation": "upsert",
+    "tableId": "imoveis",
+    "comment": "TABELA CORRETA: 'imoveis'. Operacao: upsert (insert se nao existe, update se ja existe). Chave composta: tenant_id + id_imovel.",
+    "conflictColumns": ["tenant_id", "id_imovel"],
+    "conflictColumns_comment": "Chave composta para upsert — garante que o mesmo imovel do mesmo tenant nao seja duplicado. Se tenant_id + id_imovel ja existe, atualiza. Se nao existe, insere.",
+    "columns": [
+      {
+        "column": "tenant_id",
+        "value": "aaaaaaaa-0002-0002-0002-000000000002",
+        "type": "string",
+        "comment": "VALOR FIXO — hardcoded para Jurema Brokers. NAO usa expressao, e string literal."
+      },
+      {
+        "column": "id_imovel",
+        "value": "={{ $json.id_imovel }}",
+        "type": "string",
+        "comment": "Identificador do imovel, ex: JP-3150. Vem do Set node."
+      },
+      {
+        "column": "titulo_comercial",
+        "value": "={{ $json.titulo_comercial }}",
+        "type": "string"
+      },
+      {
+        "column": "titulo_seo",
+        "value": "={{ $json.titulo_seo }}",
+        "type": "string"
+      },
+      {
+        "column": "descricao_imovel",
+        "value": "={{ $json.descricao_imovel }}",
+        "type": "string"
+      },
+      {
+        "column": "bairro",
+        "value": "={{ $json.bairro }}",
+        "type": "string"
+      },
+      {
+        "column": "tipo_de_imovel",
+        "value": "={{ $json.tipo_de_imovel }}",
+        "type": "string",
+        "comment": "Ex: Apartamento, Casa, Sala Comercial"
+      },
+      {
+        "column": "finalidade",
+        "value": "={{ $json.finalidade }}",
+        "type": "string",
+        "comment": "Ex: Venda, Aluguel"
+      },
+      {
+        "column": "valor",
+        "value": "={{ $json.valor }}",
+        "type": "string",
+        "comment": "Preco do imovel conforme armazenado na tabela"
+      },
+      {
+        "column": "condominio",
+        "value": "={{ $json.condominio }}",
+        "type": "string",
+        "comment": "Valor do condominio, se aplicavel"
+      },
+      {
+        "column": "metragem",
+        "value": "={{ $json.metragem }}",
+        "type": "string"
+      },
+      {
+        "column": "quartos",
+        "value": "={{ $json.quartos }}",
+        "type": "string"
+      },
+      {
+        "column": "suites",
+        "value": "={{ $json.suites }}",
+        "type": "string"
+      },
+      {
+        "column": "vagas",
+        "value": "={{ $json.vagas }}",
+        "type": "string"
+      },
+      {
+        "column": "foto_principal",
+        "value": "={{ $json.foto_principal }}",
+        "type": "string",
+        "comment": "URL da foto principal do imovel"
+      },
+      {
+        "column": "link_do_imovel",
+        "value": "={{ $json.link_do_imovel }}",
+        "type": "string",
+        "comment": "Link direto para o imovel no site"
+      },
+      {
+        "column": "link_redes_sociais",
+        "value": "={{ $json.link_redes_sociais }}",
+        "type": "string",
+        "comment": "Link para redes sociais ou divulgacao do imovel"
+      },
+      {
+        "column": "status_publicacao",
+        "value": "={{ $json.status_publicacao }}",
+        "type": "string",
+        "comment": "published / draft / archived"
+      }
+    ]
+  },
+
+  "NODE_SET_MAPPING": {
+    "comment": "Referencia do mapeamento esperado no node Set existente (NAO ALTERAR). O Set node recebe os dados brutos do JetEngine e os transforma para os nomes de campo da tabela imoveis.",
+    "note": "Se o workflow atual nao tem um Set node intermediario, os campos abaixo devem ser mapeados diretamente no node Supabase usando as expressoes do JetEngine ($json.campo_jetengine).",
+    "fields": [
+      {
+        "name": "id_imovel",
+        "value": "={{ $json.id_imovel }}",
+        "comment": "Campo do JetEngine — identificador unico do imovel"
+      },
+      {
+        "name": "titulo_comercial",
+        "value": "={{ $json.titulo_comercial }}"
+      },
+      {
+        "name": "titulo_seo",
+        "value": "={{ $json.titulo_seo }}"
+      },
+      {
+        "name": "descricao_imovel",
+        "value": "={{ $json.descricao_imovel }}"
+      },
+      {
+        "name": "bairro",
+        "value": "={{ $json.bairro }}"
+      },
+      {
+        "name": "tipo_de_imovel",
+        "value": "={{ $json.tipo_de_imovel }}"
+      },
+      {
+        "name": "finalidade",
+        "value": "={{ $json.finalidade }}"
+      },
+      {
+        "name": "valor",
+        "value": "={{ $json.valor }}"
+      },
+      {
+        "name": "condominio",
+        "value": "={{ $json.condominio }}"
+      },
+      {
+        "name": "metragem",
+        "value": "={{ $json.metragem }}"
+      },
+      {
+        "name": "quartos",
+        "value": "={{ $json.quartos }}"
+      },
+      {
+        "name": "suites",
+        "value": "={{ $json.suites }}"
+      },
+      {
+        "name": "vagas",
+        "value": "={{ $json.vagas }}"
+      },
+      {
+        "name": "foto_principal",
+        "value": "={{ $json.foto_principal }}"
+      },
+      {
+        "name": "link_do_imovel",
+        "value": "={{ $json.link_do_imovel }}"
+      },
+      {
+        "name": "link_redes_sociais",
+        "value": "={{ $json.link_redes_sociais }}"
+      },
+      {
+        "name": "status_publicacao",
+        "value": "={{ $json.status_publicacao }}"
+      }
+    ],
+    "note_tenant_id": "tenant_id NAO aparece no Set node — e hardcoded diretamente no node Supabase como valor fixo 'aaaaaaaa-0002-0002-0002-000000000002'."
+  },
+
+  "WIRING": {
+    "comment": "Instrucoes de reconexao dos nodes no workflow",
+    "before": "HTTP/WordPress JetEngine -> [Set node opcional] -> Airtable",
+    "after": "HTTP/WordPress JetEngine -> [Set node opcional] -> Supabase (upsert imoveis)",
+    "steps": [
+      "1. Remover o node Airtable: clicar no node e pressionar Delete (ou clicar com botao direito -> Delete).",
+      "2. Adicionar novo node Supabase: clicar em '+' na canvas, buscar 'Supabase', selecionar 'Supabase'.",
+      "3. Configurar credencial Supabase existente (mesma usada nos outros workflows).",
+      "4. Configurar operacao: 'Upsert'.",
+      "5. Configurar tabela: 'imoveis'.",
+      "6. Configurar 'Conflict Columns': adicionar 'tenant_id' e 'id_imovel' (chave composta).",
+      "7. Configurar os 18 campos conforme NODE_SUPABASE_UPSERT.columns acima.",
+      "8. Conectar a saida do node Set (ou do node HTTP se nao houver Set) a entrada do novo node Supabase.",
+      "9. Garantir que a ligacao anterior para o Airtable foi removida."
+    ],
+    "nodes_nao_alterar": [
+      "Node HTTP Request / WordPress JetEngine — leitura do catalogo de imoveis",
+      "Node Set — transformacao de campos (se existir)",
+      "Qualquer node de Loop ou SplitInBatches antes do Airtable"
+    ]
+  },
+
+  "SCHEMA_REFERENCE": {
+    "table": "imoveis",
+    "supabase_url": "https://dwmbklfkrtumfaxrbxio.supabase.co",
+    "tenant_jurema": "aaaaaaaa-0002-0002-0002-000000000002",
+    "upsert_conflict_key": "UNIQUE (tenant_id, id_imovel)",
+    "source": "Confirmado por patches 260407-r8a e 260407-rnb — tabela real derivada do CSV clientes/jurema-brokers/data/IMOVEIS-Grid view.csv",
+    "all_18_columns": [
+      "tenant_id",
+      "id_imovel",
+      "titulo_comercial",
+      "titulo_seo",
+      "descricao_imovel",
+      "bairro",
+      "tipo_de_imovel",
+      "finalidade",
+      "valor",
+      "condominio",
+      "metragem",
+      "quartos",
+      "suites",
+      "vagas",
+      "foto_principal",
+      "link_do_imovel",
+      "link_redes_sociais",
+      "status_publicacao"
+    ],
+    "campos_nao_existem_na_tabela_imoveis": [
+      "title",
+      "photo_url",
+      "price",
+      "location",
+      "area_sqm",
+      "status",
+      "link",
+      "neighborhood",
+      "property_type",
+      "publication_status",
+      "tags",
+      "purpose",
+      "construction_status",
+      "id"
+    ],
+    "nota_tabela_properties": "As migrations 008 e 009 criaram a tabela 'properties' com schema diferente — esta tabela NAO e usada. A tabela real com dados de Jurema Brokers e 'imoveis'."
+  },
+
+  "VERIFICATION": {
+    "comment": "Comandos para verificar que o workflow esta funcionando corretamente apos aplicar o patch",
+    "sql_check_count": "SELECT count(*) FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002';",
+    "sql_check_sample": "SELECT id_imovel, titulo_comercial, bairro, status_publicacao FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002' LIMIT 5;",
+    "sql_check_upsert": "SELECT id_imovel, titulo_comercial, updated_at FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002' ORDER BY updated_at DESC LIMIT 3;",
+    "expected": "Registros de imoveis Jurema Brokers presentes na tabela imoveis. Ao re-executar o workflow, contagem permanece igual (upsert nao duplica). updated_at deve ser atualizado para execucoes subsequentes."
+  }
+}
