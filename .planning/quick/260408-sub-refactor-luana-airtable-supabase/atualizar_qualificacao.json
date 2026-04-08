@@ -1,0 +1,171 @@
+{
+  "name": "atualizar_qualificacao",
+  "_comment": "Workflow: Luana tool — atualizar qualificação do lead. Airtable → Supabase. Architecture: Webhook → Normalize → Get Lead → Build Context → UPSERT Lead → Respond",
+  "nodes": [
+    {
+      "id": "aq-1-webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "atualizar-qualificacao",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "aq-2-normalize",
+      "name": "Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300],
+      "parameters": {
+        "jsCode": "// Normalize: clean phone, extract tenant_id and qualificação fields\nconst telefone = String($json.telefone || '').replace(/\\D/g, '')\nconst tenant_id = $json.tenant_id || ''\nconst sessionId = $json.sessionId || $json.session_id || ''\nconst messageType = $json.messageType || $json.message_type || 'text'\n\nreturn [{\n  json: {\n    ...$json,\n    telefone_limpo: telefone,\n    tenant_id,\n    sessionId,\n    messageType\n  }\n}]"
+      }
+    },
+    {
+      "id": "aq-3-get-lead",
+      "name": "Get Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $vars.SUPABASE_URL + '/rest/v1/leads' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $vars.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $vars.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id,tenant_id,phone,name,status,score,metadata,stage_id,created_at"
+            },
+            {
+              "name": "tenant_id",
+              "value": "={{ 'eq.' + $json.tenant_id }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ 'eq.' + $json.telefone_limpo }}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "aq-4-build-context",
+      "name": "Build Context",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300],
+      "parameters": {
+        "jsCode": "// $json = array from Supabase GET: [] if new lead, [{...}] if found\n// input = original qualificação data from webhook (via Normalize)\nconst input = $('Normalize').first().json\nconst existingLead = Array.isArray($json) && $json.length > 0 ? $json[0] : null\nconst telefone = input.telefone_limpo\n\n// Preserve ALL previous metadata — never overwrite, only merge\nconst antigo = existingLead ? (existingLead.metadata || {}) : {}\n\n// New qualification fields from this agent call\nconst novo = {\n  objetivo: input.objetivo,\n  faixa_valor: input.faixa_valor,\n  bairro_interesse: input.bairro,\n  interesse_principal: input.interesse,\n  finalidade: input.finalidade,\n  origem: input.origem,\n  localizacao_visita: input.localizacao_visita,\n  session_id: input.sessionId,\n  message_type: input.messageType\n}\n\n// Strip undefined/null/empty so we don't overwrite with blanks\nObject.keys(novo).forEach(k => {\n  if (novo[k] === undefined || novo[k] === null || novo[k] === '') {\n    delete novo[k]\n  }\n})\n\nreturn [{\n  json: {\n    tenant_id: input.tenant_id,\n    phone: telefone,\n    name: existingLead ? existingLead.name : (input.nome || input.name || telefone),\n    metadata: { ...antigo, ...novo }\n  }\n}]"
+      }
+    },
+    {
+      "id": "aq-5-upsert-lead",
+      "name": "UPSERT Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.SUPABASE_URL + '/rest/v1/leads?on_conflict=tenant_id,phone' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $vars.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $vars.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify($json) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "aq-6-respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1340, 300],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, lead_id: $json[0] ? $json[0].id : $json.id, message: 'Qualificação atualizada' }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{"node": "Normalize", "type": "main", "index": 0}]
+      ]
+    },
+    "Normalize": {
+      "main": [
+        [{"node": "Get Lead", "type": "main", "index": 0}]
+      ]
+    },
+    "Get Lead": {
+      "main": [
+        [{"node": "Build Context", "type": "main", "index": 0}]
+      ]
+    },
+    "Build Context": {
+      "main": [
+        [{"node": "UPSERT Lead", "type": "main", "index": 0}]
+      ]
+    },
+    "UPSERT Lead": {
+      "main": [
+        [{"node": "Respond", "type": "main", "index": 0}]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": ""
+  }
+}
