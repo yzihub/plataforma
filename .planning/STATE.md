@@ -3,8 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Quick task 260407-ktd complete — Sidebar limpa, rotas quebradas removidas, secao Sistema eliminada
-last_updated: "2026-04-07T15:10:00.000Z"
+stopped_at: Completed quick-260408-rzc — verificacao local do workflow atualizar_qualificacao, checkpoint human-verify pendente
+last_updated: "2026-04-08T23:13:48.885Z"
+last_activity: "2026-04-08 - Completed quick task 260408-sow: Padronizar entrada do lead no Supabase — workflow principal Luana"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -89,6 +90,7 @@ None yet.
 | 260408-c28 | Ajustar Luana para buscar imóveis no YZI Supabase — HTTP Request GET, 14 campos, status Publicado | 2026-04-08 | 34705e7 | [260408-c28-ajustar-luana-para-buscar-im-veis-no-yzi](./quick/260408-c28-ajustar-luana-para-buscar-im-veis-no-yzi/) |
 | 260408-jth | Enriquecer query de imoveis para uso do agente Luana | 2026-04-08 | 287b200 | [260408-jth-enriquecer-query-de-imoveis-para-uso-do-](./quick/260408-jth-enriquecer-query-de-imoveis-para-uso-do-/) |
 | 260408-rqi | Padronizar entrada do lead no Supabase — UNIQUE(tenant_id,phone) + on_conflict fix + prompt cleanup | 2026-04-08 | e17f1d9 | [260408-rqi-padronizar-entrada-do-lead-no-supabase](./quick/260408-rqi-padronizar-entrada-do-lead-no-supabase/) |
+| 260408-sow | Padronizar entrada do lead no Supabase — migrar workflow principal Luana de Airtable para Supabase leads | 2026-04-08 | pending | [260408-sow-padronizar-entrada-do-lead-no-supabase](./quick/260408-sow-padronizar-entrada-do-lead-no-supabase/) |
 
 ### Blockers/Concerns
 
@@ -97,7 +99,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-08T05:30:00Z
+Last session: 2026-04-08T23:13:48.875Z
 Last activity: 2026-04-08 - Completed quick task 260408-rqi: Padronizar entrada do lead no Supabase
-Stopped at: Quick task 260408-rqi complete — migration 012, on_conflict fix, prompt cleanup done
+Stopped at: Completed quick-260408-rzc — verificacao local do workflow atualizar_qualificacao, checkpoint human-verify pendente
 Resume file: None
