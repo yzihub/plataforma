@@ -1,158 +1,81 @@
 {
   "_meta": {
-    "task": "260408-3os",
-    "supersedes": "260408-2i3 (usava node nativo Supabase com credencial JUREMA — errado)",
+    "task": "260408-3os (revisado)",
+    "supersedes": "260408-2i3 — ERROS: operacao 'upsert' nao existe no node Supabase nativo; credencial 'JUREMA' aponta banco errado",
     "workflow_name": "Ler Imoveis JetEngine",
-    "description": "Patch corrigido: substitui node Supabase nativo por HTTP Request que chama REST API do Supabase YZI diretamente. Sem dependencia de credencial configurada no n8n.",
-    "objetivo": "Upsert de imoveis na tabela 'imoveis' do Supabase YZI (banco correto) via REST API, com chave composta tenant_id + id_imovel.",
-    "tenant": "Jurema Brokers — tenant_id: aaaaaaaa-0002-0002-0002-000000000002",
-    "supabase_project": "YZI — https://dwmbklfkrtumfaxrbxio.supabase.co",
-    "instructions": [
+    "por_que_nao_salvou": {
+      "erro_1_operacao_invalida": "'upsert' nao e uma operacao valida no node n8n-nodes-base.supabase. Operacoes disponíveis: create, delete, get, getAll, update. O node falha silenciosamente ou com erro e nao grava nada.",
+      "erro_2_credencial_errada": "Credencial 'Supabase JUREMA' aponta para projeto Supabase diferente do YZI. Mesmo que a operacao existisse, gravaria no banco errado.",
+      "solucao": "Usar operation='update' + credencial 'Supabase YZI' com URL e service role key do projeto YZI."
+    },
+    "instrucoes_credencial": {
+      "passo": "Criar (ou verificar) credencial no n8n chamada 'Supabase YZI'",
+      "tipo": "supabaseApi",
+      "campos": {
+        "host": "https://dwmbklfkrtumfaxrbxio.supabase.co",
+        "serviceRole": "REDACTED_SUPABASE_SERVICE_KEY"
+      },
+      "aviso": "NAO usar a credencial 'Supabase JUREMA' — ela aponta para outro projeto."
+    },
+    "instrucoes_aplicacao": [
       "1. Abrir n8n e navegar ate o workflow 'Ler Imoveis JetEngine'.",
-      "2. Localizar o node Supabase (ou Airtable, se ainda nao foi trocado) — sera removido.",
-      "3. Remover esse node destino.",
-      "4. Adicionar novo node 'HTTP Request'.",
-      "5. Configurar conforme NODE_HTTP_REQUEST abaixo.",
-      "6. Conectar a saida do node Set (ou ultimo node antes do destino) na entrada do HTTP Request.",
-      "7. Salvar o workflow.",
-      "8. Executar manualmente e verificar registros no Supabase YZI.",
+      "2. Localizar o node Supabase (ou Airtable) destino — sera substituido.",
+      "3. Remover esse node.",
+      "4. Adicionar novo node 'Supabase'.",
+      "5. Selecionar credencial 'Supabase YZI' (criar se nao existir — ver instrucoes_credencial acima).",
+      "6. Configurar conforme NODE_SUPABASE_UPDATE abaixo.",
+      "7. Conectar saida do node Set na entrada do novo node Supabase.",
+      "8. Salvar e testar.",
       "9. Verificar: SELECT count(*) FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002';"
     ]
   },
 
-  "NODE_HTTP_REQUEST": {
-    "type": "n8n-nodes-base.httpRequest",
-    "name": "Supabase YZI — Upsert Imovel",
-    "comment": "Upsert via REST API do Supabase YZI. Nao usa credencial nativa n8n — chaves hardcoded nos headers. Conflict por tenant_id + id_imovel.",
-    "method": "POST",
-    "url": "https://dwmbklfkrtumfaxrbxio.supabase.co/rest/v1/imoveis?on_conflict=tenant_id,id_imovel",
-    "url_comment": "?on_conflict=tenant_id,id_imovel define a chave composta para upsert (INSERT ... ON CONFLICT DO UPDATE)",
-    "authentication": "none",
-    "authentication_comment": "Sem credencial n8n — autenticacao feita via headers apikey e Authorization abaixo",
-    "headers": [
-      {
-        "name": "apikey",
-        "value": "REDACTED_SUPABASE_SERVICE_KEY",
-        "comment": "Service Role Key do Supabase YZI — necessario para bypass de RLS e escrita direta"
-      },
-      {
-        "name": "Authorization",
-        "value": "Bearer REDACTED_SUPABASE_SERVICE_KEY",
-        "comment": "Mesmo service role key no formato Bearer"
-      },
-      {
-        "name": "Content-Type",
-        "value": "application/json"
-      },
-      {
-        "name": "Prefer",
-        "value": "resolution=merge-duplicates",
-        "comment": "Ativa o comportamento UPSERT no PostgREST — se o registro ja existe (conflict), atualiza; se nao existe, insere."
-      }
-    ],
-    "body": {
-      "type": "json",
-      "comment": "Body e um objeto JSON com os 18 campos. Cada campo usa expressao n8n $json.campo para puxar do node Set anterior.",
-      "fields": {
-        "tenant_id": "aaaaaaaa-0002-0002-0002-000000000002",
-        "tenant_id_comment": "VALOR FIXO — hardcoded para Jurema Brokers. NAO e expressao.",
-        "id_imovel": "={{ $json.id_imovel }}",
-        "titulo_comercial": "={{ $json.titulo_comercial }}",
-        "titulo_seo": "={{ $json.titulo_seo }}",
-        "descricao_imovel": "={{ $json.descricao_imovel }}",
-        "bairro": "={{ $json.bairro }}",
-        "tipo_de_imovel": "={{ $json.tipo_de_imovel }}",
-        "finalidade": "={{ $json.finalidade }}",
-        "valor": "={{ $json.valor }}",
-        "condominio": "={{ $json.condominio }}",
-        "metragem": "={{ $json.metragem }}",
-        "quartos": "={{ $json.quartos }}",
-        "suites": "={{ $json.suites }}",
-        "vagas": "={{ $json.vagas }}",
-        "foto_principal": "={{ $json.foto_principal }}",
-        "link_do_imovel": "={{ $json.link_do_imovel }}",
-        "link_redes_sociais": "={{ $json.link_redes_sociais }}",
-        "status_publicacao": "={{ $json.status_publicacao }}"
-      }
+  "NODE_SUPABASE_UPDATE": {
+    "type": "n8n-nodes-base.supabase",
+    "name": "Supabase YZI — Update Imovel",
+    "credential": "Supabase YZI",
+    "credential_comment": "Credencial do projeto YZI — host: dwmbklfkrtumfaxrbxio.supabase.co, service role key do .env.local",
+
+    "resource": "row",
+    "operation": "update",
+    "operation_comment": "UPDATE — upsert nao existe no node nativo. UPDATE atualiza registros existentes filtrados pelo Must Match abaixo.",
+
+    "tableId": "imoveis",
+
+    "filterType": "manual",
+    "filterType_comment": "Build Manually — configurar as condicoes graficamente no n8n",
+
+    "matchType": "allFilters",
+    "matchType_comment": "All Select Conditions — equivale a WHERE id_imovel = X AND tenant_id = Y (ambas devem ser satisfeitas)",
+
+    "must_match_config": {
+      "display_label": "Must Match",
+      "value": "All Select Conditions",
+      "comment": "Selecionar 'All Select Conditions' para garantir que o UPDATE so afeta registros do tenant correto com o id_imovel certo",
+      "conditions": [
+        {
+          "fieldName": "id_imovel",
+          "condition": "eq",
+          "value": "={{ $json.id_imovel }}",
+          "comment": "Identificador unico do imovel vindo do Set node — ex: JP-3150"
+        },
+        {
+          "fieldName": "tenant_id",
+          "condition": "eq",
+          "value": "aaaaaaaa-0002-0002-0002-000000000002",
+          "comment": "VALOR FIXO — filtra apenas registros da Jurema Brokers. Previne update acidental em outro tenant."
+        }
+      ],
+      "sql_equivalente": "WHERE id_imovel = '{{ $json.id_imovel }}' AND tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002'"
     },
-    "body_expression_n8n": "={{ {\n  \"tenant_id\": \"aaaaaaaa-0002-0002-0002-000000000002\",\n  \"id_imovel\": $json.id_imovel,\n  \"titulo_comercial\": $json.titulo_comercial,\n  \"titulo_seo\": $json.titulo_seo,\n  \"descricao_imovel\": $json.descricao_imovel,\n  \"bairro\": $json.bairro,\n  \"tipo_de_imovel\": $json.tipo_de_imovel,\n  \"finalidade\": $json.finalidade,\n  \"valor\": $json.valor,\n  \"condominio\": $json.condominio,\n  \"metragem\": $json.metragem,\n  \"quartos\": $json.quartos,\n  \"suites\": $json.suites,\n  \"vagas\": $json.vagas,\n  \"foto_principal\": $json.foto_principal,\n  \"link_do_imovel\": $json.link_do_imovel,\n  \"link_redes_sociais\": $json.link_redes_sociais,\n  \"status_publicacao\": $json.status_publicacao\n} }}",
-    "body_expression_comment": "Alternativa: usar 'Expression' mode no body do HTTP Request e colar a expressao acima. Isso mapeia todos os campos em um unico objeto por execucao."
-  },
 
-  "N8N_NODE_CONFIG_FULL": {
-    "comment": "Configuracao completa do node HTTP Request no formato interno do n8n para quem preferir importar via JSON do workflow",
-    "id": "http-supabase-upsert-imovel",
-    "name": "Supabase YZI — Upsert Imovel",
-    "type": "n8n-nodes-base.httpRequest",
-    "typeVersion": 4.2,
-    "parameters": {
-      "method": "POST",
-      "url": "https://dwmbklfkrtumfaxrbxio.supabase.co/rest/v1/imoveis?on_conflict=tenant_id,id_imovel",
-      "authentication": "none",
-      "sendHeaders": true,
-      "headerParameters": {
-        "parameters": [
-          {
-            "name": "apikey",
-            "value": "REDACTED_SUPABASE_SERVICE_KEY"
-          },
-          {
-            "name": "Authorization",
-            "value": "Bearer REDACTED_SUPABASE_SERVICE_KEY"
-          },
-          {
-            "name": "Content-Type",
-            "value": "application/json"
-          },
-          {
-            "name": "Prefer",
-            "value": "resolution=merge-duplicates"
-          }
-        ]
-      },
-      "sendBody": true,
-      "contentType": "raw",
-      "rawContentType": "application/json",
-      "body": "={{ JSON.stringify({\n  \"tenant_id\": \"aaaaaaaa-0002-0002-0002-000000000002\",\n  \"id_imovel\": $json.id_imovel,\n  \"titulo_comercial\": $json.titulo_comercial,\n  \"titulo_seo\": $json.titulo_seo,\n  \"descricao_imovel\": $json.descricao_imovel,\n  \"bairro\": $json.bairro,\n  \"tipo_de_imovel\": $json.tipo_de_imovel,\n  \"finalidade\": $json.finalidade,\n  \"valor\": $json.valor,\n  \"condominio\": $json.condominio,\n  \"metragem\": $json.metragem,\n  \"quartos\": $json.quartos,\n  \"suites\": $json.suites,\n  \"vagas\": $json.vagas,\n  \"foto_principal\": $json.foto_principal,\n  \"link_do_imovel\": $json.link_do_imovel,\n  \"link_redes_sociais\": $json.link_redes_sociais,\n  \"status_publicacao\": $json.status_publicacao\n}) }}",
-      "options": {}
-    }
-  },
+    "dataToSend": "autoMapInputData",
+    "dataToSend_comment": "Auto-Map Input Data — mapeia automaticamente todos os campos do node Set para as colunas da tabela. Funciona porque o Set node ja usa os nomes exatos das colunas da tabela 'imoveis'.",
 
-  "WIRING": {
-    "comment": "Instrucoes de reconexao dos nodes no workflow",
-    "before": "HTTP JetEngine -> Set (mapeamento) -> [Airtable ou Supabase nativo — REMOVER]",
-    "after": "HTTP JetEngine -> Set (mapeamento) -> HTTP Request (Supabase YZI REST API)",
-    "steps": [
-      "1. Remover o node destino atual (Airtable ou Supabase nativo).",
-      "2. Adicionar novo node: '+' na canvas -> buscar 'HTTP Request' -> selecionar.",
-      "3. Configurar Method: POST.",
-      "4. Configurar URL: https://dwmbklfkrtumfaxrbxio.supabase.co/rest/v1/imoveis?on_conflict=tenant_id,id_imovel",
-      "5. Em 'Headers': adicionar os 4 headers listados em NODE_HTTP_REQUEST.headers.",
-      "6. Em 'Body': selecionar 'Raw/JSON' e colar a expressao de N8N_NODE_CONFIG_FULL.parameters.body.",
-      "7. Conectar saida do node Set na entrada do novo HTTP Request.",
-      "8. Salvar e testar.",
-      "IMPORTANTE: NAO alterar o node Set nem o node HTTP/JetEngine de leitura."
-    ],
-    "nodes_nao_alterar": [
-      "Node HTTP Request / WordPress JetEngine — leitura do catalogo",
-      "Node Set — mapeamento de campos",
-      "Qualquer node de Loop/SplitInBatches antes do destino"
-    ]
-  },
+    "inputsToIgnore": "",
+    "inputsToIgnore_comment": "Deixar vazio — todos os 17 campos do Set node serao enviados. tenant_id NAO vem do Set node, entao nao sera sobrescrito (esta apenas no Must Match/WHERE).",
 
-  "DIFERENCA_DO_PATCH_ANTERIOR": {
-    "patch_260408_2i3": "Usava n8n-nodes-base.supabase (node nativo) com credencial 'Supabase JUREMA' — apontava para banco errado",
-    "este_patch_260408_3os": "Usa n8n-nodes-base.httpRequest com service role key do Supabase YZI hardcoded nos headers — banco correto, sem dependencia de credencial n8n"
-  },
-
-  "SCHEMA_REFERENCE": {
-    "table": "imoveis",
-    "supabase_url": "https://dwmbklfkrtumfaxrbxio.supabase.co",
-    "tenant_jurema": "aaaaaaaa-0002-0002-0002-000000000002",
-    "upsert_mechanism": "POST /rest/v1/imoveis?on_conflict=tenant_id,id_imovel + Prefer: resolution=merge-duplicates",
-    "all_18_columns": [
-      "tenant_id",
-      "id_imovel",
+    "campos_que_serao_atualizados": [
       "titulo_comercial",
       "titulo_seo",
       "descricao_imovel",
@@ -169,13 +92,78 @@
       "link_do_imovel",
       "link_redes_sociais",
       "status_publicacao"
+    ],
+    "campos_nao_atualizados": [
+      "id_imovel (esta no Must Match — filtro, nao atualiza)",
+      "tenant_id (esta no Must Match — filtro, nao atualiza)"
     ]
+  },
+
+  "N8N_NODE_JSON_PARA_IMPORTAR": {
+    "comment": "Configuracao JSON do node no formato interno n8n. Pode ser colado diretamente no editor JSON do workflow.",
+    "node": {
+      "id": "supabase-update-imovel",
+      "name": "Supabase YZI — Update Imovel",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "credentials": {
+        "supabaseApi": {
+          "name": "Supabase YZI"
+        }
+      },
+      "parameters": {
+        "resource": "row",
+        "operation": "update",
+        "tableId": "imoveis",
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id_imovel",
+              "condition": "eq",
+              "keyValue": "={{ $json.id_imovel }}"
+            },
+            {
+              "keyName": "tenant_id",
+              "condition": "eq",
+              "keyValue": "aaaaaaaa-0002-0002-0002-000000000002"
+            }
+          ]
+        },
+        "dataToSend": "autoMapInputData",
+        "inputsToIgnore": ""
+      }
+    }
+  },
+
+  "AVISO_LIMITACAO_UPDATE": {
+    "importante": "UPDATE so atualiza registros que JA EXISTEM na tabela 'imoveis'. Se um imovel novo do JetEngine nao tiver registro correspondente, o UPDATE nao cria — simplesmente nao faz nada para esse item.",
+    "solucao_se_necessario_inserir_novos": "Adicionar um node Supabase 'Create' antes do Update, com um bloco de tratamento de erro (Continue on Error), para inserir registros novos antes de tentar atualizar.",
+    "para_carga_inicial": "Se a tabela 'imoveis' ainda nao tem dados da Jurema, usar operation='create' na primeira carga. Depois trocar para 'update'."
+  },
+
+  "WIRING": {
+    "antes": "HTTP JetEngine -> Set (mapeamento) -> [Airtable ou Supabase com upsert — REMOVER]",
+    "depois": "HTTP JetEngine -> Set (mapeamento) -> Supabase YZI (update, Must Match: id_imovel + tenant_id)",
+    "nodes_nao_alterar": [
+      "Node HTTP Request / WordPress JetEngine — leitura do catalogo",
+      "Node Set — mapeamento de campos",
+      "Qualquer node de Loop/SplitInBatches antes do destino"
+    ]
+  },
+
+  "SCHEMA_REFERENCE": {
+    "table": "imoveis",
+    "supabase_url": "https://dwmbklfkrtumfaxrbxio.supabase.co",
+    "tenant_jurema": "aaaaaaaa-0002-0002-0002-000000000002",
+    "pk_constraint": "UNIQUE (tenant_id, id_imovel)"
   },
 
   "VERIFICATION": {
     "sql_check_count": "SELECT count(*) FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002';",
     "sql_check_sample": "SELECT id_imovel, titulo_comercial, bairro, status_publicacao FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002' LIMIT 5;",
-    "sql_check_upsert": "SELECT id_imovel, titulo_comercial, updated_at FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002' ORDER BY updated_at DESC LIMIT 3;",
-    "expected": "Registros presentes. Re-execucao nao duplica (upsert). updated_at atualizado a cada execucao."
+    "sql_check_update": "SELECT id_imovel, titulo_comercial, updated_at FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002' ORDER BY updated_at DESC LIMIT 3;",
+    "expected": "updated_at atualizado para registros existentes. Registros sem correspondencia (imovel novo) nao aparecerao — ver AVISO_LIMITACAO_UPDATE."
   }
 }
