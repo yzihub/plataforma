@@ -87,6 +87,7 @@ None yet.
 | 260407-wba | Migrar workflow Ler Imoveis JetEngine — substituir Airtable por Supabase upsert (18 campos, tenant_id + id_imovel) | 2026-04-08 | 30116a9 | [260407-wba-migrar-workflow-ler-im-veis-jetengine-pa](./quick/260407-wba-migrar-workflow-ler-im-veis-jetengine-pa/) |
 | 260408-3os | Corrigir workflow Ler Imóveis JetEngine — HTTP Request REST API YZI (sem credencial nativa, sem node Supabase) | 2026-04-08 | 766dcd5 | [260408-3os-corrigir-workflow-ler-im-veis-jetengine-](./quick/260408-3os-corrigir-workflow-ler-im-veis-jetengine-/) |
 | 260408-c28 | Ajustar Luana para buscar imóveis no YZI Supabase — HTTP Request GET, 14 campos, status Publicado | 2026-04-08 | 34705e7 | [260408-c28-ajustar-luana-para-buscar-im-veis-no-yzi](./quick/260408-c28-ajustar-luana-para-buscar-im-veis-no-yzi/) |
+| 260408-jth | Enriquecer query de imoveis para uso do agente Luana | 2026-04-08 | 287b200 | [260408-jth-enriquecer-query-de-imoveis-para-uso-do-](./quick/260408-jth-enriquecer-query-de-imoveis-para-uso-do-/) |
 
 ### Blockers/Concerns
 
@@ -96,6 +97,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-08T04:53:00Z
-Last activity: 2026-04-08 - Completed quick task 260408-c28: Ajustar Luana para buscar imóveis no YZI Supabase
+Last activity: 2026-04-08 - Completed quick task 260408-jth: Enriquecer query de imoveis para uso do agente Luana
 Stopped at: Quick task 260407-wba complete — patch JSON gerado com 18 campos, upsert por tenant_id + id_imovel, instrucoes de reconexao completas
 Resume file: None
