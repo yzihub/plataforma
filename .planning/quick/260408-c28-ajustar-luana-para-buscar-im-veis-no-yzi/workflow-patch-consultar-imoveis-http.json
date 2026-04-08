@@ -1,0 +1,225 @@
+{
+  "_meta": {
+    "task": "260408-c28",
+    "supersedes": "260407-rnb — usava node Supabase nativo getAll com status 'published' (errado) e apenas 10 campos",
+    "workflow_name": "consultar_imoveis",
+    "tools_luana": ["buscar_imoveis_site", "buscar_lancamentos"],
+    "descricao": "Patch para substituir node Supabase nativo por HTTP Request GET na REST API do Supabase YZI, com 14 campos, status_publicacao = 'Publicado' e suporte a filtros dinâmicos da qualificação da Luana.",
+    "correcoes": {
+      "status_errado": "'published' (inglês) → 'Publicado' (valor real na tabela)",
+      "campos_faltantes": "titulo_comercial, finalidade, link_do_imovel adicionados (era 10, agora 14 campos)",
+      "node_errado": "n8n-nodes-base.supabase getAll → n8n-nodes-base.httpRequest GET",
+      "credencial": "Sem credencial nativa n8n — service role key YZI direto nos headers"
+    },
+    "instrucoes": [
+      "1. Abrir n8n e navegar até o workflow 'consultar_imoveis'.",
+      "2. Localizar o node Supabase (getAll / Get Many) — será removido.",
+      "3. Adicionar novo node 'HTTP Request'.",
+      "4. Configurar conforme NODE_HTTP_REQUEST abaixo.",
+      "5. Ajustar o node Set seguinte para incluir os 4 campos novos (titulo_comercial, finalidade, link_do_imovel + outros).",
+      "6. Conectar: [Webhook / trigger] → HTTP Request → Set → [resposta].",
+      "7. Salvar e testar.",
+      "8. Verificar que imóveis com status_publicacao = 'Publicado' aparecem corretamente."
+    ]
+  },
+
+  "NODE_HTTP_REQUEST": {
+    "type": "n8n-nodes-base.httpRequest",
+    "name": "Supabase YZI — Buscar Imóveis",
+    "method": "GET",
+    "authentication": "none",
+
+    "url_simples": "https://dwmbklfkrtumfaxrbxio.supabase.co/rest/v1/imoveis",
+    "url_comment": "URL base da tabela. Filtros são adicionados via Query Parameters abaixo.",
+
+    "headers": [
+      {
+        "name": "apikey",
+        "value": "REDACTED_SUPABASE_SERVICE_KEY"
+      },
+      {
+        "name": "Authorization",
+        "value": "Bearer REDACTED_SUPABASE_SERVICE_KEY"
+      },
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      }
+    ],
+
+    "query_parameters": {
+      "comment": "PostgREST filtra via query params. Filtros fixos sempre presentes. Filtros dinâmicos usam expressão condicional.",
+      "fixos": [
+        {
+          "name": "select",
+          "value": "id_imovel,titulo_comercial,bairro,tipo_de_imovel,finalidade,valor,metragem,quartos,suites,vagas,link_redes_sociais,link_do_imovel,foto_principal,status_publicacao",
+          "comment": "14 campos — todos os campos necessários para o card WhatsApp da Luana"
+        },
+        {
+          "name": "tenant_id",
+          "value": "eq.aaaaaaaa-0002-0002-0002-000000000002",
+          "comment": "Filtro fixo — apenas imóveis da Jurema Brokers"
+        },
+        {
+          "name": "status_publicacao",
+          "value": "eq.Publicado",
+          "comment": "VALOR CORRETO: 'Publicado' (português, com P maiúsculo). Patches anteriores usavam 'published' — ERRADO."
+        },
+        {
+          "name": "order",
+          "value": "id_imovel.asc",
+          "comment": "Ordenação consistente para facilitar paginação futura"
+        }
+      ],
+      "dinamicos": {
+        "comment": "Adicionar estes query params CONDICIONALMENTE usando expressões n8n. Se o valor não vier do agente, o filtro não é enviado.",
+        "bairro": {
+          "name": "bairro",
+          "value_expression": "={{ $json.bairro ? 'eq.' + $json.bairro : undefined }}",
+          "comment": "Filtrar por bairro se a Luana qualificou o lead com bairro preferido"
+        },
+        "tipo_de_imovel": {
+          "name": "tipo_de_imovel",
+          "value_expression": "={{ $json.tipo_de_imovel ? 'eq.' + $json.tipo_de_imovel : undefined }}",
+          "comment": "Filtrar por tipo (Apartamento, Casa, etc.) se qualificado"
+        },
+        "finalidade": {
+          "name": "finalidade",
+          "value_expression": "={{ $json.finalidade ? 'eq.' + $json.finalidade : undefined }}",
+          "comment": "Filtrar por Venda ou Aluguel se qualificado"
+        }
+      }
+    },
+
+    "url_completa_com_filtros_fixos": "https://dwmbklfkrtumfaxrbxio.supabase.co/rest/v1/imoveis?select=id_imovel,titulo_comercial,bairro,tipo_de_imovel,finalidade,valor,metragem,quartos,suites,vagas,link_redes_sociais,link_do_imovel,foto_principal,status_publicacao&tenant_id=eq.aaaaaaaa-0002-0002-0002-000000000002&status_publicacao=eq.Publicado&order=id_imovel.asc",
+    "url_comment_completa": "URL com filtros fixos já embutidos. Use esta se não houver filtros dinâmicos do agente (busca ampla)."
+  },
+
+  "N8N_NODE_JSON_PARA_IMPORTAR": {
+    "comment": "Configuração JSON do node no formato interno n8n. Suporta filtros dinâmicos via sendQuery + expressões.",
+    "node": {
+      "id": "http-supabase-buscar-imoveis",
+      "name": "Supabase YZI — Buscar Imóveis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "GET",
+        "url": "https://dwmbklfkrtumfaxrbxio.supabase.co/rest/v1/imoveis",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "REDACTED_SUPABASE_SERVICE_KEY"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer REDACTED_SUPABASE_SERVICE_KEY"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id_imovel,titulo_comercial,bairro,tipo_de_imovel,finalidade,valor,metragem,quartos,suites,vagas,link_redes_sociais,link_do_imovel,foto_principal,status_publicacao"
+            },
+            {
+              "name": "tenant_id",
+              "value": "eq.aaaaaaaa-0002-0002-0002-000000000002"
+            },
+            {
+              "name": "status_publicacao",
+              "value": "eq.Publicado"
+            },
+            {
+              "name": "order",
+              "value": "id_imovel.asc"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    "nota_filtros_dinamicos": "Para adicionar filtros dinâmicos (bairro, tipo, finalidade), adicionar entries extras em queryParameters.parameters com values usando expressões n8n condicionais."
+  },
+
+  "NODE_SET_ATUALIZADO": {
+    "comment": "Set node após o HTTP Request. Atualizar para incluir os 4 campos novos. A resposta do HTTP Request já retorna JSON com os 14 campos — o Set node apenas garante a estrutura para o WhatsApp.",
+    "modo_recomendado": "autoMapInputData ou keepAllExistingFields — a resposta do Supabase REST já tem os nomes corretos",
+    "se_preferir_explicito": {
+      "type": "n8n-nodes-base.set",
+      "fields": [
+        { "name": "id_imovel", "value": "={{ $json.id_imovel }}" },
+        { "name": "titulo_comercial", "value": "={{ $json.titulo_comercial }}", "novo": true },
+        { "name": "bairro", "value": "={{ $json.bairro }}" },
+        { "name": "tipo_de_imovel", "value": "={{ $json.tipo_de_imovel }}" },
+        { "name": "finalidade", "value": "={{ $json.finalidade }}", "novo": true },
+        { "name": "valor", "value": "={{ $json.valor }}" },
+        { "name": "metragem", "value": "={{ $json.metragem }}" },
+        { "name": "quartos", "value": "={{ $json.quartos }}" },
+        { "name": "suites", "value": "={{ $json.suites }}" },
+        { "name": "vagas", "value": "={{ $json.vagas }}" },
+        { "name": "link_redes_sociais", "value": "={{ $json.link_redes_sociais }}" },
+        { "name": "link_do_imovel", "value": "={{ $json.link_do_imovel }}", "novo": true },
+        { "name": "foto_principal", "value": "={{ $json.foto_principal }}" },
+        { "name": "status_publicacao", "value": "={{ $json.status_publicacao }}" }
+      ],
+      "campos_novos_vs_patch_rnb": ["titulo_comercial", "finalidade", "link_do_imovel", "status_publicacao"]
+    }
+  },
+
+  "RESPOSTA_SUPABASE_FORMATO": {
+    "comment": "O Supabase REST API retorna um array JSON. Cada item é um objeto com os campos selecionados.",
+    "exemplo": [
+      {
+        "id_imovel": "JP-3150",
+        "titulo_comercial": "Apartamento Aconchegante em Manaíra",
+        "bairro": "Manaíra",
+        "tipo_de_imovel": "Apartamento",
+        "finalidade": "Venda",
+        "valor": "350000",
+        "metragem": "75",
+        "quartos": "2",
+        "suites": "1",
+        "vagas": "1",
+        "link_redes_sociais": "https://instagram.com/p/xyz",
+        "link_do_imovel": "https://juremabrokers.com.br/imovel/jp-3150",
+        "foto_principal": "https://juremabrokers.com.br/foto/jp-3150.jpg",
+        "status_publicacao": "Publicado"
+      }
+    ],
+    "nota_n8n": "n8n processa o array automaticamente — cada item vira um item do output. O node Set seguinte recebe um item por vez."
+  },
+
+  "WIRING": {
+    "antes": "[Webhook/Trigger] → Supabase getAll (nativo) → Set → [resposta WhatsApp]",
+    "depois": "[Webhook/Trigger] → HTTP Request GET (Supabase YZI REST) → Set → [resposta WhatsApp]",
+    "nodes_nao_alterar": [
+      "Webhook / trigger de entrada — não alterar",
+      "Nó de personalidade/AI da Luana — não alterar",
+      "Funil de qualificação — não alterar",
+      "Formato de saída WhatsApp — manter estrutura"
+    ]
+  },
+
+  "SCHEMA_REFERENCE": {
+    "table": "imoveis",
+    "supabase_url": "https://dwmbklfkrtumfaxrbxio.supabase.co",
+    "tenant_jurema": "aaaaaaaa-0002-0002-0002-000000000002",
+    "status_publicado_valor_correto": "Publicado",
+    "status_publicado_valor_errado": "published"
+  },
+
+  "VERIFICATION": {
+    "sql_check": "SELECT id_imovel, titulo_comercial, status_publicacao FROM imoveis WHERE tenant_id = 'aaaaaaaa-0002-0002-0002-000000000002' AND status_publicacao = 'Publicado' LIMIT 5;",
+    "curl_test": "curl -H 'apikey: REDACTED_SUPABASE_SERVICE_KEY' -H 'Authorization: Bearer REDACTED_SUPABASE_SERVICE_KEY' 'https://dwmbklfkrtumfaxrbxio.supabase.co/rest/v1/imoveis?select=id_imovel,titulo_comercial,status_publicacao&tenant_id=eq.aaaaaaaa-0002-0002-0002-000000000002&status_publicacao=eq.Publicado'",
+    "expected": "Array com imóveis publicados da Jurema Brokers. Se retornar [] (array vazio), verificar valor real de status_publicacao na tabela."
+  }
+}
