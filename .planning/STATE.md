@@ -98,6 +98,7 @@ None yet.
 | 260409-ds4 | Mapear workflow de geração de contrato existente | 2026-04-09 | bfaae9e | [260409-ds4-mapear-workflow-de-gera-o-de-contrato-ex](./quick/260409-ds4-mapear-workflow-de-gera-o-de-contrato-ex/) |
 | 260409-e0v | Criar tabela contracts no Supabase | 2026-04-09 | 74f8b6e | [260409-e0v-criar-tabela-contracts-no-supabase](./quick/260409-e0v-criar-tabela-contracts-no-supabase/) |
 | 260409-e9u | Remover record_id e padronizar entrada do workflow de contrato | 2026-04-09 | 5b253af | [260409-e9u-remover-record-id-e-padronizar-entrada-d](./quick/260409-e9u-remover-record-id-e-padronizar-entrada-d/) |
+| 260409-elu | Migrar nodes Airtable para Supabase no workflow de contrato (lead + imovel) | 2026-04-09 | 730ac64 | [260409-elu-buscar-lead-e-imovel-do-supabase-no-cont](./quick/260409-elu-buscar-lead-e-imovel-do-supabase-no-cont/) |
 
 ### Blockers/Concerns
 
@@ -106,7 +107,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-09T13:25:00Z
-Last activity: 2026-04-09 - Completed quick task 260409-e9u: Remover record_id e padronizar entrada do workflow de contrato
-Stopped at: Completed quick-260409-e9u: Padronizar entrada do workflow bzK9KbNa5zEYcurj para phone+tenant_id+imovel_id
+Last session: 2026-04-09T18:18:00Z
+Last activity: 2026-04-09 - Completed quick task 260409-elu: Migrar nodes Airtable para Supabase no workflow de contrato
+Stopped at: Completed quick-260409-elu: Buscar lead e imovel do Supabase no workflow bzK9KbNa5zEYcurj
 Resume file: None
