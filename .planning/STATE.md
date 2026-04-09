@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: "Completed quick-260409-ds4: Mapear workflow de geração de contrato n8n"
 last_updated: "2026-04-09T13:01:22.722Z"
-last_activity: "2026-04-09 - Completed quick task 260409-7j3: Criar handoff do lead quente para corretor"
+last_activity: "2026-04-09 - Completed quick task 260409-ds4: Mapear workflow de geração de contrato existente"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -95,6 +95,7 @@ None yet.
 | 260409-5w2 | Padronizar setar_lead_quente com merge e contexto | 2026-04-09 | 98f940b | [260409-5w2-padronizar-setar-lead-quente-com-merge-e](./quick/260409-5w2-padronizar-setar-lead-quente-com-merge-e/) |
 | 260409-7av | Padronizar status dos leads para inglês nos workflows | 2026-04-09 | b776e59 | [260409-7av-padronizar-status-dos-leads-para-ingl-s-](./quick/260409-7av-padronizar-status-dos-leads-para-ingl-s-/) |
 | 260409-7j3 | Criar handoff do lead quente para corretor | 2026-04-09 | 7d706ca | [260409-7j3-criar-handoff-do-lead-quente-para-corret](./quick/260409-7j3-criar-handoff-do-lead-quente-para-corret/) |
+| 260409-ds4 | Mapear workflow de geração de contrato existente | 2026-04-09 | bfaae9e | [260409-ds4-mapear-workflow-de-gera-o-de-contrato-ex](./quick/260409-ds4-mapear-workflow-de-gera-o-de-contrato-ex/) |
 
 ### Blockers/Concerns
 
