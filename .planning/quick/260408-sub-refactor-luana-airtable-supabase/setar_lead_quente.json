@@ -1,6 +1,6 @@
 {
   "name": "setar_lead_quente",
-  "_comment": "Workflow: Luana tool — marcar lead como quente. Arquitetura: ExecuteWorkflowTrigger → Normalize → Get Lead (HTTP GET Supabase) → Build Metadata (merge) → PATCH Lead (HTTP PATCH Supabase). REGRA: apenas atualiza lead existente — nunca cria novo.",
+  "_comment": "Workflow: Luana tool — marcar lead como quente. Arquitetura: ExecuteWorkflowTrigger → Normalize → Get Lead (HTTP GET Supabase) → Build Metadata (merge) → PATCH Lead (HTTP PATCH Supabase) → Handoff Corretor. REGRA: apenas atualiza lead existente — nunca cria novo.",
   "nodes": [
     {
       "id": "460d3814-ccc1-486e-92fc-c7c2bc5d3701",
@@ -64,7 +64,7 @@
       "typeVersion": 2,
       "position": [1040, 0],
       "parameters": {
-        "jsCode": "const input = $('Normalize').first().json;\nconst supabaseResponse = $input.first().json;\n\n// Supabase retorna array diretamente\nconst existingLead = Array.isArray(supabaseResponse) ? supabaseResponse[0] : null;\n\n// Preserva metadata anterior — merge não destrutivo\nconst antigo = existingLead ? (existingLead.metadata || {}) : {};\nconst novoMetadata = { ...antigo };\nif (input.localizacao_visita) {\n  novoMetadata.localizacao_visita = input.localizacao_visita;\n}\n\nreturn [{\n  json: {\n    phone: input.phone,\n    tenant_id: input.tenant_id,\n    status: 'lead_quente',\n    score: 3,\n    metadata: novoMetadata,\n  }\n}];"
+        "jsCode": "const input = $('Normalize').first().json;\nconst supabaseResponse = $input.first().json;\n\n// Supabase retorna array diretamente\nconst existingLead = Array.isArray(supabaseResponse) ? supabaseResponse[0] : null;\n\n// Preserva metadata anterior — merge não destrutivo\nconst antigo = existingLead ? (existingLead.metadata || {}) : {};\nconst novoMetadata = { ...antigo };\nif (input.localizacao_visita) {\n  novoMetadata.localizacao_visita = input.localizacao_visita;\n}\n\nreturn [{\n  json: {\n    phone: input.phone,\n    tenant_id: input.tenant_id,\n    status: 'qualified',\n    score: 3,\n    metadata: novoMetadata,\n  }\n}];"
       }
     },
     {
@@ -98,6 +98,27 @@
         "body": "={{ JSON.stringify({ status: $json.status, score: $json.score, metadata: $json.metadata }) }}",
         "options": {}
       }
+    },
+    {
+      "id": "b5c6d7e8-f9a0-1234-bcde-f56789012345",
+      "name": "Handoff Corretor",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [1456, 0],
+      "parameters": {
+        "mode": "each",
+        "workflowId": "={{ $vars.HANDOFF_WORKFLOW_ID }}",
+        "workflowInputs": {
+          "values": [
+            { "name": "phone", "value": "={{ $json.phone || $('Normalize').first().json.phone }}" },
+            { "name": "tenant_id", "value": "={{ $json.tenant_id || $('Normalize').first().json.tenant_id }}" },
+            { "name": "lead_name", "value": "={{ $json.name || 'Sem nome' }}" },
+            { "name": "lead_status", "value": "={{ $json.status || 'qualified' }}" },
+            { "name": "lead_score", "value": "={{ $json.score || 3 }}" },
+            { "name": "metadata_json", "value": "={{ JSON.stringify($json.metadata || {}) }}" }
+          ]
+        }
+      }
     }
   ],
   "connections": {
@@ -112,6 +133,9 @@
     },
     "Build Metadata": {
       "main": [[{"node": "PATCH Lead", "type": "main", "index": 0}]]
+    },
+    "PATCH Lead": {
+      "main": [[{"node": "Handoff Corretor", "type": "main", "index": 0}]]
     }
   },
   "settings": {
