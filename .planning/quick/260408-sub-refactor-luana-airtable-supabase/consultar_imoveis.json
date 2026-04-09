@@ -1,0 +1,103 @@
+{
+  "name": "consultar_imoveis",
+  "_comment": "Workflow: Luana tool — consultar imóveis disponíveis no Supabase YZI. Arquitetura: ExecuteWorkflowTrigger → Prepara Busca → Buscar Imóveis (HTTP GET Supabase) → Formatar Imóveis (array normalizado). Filtros client-side preservados do Prepara Busca (tipo_busca: direta|filtro).",
+  "nodes": [
+    {
+      "id": "5e6a45fd-b6ec-4b11-82d3-e89140df22dd",
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [288, -192],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            { "name": "codigo_ref" },
+            { "name": "bairro" },
+            { "name": "quartos" },
+            { "name": "valor_max" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "b8c5918b-fd82-4b92-a834-9c1020059a3d",
+      "name": "Prepara Busca",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [512, -192],
+      "parameters": {
+        "jsCode": "const data = $json;\n\n// 1. Prioridade Total para o Código JP (O tiro de sniper)\n// Aceita tanto id_imovel quanto codigo_ref conforme definimos na Tool\nconst codigo = data.id_imovel || data.codigo_ref;\n\nif (codigo && codigo.toLowerCase() !== \"null\") {\n  return {\n    json: {\n      id_imovel: codigo.toUpperCase().trim(),\n      tipo_busca: \"direta\"\n    }\n  };\n}\n\n// 2. Limpeza e Normalização para buscas genéricas\n// Pega o primeiro valor caso a IA mande uma lista ou texto sujo\nconst bairro = data.bairro ? data.bairro.split(\",\")[0].trim() : \"\";\nconst quartos = data.quartos ? parseInt(String(data.quartos).replace(/\\D/g, \"\")) : 0;\n\n// Trata o valor para garantir que seja um número puro (Ex: \"1.2M\" ou \"1200000\")\nlet valor = 0;\nif (data.valor_maximo || data.valor_max) {\n  const vRaw = String(data.valor_maximo || data.valor_max);\n  valor = Number(vRaw.replace(/\\D/g, \"\"));\n}\n\n// 3. Retorno Formatado para o Nó de Busca\nreturn {\n  json: {\n    id_imovel: \"NULL\",\n    bairro: bairro,\n    finalidade: data.finalidade || data.Finalidade || \"\",\n    valor_maximo: valor,\n    quartos: isNaN(quartos) ? 0 : quartos,\n    tipo_busca: \"filtro\"\n  }\n};"
+      }
+    },
+    {
+      "id": "f62f7584-8f43-4dc4-89db-abfbeb23eb11",
+      "name": "Buscar Imóveis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, -192],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $vars.SUPABASE_URL + '/rest/v1/imoveis' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $vars.SUPABASE_ANON_KEY }}" },
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $vars.SUPABASE_ANON_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "select",
+              "value": "id_imovel,titulo_comercial,titulo_seo,descricao_imovel,bairro,tipo_de_imovel,finalidade,valor,metragem,quartos,suites,vagas,foto_principal,link_do_imovel,link_redes_sociais,status_publicacao"
+            },
+            {
+              "name": "tenant_id",
+              "value": "eq.aaaaaaaa-0002-0002-0002-000000000002"
+            },
+            {
+              "name": "status_publicacao",
+              "value": "eq.Publicado"
+            },
+            {
+              "name": "order",
+              "value": "valor.asc"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c5e0e701-8489-49ba-8152-dd2807edcbe8",
+      "name": "Formatar Imóveis",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [928, -192],
+      "parameters": {
+        "jsCode": "const supabaseResponse = $input.first().json;\nconst busca = $('Prepara Busca').first().json;\n\n// Supabase REST API retorna array diretamente\nconst todos = Array.isArray(supabaseResponse) ? supabaseResponse : [];\n\n// Normaliza nomes de campos para padrão do agente\nconst normalized = todos.map(d => ({\n  id_imovel:         d.id_imovel,\n  titulo:            d.titulo_comercial ?? '',\n  descricao:         d.descricao_imovel ?? null,\n  preco:             d.valor ?? 0,\n  quartos:           d.quartos ?? 0,\n  suites:            d.suites ?? 0,\n  vagas:             d.vagas ?? 0,\n  area:              d.metragem ?? null,\n  bairro:            d.bairro ?? null,\n  cidade:            'João Pessoa',\n  tipo:              d.tipo_de_imovel ?? null,\n  finalidade:        d.finalidade ?? null,\n  status_publicacao: d.status_publicacao,\n  fotos:             d.foto_principal ?? null,\n  link:              d.link_do_imovel ?? d.link_redes_sociais ?? null,\n}));\n\n// Aplica filtros do Prepara Busca (client-side)\nlet resultado = normalized;\n\nif (busca.tipo_busca === 'direta' && busca.id_imovel && busca.id_imovel !== 'NULL') {\n  resultado = normalized.filter(i => i.id_imovel === busca.id_imovel);\n} else {\n  if (busca.bairro) {\n    resultado = resultado.filter(i =>\n      i.bairro && i.bairro.toLowerCase().includes(busca.bairro.toLowerCase())\n    );\n  }\n  if (busca.quartos > 0) {\n    resultado = resultado.filter(i => i.quartos >= busca.quartos);\n  }\n  if (busca.valor_maximo > 0) {\n    resultado = resultado.filter(i => i.preco <= busca.valor_maximo);\n  }\n}\n\nreturn [{\n  json: {\n    imoveis: resultado,\n    total: resultado.length,\n  }\n}];"
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [[{"node": "Prepara Busca", "type": "main", "index": 0}]]
+    },
+    "Prepara Busca": {
+      "main": [[{"node": "Buscar Imóveis", "type": "main", "index": 0}]]
+    },
+    "Buscar Imóveis": {
+      "main": [[{"node": "Formatar Imóveis", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": ""
+  }
+}
