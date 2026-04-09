@@ -91,7 +91,7 @@ None yet.
 | 260408-jth | Enriquecer query de imoveis para uso do agente Luana | 2026-04-08 | 287b200 | [260408-jth-enriquecer-query-de-imoveis-para-uso-do-](./quick/260408-jth-enriquecer-query-de-imoveis-para-uso-do-/) |
 | 260408-rqi | Padronizar entrada do lead no Supabase — UNIQUE(tenant_id,phone) + on_conflict fix + prompt cleanup | 2026-04-08 | e17f1d9 | [260408-rqi-padronizar-entrada-do-lead-no-supabase](./quick/260408-rqi-padronizar-entrada-do-lead-no-supabase/) |
 | 260408-sow | Padronizar entrada do lead no Supabase — migrar workflow principal Luana de Airtable para Supabase leads | 2026-04-08 | pending | [260408-sow-padronizar-entrada-do-lead-no-supabase](./quick/260408-sow-padronizar-entrada-do-lead-no-supabase/) |
-| 260409-06k | Padronizar consultar_imoveis com dados completos | 2026-04-09 | pending | [260409-06k-padronizar-consultar-imoveis-com-dados-c](./quick/260409-06k-padronizar-consultar-imoveis-com-dados-c/) |
+| 260409-06k | Padronizar consultar_imoveis com dados completos | 2026-04-09 | 16fc0fb | [260409-06k-padronizar-consultar-imoveis-com-dados-c](./quick/260409-06k-padronizar-consultar-imoveis-com-dados-c/) |
 
 ### Blockers/Concerns
 
