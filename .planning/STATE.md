@@ -97,6 +97,7 @@ None yet.
 | 260409-7j3 | Criar handoff do lead quente para corretor | 2026-04-09 | 7d706ca | [260409-7j3-criar-handoff-do-lead-quente-para-corret](./quick/260409-7j3-criar-handoff-do-lead-quente-para-corret/) |
 | 260409-ds4 | Mapear workflow de geração de contrato existente | 2026-04-09 | bfaae9e | [260409-ds4-mapear-workflow-de-gera-o-de-contrato-ex](./quick/260409-ds4-mapear-workflow-de-gera-o-de-contrato-ex/) |
 | 260409-e0v | Criar tabela contracts no Supabase | 2026-04-09 | 74f8b6e | [260409-e0v-criar-tabela-contracts-no-supabase](./quick/260409-e0v-criar-tabela-contracts-no-supabase/) |
+| 260409-e9u | Remover record_id e padronizar entrada do workflow de contrato | 2026-04-09 | pending | [260409-e9u-remover-record-id-e-padronizar-entrada-d](./quick/260409-e9u-remover-record-id-e-padronizar-entrada-d/) |
 
 ### Blockers/Concerns
 
@@ -105,7 +106,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-09T13:08:42.902Z
-Last activity: 2026-04-09 - Completed quick task 260409-7j3: Criar handoff do lead quente para corretor
-Stopped at: Completed quick-260409-e0v: Estender contracts com imovel_id, conteudo e index composto
+Last session: 2026-04-09T13:25:00Z
+Last activity: 2026-04-09 - Completed quick task 260409-e9u: Remover record_id e padronizar entrada do workflow de contrato
+Stopped at: Completed quick-260409-e9u: Padronizar entrada do workflow bzK9KbNa5zEYcurj para phone+tenant_id+imovel_id
 Resume file: None
