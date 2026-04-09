@@ -1,0 +1,124 @@
+{
+  "name": "setar_lead_quente",
+  "_comment": "Workflow: Luana tool — marcar lead como quente. Arquitetura: ExecuteWorkflowTrigger → Normalize → Get Lead (HTTP GET Supabase) → Build Metadata (merge) → PATCH Lead (HTTP PATCH Supabase). REGRA: apenas atualiza lead existente — nunca cria novo.",
+  "nodes": [
+    {
+      "id": "460d3814-ccc1-486e-92fc-c7c2bc5d3701",
+      "name": "Dados recebidos da Luana",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [400, 0],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            { "name": "phone" },
+            { "name": "tenant_id" },
+            { "name": "localizacao_visita" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "3cb5f7cc-f78f-4381-9bce-694a87c2e5f4",
+      "name": "Normalize",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [624, 0],
+      "parameters": {
+        "jsCode": "const data = $json;\nconst phone = String(data.phone || '').replace(/\\D/g, '');\nreturn [{\n  json: {\n    phone,\n    tenant_id: data.tenant_id || 'aaaaaaaa-0002-0002-0002-000000000002',\n    localizacao_visita: data.localizacao_visita || null,\n  }\n}];"
+      }
+    },
+    {
+      "id": "dd7a1bef-d5ea-49fd-9236-dfe096171a05",
+      "name": "Get Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [832, 0],
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $vars.SUPABASE_URL + '/rest/v1/leads' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $vars.SUPABASE_ANON_KEY }}" },
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $vars.SUPABASE_ANON_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "select", "value": "id,tenant_id,phone,name,status,score,metadata" },
+            { "name": "tenant_id", "value": "={{ 'eq.' + $json.tenant_id }}" },
+            { "name": "phone", "value": "={{ 'eq.' + $json.phone }}" }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "e6c9ac6f-3735-4923-8ed3-d4f8abfae37e",
+      "name": "Build Metadata",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 0],
+      "parameters": {
+        "jsCode": "const input = $('Normalize').first().json;\nconst supabaseResponse = $input.first().json;\n\n// Supabase retorna array diretamente\nconst existingLead = Array.isArray(supabaseResponse) ? supabaseResponse[0] : null;\n\n// Preserva metadata anterior — merge não destrutivo\nconst antigo = existingLead ? (existingLead.metadata || {}) : {};\nconst novoMetadata = { ...antigo };\nif (input.localizacao_visita) {\n  novoMetadata.localizacao_visita = input.localizacao_visita;\n}\n\nreturn [{\n  json: {\n    phone: input.phone,\n    tenant_id: input.tenant_id,\n    status: 'lead_quente',\n    score: 3,\n    metadata: novoMetadata,\n  }\n}];"
+      }
+    },
+    {
+      "id": "a1b2c3d4-5e6f-7890-abcd-ef1234567890",
+      "name": "PATCH Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1248, 0],
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $vars.SUPABASE_URL + '/rest/v1/leads' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $vars.SUPABASE_ANON_KEY }}" },
+            { "name": "Authorization", "value": "={{ 'Bearer ' + $vars.SUPABASE_ANON_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=representation" }
+          ]
+        },
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "tenant_id", "value": "={{ 'eq.' + $json.tenant_id }}" },
+            { "name": "phone", "value": "={{ 'eq.' + $json.phone }}" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ status: $json.status, score: $json.score, metadata: $json.metadata }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Dados recebidos da Luana": {
+      "main": [[{"node": "Normalize", "type": "main", "index": 0}]]
+    },
+    "Normalize": {
+      "main": [[{"node": "Get Lead", "type": "main", "index": 0}]]
+    },
+    "Get Lead": {
+      "main": [[{"node": "Build Metadata", "type": "main", "index": 0}]]
+    },
+    "Build Metadata": {
+      "main": [[{"node": "PATCH Lead", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": ""
+  }
+}
