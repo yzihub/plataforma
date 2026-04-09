@@ -92,7 +92,7 @@ None yet.
 | 260408-rqi | Padronizar entrada do lead no Supabase — UNIQUE(tenant_id,phone) + on_conflict fix + prompt cleanup | 2026-04-08 | e17f1d9 | [260408-rqi-padronizar-entrada-do-lead-no-supabase](./quick/260408-rqi-padronizar-entrada-do-lead-no-supabase/) |
 | 260408-sow | Padronizar entrada do lead no Supabase — migrar workflow principal Luana de Airtable para Supabase leads | 2026-04-08 | pending | [260408-sow-padronizar-entrada-do-lead-no-supabase](./quick/260408-sow-padronizar-entrada-do-lead-no-supabase/) |
 | 260409-06k | Padronizar consultar_imoveis com dados completos | 2026-04-09 | 16fc0fb | [260409-06k-padronizar-consultar-imoveis-com-dados-c](./quick/260409-06k-padronizar-consultar-imoveis-com-dados-c/) |
-| 260409-5w2 | Padronizar setar_lead_quente com merge e contexto | 2026-04-09 | pending | [260409-5w2-padronizar-setar-lead-quente-com-merge-e](./quick/260409-5w2-padronizar-setar-lead-quente-com-merge-e/) |
+| 260409-5w2 | Padronizar setar_lead_quente com merge e contexto | 2026-04-09 | 98f940b | [260409-5w2-padronizar-setar-lead-quente-com-merge-e](./quick/260409-5w2-padronizar-setar-lead-quente-com-merge-e/) |
 
 ### Blockers/Concerns
 
