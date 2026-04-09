@@ -1,0 +1,72 @@
+{
+  "name": "handoff_corretor",
+  "_comment": "Workflow: Sub-workflow chamado pelo setar_lead_quente apos PATCH Lead. Recebe dados do lead quente e envia resumo estruturado ao corretor. Arquitetura: executeWorkflowTrigger → Montar Resumo (Code) → Enviar Handoff (HTTP POST).",
+  "nodes": [
+    {
+      "id": "h1a2b3c4-d5e6-f789-0abc-def123456789",
+      "name": "Dados do Lead",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [400, 0],
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            { "name": "phone" },
+            { "name": "tenant_id" },
+            { "name": "lead_name" },
+            { "name": "lead_status" },
+            { "name": "lead_score" },
+            { "name": "metadata_json" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "h2b3c4d5-e6f7-8901-bcde-f12345678901",
+      "name": "Montar Resumo",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [624, 0],
+      "parameters": {
+        "jsCode": "const data = $json;\nconst phone = data.phone || '';\nconst tenant_id = data.tenant_id || '';\nconst lead_name = data.lead_name || 'Sem nome';\nconst lead_status = data.lead_status || 'qualified';\nconst lead_score = data.lead_score || 3;\n\n// Parse metadata com fallback seguro\nlet metadata = {};\ntry {\n  metadata = JSON.parse(data.metadata_json || '{}');\n} catch (e) {\n  metadata = {};\n}\n\nconst resumo = {\n  titulo: `Lead Quente: ${lead_name}`,\n  telefone: phone,\n  nome: lead_name,\n  status: lead_status,\n  score: lead_score,\n  objetivo: metadata.objetivo || 'Nao informado',\n  faixa_valor: metadata.faixa_valor || 'Nao informado',\n  bairro_interesse: metadata.bairro_interesse || 'Nao informado',\n  imovel_ref: metadata.imovel_ref || null,\n  localizacao_visita: metadata.localizacao_visita || null,\n  data_handoff: new Date().toISOString()\n};\n\nconst mensagem_texto = [\n  'LEAD QUENTE - HANDOFF CORRETOR',\n  `Nome: ${resumo.nome}`,\n  `Telefone: ${resumo.telefone}`,\n  `Objetivo: ${resumo.objetivo}`,\n  `Faixa de Valor: ${resumo.faixa_valor}`,\n  `Bairro: ${resumo.bairro_interesse}`,\n  `Imovel Ref: ${resumo.imovel_ref || 'Nenhum'}`,\n  `Local Visita: ${resumo.localizacao_visita || 'Nao definido'}`,\n  `Data: ${resumo.data_handoff}`\n].join('\\n');\n\nreturn [{\n  json: {\n    resumo,\n    mensagem_texto,\n    phone,\n    tenant_id\n  }\n}];"
+      }
+    },
+    {
+      "id": "h3c4d5e6-f7a8-9012-cdef-123456789012",
+      "name": "Enviar Handoff",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [848, 0],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $vars.HANDOFF_WEBHOOK_URL || 'https://httpbin.org/post' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ type: 'lead_handoff', tenant_id: $json.tenant_id, resumo: $json.resumo, mensagem_texto: $json.mensagem_texto }) }}",
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Dados do Lead": {
+      "main": [[{"node": "Montar Resumo", "type": "main", "index": 0}]]
+    },
+    "Montar Resumo": {
+      "main": [[{"node": "Enviar Handoff", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "instanceId": ""
+  }
+}
