@@ -93,6 +93,7 @@ None yet.
 | 260408-sow | Padronizar entrada do lead no Supabase — migrar workflow principal Luana de Airtable para Supabase leads | 2026-04-08 | pending | [260408-sow-padronizar-entrada-do-lead-no-supabase](./quick/260408-sow-padronizar-entrada-do-lead-no-supabase/) |
 | 260409-06k | Padronizar consultar_imoveis com dados completos | 2026-04-09 | 16fc0fb | [260409-06k-padronizar-consultar-imoveis-com-dados-c](./quick/260409-06k-padronizar-consultar-imoveis-com-dados-c/) |
 | 260409-5w2 | Padronizar setar_lead_quente com merge e contexto | 2026-04-09 | 98f940b | [260409-5w2-padronizar-setar-lead-quente-com-merge-e](./quick/260409-5w2-padronizar-setar-lead-quente-com-merge-e/) |
+| 260409-7av | Padronizar status dos leads para inglês nos workflows | 2026-04-09 | b776e59 | [260409-7av-padronizar-status-dos-leads-para-ingl-s-](./quick/260409-7av-padronizar-status-dos-leads-para-ingl-s-/) |
 
 ### Blockers/Concerns
 
@@ -102,6 +103,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-09T08:20:30.822Z
-Last activity: 2026-04-08 - Completed quick task 260408-rqi: Padronizar entrada do lead no Supabase
+Last activity: 2026-04-09 - Completed quick task 260409-7av: Padronizar status dos leads para inglês nos workflows
 Stopped at: Completed quick-260409-7av: Padronizar status dos leads para ingles
 Resume file: None
