@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed quick-260409-e0v: Estender contracts com imovel_id, conteudo e index composto"
-last_updated: "2026-04-09T13:08:42.919Z"
-last_activity: "2026-04-09 - Completed quick task 260409-e0v: Criar tabela contracts no Supabase"
+stopped_at: "Completed quick-260409-ltv: Padronizar status da tabela contracts"
+last_updated: "2026-04-09T19:04:03.918Z"
+last_activity: "2026-04-09 - Completed quick task 260409-ldi: Salvar contrato no Supabase via node HTTP POST"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -58,6 +58,7 @@ Recent decisions affecting current work:
 - Kernel: proxy.ts (not middleware.ts) is the route guard — Next.js 15 convention
 - UI: TailAdmin dark is the base; all custom components go in src/components/yzihub/
 - Action Flow: frontend never calls n8n directly — always via POST /api/actions/execute → job_queue
+- [Phase quick-260409-ltv]: Used DO block to dynamically find and drop all status CHECK constraints (handles unnamed inline constraints from migration 011)
 
 ### Pending Todos
 
@@ -100,6 +101,7 @@ None yet.
 | 260409-e9u | Remover record_id e padronizar entrada do workflow de contrato | 2026-04-09 | 5b253af | [260409-e9u-remover-record-id-e-padronizar-entrada-d](./quick/260409-e9u-remover-record-id-e-padronizar-entrada-d/) |
 | 260409-elu | Migrar nodes Airtable para Supabase no workflow de contrato (lead + imovel) | 2026-04-09 | 730ac64 | [260409-elu-buscar-lead-e-imovel-do-supabase-no-cont](./quick/260409-elu-buscar-lead-e-imovel-do-supabase-no-cont/) |
 | 260409-ldi | Salvar contrato no Supabase via node HTTP POST no workflow bzK9KbNa5zEYcurj | 2026-04-09 | f73c11d | [260409-ldi-salvar-contrato-no-supabase](./quick/260409-ldi-salvar-contrato-no-supabase/) |
+| 260409-ltv | Padronizar status da tabela contracts — migration CHECK constraint EN (draft/sent/signed/cancelled) | 2026-04-09 | 866ae38 | [260409-ltv-padronizar-status-da-tabela-contracts](./quick/260409-ltv-padronizar-status-da-tabela-contracts/) |
 
 ### Blockers/Concerns
 
@@ -108,7 +110,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-09T18:32:00Z
+Last session: 2026-04-09T19:03:57.283Z
 Last activity: 2026-04-09 - Completed quick task 260409-ldi: Salvar contrato no Supabase via node HTTP POST
-Stopped at: Completed quick-260409-ldi: Adicionar node Salvar Contrato Supabase ao workflow bzK9KbNa5zEYcurj
+Stopped at: Completed quick-260409-ltv: Padronizar status da tabela contracts
 Resume file: None
