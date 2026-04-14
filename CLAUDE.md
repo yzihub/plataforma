@@ -38,6 +38,14 @@
 - Nunca varrer projeto inteiro — ler apenas arquivos necessários
 - Sempre use context7 para documentação: Next.js, Supabase, Tailwind, n8n, React
 - Exemplo: "Como configurar middleware Next.js? use context7"
+- Sempre prefixar comandos CLI com `rtk` para comprimir output (RTK v0.36.0+ instalado globalmente)
+- Comandos críticos YZIHUB com RTK:
+  - `rtk git status`, `rtk git diff`, `rtk git log` (git)
+  - `rtk next build` (build Next.js)
+  - `rtk tsc --noEmit` (type-check)
+  - `rtk grep`, `rtk find` (busca em arquivos)
+  - `rtk pnpm install`, `rtk pnpm list` (gerenciador de pacotes)
+- Config global RTK em `~/.claude/CLAUDE.md` — regras detalhadas lá; aqui apenas reforço de uso
 
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project
@@ -94,3 +102,5 @@ Do not make direct repo edits outside a GSD workflow unless the user explicitly 
 > Profile not yet configured. Run `/gsd:profile-user` to generate your developer profile.
 > This section is managed by `generate-claude-profile` -- do not edit manually.
 <!-- GSD:profile-end -->
+
+## **Lei do Upsell**: Módulos Pro/Growth devem ser visíveis no Sidebar, mas marcados com cadeado (🔒) ou Badge 'PRO' se o tenant for 'Básico'. Cliques em módulos bloqueados devem disparar o Modal de Upgrade.
