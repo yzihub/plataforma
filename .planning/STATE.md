@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: "Completed quick-260414-c2m: Clonar e mapear RTK — diagnostico de otimizacao de tokens"
-last_updated: "2026-04-14T12:14:00Z"
-last_activity: "2026-04-14 - Completed quick task 260414-c2m: RTK gist cloned and diagnostic produced"
+stopped_at: "Completed quick-260414-czh: Instalar RTK para reduzir consumo de tokens"
+last_updated: "2026-04-14T12:23:18Z"
+last_activity: "2026-04-14 - Completed quick task 260414-czh: RTK v0.36.0 installed globally"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -103,6 +103,7 @@ None yet.
 | 260409-ldi | Salvar contrato no Supabase via node HTTP POST no workflow bzK9KbNa5zEYcurj | 2026-04-09 | f73c11d | [260409-ldi-salvar-contrato-no-supabase](./quick/260409-ldi-salvar-contrato-no-supabase/) |
 | 260409-ltv | Padronizar status da tabela contracts — migration CHECK constraint EN (draft/sent/signed/cancelled) | 2026-04-09 | 866ae38 | [260409-ltv-padronizar-status-da-tabela-contracts](./quick/260409-ltv-padronizar-status-da-tabela-contracts/) |
 | 260414-c2m | Clonar e mapear RTK (Rust Token Killer) — diagnostico de otimizacao de tokens LLM para YZIHUB | 2026-04-14 | 296a5bd | [260414-c2m-clonar-e-mapear-reposit-rio-de-otimiza-o](./quick/260414-c2m-clonar-e-mapear-reposit-rio-de-otimiza-o/) |
+| 260414-czh | Instalar RTK v0.36.0 globalmente no Windows — hook --claude-md mode ativo em ~/.claude/CLAUDE.md | 2026-04-14 | (docs) | [260414-czh-instalar-rtk-para-reduzir-consumo-de-tok](./quick/260414-czh-instalar-rtk-para-reduzir-consumo-de-tok/) |
 
 ### Blockers/Concerns
 
@@ -111,7 +112,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-14T12:14:00Z
-Last activity: 2026-04-14 - Completed quick task 260414-c2m: RTK gist cloned and diagnostic produced
-Stopped at: Completed quick-260414-c2m: Clonar e mapear RTK — diagnostico de otimizacao de tokens
+Last session: 2026-04-14T12:23:18Z
+Last activity: 2026-04-14 - Completed quick task 260414-czh: RTK v0.36.0 installed globally, --claude-md mode active
+Stopped at: Completed quick-260414-czh: Instalar RTK para reduzir consumo de tokens
 Resume file: None
