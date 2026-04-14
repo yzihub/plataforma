@@ -104,6 +104,7 @@ None yet.
 | 260409-ltv | Padronizar status da tabela contracts — migration CHECK constraint EN (draft/sent/signed/cancelled) | 2026-04-09 | 866ae38 | [260409-ltv-padronizar-status-da-tabela-contracts](./quick/260409-ltv-padronizar-status-da-tabela-contracts/) |
 | 260414-c2m | Clonar e mapear RTK (Rust Token Killer) — diagnostico de otimizacao de tokens LLM para YZIHUB | 2026-04-14 | 296a5bd | [260414-c2m-clonar-e-mapear-reposit-rio-de-otimiza-o](./quick/260414-c2m-clonar-e-mapear-reposit-rio-de-otimiza-o/) |
 | 260414-czh | Instalar RTK v0.36.0 globalmente no Windows — hook --claude-md mode ativo em ~/.claude/CLAUDE.md | 2026-04-14 | 1aa7acd | [260414-czh-instalar-rtk-para-reduzir-consumo-de-tok](./quick/260414-czh-instalar-rtk-para-reduzir-consumo-de-tok/) |
+| 260414-nw1 | Mapear persistência da Luana no YZI | 2026-04-14 | 874e26e | [260414-nw1-mapear-persist-ncia-da-luana-no-yzi](./quick/260414-nw1-mapear-persist-ncia-da-luana-no-yzi/) |
 
 ### Blockers/Concerns
 
@@ -113,6 +114,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-14T20:17:09.268Z
-Last activity: 2026-04-14 - Completed quick task 260414-czh: RTK v0.36.0 installed globally, --claude-md mode active
+Last activity: 2026-04-14 - Completed quick task 260414-nw1: Mapear persistência da Luana no YZI
 Stopped at: Completed quick-260414-nw1: Mapear persistencia da Luana no YZI
 Resume file: None
