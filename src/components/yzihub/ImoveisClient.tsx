@@ -9,6 +9,12 @@ import PropertyDrawer from "@/components/yzihub/PropertyDrawer";
 import PropertyKanban from "@/components/yzihub/PropertyKanban";
 import PropertyTable from "@/components/yzihub/PropertyTable";
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatBRL(v: number) {
+  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+}
+
 // ─── Imoveis table row type ───────────────────────────────────────────────────
 
 interface ImoveisRow {
@@ -114,6 +120,40 @@ function KanbanIcon() {
   );
 }
 
+// ─── MetricCard ──────────────────────────────────────────────────────────────
+
+function MetricCard({
+  label, value, sub, accent = "default",
+}: {
+  label: string;
+  value: string | number;
+  sub?: string;
+  accent?: "default" | "green" | "amber" | "brand" | "sky";
+}) {
+  const accentCls = {
+    default: "bg-gray-100 dark:bg-gray-800",
+    green:   "bg-emerald-50 dark:bg-emerald-900/20",
+    amber:   "bg-amber-50 dark:bg-amber-900/20",
+    brand:   "bg-brand-50 dark:bg-brand-900/20",
+    sky:     "bg-sky-50 dark:bg-sky-900/20",
+  }[accent];
+  const valueCls = {
+    default: "text-gray-900 dark:text-white",
+    green:   "text-emerald-600 dark:text-emerald-400",
+    amber:   "text-amber-600 dark:text-amber-400",
+    brand:   "text-brand-600 dark:text-brand-400",
+    sky:     "text-sky-600 dark:text-sky-400",
+  }[accent];
+
+  return (
+    <div className={`rounded-2xl border border-gray-200 p-4 dark:border-gray-800 ${accentCls}`}>
+      <p className={`text-xl font-bold leading-none ${valueCls}`}>{value}</p>
+      {sub && <p className="mt-0.5 text-[10px] text-gray-400">{sub}</p>}
+      <p className="mt-1.5 text-xs text-gray-500 dark:text-gray-400">{label}</p>
+    </div>
+  );
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ImoveisClient() {
@@ -192,6 +232,27 @@ export default function ImoveisClient() {
     });
   }, [properties, filterType, filterNeighborhood, filterPubStatus, filterMaxPrice]);
 
+  const metrics = useMemo(() => {
+    const total = properties.length;
+    const ticketMedio = total > 0
+      ? properties.reduce((s, p) => s + p.price, 0) / total
+      : 0;
+    const paraVenda   = properties.filter(p => p.purpose === "Venda").length;
+    const paraAluguel = properties.filter(p => p.purpose === "Aluguel").length;
+    const semFoto     = properties.filter(p => !p.photo_url).length;
+
+    const bairroCount = properties.reduce<Record<string, number>>((acc, p) => {
+      const b = p.neighborhood ?? "Sem bairro";
+      acc[b] = (acc[b] ?? 0) + 1;
+      return acc;
+    }, {});
+    const sorted = Object.entries(bairroCount).sort((a, b) => b[1] - a[1]);
+    const topBairro  = sorted[0]?.[0] ?? "—";
+    const topBairroN = sorted[0]?.[1] ?? 0;
+
+    return { total, ticketMedio, paraVenda, paraAluguel, semFoto, topBairro, topBairroN };
+  }, [properties]);
+
   // ── Select class ────────────────────────────────────────────────────────────
 
   const selectClass =
@@ -220,6 +281,16 @@ export default function ImoveisClient() {
 
   return (
     <div className="space-y-6">
+      {/* Metrics strip */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <MetricCard label="Total de Imóveis" value={metrics.total} />
+        <MetricCard label="Valor Médio"       value={formatBRL(metrics.ticketMedio)} accent="brand" />
+        <MetricCard label="Para Venda"        value={metrics.paraVenda}   accent="green" />
+        <MetricCard label="Para Aluguel"      value={metrics.paraAluguel} accent="sky" />
+        <MetricCard label="Top Bairro"        value={metrics.topBairro}   sub={`${metrics.topBairroN} imóveis`} />
+        <MetricCard label="Sem Foto"          value={metrics.semFoto}     accent={metrics.semFoto > 0 ? "amber" : "default"} />
+      </div>
+
       {/* Filter bar + view toggle */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Tipo */}
