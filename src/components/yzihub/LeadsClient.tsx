@@ -55,7 +55,7 @@ function KanbanViewIcon({ active }: { active: boolean }) {
   );
 }
 
-// ─── SearchBar ────────────────────────────────────────────────────────────────
+// ─── SearchBar (used only in Kanban view) ─────────────────────────────────────
 
 function SearchBar({
   search,
@@ -148,17 +148,28 @@ export default function LeadsClient({
     );
   };
 
-  const filteredLeads = useMemo(() => {
-    return leads.filter((l) => {
-      const matchSearch =
-        !search ||
-        l.name.toLowerCase().includes(search.toLowerCase()) ||
-        (l.phone ?? "").includes(search);
-      const matchStatus = !filterStatus || l.status === filterStatus;
-      const matchSource = !filterSource || l.source === filterSource;
-      return matchSearch && matchStatus && matchSource;
-    });
-  }, [leads, search, filterStatus, filterSource]);
+  // Kanban: all 3 filters (search + status + source)
+  const kanbanLeads = useMemo(() => leads.filter((l) => {
+    const matchSearch =
+      !search ||
+      l.name.toLowerCase().includes(search.toLowerCase()) ||
+      (l.phone ?? "").includes(search);
+    const matchStatus = !filterStatus || l.status === filterStatus;
+    const matchSource = !filterSource || l.source === filterSource;
+    return matchSearch && matchStatus && matchSource;
+  }), [leads, search, filterStatus, filterSource]);
+
+  // Table: search + status only (source filter not shown in table view per TailAdmin pattern)
+  const tableLeads = useMemo(() => leads.filter((l) => {
+    const matchSearch =
+      !search ||
+      l.name.toLowerCase().includes(search.toLowerCase()) ||
+      (l.phone ?? "").includes(search);
+    const matchStatus = !filterStatus || l.status === filterStatus;
+    return matchSearch && matchStatus;
+  }), [leads, search, filterStatus]);
+
+  const displayCount = view === "table" ? tableLeads.length : kanbanLeads.length;
 
   return (
     <>
@@ -168,7 +179,7 @@ export default function LeadsClient({
           <div>
             <h1 className="text-2xl font-bold text-gray-800 dark:text-white/90">Leads</h1>
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {filteredLeads.length} de {leads.length} leads
+              {displayCount} de {leads.length} leads
             </p>
           </div>
           <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -198,15 +209,42 @@ export default function LeadsClient({
               </button>
             </div>
 
-            <button type="button" className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors">
-              <PlusIcon className="size-4" />
-              Novo Lead
-            </button>
+            {/* Novo Lead button — shown only in kanban view; in table view it lives inside DataTable card */}
+            {view === "kanban" && (
+              <button
+                type="button"
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors"
+              >
+                <PlusIcon className="size-4" />
+                Novo Lead
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Table view */}
+        {/* Table view — SearchBar is inside the DataTable card per TailAdmin pattern */}
         {view === "table" && (
+          <LeadsDataTable
+            leads={tableLeads}
+            onSelect={setSelectedLead}
+            activeStatus={filterStatus}
+            onStatusChange={setFilterStatus}
+            search={search}
+            onSearchChange={setSearch}
+            headerActions={
+              <button
+                type="button"
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors"
+              >
+                <PlusIcon className="size-4" />
+                Novo Lead
+              </button>
+            }
+          />
+        )}
+
+        {/* Kanban view — SearchBar is external, includes source filter */}
+        {view === "kanban" && (
           <>
             <SearchBar
               search={search}
@@ -216,13 +254,8 @@ export default function LeadsClient({
               onStatus={setFilterStatus}
               onSource={setFilterSource}
             />
-            <LeadsDataTable leads={filteredLeads} onSelect={setSelectedLead} />
+            <LeadsKanban leads={kanbanLeads} stages={stages} onMoveLead={handleMoveLead} />
           </>
-        )}
-
-        {/* Kanban view */}
-        {view === "kanban" && (
-          <LeadsKanban leads={filteredLeads} stages={stages} onMoveLead={handleMoveLead} />
         )}
       </div>
 
