@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Badge from "@/components/ui/badge/Badge";
-import CommandButton from "@/components/yzihub/CommandButton";
 import { CloseIcon } from "@/icons";
 import type { Lead, LeadStatus } from "@/lib/crm/types";
 
@@ -119,137 +118,187 @@ const TABS: { key: Tab; label: string }[] = [
 
 // ─── Tab: Dados ───────────────────────────────────────────────────────────────
 
-function TabDados({ lead }: { lead: Lead }) {
-  const fields = [
-    { label: "Nome do cliente",              key: "name",             value: lead.name,                    type: "text" },
-    { label: "Telefone",                     key: "phone",            value: lead.phone ?? "",             type: "tel" },
-    { label: "E-mail",                       key: "email",            value: lead.email ?? "",             type: "email" },
-    { label: "Score do Lead (0-100)",        key: "score",            value: String(lead.score ?? 0),     type: "number" },
-    { label: "Janela de visita",             key: "janela_visita",    value: lead.janela_visita ?? "",     type: "text" },
-    { label: "Região / Bairro de interesse", key: "regiao_interesse", value: lead.regiao_interesse ?? "", type: "text" },
-    { label: "Faixa de valor",               key: "faixa_valor",      value: lead.faixa_valor ?? "",       type: "text" },
-    { label: "Corretor responsável",         key: "assigned_to",      value: lead.assigned_to ?? "",       type: "text" },
-    { label: "Referência do imóvel",         key: "imovel_ref",       value: lead.imovel_ref ?? "",        type: "text" },
-    { label: "Data do agendamento",          key: "data_agendamento", value: lead.data_agendamento ?? "",  type: "text" },
-    { label: "Perfil resumido",              key: "notes",            value: lead.notes ?? "",             type: "textarea" },
-  ];
-  {/* Empresa e valor estimado omitidos do pipeline imobiliário */}
+const INPUT_CLS = "h-11 w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-500 dark:focus:border-brand-800";
+const SELECT_CLS = "h-11 w-full appearance-none rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm text-gray-800 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90";
+const LABEL_CLS = "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400";
+const SECTION_CLS = "mb-5 border-b border-gray-100 dark:border-gray-800 pb-5 last:border-none last:pb-0";
 
-  const selectClass = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500";
+function TabDados({ lead }: { lead: Lead }) {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  async function enviarParaCorretor() {
+    setSending(true);
+    setSent(false);
+    try {
+      await fetch("/api/actions/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_to_broker", lead_id: lead.id, tenant_id: lead.tenant_id }),
+      });
+      setSent(true);
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
-    <div className="space-y-4">
-      {fields.map(({ label, key, value, type }) => (
-        <div key={key}>
-          <label className="block text-xs font-medium text-gray-400 mb-1">{label}</label>
-          {type === "textarea" ? (
-            <textarea
-              defaultValue={value}
-              rows={3}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 resize-none focus:outline-none focus:border-brand-500"
-            />
+    <div className="space-y-0">
+
+      {/* ── Contato ── */}
+      <div className={SECTION_CLS}>
+        <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Contato</h4>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={LABEL_CLS}>Nome</label>
+            <input type="text" defaultValue={lead.name} className={INPUT_CLS} />
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Telefone</label>
+            <input type="tel" defaultValue={lead.phone ?? ""} className={INPUT_CLS} />
+          </div>
+          <div>
+            <label className={LABEL_CLS}>E-mail</label>
+            <input type="email" defaultValue={lead.email ?? ""} className={INPUT_CLS} />
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Corretor responsável</label>
+            <input type="text" defaultValue={lead.assigned_to ?? ""} className={INPUT_CLS} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Perfil Imobiliário ── */}
+      <div className={SECTION_CLS}>
+        <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Perfil Imobiliário</h4>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={LABEL_CLS}>Interesse principal</label>
+            <select defaultValue={lead.interesse_principal ?? ""} className={SELECT_CLS}>
+              <option value="">—</option>
+              {["Apartamento", "Casa", "Terreno", "Cobertura"].map((o) => (
+                <option key={o} value={o.toLowerCase()}>{o}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Finalidade</label>
+            <select defaultValue={lead.finalidade ?? ""} className={SELECT_CLS}>
+              <option value="">—</option>
+              {["Compra", "Aluguel"].map((o) => (
+                <option key={o} value={o.toLowerCase()}>{o}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Objetivo</label>
+            <select defaultValue={lead.objetivo ?? ""} className={SELECT_CLS}>
+              <option value="">—</option>
+              {["Investimento", "Moradia"].map((o) => (
+                <option key={o} value={o.toLowerCase()}>{o}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Faixa de valor</label>
+            <input type="text" defaultValue={lead.faixa_valor ?? ""} placeholder="ex: R$ 700k – R$ 1M" className={INPUT_CLS} />
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Região / Bairro</label>
+            <input type="text" defaultValue={lead.regiao_interesse ?? ""} className={INPUT_CLS} />
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Referência do imóvel</label>
+            <input type="text" defaultValue={lead.imovel_ref ?? ""} className={INPUT_CLS} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Agendamento ── */}
+      <div className={SECTION_CLS}>
+        <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Agendamento</h4>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={LABEL_CLS}>Data do agendamento</label>
+            <input type="text" defaultValue={lead.data_agendamento ?? ""} placeholder="dd/mm/aaaa" className={INPUT_CLS} />
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Status do agendamento</label>
+            <select defaultValue={lead.status_agendamento ?? ""} className={SELECT_CLS}>
+              <option value="">—</option>
+              {["Pendente", "Confirmado", "Realizado", "Cancelado"].map((o) => (
+                <option key={o} value={o.toLowerCase()}>{o}</option>
+              ))}
+            </select>
+          </div>
+          <div className="col-span-2">
+            <label className={LABEL_CLS}>Janela de visita</label>
+            <input type="text" defaultValue={lead.janela_visita ?? ""} placeholder="ex: Sábado manhã" className={INPUT_CLS} />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Origem & Status ── */}
+      <div className={SECTION_CLS}>
+        <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Origem & Status</h4>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={LABEL_CLS}>Origem</label>
+            <select defaultValue={lead.source ?? ""} className={SELECT_CLS}>
+              <option value="">—</option>
+              {["WhatsApp", "Instagram", "Site Jurema", "Zap Imóveis", "OLX", "Indicação", "Orgânico"].map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className={LABEL_CLS}>Score (0–100)</label>
+            <input type="number" defaultValue={lead.score ?? 0} min={0} max={100} className={INPUT_CLS} />
+          </div>
+          <div className="col-span-2">
+            <label className={LABEL_CLS}>Status</label>
+            <select defaultValue={lead.status} className={SELECT_CLS}>
+              {Object.entries(STATUS_BADGE).map(([k, v]) => (
+                <option key={k} value={k}>{v.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Notas ── */}
+      <div className={SECTION_CLS}>
+        <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Perfil Resumido</h4>
+        <textarea
+          defaultValue={lead.notes ?? ""}
+          rows={3}
+          placeholder="Resumo do perfil, observações da IA..."
+          className="w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-500 resize-none"
+        />
+      </div>
+
+      {/* ── Ação única ── */}
+      <div className="pt-2">
+        {sent && (
+          <p className="mb-3 rounded-lg bg-emerald-50 px-4 py-2.5 text-sm text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
+            Lead enviado ao corretor com sucesso via n8n.
+          </p>
+        )}
+        <button
+          onClick={enviarParaCorretor}
+          disabled={sending}
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-500 px-5 py-3 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60 transition-colors"
+        >
+          {sending ? (
+            <>
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+              Enviando...
+            </>
           ) : (
-            <input
-              type={type}
-              defaultValue={value}
-              className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500"
-            />
+            "Enviar lead quente para corretor"
           )}
-        </div>
-      ))}
-
-      {/* Select objetivo */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Objetivo</label>
-        <select defaultValue={lead.objetivo ?? ""} className={selectClass}>
-          <option value="">—</option>
-          {["Investimento", "Moradia"].map((o) => (
-            <option key={o} value={o.toLowerCase()}>{o}</option>
-          ))}
-        </select>
+        </button>
       </div>
-
-      {/* Select interesse principal */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Interesse principal</label>
-        <select defaultValue={lead.interesse_principal ?? ""} className={selectClass}>
-          <option value="">—</option>
-          {["Apartamento", "Casa", "Terreno", "Cobertura"].map((o) => (
-            <option key={o} value={o.toLowerCase()}>{o}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Select finalidade */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Finalidade</label>
-        <select defaultValue={lead.finalidade ?? ""} className={selectClass}>
-          <option value="">—</option>
-          {["Compra", "Aluguel"].map((o) => (
-            <option key={o} value={o.toLowerCase()}>{o}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Select status do agendamento */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Status do agendamento</label>
-        <select defaultValue={lead.status_agendamento ?? ""} className={selectClass}>
-          <option value="">—</option>
-          {["Pendente", "Confirmado", "Realizado", "Cancelado"].map((o) => (
-            <option key={o} value={o.toLowerCase()}>{o}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Select status */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Status</label>
-        <select defaultValue={lead.status} className={selectClass}>
-          {Object.entries(STATUS_BADGE).map(([k, v]) => (
-            <option key={k} value={k}>{v.label}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Select origem */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Origem</label>
-        <select defaultValue={lead.source ?? ""} className={selectClass}>
-          <option value="">—</option>
-          {["WhatsApp", "Instagram", "Site Jurema", "Zap Imóveis", "OLX", "Indicação", "Orgânico"].map((o) => (
-            <option key={o} value={o}>{o}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Tags */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Tags</label>
-        <div className="flex flex-wrap gap-2">
-          {["VIP", "Urgente", "Indicação", "Alta prioridade"].map((tag) => (
-            <button
-              key={tag}
-              className="rounded-full border border-gray-200 px-3 py-0.5 text-xs text-gray-500 hover:border-brand-500 hover:text-brand-500 dark:border-gray-700 dark:text-gray-400 transition-colors"
-            >
-              + {tag}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Upload */}
-      <div>
-        <label className="block text-xs font-medium text-gray-400 mb-1">Upload de arquivo</label>
-        <label className="flex flex-col items-center justify-center w-full h-20 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 cursor-pointer hover:border-brand-400 transition-colors">
-          <span className="text-xs text-gray-400">Clique ou arraste para anexar</span>
-          <input type="file" className="hidden" />
-        </label>
-      </div>
-
-      <button className="w-full rounded-xl bg-brand-500 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 transition-colors">
-        Salvar alterações
-      </button>
     </div>
   );
 }
@@ -554,15 +603,6 @@ export default function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
               <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg transition-colors">
                 <CloseIcon className="size-5" />
               </button>
-            </div>
-
-            {/* ── Ações principais (sempre visíveis) ── */}
-            <div className="flex flex-wrap gap-2 px-5 py-3 border-b border-gray-100 dark:border-gray-800 shrink-0">
-              <CommandButton action="qualify" leadId={lead.id} tenantId={lead.tenant_id} />
-              <CommandButton action="schedule" leadId={lead.id} tenantId={lead.tenant_id} />
-              <CommandButton action="send_proposal" leadId={lead.id} tenantId={lead.tenant_id} />
-              <CommandButton action="close" leadId={lead.id} tenantId={lead.tenant_id} />
-              <CommandButton action="lose" leadId={lead.id} tenantId={lead.tenant_id} />
             </div>
 
             {/* ── Tabs ── */}
