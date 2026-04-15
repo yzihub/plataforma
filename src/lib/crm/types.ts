@@ -42,6 +42,16 @@ export interface Lead {
   assigned_to: string | null
   last_action_at: string | null // ISO timestamp
   created_at: string
+  // Campos específicos imobiliário (Jurema) — opcionais para compatibilidade com outros tenants
+  janela_visita?: string | null        // ex: "Sábado manhã"
+  regiao_interesse?: string | null     // ex: "Barra da Tijuca"
+  objetivo?: 'investimento' | 'moradia' | string | null
+  interesse_principal?: 'apartamento' | 'casa' | 'terreno' | 'cobertura' | string | null
+  finalidade?: 'compra' | 'aluguel' | string | null
+  faixa_valor?: string | null          // ex: "R$ 700k – R$ 1.000k"
+  imovel_ref?: string | null           // referência do imóvel (id_imovel)
+  status_agendamento?: string | null   // ex: "confirmado", "pendente"
+  data_agendamento?: string | null     // ISO timestamp
 }
 
 export interface Tenant {
