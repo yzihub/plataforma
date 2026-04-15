@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: "Completed quick-260414-nw1: Mapear persistencia da Luana no YZI"
 last_updated: "2026-04-14T20:17:09.282Z"
-last_activity: "2026-04-14 - Completed quick task 260414-olz: Criar CRUD simples de corretores por tenant"
+last_activity: "2026-04-15 - Completed quick task 260414-wph: Corrigir layout da lista de leads padronizar UI TailAdmin"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -106,6 +106,7 @@ None yet.
 | 260414-czh | Instalar RTK v0.36.0 globalmente no Windows — hook --claude-md mode ativo em ~/.claude/CLAUDE.md | 2026-04-14 | 1aa7acd | [260414-czh-instalar-rtk-para-reduzir-consumo-de-tok](./quick/260414-czh-instalar-rtk-para-reduzir-consumo-de-tok/) |
 | 260414-nw1 | Mapear persistência da Luana no YZI | 2026-04-14 | 874e26e | [260414-nw1-mapear-persist-ncia-da-luana-no-yzi](./quick/260414-nw1-mapear-persist-ncia-da-luana-no-yzi/) |
 | 260414-olz | Criar CRUD simples de corretores por tenant. Campos: full_name, phone, email. Sem mock. | 2026-04-14 | f2a2b6a | [260414-olz-criar-crud-simples-de-corretores-por-ten](./quick/260414-olz-criar-crud-simples-de-corretores-por-ten/) |
+| 260414-wph | Corrigir layout da lista de leads — padronizar botões, espaçamento e alinhamento TailAdmin | 2026-04-15 | e4cfddf | [260414-wph-corrigir-layout-da-lista-de-leads-padron](./quick/260414-wph-corrigir-layout-da-lista-de-leads-padron/) |
 
 ### Blockers/Concerns
 
