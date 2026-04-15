@@ -121,18 +121,26 @@ const TABS: { key: Tab; label: string }[] = [
 
 function TabDados({ lead }: { lead: Lead }) {
   const fields = [
-    { label: "Nome completo", value: lead.name, type: "text" },
-    { label: "E-mail", value: lead.email ?? "", type: "email" },
-    { label: "Telefone", value: lead.phone ?? "", type: "tel" },
-    { label: "Empresa", value: lead.company ?? "", type: "text" },
-    { label: "Valor estimado", value: formatCurrency(lead.value), type: "text" },
-    { label: "Observações", value: lead.notes ?? "", type: "textarea" },
+    { label: "Nome do cliente",              key: "name",             value: lead.name,                    type: "text" },
+    { label: "Telefone",                     key: "phone",            value: lead.phone ?? "",             type: "tel" },
+    { label: "E-mail",                       key: "email",            value: lead.email ?? "",             type: "email" },
+    { label: "Score do Lead (0-100)",        key: "score",            value: String(lead.score ?? 0),     type: "number" },
+    { label: "Janela de visita",             key: "janela_visita",    value: lead.janela_visita ?? "",     type: "text" },
+    { label: "Região / Bairro de interesse", key: "regiao_interesse", value: lead.regiao_interesse ?? "", type: "text" },
+    { label: "Faixa de valor",               key: "faixa_valor",      value: lead.faixa_valor ?? "",       type: "text" },
+    { label: "Corretor responsável",         key: "assigned_to",      value: lead.assigned_to ?? "",       type: "text" },
+    { label: "Referência do imóvel",         key: "imovel_ref",       value: lead.imovel_ref ?? "",        type: "text" },
+    { label: "Data do agendamento",          key: "data_agendamento", value: lead.data_agendamento ?? "",  type: "text" },
+    { label: "Perfil resumido",              key: "notes",            value: lead.notes ?? "",             type: "textarea" },
   ];
+  {/* Empresa e valor estimado omitidos do pipeline imobiliário */}
+
+  const selectClass = "w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500";
 
   return (
     <div className="space-y-4">
-      {fields.map(({ label, value, type }) => (
-        <div key={label}>
+      {fields.map(({ label, key, value, type }) => (
+        <div key={key}>
           <label className="block text-xs font-medium text-gray-400 mb-1">{label}</label>
           {type === "textarea" ? (
             <textarea
@@ -150,13 +158,54 @@ function TabDados({ lead }: { lead: Lead }) {
         </div>
       ))}
 
+      {/* Select objetivo */}
+      <div>
+        <label className="block text-xs font-medium text-gray-400 mb-1">Objetivo</label>
+        <select defaultValue={lead.objetivo ?? ""} className={selectClass}>
+          <option value="">—</option>
+          {["Investimento", "Moradia"].map((o) => (
+            <option key={o} value={o.toLowerCase()}>{o}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Select interesse principal */}
+      <div>
+        <label className="block text-xs font-medium text-gray-400 mb-1">Interesse principal</label>
+        <select defaultValue={lead.interesse_principal ?? ""} className={selectClass}>
+          <option value="">—</option>
+          {["Apartamento", "Casa", "Terreno", "Cobertura"].map((o) => (
+            <option key={o} value={o.toLowerCase()}>{o}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Select finalidade */}
+      <div>
+        <label className="block text-xs font-medium text-gray-400 mb-1">Finalidade</label>
+        <select defaultValue={lead.finalidade ?? ""} className={selectClass}>
+          <option value="">—</option>
+          {["Compra", "Aluguel"].map((o) => (
+            <option key={o} value={o.toLowerCase()}>{o}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Select status do agendamento */}
+      <div>
+        <label className="block text-xs font-medium text-gray-400 mb-1">Status do agendamento</label>
+        <select defaultValue={lead.status_agendamento ?? ""} className={selectClass}>
+          <option value="">—</option>
+          {["Pendente", "Confirmado", "Realizado", "Cancelado"].map((o) => (
+            <option key={o} value={o.toLowerCase()}>{o}</option>
+          ))}
+        </select>
+      </div>
+
       {/* Select status */}
       <div>
         <label className="block text-xs font-medium text-gray-400 mb-1">Status</label>
-        <select
-          defaultValue={lead.status}
-          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500"
-        >
+        <select defaultValue={lead.status} className={selectClass}>
           {Object.entries(STATUS_BADGE).map(([k, v]) => (
             <option key={k} value={k}>{v.label}</option>
           ))}
@@ -166,11 +215,9 @@ function TabDados({ lead }: { lead: Lead }) {
       {/* Select origem */}
       <div>
         <label className="block text-xs font-medium text-gray-400 mb-1">Origem</label>
-        <select
-          defaultValue={lead.source ?? ""}
-          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500"
-        >
-          {["Instagram", "Site", "Indicação", "WhatsApp", "Zap Imóveis", "OLX"].map((o) => (
+        <select defaultValue={lead.source ?? ""} className={selectClass}>
+          <option value="">—</option>
+          {["WhatsApp", "Instagram", "Site Jurema", "Zap Imóveis", "OLX", "Indicação", "Orgânico"].map((o) => (
             <option key={o} value={o}>{o}</option>
           ))}
         </select>
@@ -220,7 +267,7 @@ function TabConversas({ lead }: { lead: Lead }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+      <div className="flex-1 overflow-y-auto space-y-3 pr-1 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
         {MOCK_MSGS.map((msg) => (
           <div
             key={msg.id}
@@ -510,7 +557,8 @@ export default function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
             </div>
 
             {/* ── Ações principais (sempre visíveis) ── */}
-            <div className="flex gap-2 px-5 py-3 border-b border-gray-100 dark:border-gray-800 shrink-0 overflow-x-auto">
+            <div className="flex flex-wrap gap-2 px-5 py-3 border-b border-gray-100 dark:border-gray-800 shrink-0">
+              <CommandButton action="qualify" leadId={lead.id} tenantId={lead.tenant_id} />
               <CommandButton action="schedule" leadId={lead.id} tenantId={lead.tenant_id} />
               <CommandButton action="send_proposal" leadId={lead.id} tenantId={lead.tenant_id} />
               <CommandButton action="close" leadId={lead.id} tenantId={lead.tenant_id} />
@@ -518,7 +566,7 @@ export default function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
             </div>
 
             {/* ── Tabs ── */}
-            <div className="flex border-b border-gray-100 dark:border-gray-800 shrink-0 overflow-x-auto">
+            <div className="flex border-b border-gray-100 dark:border-gray-800 shrink-0 overflow-x-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
               {TABS.map((tab) => (
                 <button
                   key={tab.key}
@@ -535,7 +583,7 @@ export default function LeadDrawer({ lead, onClose }: LeadDrawerProps) {
             </div>
 
             {/* ── Tab content ── */}
-            <div className="flex-1 overflow-y-auto p-5">
+            <div className="flex-1 overflow-y-auto p-5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500">
               {activeTab === "dados" && <TabDados lead={lead} />}
               {activeTab === "conversas" && <TabConversas lead={lead} />}
               {activeTab === "atividades" && <TabAtividades />}
