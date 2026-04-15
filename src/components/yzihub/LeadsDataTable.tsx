@@ -108,14 +108,25 @@ export default function LeadsDataTable({ leads, onSelect }: LeadsDataTableProps)
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
-        <Table>
-          <TableHeader className="border-b border-gray-100 dark:border-gray-800">
+        <Table className="w-full">
+          <colgroup>
+            <col className="w-[18%]" />
+            <col className="w-[12%]" />
+            <col className="w-[11%]" />
+            <col className="w-[9%]" />
+            <col className="w-[10%]" />
+            <col className="w-[10%]" />
+            <col className="w-[9%]" />
+            <col className="w-[11%]" />
+            <col className="w-[10%]" />
+          </colgroup>
+          <TableHeader>
             <TableRow className="bg-gray-50 dark:bg-gray-800/40">
-              {["Nome", "WhatsApp", "Status", "Score Luana", "Bairro Interesse", "Corretor", "Origem", "Valor Imóvel", ""].map((h) => (
+              {["Nome", "WhatsApp", "Status", "Score Luana", "Bairro Interesse", "Corretor", "Origem", "Valor Imóvel", "Ações"].map((h) => (
                 <TableCell
                   key={h}
                   isHeader
-                  className={`py-3 px-5 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 text-left${h === "" ? " w-[120px]" : ""}`}
+                  className="py-3 px-5 text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 text-left"
                 >
                   {h}
                 </TableCell>
@@ -123,12 +134,12 @@ export default function LeadsDataTable({ leads, onSelect }: LeadsDataTableProps)
             </TableRow>
           </TableHeader>
 
-          <TableBody className="divide-y divide-gray-50 dark:divide-gray-800">
+          <TableBody>
             {leads.length === 0 ? (
-              <tr>
-                <td colSpan={9} className="py-20 px-5 text-center text-sm text-gray-400">
+              <tr className="border-b-0">
+                <td colSpan={9} className="py-16 px-5 text-center text-sm text-gray-400">
                   <div className="flex flex-col items-center gap-2">
-                    <UserCircleIcon className="size-12 text-gray-200 dark:text-gray-700" />
+                    <UserCircleIcon className="size-14 text-gray-200 dark:text-gray-700" />
                     <span>Nenhum lead encontrado</span>
                   </div>
                 </td>
@@ -141,7 +152,7 @@ export default function LeadsDataTable({ leads, onSelect }: LeadsDataTableProps)
                   <tr
                     key={lead.id}
                     onClick={() => onSelect?.(lead)}
-                    className="cursor-pointer align-middle hover:bg-gray-50/80 dark:hover:bg-white/[0.02] transition-colors"
+                    className="cursor-pointer align-middle border-b border-gray-50 dark:border-gray-800/60 last:border-0 hover:bg-gray-50/80 dark:hover:bg-white/[0.02] transition-colors"
                   >
                     {/* Nome */}
                     <td className="py-3.5 px-5">
@@ -178,12 +189,12 @@ export default function LeadsDataTable({ leads, onSelect }: LeadsDataTableProps)
                     </td>
 
                     {/* Corretor */}
-                    <td className="py-3.5 px-5 text-xs font-mono text-gray-500">
+                    <td className="py-3.5 px-5 text-xs font-mono text-gray-500 truncate">
                       {formatCorretor(lead.assigned_to)}
                     </td>
 
                     {/* Origem */}
-                    <td className="py-3.5 px-5 text-sm text-gray-500 dark:text-gray-400">
+                    <td className="py-3.5 px-5 text-sm text-gray-500 dark:text-gray-400 truncate">
                       {lead.source ?? "—"}
                     </td>
 
