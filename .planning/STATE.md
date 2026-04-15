@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: Completed quick-260415-1zp-PLAN.md
 last_updated: "2026-04-15T04:31:21.214Z"
-last_activity: "2026-04-14 - Completed quick task 260414-nw1: Mapear persistência da Luana no YZI"
+last_activity: "2026-04-15 - Completed quick task 260415-1zp: copiar kanban TailAdmin para leads"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -108,6 +108,7 @@ None yet.
 | 260414-olz | Criar CRUD simples de corretores por tenant. Campos: full_name, phone, email. Sem mock. | 2026-04-14 | f2a2b6a | [260414-olz-criar-crud-simples-de-corretores-por-ten](./quick/260414-olz-criar-crud-simples-de-corretores-por-ten/) |
 | 260414-wph | Corrigir layout da lista de leads — padronizar botões, espaçamento e alinhamento TailAdmin | 2026-04-15 | e4cfddf | [260414-wph-corrigir-layout-da-lista-de-leads-padron](./quick/260414-wph-corrigir-layout-da-lista-de-leads-padron/) |
 | 260414-x36 | Corrigir LeadDrawer: scrollbar nativa, botões errados, TabDados alinhada ao schema Supabase | 2026-04-15 | 9b55ed6 | [260414-x36-corrigir-leaddrawer-scrollbar-botoes-err](./quick/260414-x36-corrigir-leaddrawer-scrollbar-botoes-err/) |
+| 260415-1zp | copiar kanban TailAdmin para leads — colunas Novo Lead, Lead Quente, Em Qualificação, Qualificando, Agendamento — cards com nome, telefone, interesse e faixa de valor | 2026-04-15 | caca81c | [260415-1zp-copiar-kanban-tailadmin-para-leads-colun](./quick/260415-1zp-copiar-kanban-tailadmin-para-leads-colun/) |
 
 ### Blockers/Concerns
 
@@ -117,6 +118,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-15T04:31:21.203Z
-Last activity: 2026-04-14 - Completed quick task 260414-nw1: Mapear persistência da Luana no YZI
+Last activity: 2026-04-15 - Completed quick task 260415-1zp: copiar kanban TailAdmin para leads
 Stopped at: Completed quick-260415-1zp-PLAN.md
 Resume file: None
