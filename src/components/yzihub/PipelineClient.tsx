@@ -420,11 +420,15 @@ export default function PipelineClient({
 
       <LeadDrawer
         lead={selectedLead}
+        isOpen={selectedLead !== null}
         onClose={() => setSelectedLead(null)}
-        onStageChange={(leadId, newStatus) => {
-          setLeads((prev) =>
-            prev.map((l) => l.id === leadId ? { ...l, status: newStatus } : l)
-          );
+        onLeadSaved={(saved) => {
+          setLeads((prev) => prev.map((l) => l.id === saved.id ? saved : l));
+          setSelectedLead(saved);
+        }}
+        onLeadDeleted={(id) => {
+          setLeads((prev) => prev.filter((l) => l.id !== id));
+          setSelectedLead(null);
         }}
       />
     </div>

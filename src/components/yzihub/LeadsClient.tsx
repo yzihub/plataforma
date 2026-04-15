@@ -11,13 +11,13 @@ import { PlusIcon } from "@/icons";
 // ─── Filter options ───────────────────────────────────────────────────────────
 
 const ALL_STATUS = [
-  { value: "new",         label: "Novo Lead" },
-  { value: "contacted",   label: "Contato" },
-  { value: "qualified",   label: "Agendado" },
-  { value: "proposal",    label: "Proposta" },
-  { value: "negotiation", label: "Contrato" },
-  { value: "won",         label: "Fechado" },
-  { value: "lost",        label: "Perdido" },
+  { value: "new",         label: "Novo Lead"  },
+  { value: "contacted",   label: "Contato"    },
+  { value: "qualified",   label: "Agendado"   },
+  { value: "proposal",    label: "Proposta"   },
+  { value: "negotiation", label: "Contrato"   },
+  { value: "won",         label: "Fechado"    },
+  { value: "lost",        label: "Perdido"    },
 ];
 
 const ALL_SOURCES = ["Instagram", "Site", "Indicação", "WhatsApp", "Zap Imóveis", "OLX", "LinkedIn", "Google Ads", "TikTok"];
@@ -26,13 +26,7 @@ const ALL_SOURCES = ["Instagram", "Site", "Indicação", "WhatsApp", "Zap Imóve
 
 function TableViewIcon({ active }: { active: boolean }) {
   return (
-    <svg
-      className={`size-4 transition-colors ${active ? "text-brand-500" : "text-gray-400"}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
+    <svg className={`size-4 transition-colors ${active ? "text-brand-500" : "text-gray-400"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
       <rect x="3" y="3" width="18" height="18" rx="2" />
       <path d="M3 9h18M9 21V9" />
     </svg>
@@ -41,13 +35,7 @@ function TableViewIcon({ active }: { active: boolean }) {
 
 function KanbanViewIcon({ active }: { active: boolean }) {
   return (
-    <svg
-      className={`size-4 transition-colors ${active ? "text-brand-500" : "text-gray-400"}`}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
+    <svg className={`size-4 transition-colors ${active ? "text-brand-500" : "text-gray-400"}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
       <rect x="3" y="3" width="5" height="18" rx="1" />
       <rect x="10" y="3" width="5" height="12" rx="1" />
       <rect x="17" y="3" width="5" height="15" rx="1" />
@@ -55,35 +43,17 @@ function KanbanViewIcon({ active }: { active: boolean }) {
   );
 }
 
-// ─── SearchBar (used only in Kanban view) ─────────────────────────────────────
+// ─── SearchBar ────────────────────────────────────────────────────────────────
 
-function SearchBar({
-  search,
-  status,
-  source,
-  onSearch,
-  onStatus,
-  onSource,
-}: {
-  search: string;
-  status: string;
-  source: string;
-  onSearch: (v: string) => void;
-  onStatus: (v: string) => void;
-  onSource: (v: string) => void;
+function SearchBar({ search, status, source, onSearch, onStatus, onSource }: {
+  search: string; status: string; source: string;
+  onSearch: (v: string) => void; onStatus: (v: string) => void; onSource: (v: string) => void;
 }) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
       <div className="relative flex-1 min-w-[240px]">
-        <svg
-          className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <circle cx="11" cy="11" r="8" />
-          <path d="M21 21l-4.35-4.35" />
+        <svg className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
         </svg>
         <input
           type="text"
@@ -93,29 +63,30 @@ function SearchBar({
           className="w-full rounded-xl border border-gray-200 bg-white py-2.5 pl-10 pr-4 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder-gray-500"
         />
       </div>
-
-      <select
-        value={status}
-        onChange={(e) => onStatus(e.target.value)}
-        className="min-w-[160px] rounded-xl border border-gray-200 bg-white py-2.5 px-3 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90"
-      >
+      <select value={status} onChange={(e) => onStatus(e.target.value)} className="min-w-[160px] rounded-xl border border-gray-200 bg-white py-2.5 px-3 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90">
         <option value="">Todos os status</option>
-        {ALL_STATUS.map((s) => (
-          <option key={s.value} value={s.value}>{s.label}</option>
-        ))}
+        {ALL_STATUS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
       </select>
-
-      <select
-        value={source}
-        onChange={(e) => onSource(e.target.value)}
-        className="min-w-[160px] rounded-xl border border-gray-200 bg-white py-2.5 px-3 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90"
-      >
+      <select value={source} onChange={(e) => onSource(e.target.value)} className="min-w-[160px] rounded-xl border border-gray-200 bg-white py-2.5 px-3 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90">
         <option value="">Todas as origens</option>
-        {ALL_SOURCES.map((o) => (
-          <option key={o} value={o}>{o}</option>
-        ))}
+        {ALL_SOURCES.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
     </div>
+  );
+}
+
+// ─── Botão Novo Lead ─────────────────────────────────────────────────────────
+
+function NovoLeadButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors"
+    >
+      <PlusIcon className="size-4" />
+      Novo Lead
+    </button>
   );
 }
 
@@ -136,7 +107,41 @@ export default function LeadsClient({
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSource, setFilterSource] = useState("");
+
+  // Drawer state
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+
+  function openNewLead() {
+    setSelectedLead(null);
+    setDrawerOpen(true);
+  }
+
+  function openLead(lead: Lead) {
+    setSelectedLead(lead);
+    setDrawerOpen(true);
+  }
+
+  function closeDrawer() {
+    setDrawerOpen(false);
+    setSelectedLead(null);
+  }
+
+  function handleLeadSaved(savedLead: Lead) {
+    setLeads((prev) => {
+      const exists = prev.some((l) => l.id === savedLead.id);
+      return exists
+        ? prev.map((l) => l.id === savedLead.id ? savedLead : l)
+        : [savedLead, ...prev];
+    });
+    // Atualiza o lead selecionado com os dados salvos
+    setSelectedLead(savedLead);
+  }
+
+  function handleLeadDeleted(leadId: string) {
+    setLeads((prev) => prev.filter((l) => l.id !== leadId));
+    closeDrawer();
+  }
 
   const handleMoveLead = (leadId: string, newStageId: string) => {
     setLeads((prev) =>
@@ -148,23 +153,17 @@ export default function LeadsClient({
     );
   };
 
-  // Kanban: all 3 filters (search + status + source)
+  // Kanban: all 3 filters
   const kanbanLeads = useMemo(() => leads.filter((l) => {
-    const matchSearch =
-      !search ||
-      l.name.toLowerCase().includes(search.toLowerCase()) ||
-      (l.phone ?? "").includes(search);
+    const matchSearch = !search || l.name.toLowerCase().includes(search.toLowerCase()) || (l.phone ?? "").includes(search);
     const matchStatus = !filterStatus || l.status === filterStatus;
     const matchSource = !filterSource || l.source === filterSource;
     return matchSearch && matchStatus && matchSource;
   }), [leads, search, filterStatus, filterSource]);
 
-  // Table: search + status only (source filter not shown in table view per TailAdmin pattern)
+  // Table: search + status
   const tableLeads = useMemo(() => leads.filter((l) => {
-    const matchSearch =
-      !search ||
-      l.name.toLowerCase().includes(search.toLowerCase()) ||
-      (l.phone ?? "").includes(search);
+    const matchSearch = !search || l.name.toLowerCase().includes(search.toLowerCase()) || (l.phone ?? "").includes(search);
     const matchStatus = !filterStatus || l.status === filterStatus;
     return matchSearch && matchStatus;
   }), [leads, search, filterStatus]);
@@ -187,81 +186,61 @@ export default function LeadsClient({
             <div className="flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] p-1">
               <button
                 onClick={() => setView("table")}
-                className={`rounded-lg p-2 transition-colors ${
-                  view === "table"
-                    ? "bg-brand-500/10"
-                    : "hover:bg-gray-100 dark:hover:bg-white/[0.05]"
-                }`}
+                className={`rounded-lg p-2 transition-colors ${view === "table" ? "bg-brand-500/10" : "hover:bg-gray-100 dark:hover:bg-white/[0.05]"}`}
                 title="Visualizacao em tabela"
               >
                 <TableViewIcon active={view === "table"} />
               </button>
               <button
                 onClick={() => setView("kanban")}
-                className={`rounded-lg p-2 transition-colors ${
-                  view === "kanban"
-                    ? "bg-brand-500/10"
-                    : "hover:bg-gray-100 dark:hover:bg-white/[0.05]"
-                }`}
+                className={`rounded-lg p-2 transition-colors ${view === "kanban" ? "bg-brand-500/10" : "hover:bg-gray-100 dark:hover:bg-white/[0.05]"}`}
                 title="Visualizacao Kanban"
               >
                 <KanbanViewIcon active={view === "kanban"} />
               </button>
             </div>
 
-            {/* Novo Lead button — shown only in kanban view; in table view it lives inside DataTable card */}
-            {view === "kanban" && (
-              <button
-                type="button"
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors"
-              >
-                <PlusIcon className="size-4" />
-                Novo Lead
-              </button>
-            )}
+            {view === "kanban" && <NovoLeadButton onClick={openNewLead} />}
           </div>
         </div>
 
-        {/* Table view — SearchBar is inside the DataTable card per TailAdmin pattern */}
+        {/* Table view */}
         {view === "table" && (
           <LeadsDataTable
             leads={tableLeads}
-            onSelect={setSelectedLead}
+            onSelect={openLead}
             activeStatus={filterStatus}
             onStatusChange={setFilterStatus}
             search={search}
             onSearchChange={setSearch}
-            headerActions={
-              <button
-                type="button"
-                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors"
-              >
-                <PlusIcon className="size-4" />
-                Novo Lead
-              </button>
-            }
+            headerActions={<NovoLeadButton onClick={openNewLead} />}
           />
         )}
 
-        {/* Kanban view — SearchBar is external, includes source filter */}
+        {/* Kanban view */}
         {view === "kanban" && (
           <>
             <SearchBar
-              search={search}
-              status={filterStatus}
-              source={filterSource}
-              onSearch={setSearch}
-              onStatus={setFilterStatus}
-              onSource={setFilterSource}
+              search={search} status={filterStatus} source={filterSource}
+              onSearch={setSearch} onStatus={setFilterStatus} onSource={setFilterSource}
             />
-            <LeadsKanban leads={kanbanLeads} stages={stages} onMoveLead={handleMoveLead} />
+            <LeadsKanban
+              leads={kanbanLeads}
+              stages={stages}
+              onMoveLead={handleMoveLead}
+              onLeadSelect={openLead}
+            />
           </>
         )}
       </div>
 
-      {view === "table" && (
-        <LeadDrawer lead={selectedLead} onClose={() => setSelectedLead(null)} />
-      )}
+      <LeadDrawer
+        lead={selectedLead}
+        isOpen={drawerOpen}
+        onClose={closeDrawer}
+        onLeadSaved={handleLeadSaved}
+        onLeadDeleted={handleLeadDeleted}
+      />
     </>
   );
 }

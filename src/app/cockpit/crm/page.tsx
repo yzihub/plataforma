@@ -683,9 +683,15 @@ export default function CrmPage() {
       {/* Full drawer — triggered by "Ver detalhes ↗" only */}
       <LeadDrawer
         lead={drawerLead}
+        isOpen={drawerLead !== null}
         onClose={() => setDrawerLead(null)}
-        onStageChange={(leadId, newStatus) => {
-          setLeads((prev) => prev.map((l) => l.id === leadId ? { ...l, status: newStatus } : l));
+        onLeadSaved={(saved) => {
+          setLeads((prev) => prev.map((l) => l.id === saved.id ? saved : l));
+          setDrawerLead(saved);
+        }}
+        onLeadDeleted={(id) => {
+          setLeads((prev) => prev.filter((l) => l.id !== id));
+          setDrawerLead(null);
         }}
       />
     </>
