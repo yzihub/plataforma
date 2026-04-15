@@ -1,364 +1,97 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { KanbanData, Lead, PipelineStage } from "@/lib/crm/types";
-import KanbanColumn from "@/components/yzihub/KanbanColumn";
-import LeadDrawer from "@/components/yzihub/LeadDrawer";
+// Etapas do funil de leads (Jurema Brokers — qualificacao inicial)
+const STAGES = [
+  'Novo Lead',
+  'Lead Quente',
+  'Em Qualificacao',
+  'Qualificando',
+  'Agendamento',
+];
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+type Lead = {
+  id: string;
+  nome: string;
+  telefone?: string;
+  interesse?: string;
+  faixa_valor?: string;
+  valor_imovel?: number; // mantido para retrocompatibilidade
+  status: string;
+  origem?: string;
+};
 
 interface KanbanBoardProps {
-  data: KanbanData;
+  leads: Lead[];
+  onMoveLead?: (leadId: string, newStatus: string) => void;
+  onSelectLead?: (lead: Lead) => void;
 }
 
-interface Toast {
-  message: string;
-  type: "success" | "error";
-}
-
-// ─── Inline SVG Icons ─────────────────────────────────────────────────────────
-
-function UsersIcon() {
+export const KanbanBoard = ({ leads, onSelectLead }: KanbanBoardProps) => {
   return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="text-brand-500"
-    >
-      <circle cx="9" cy="7" r="3" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="17" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M3 19c0-3.314 2.686-6 6-6s6 2.686 6 6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M17 13c2.21 0 4 1.79 4 4"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+    <div className="flex gap-4 overflow-x-auto pb-4">
+      {STAGES.map((stage) => {
+        const stageLeads = leads.filter((l) => l.status === stage);
 
-function ClockIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="text-warning-500"
-    >
-      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M12 7v5l3 3"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+        return (
+          <div
+            key={stage}
+            className="flex flex-col w-72 shrink-0 rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900/50"
+          >
+            {/* Header da coluna */}
+            <div className="px-3.5 pt-3.5 pb-2">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200 truncate">
+                  {stage}
+                </span>
+                <span className="text-xs font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full shrink-0">
+                  {stageLeads.length}
+                </span>
+              </div>
+            </div>
 
-function CurrencyIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="text-success-500"
-    >
-      <path
-        d="M12 3v18"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M17 7H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H7"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+            {/* Cards */}
+            <div className="flex flex-col gap-2.5 p-2.5 flex-1 overflow-y-auto max-h-[calc(100vh-260px)] min-h-[80px]">
+              {stageLeads.length === 0 && (
+                <div className="flex items-center justify-center h-20 rounded-lg border border-dashed border-gray-200 dark:border-gray-700">
+                  <p className="text-xs text-gray-300 dark:text-gray-600">Sem leads nesta etapa</p>
+                </div>
+              )}
 
-function TrendUpIcon() {
-  return (
-    <svg
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="text-brand-500"
-    >
-      <path
-        d="M3 17l5-5 4 4 9-9"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M15 7h6v6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+              {stageLeads.map((lead) => (
+                <div
+                  key={lead.id}
+                  onClick={() => onSelectLead?.(lead)}
+                  className="rounded-xl border border-gray-200 bg-white p-3.5 shadow-sm dark:border-gray-700 dark:bg-gray-800 cursor-pointer hover:border-brand-300 hover:shadow-md transition-all space-y-2"
+                >
+                  {/* Nome */}
+                  <p className="text-sm font-medium text-gray-800 dark:text-white/90 truncate">
+                    {lead.nome}
+                  </p>
 
-function SearchIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="text-gray-400"
-    >
-      <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.5" />
-      <path
-        d="M16.5 16.5L21 21"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+                  {/* Telefone (somente se presente) */}
+                  {lead.telefone && (
+                    <p className="text-xs text-gray-400 truncate">{lead.telefone}</p>
+                  )}
 
-function PlusIcon() {
-  return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M12 5v14M5 12h14"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
+                  {/* Interesse como tag pill */}
+                  {lead.interesse && (
+                    <span className="inline-block rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                      {lead.interesse}
+                    </span>
+                  )}
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function formatPipelineValue(total: number): string {
-  if (total >= 1_000_000) {
-    return `R$ ${(total / 1_000_000).toFixed(1).replace(".", ",")}mi`;
-  }
-  if (total >= 1_000) {
-    return `R$ ${(total / 1_000).toFixed(1).replace(".", ",")}k`;
-  }
-  return total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-}
-
-// ─── Metric Card ──────────────────────────────────────────────────────────────
-
-interface MetricCardProps {
-  label: string;
-  value: string | number;
-  icon: React.ReactNode;
-}
-
-function MetricCard({ label, value, icon }: MetricCardProps) {
-  return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-800">
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-theme-xs font-medium text-gray-500 dark:text-gray-400">
-          {label}
-        </span>
-        {icon}
-      </div>
-      <p className="text-lg font-semibold text-gray-800 dark:text-white/90">
-        {value}
-      </p>
+                  {/* Faixa de valor */}
+                  {lead.faixa_valor && (
+                    <p className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+                      {lead.faixa_valor}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
-}
-
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function KanbanBoard({ data }: KanbanBoardProps) {
-  const [leads, setLeads] = useState<Lead[]>(data.leads);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [toast, setToast] = useState<Toast | null>(null);
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-
-  // ── Metrics ──
-  const totalLeads = leads.length;
-  const inProgressLeads = leads.filter(
-    (l) => l.status !== "won" && l.status !== "lost"
-  ).length;
-  const totalValue = leads.reduce((sum, l) => sum + (l.value ?? 0), 0);
-  const wonLeads = leads.filter((l) => l.status === "won").length;
-  const conversionRate =
-    totalLeads > 0 ? ((wonLeads / totalLeads) * 100).toFixed(0) : "0";
-
-  // ── Sorted stages ──
-  const sortedStages = [...data.stages].sort((a, b) => a.position - b.position);
-
-  // ── Filtered leads ──
-  const lowerSearch = searchTerm.toLowerCase().trim();
-  const filteredLeads = lowerSearch
-    ? leads.filter(
-        (l) =>
-          l.name.toLowerCase().includes(lowerSearch) ||
-          (l.email ?? "").toLowerCase().includes(lowerSearch) ||
-          (l.phone ?? "").toLowerCase().includes(lowerSearch) ||
-          (l.company ?? "").toLowerCase().includes(lowerSearch)
-      )
-    : leads;
-
-  // ── Action success handler ──
-  function handleActionSuccess(
-    leadId: string,
-    jobId: string,
-    action: string
-  ) {
-    setLeads((prev) =>
-      prev.map((l) =>
-        l.id === leadId
-          ? { ...l, last_action_at: new Date().toISOString() }
-          : l
-      )
-    );
-    setToast({
-      message: `Ação "${action}" executada com sucesso.`,
-      type: "success",
-    });
-  }
-
-  // ── Toast auto-dismiss ──
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 3000);
-    return () => clearTimeout(timer);
-  }, [toast]);
-
-  return (
-    <div className="relative">
-      {/* ── Toast ── */}
-      {toast && (
-        <div
-          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-white text-theme-sm transition-all ${
-            toast.type === "success" ? "bg-success-500" : "bg-error-500"
-          }`}
-          role="alert"
-        >
-          {toast.message}
-        </div>
-      )}
-
-      {/* ── Header ── */}
-      <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            {data.tenant.name}
-          </h1>
-          <p className="text-theme-sm text-gray-500 dark:text-gray-400">
-            Pipeline CRM
-          </p>
-        </div>
-
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5 text-theme-sm font-medium text-white shadow-theme-xs hover:bg-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-        >
-          <PlusIcon />
-          Novo Lead
-        </button>
-      </div>
-
-      {/* ── Metrics ── */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 mb-6">
-        <MetricCard
-          label="Total Leads"
-          value={totalLeads}
-          icon={<UsersIcon />}
-        />
-        <MetricCard
-          label="Em Andamento"
-          value={inProgressLeads}
-          icon={<ClockIcon />}
-        />
-        <MetricCard
-          label="Valor Pipeline"
-          value={formatPipelineValue(totalValue)}
-          icon={<CurrencyIcon />}
-        />
-        <MetricCard
-          label="Conversão"
-          value={`${conversionRate}%`}
-          icon={<TrendUpIcon />}
-        />
-      </div>
-
-      {/* ── Filter / Search ── */}
-      <div className="flex flex-col gap-3 mb-4 sm:flex-row sm:items-center">
-        <div className="relative flex-1 sm:max-w-xs">
-          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <SearchIcon />
-          </span>
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar lead..."
-            className="w-full rounded-lg border border-gray-300 bg-white py-2.5 pl-9 pr-4 text-theme-sm text-gray-700 placeholder-gray-400 shadow-theme-xs focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-gray-700 dark:bg-gray-800 dark:text-white/90 dark:placeholder-gray-500"
-          />
-        </div>
-      </div>
-
-      {/* ── Board ── */}
-      <div
-        className="
-          flex gap-4 overflow-x-auto pb-4
-          scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-gray-700
-        "
-      >
-        {sortedStages.map((stage: PipelineStage) => {
-          const stageLeads = filteredLeads.filter(
-            (l) => l.stage_id === stage.id
-          );
-          return (
-            <KanbanColumn
-              key={stage.id}
-              stage={stage}
-              leads={stageLeads}
-              onActionSuccess={handleActionSuccess}
-              onLeadSelect={setSelectedLead}
-            />
-          );
-        })}
-      </div>
-
-      <LeadDrawer
-        lead={selectedLead}
-        onClose={() => setSelectedLead(null)}
-      />
-    </div>
-  );
-}
+};
