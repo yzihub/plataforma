@@ -73,8 +73,8 @@ function SearchBar({
   onSource: (v: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-      <div className="relative flex-1">
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="relative flex-1 min-w-[240px]">
         <svg
           className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-gray-400"
           fill="none"
@@ -171,7 +171,7 @@ export default function LeadsClient({
               {filteredLeads.length} de {leads.length} leads
             </p>
           </div>
-          <div className="flex items-center gap-3 self-start sm:self-auto">
+          <div className="flex items-center gap-2 self-start sm:self-auto">
             {/* View toggle */}
             <div className="flex items-center gap-1 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] p-1">
               <button
@@ -198,7 +198,7 @@ export default function LeadsClient({
               </button>
             </div>
 
-            <button className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors">
+            <button type="button" className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-brand-600 transition-colors">
               <PlusIcon className="size-4" />
               Novo Lead
             </button>
