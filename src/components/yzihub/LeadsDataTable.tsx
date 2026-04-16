@@ -283,6 +283,8 @@ interface LeadsDataTableProps {
   // Inline editing
   corretores?: Corretor[];
   onInlineEdit?: (leadId: string, patch: Partial<Lead>) => void | Promise<void>;
+  // Selected lead highlight
+  selectedLeadId?: string | null;
 }
 
 export default function LeadsDataTable({
@@ -298,6 +300,7 @@ export default function LeadsDataTable({
   onSourceChange,
   corretores = [],
   onInlineEdit,
+  selectedLeadId,
 }: LeadsDataTableProps) {
   const [pageIndex, setPageIndex] = useState(0);
 
@@ -413,7 +416,11 @@ export default function LeadsDataTable({
                   <tr
                     key={lead.id}
                     onClick={() => onSelect?.(lead)}
-                    className="cursor-pointer align-middle border-b border-gray-100 dark:border-gray-800/60 last:border-0 hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
+                    className={`cursor-pointer align-middle border-b border-gray-100 dark:border-gray-800/60 last:border-0 transition-colors ${
+                      selectedLeadId === lead.id
+                        ? "bg-brand-50 ring-1 ring-inset ring-brand-500 dark:bg-brand-500/10"
+                        : "hover:bg-gray-50/60 dark:hover:bg-white/[0.02]"
+                    }`}
                   >
                     {/* Lead: avatar + nome + telefone */}
                     <td className="py-3.5 px-5">

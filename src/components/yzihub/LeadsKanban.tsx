@@ -64,12 +64,14 @@ function LeadCard({
   onDragStart,
   onMove,
   onSelect,
+  selectedLeadId,
 }: {
   lead: Lead;
   stages: PipelineStage[];
   onDragStart: (e: React.DragEvent, leadId: string) => void;
   onMove: (leadId: string, newStageId: string) => void;
   onSelect?: (lead: Lead) => void;
+  selectedLeadId?: string | null;
 }) {
   const score = lead.score ?? 0;
 
@@ -78,11 +80,15 @@ function LeadCard({
       draggable
       onDragStart={(e) => onDragStart(e, lead.id)}
       onClick={() => onSelect?.(lead)}
-      className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3.5 hover:shadow-md hover:border-brand-300 dark:hover:border-brand-700 transition-all cursor-pointer active:cursor-grabbing select-none"
+      className={`rounded-xl border p-3 transition-all cursor-pointer active:cursor-grabbing select-none ${
+        selectedLeadId === lead.id
+          ? "border-brand-500 ring-2 ring-brand-500/40 bg-white dark:bg-gray-800 shadow-md"
+          : "border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/60 hover:shadow-sm hover:border-brand-300 dark:hover:border-brand-700"
+      }`}
     >
       {/* ── Linha 1: Avatar + Nome + Status badge ── */}
       <div className="flex items-center gap-2.5 mb-2.5">
-        <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-white text-xs font-bold ${avatarBg(lead.name)}`}>
+        <div className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-white text-[10px] font-bold ${avatarBg(lead.name)}`}>
           {initials(lead.name)}
         </div>
         <span className="flex-1 text-sm font-semibold text-gray-800 dark:text-white/90 truncate leading-tight">
@@ -123,7 +129,7 @@ function LeadCard({
       </div>
 
       {/* ── Score bar ── */}
-      <div className="mb-2.5">
+      <div className="mb-2.5 opacity-70">
         <div className="flex items-center justify-between mb-1">
           <span className="text-[10px] text-gray-400">Score</span>
           <span className="text-[10px] font-semibold" style={{ color: scoreColor(score) }}>{score}</span>
@@ -137,7 +143,7 @@ function LeadCard({
       </div>
 
       {/* ── Footer: data + corretor + mover ── */}
-      <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+      <div className="flex items-center justify-between pt-2 border-t border-gray-100/60 dark:border-gray-700/50">
         <div className="flex flex-col gap-0.5 min-w-0">
           {lead.assigned_to && (
             <span className="text-[10px] text-gray-400 truncate">👤 {lead.assigned_to}</span>
@@ -204,7 +210,7 @@ function MoveMenu({
 
 function KanbanColumn({
   stage, leads, stages, isDragOver,
-  onDragStart, onDragOver, onDrop, onMove, onSelect,
+  onDragStart, onDragOver, onDrop, onMove, onSelect, selectedLeadId,
 }: {
   stage: PipelineStage;
   leads: Lead[];
@@ -215,6 +221,7 @@ function KanbanColumn({
   onDrop: (e: React.DragEvent, stageId: string) => void;
   onMove: (leadId: string, newStageId: string) => void;
   onSelect?: (lead: Lead) => void;
+  selectedLeadId?: string | null;
 }) {
   return (
     <div
@@ -223,9 +230,9 @@ function KanbanColumn({
       className={`flex flex-col min-w-[260px] w-64 rounded-2xl border transition-colors overflow-hidden ${
         isDragOver
           ? "border-brand-400 bg-brand-50/30 dark:bg-brand-500/5"
-          : "border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50"
+          : "border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50"
       }`}
-      style={{ borderTopColor: stage.color, borderTopWidth: "3px" }}
+      style={{ borderTopColor: stage.color, borderTopWidth: "2px" }}
     >
       {/* Column header */}
       <div className="flex items-center gap-2 px-3 py-2.5 bg-white dark:bg-gray-800/60 border-b border-gray-100 dark:border-gray-700">
@@ -262,6 +269,7 @@ function KanbanColumn({
             onDragStart={onDragStart}
             onMove={onMove}
             onSelect={onSelect}
+            selectedLeadId={selectedLeadId}
           />
         ))}
       </div>
@@ -276,11 +284,13 @@ export default function LeadsKanban({
   stages,
   onMoveLead,
   onLeadSelect,
+  selectedLeadId,
 }: {
   leads: Lead[];
   stages: PipelineStage[];
   onMoveLead: (leadId: string, newStageId: string) => void;
   onLeadSelect?: (lead: Lead) => void;
+  selectedLeadId?: string | null;
 }) {
   const dragLeadId = useRef<string | null>(null);
   const [dragOverStageId, setDragOverStageId] = useState<string | null>(null);
@@ -342,6 +352,7 @@ export default function LeadsKanban({
               onDrop={handleDrop}
               onMove={onMoveLead}
               onSelect={onLeadSelect}
+              selectedLeadId={selectedLeadId}
             />
           );
         })}
