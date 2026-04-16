@@ -9,7 +9,7 @@ import CorretoresKpiStrip from "@/components/yzihub/CorretoresKpiStrip";
 
 // ─── Table name ───────────────────────────────────────────────────────────────
 
-const BROKERS_TABLE = "brokers";
+const BROKERS_TABLE = "corretores";
 
 // ─── Loading skeleton (4 columns) ─────────────────────────────────────────────
 
@@ -75,7 +75,7 @@ export default function CorretoresClient() {
         supabase
           .from(BROKERS_TABLE)
           .select(
-            "id, tenant_id, full_name, phone, email, role, is_active, created_at, updated_at"
+            "id, tenant_id, name, phone, email, role, is_active, created_at, updated_at"
           )
           .eq("tenant_id", tenant!.id)
           .order("created_at", { ascending: false }),
@@ -129,18 +129,31 @@ export default function CorretoresClient() {
       .sort((a, b) => {
         const diff = (leadCounts[b.id] ?? 0) - (leadCounts[a.id] ?? 0);
         if (diff !== 0) return diff;
-        return a.full_name.localeCompare(b.full_name);
+        return a.name.localeCompare(b.name);
       })
       .slice(0, 5);
   }, [brokers, leadCounts]);
 
   const maxLeads = rankingTop5[0] ? (leadCounts[rankingTop5[0].id] ?? 0) : 0;
 
+  // ── Refetch brokers (chamado após CREATE via webhook para sincronizar a lista) ──
+
+  async function refetchBrokers() {
+    if (!tenant?.id) return;
+    const supabase = createClient();
+    const { data, error: brokersError } = await supabase
+      .from(BROKERS_TABLE)
+      .select("id, tenant_id, name, phone, email, role, is_active, created_at, updated_at")
+      .eq("tenant_id", tenant.id)
+      .order("created_at", { ascending: false });
+    if (!brokersError && data) setBrokers(data as Broker[]);
+  }
+
   // ── CRUD handlers ─────────────────────────────────────────────────────────────
 
   async function handleSave(input: BrokerInput, id?: string) {
     if (!tenant?.id) return;
-    if (!input.full_name || input.full_name.trim().length < 2) throw new Error("Nome inválido");
+    if (!input.name || input.name.trim().length < 2) throw new Error("Nome inválido");
     const supabase = createClient();
 
     try {
@@ -156,21 +169,39 @@ export default function CorretoresClient() {
         if (updateError) throw updateError;
         if (data) setBrokers((prev) => prev.map((b) => (b.id === id ? (data as Broker) : b)));
       } else {
-        const { data, error: insertError } = await supabase
-          .from(BROKERS_TABLE)
-          .insert({ ...input, is_active: input.is_active ?? true, tenant_id: tenant.id })
-          .select()
-          .single();
+        // CREATE → delega ao webhook n8n via API route (Regra de Ouro: frontend nunca escreve em fontes de automação).
+        const payload = {
+          tenant_id: tenant.id,
+          name: input.name,
+          email: input.email ?? null,
+          phone: input.phone ?? null, // já normalizado pelo CorretorDrawer
+          is_active: input.is_active ?? true,
+          role: input.role ?? null,
+          notes: null, // reservado para uso futuro
+        };
 
-        if (insertError) throw insertError;
-        if (data) setBrokers((prev) => [data as Broker, ...prev]);
+        const res = await fetch("/api/corretores/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error((body as { error?: string })?.error ?? "Falha ao criar corretor");
+        }
+
+        // Refresh: refazer o fetch da lista a partir do Supabase, já que a source of truth
+        // (criada pelo n8n) precisa ser lida depois.
+        await refetchBrokers();
       }
 
       setDrawerOpen(false);
       setEditingBroker(null);
-    } catch (err) {
-      console.error("[CorretoresClient] handleSave error:", err);
-      setError("Erro ao salvar corretor. Tente novamente.");
+    } catch (err: unknown) {
+      const e = err as { message?: string; details?: string };
+      console.error("[CorretoresClient] handleSave error:", e);
+      setError(`Erro ao salvar: ${e?.message ?? ""} ${e?.details ?? ""}`.trim());
       throw err;
     }
   }
@@ -304,7 +335,7 @@ export default function CorretoresClient() {
                         <div className="flex items-center gap-3">
                           {/* Avatar initials */}
                           <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-600 dark:text-gray-300 shrink-0 select-none">
-                            {broker.full_name
+                            {broker.name
                               .trim()
                               .split(/\s+/)
                               .slice(0, 2)
@@ -313,7 +344,7 @@ export default function CorretoresClient() {
                               .toUpperCase()}
                           </div>
                           <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                            {broker.full_name}
+                            {broker.name}
                           </span>
                         </div>
                       </td>
@@ -382,7 +413,7 @@ export default function CorretoresClient() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-theme-sm font-medium text-gray-700 dark:text-white/80 truncate">
-                          {broker.full_name}
+                          {broker.name}
                         </span>
                         <span className="text-theme-xs font-semibold text-gray-600 dark:text-gray-300 tabular-nums shrink-0 ml-3">
                           {count}
