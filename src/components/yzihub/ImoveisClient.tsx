@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/client";
 import type { Property } from "@/types/properties";
 import PropertyCard from "@/components/yzihub/PropertyCard";
 import PropertyDrawer from "@/components/yzihub/PropertyDrawer";
-import PropertyKanban from "@/components/yzihub/PropertyKanban";
 import PropertyTable from "@/components/yzihub/PropertyTable";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -110,16 +109,6 @@ function GridIcon() {
   );
 }
 
-function KanbanIcon() {
-  return (
-    <svg className="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-      <rect x="3" y="3" width="5" height="18" rx="1" />
-      <rect x="10" y="3" width="5" height="13" rx="1" />
-      <rect x="17" y="3" width="5" height="16" rx="1" />
-    </svg>
-  );
-}
-
 // ─── MetricCard ──────────────────────────────────────────────────────────────
 
 function MetricCard({
@@ -166,7 +155,7 @@ export default function ImoveisClient() {
   const [filterNeighborhood, setFilterNeighborhood] = useState("all");
   const [filterPubStatus, setFilterPubStatus] = useState("all");
   const [filterMaxPrice, setFilterMaxPrice] = useState("all");
-  const [view, setView] = useState<"table" | "grid" | "kanban">("table");
+  const [view, setView] = useState<"table" | "grid">("table");
 
   // ── Fetch properties from Supabase filtered by tenant ──────────────────────
 
@@ -374,18 +363,6 @@ export default function ImoveisClient() {
             <GridIcon />
             <span className="hidden sm:inline">Grade</span>
           </button>
-          <button
-            onClick={() => setView("kanban")}
-            title="Visualização em Kanban por bairro"
-            className={`flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
-              view === "kanban"
-                ? "bg-brand-500 text-white"
-                : "bg-white text-gray-500 hover:text-gray-700 dark:bg-white/[0.03] dark:text-gray-400 dark:hover:text-gray-200"
-            }`}
-          >
-            <KanbanIcon />
-            <span className="hidden sm:inline">Kanban</span>
-          </button>
         </div>
       </div>
 
@@ -434,11 +411,6 @@ export default function ImoveisClient() {
             </div>
           )}
         </>
-      )}
-
-      {/* Kanban view */}
-      {view === "kanban" && (
-        <PropertyKanban properties={filtered} />
       )}
 
       {/* Drawer */}
