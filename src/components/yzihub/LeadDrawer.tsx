@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Badge from "@/components/ui/badge/Badge";
 import { CloseIcon } from "@/icons";
 import type { Lead, LeadStatus } from "@/lib/crm/types";
+import type { Corretor } from "@/components/yzihub/LeadsClient";
 
 // ─── Types internos do Drawer ─────────────────────────────────────────────────
 
@@ -93,6 +94,11 @@ const STATUS_BADGE: Record<LeadStatus, { color: BadgeColor; label: string }> = {
   lost:        { color: "dark",    label: "❌ Perdido"     },
 };
 
+const STATUS_ORDER: LeadStatus[] = [
+  "new", "contacted", "qualified", "meeting",
+  "proposal", "negotiation", "won", "lost",
+];
+
 const ACTIVITY_ICON: Record<Atividade["tipo"], string> = {
   ia: "🤖", n8n: "⚡", status: "🔄", manual: "👤",
 };
@@ -157,6 +163,198 @@ function initForm(lead: Lead | null): FormState {
     status:              lead?.status ?? "new",
     notes:               lead?.notes ?? "",
   };
+}
+
+// ─── Quick Actions Bar ────────────────────────────────────────────────────────
+
+function QuickActionsBar({
+  lead,
+  onLeadSaved,
+}: {
+  lead: Lead;
+  onLeadSaved?: (lead: Lead) => void;
+}) {
+  const [showStatusMenu, setShowStatusMenu] = useState(false);
+
+  const phone = lead.phone?.replace(/\D/g, "") ?? "";
+  const hasPhone = !!lead.phone;
+  const hasEmail = !!lead.email;
+
+  function moveStatus(newStatus: LeadStatus) {
+    setShowStatusMenu(false);
+    if (onLeadSaved) {
+      onLeadSaved({ ...lead, status: newStatus, last_action_at: new Date().toISOString() });
+    }
+  }
+
+  return (
+    <div className="flex gap-2 px-6 py-3 border-b border-gray-200 dark:border-gray-800 shrink-0 flex-wrap">
+      {/* WhatsApp */}
+      <a
+        href={hasPhone ? `https://wa.me/${phone}` : undefined}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-disabled={!hasPhone}
+        className={[
+          "inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
+          hasPhone
+            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20"
+            : "cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-600",
+        ].join(" ")}
+        onClick={(e) => !hasPhone && e.preventDefault()}
+      >
+        <span>💬</span>
+        WhatsApp
+      </a>
+
+      {/* Ligar */}
+      <a
+        href={hasPhone ? `tel:${lead.phone}` : undefined}
+        aria-disabled={!hasPhone}
+        className={[
+          "inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
+          hasPhone
+            ? "bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20"
+            : "cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-600",
+        ].join(" ")}
+        onClick={(e) => !hasPhone && e.preventDefault()}
+      >
+        <span>📞</span>
+        Ligar
+      </a>
+
+      {/* Email */}
+      <a
+        href={hasEmail ? `mailto:${lead.email}` : undefined}
+        aria-disabled={!hasEmail}
+        className={[
+          "inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors",
+          hasEmail
+            ? "bg-violet-50 text-violet-700 hover:bg-violet-100 dark:bg-violet-500/10 dark:text-violet-400 dark:hover:bg-violet-500/20"
+            : "cursor-not-allowed bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-600",
+        ].join(" ")}
+        onClick={(e) => !hasEmail && e.preventDefault()}
+      >
+        <span>✉️</span>
+        Email
+      </a>
+
+      {/* Mover status */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => setShowStatusMenu((prev) => !prev)}
+          className="inline-flex items-center gap-1.5 rounded-xl bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition-colors"
+        >
+          <span>🔄</span>
+          Mover status
+          <span className="text-gray-400">▾</span>
+        </button>
+        {showStatusMenu && (
+          <div className="absolute left-0 top-full mt-1 z-50 min-w-[180px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-lg py-1">
+            {STATUS_ORDER.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => moveStatus(s)}
+                className={[
+                  "flex w-full items-center gap-2 px-3 py-2 text-xs hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors",
+                  lead.status === s ? "text-brand-600 dark:text-brand-400 font-semibold" : "text-gray-700 dark:text-gray-300",
+                ].join(" ")}
+              >
+                {STATUS_BADGE[s].label}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Corretor Card ────────────────────────────────────────────────────────────
+
+function CorretorCard({
+  lead,
+  corretores,
+  onLeadSaved,
+}: {
+  lead: Lead;
+  corretores: Corretor[];
+  onLeadSaved?: (lead: Lead) => void;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [selectedId, setSelectedId] = useState(lead.assigned_to ?? "");
+
+  useEffect(() => {
+    setSelectedId(lead.assigned_to ?? "");
+    setEditing(false);
+  }, [lead.assigned_to, lead.id]);
+
+  const corretor = corretores.find((c) => c.id === lead.assigned_to);
+  const hasCorretor = !!corretor;
+
+  function handleAssign() {
+    if (!onLeadSaved) return;
+    onLeadSaved({ ...lead, assigned_to: selectedId || null });
+    setEditing(false);
+  }
+
+  return (
+    <div className="mx-6 mb-4 rounded-xl border border-gray-200 dark:border-gray-700 p-3 shrink-0">
+      <div className="flex items-center justify-between">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-400 mb-1">Corretor Responsável</p>
+        {onLeadSaved && (
+          <button
+            type="button"
+            onClick={() => setEditing((v) => !v)}
+            className="text-[11px] text-brand-500 hover:underline"
+          >
+            {hasCorretor ? "Trocar" : "Atribuir"}
+          </button>
+        )}
+      </div>
+
+      {!editing && (
+        hasCorretor ? (
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-violet-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+              {corretor.full_name.slice(0, 1).toUpperCase()}
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">{corretor.full_name}</p>
+              {corretor.phone && <p className="text-[11px] text-gray-400">{corretor.phone}</p>}
+              {corretor.email && <p className="text-[11px] text-gray-400">{corretor.email}</p>}
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-400 italic">Nenhum corretor atribuído</p>
+        )
+      )}
+
+      {editing && (
+        <div className="flex gap-2 mt-1">
+          <select
+            value={selectedId}
+            onChange={(e) => setSelectedId(e.target.value)}
+            className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-1.5 text-sm text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+          >
+            <option value="">— Sem corretor —</option>
+            {corretores.map((c) => (
+              <option key={c.id} value={c.id}>{c.full_name}</option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={handleAssign}
+            className="rounded-lg bg-brand-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-600 transition-colors"
+          >
+            OK
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ─── Tab: Dados ───────────────────────────────────────────────────────────────
@@ -245,6 +443,74 @@ function TabDados({
   return (
     <div className="space-y-0">
 
+      {/* ── Imóvel Associado ── */}
+      {lead && (
+        <div className={SECTION_CLS}>
+          <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Imóvel Associado</h4>
+          {form.imovel_ref ? (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-3 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-white/90">Ref: {form.imovel_ref}</p>
+                <p className="text-xs text-gray-400 mt-0.5">Imóvel vinculado ao lead</p>
+              </div>
+              <a
+                href={`/cockpit/imoveis?ref=${encodeURIComponent(form.imovel_ref)}`}
+                className="text-xs text-brand-500 hover:underline whitespace-nowrap"
+              >
+                Ver imóvel →
+              </a>
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center gap-2 text-center">
+              <span className="text-2xl">🏠</span>
+              <p className="text-sm text-gray-400">Nenhum imóvel associado</p>
+              <button
+                type="button"
+                className="text-xs text-brand-500 hover:underline"
+                onClick={() => { /* TODO: modal de seleção de imóvel */ }}
+              >
+                Associar imóvel
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Interesse Imobiliário ── */}
+      {lead && (
+        <div className={SECTION_CLS}>
+          <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Interesse Imobiliário</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL_CLS}>Tipo de imóvel</label>
+              <select value={form.interesse_principal} onChange={(e) => set("interesse_principal", e.target.value)} className={SELECT_CLS}>
+                <option value="">—</option>
+                {["Apartamento", "Casa", "Terreno", "Cobertura"].map((o) => (
+                  <option key={o} value={o.toLowerCase()}>{o}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Finalidade</label>
+              <select value={form.finalidade} onChange={(e) => set("finalidade", e.target.value)} className={SELECT_CLS}>
+                <option value="">—</option>
+                {["Compra", "Aluguel"].map((o) => (
+                  <option key={o} value={o.toLowerCase()}>{o}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Região / Bairro</label>
+              <input type="text" value={form.regiao_interesse} onChange={(e) => set("regiao_interesse", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Faixa de valor</label>
+              <input type="text" value={form.faixa_valor} onChange={(e) => set("faixa_valor", e.target.value)} placeholder="ex: R$ 700k – R$ 1M" className={INPUT_CLS} />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Contato ── */}
       <div className={SECTION_CLS}>
         <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Contato</h4>
@@ -262,57 +528,59 @@ function TabDados({
             <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className={INPUT_CLS} />
           </div>
           <div>
-            <label className={LABEL_CLS}>Corretor responsável</label>
+            <label className={LABEL_CLS}>Corretor responsável (ID)</label>
             <input type="text" value={form.assigned_to} onChange={(e) => set("assigned_to", e.target.value)} className={INPUT_CLS} />
           </div>
         </div>
       </div>
 
-      {/* ── Perfil Imobiliário ── */}
-      <div className={SECTION_CLS}>
-        <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Perfil Imobiliário</h4>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className={LABEL_CLS}>Interesse principal</label>
-            <select value={form.interesse_principal} onChange={(e) => set("interesse_principal", e.target.value)} className={SELECT_CLS}>
-              <option value="">—</option>
-              {["Apartamento", "Casa", "Terreno", "Cobertura"].map((o) => (
-                <option key={o} value={o.toLowerCase()}>{o}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={LABEL_CLS}>Finalidade</label>
-            <select value={form.finalidade} onChange={(e) => set("finalidade", e.target.value)} className={SELECT_CLS}>
-              <option value="">—</option>
-              {["Compra", "Aluguel"].map((o) => (
-                <option key={o} value={o.toLowerCase()}>{o}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={LABEL_CLS}>Objetivo</label>
-            <select value={form.objetivo} onChange={(e) => set("objetivo", e.target.value)} className={SELECT_CLS}>
-              <option value="">—</option>
-              {["Investimento", "Moradia"].map((o) => (
-                <option key={o} value={o.toLowerCase()}>{o}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className={LABEL_CLS}>Faixa de valor</label>
-            <input type="text" value={form.faixa_valor} onChange={(e) => set("faixa_valor", e.target.value)} placeholder="ex: R$ 700k – R$ 1M" className={INPUT_CLS} />
-          </div>
-          <div>
-            <label className={LABEL_CLS}>Região / Bairro</label>
-            <input type="text" value={form.regiao_interesse} onChange={(e) => set("regiao_interesse", e.target.value)} className={INPUT_CLS} />
-          </div>
-          <div>
-            <label className={LABEL_CLS}>Referência do imóvel</label>
-            <input type="text" value={form.imovel_ref} onChange={(e) => set("imovel_ref", e.target.value)} className={INPUT_CLS} />
+      {/* ── Perfil Imobiliário (modo novo lead) ── */}
+      {!lead && (
+        <div className={SECTION_CLS}>
+          <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Perfil Imobiliário</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL_CLS}>Interesse principal</label>
+              <select value={form.interesse_principal} onChange={(e) => set("interesse_principal", e.target.value)} className={SELECT_CLS}>
+                <option value="">—</option>
+                {["Apartamento", "Casa", "Terreno", "Cobertura"].map((o) => (
+                  <option key={o} value={o.toLowerCase()}>{o}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Finalidade</label>
+              <select value={form.finalidade} onChange={(e) => set("finalidade", e.target.value)} className={SELECT_CLS}>
+                <option value="">—</option>
+                {["Compra", "Aluguel"].map((o) => (
+                  <option key={o} value={o.toLowerCase()}>{o}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Objetivo</label>
+              <select value={form.objetivo} onChange={(e) => set("objetivo", e.target.value)} className={SELECT_CLS}>
+                <option value="">—</option>
+                {["Investimento", "Moradia"].map((o) => (
+                  <option key={o} value={o.toLowerCase()}>{o}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Faixa de valor</label>
+              <input type="text" value={form.faixa_valor} onChange={(e) => set("faixa_valor", e.target.value)} placeholder="ex: R$ 700k – R$ 1M" className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Região / Bairro</label>
+              <input type="text" value={form.regiao_interesse} onChange={(e) => set("regiao_interesse", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Referência do imóvel</label>
+              <input type="text" value={form.imovel_ref} onChange={(e) => set("imovel_ref", e.target.value)} className={INPUT_CLS} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* ── Agendamento ── */}
       <div className={SECTION_CLS}>
@@ -558,9 +826,9 @@ function TabIA({ lead }: { lead: Lead }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: acao, lead_id: lead.id, tenant_id: lead.tenant_id }),
       });
-      setResult(`✅ Ação "${acao}" disparada com sucesso via n8n.`);
+      setResult(`Ação "${acao}" disparada com sucesso via n8n.`);
     } catch {
-      setResult("❌ Erro ao conectar com n8n.");
+      setResult("Erro ao conectar com n8n.");
     } finally {
       setLoading(null);
     }
@@ -626,14 +894,24 @@ function TabArquivos() {
 // ─── Main Drawer Component ────────────────────────────────────────────────────
 
 interface LeadDrawerProps {
-  lead: Lead | null;        // null = modo criar novo lead
-  isOpen: boolean;          // controla visibilidade
+  lead: Lead | null;
+  isOpen: boolean;
   onClose: () => void;
   onLeadSaved?: (lead: Lead) => void;
   onLeadDeleted?: (leadId: string) => void;
+  // Corretores for assignment UI
+  // TODO: fetch from /api/corretores — currently passed from LeadsClient
+  corretores?: Corretor[];
 }
 
-export default function LeadDrawer({ lead, isOpen, onClose, onLeadSaved, onLeadDeleted }: LeadDrawerProps) {
+export default function LeadDrawer({
+  lead,
+  isOpen,
+  onClose,
+  onLeadSaved,
+  onLeadDeleted,
+  corretores = [],
+}: LeadDrawerProps) {
   const [activeTab, setActiveTab] = useState<Tab>("dados");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -735,6 +1013,16 @@ export default function LeadDrawer({ lead, isOpen, onClose, onLeadSaved, onLeadD
             </button>
           </div>
         </div>
+
+        {/* ── Quick Actions Bar (só em modo edição) ── */}
+        {lead && (
+          <QuickActionsBar lead={lead} onLeadSaved={onLeadSaved} />
+        )}
+
+        {/* ── Corretor Card (só em modo edição, quando corretores disponíveis) ── */}
+        {lead && corretores.length > 0 && (
+          <CorretorCard lead={lead} corretores={corretores} onLeadSaved={onLeadSaved} />
+        )}
 
         {/* ── Tabs (só em modo edição) ── */}
         {lead && (
