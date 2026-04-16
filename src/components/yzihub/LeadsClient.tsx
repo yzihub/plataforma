@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import LeadDrawer from "@/components/yzihub/LeadDrawer";
 import LeadsDataTable from "@/components/yzihub/LeadsDataTable";
@@ -13,7 +13,7 @@ import { PlusIcon, GridIcon, ListIcon } from "@/icons";
 
 export type Corretor = {
   id: string;
-  full_name: string;
+  name: string;
   phone?: string;
   email?: string;
 };
@@ -53,8 +53,31 @@ export default function LeadsClient({
   const [filterStatus, setFilterStatus] = useState("");
   const [filterSource, setFilterSource] = useState("");
 
-  // TODO: fetch from /api/corretores — currently empty; integration planned for future plan
-  const corretores: Corretor[] = [];
+  const [corretores, setCorretores] = useState<Corretor[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/brokers", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!Array.isArray(data) || cancelled) return;
+        const active: Corretor[] = data
+          .filter((b: { is_active?: boolean }) => b.is_active !== false)
+          .map((b: { id: string; name: string; phone?: string | null; email?: string | null }) => ({
+            id: b.id,
+            name: b.name,
+            phone: b.phone ?? undefined,
+            email: b.email ?? undefined,
+          }));
+        setCorretores(active);
+      } catch (err) {
+        console.error("[LeadsClient] falha ao carregar corretores:", err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Drawer state
   const [drawerOpen, setDrawerOpen] = useState(false);
