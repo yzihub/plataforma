@@ -10,7 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { UserCircleIcon } from "@/icons";
-import type { Lead } from "@/lib/crm/types";
+import type { Lead, LeadStatus } from "@/lib/crm/types";
+import type { Corretor } from "@/components/yzihub/LeadsClient";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -29,16 +30,9 @@ const STATUS_BADGE: Record<string, { color: BadgeColor; label: string }> = {
   lost:        { color: "dark",    label: "❌ Perdido" },
 };
 
-const STATUS_TABS = [
-  { value: "",            label: "Todos" },
-  { value: "new",         label: "Novo Lead" },
-  { value: "contacted",   label: "Contato" },
-  { value: "qualified",   label: "Agendado" },
-  { value: "meeting",     label: "Reunião" },
-  { value: "proposal",    label: "Proposta" },
-  { value: "negotiation", label: "Contrato" },
-  { value: "won",         label: "Fechado" },
-  { value: "lost",        label: "Perdido" },
+const STATUS_ORDER: LeadStatus[] = [
+  "new", "contacted", "qualified", "meeting",
+  "proposal", "negotiation", "won", "lost",
 ];
 
 const AVATAR_COLORS = [
@@ -85,8 +79,10 @@ function scoreBadge(score: number): { color: BadgeColor; label: string } {
   return { color: "error", label: `▼ ${score}` };
 }
 
-function formatCorretor(assigned_to: string | null): string {
+function findCorretorName(assigned_to: string | null, corretores: Corretor[]): string {
   if (!assigned_to) return "—";
+  const corretor = corretores.find((c) => c.id === assigned_to);
+  if (corretor) return corretor.full_name;
   const isUuid = /^[0-9a-f-]{32,}$/i.test(assigned_to.replace(/-/g, ""));
   if (isUuid) return `@${assigned_to.slice(0, 8)}`;
   return assigned_to;
@@ -154,16 +150,139 @@ async function handleQualify(lead: Lead, e: React.MouseEvent) {
   }
 }
 
+// ─── Inline Status Select ─────────────────────────────────────────────────────
+
+// Badge color → Tailwind classes for inline select styling
+const BADGE_COLOR_CLASSES: Record<BadgeColor, string> = {
+  info:    "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20",
+  warning: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20",
+  primary: "bg-brand-50 text-brand-700 border-brand-200 dark:bg-brand-500/10 dark:text-brand-400 dark:border-brand-500/20",
+  success: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20",
+  dark:    "bg-gray-100 text-gray-600 border-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-700",
+  error:   "bg-red-50 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20",
+  light:   "bg-gray-50 text-gray-600 border-gray-100 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-800",
+};
+
+function InlineStatusSelect({
+  lead,
+  onInlineEdit,
+}: {
+  lead: Lead;
+  onInlineEdit?: (leadId: string, patch: Partial<Lead>) => void | Promise<void>;
+}) {
+  const badge = STATUS_BADGE[lead.status] ?? { color: "light" as BadgeColor, label: lead.status };
+  const [localStatus, setLocalStatus] = useState<string>(lead.status);
+
+  // Sync when lead changes from parent
+  useEffect(() => {
+    setLocalStatus(lead.status);
+  }, [lead.status]);
+
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    e.stopPropagation();
+    const newStatus = e.target.value as LeadStatus;
+    setLocalStatus(newStatus); // optimistic
+    onInlineEdit?.(lead.id, { status: newStatus, last_action_at: new Date().toISOString() });
+  }
+
+  if (!onInlineEdit) {
+    return <Badge size="sm" color={badge.color}>{badge.label}</Badge>;
+  }
+
+  const currentBadge = STATUS_BADGE[localStatus] ?? { color: "light" as BadgeColor, label: localStatus };
+  const colorCls = BADGE_COLOR_CLASSES[currentBadge.color] ?? BADGE_COLOR_CLASSES.light;
+
+  return (
+    <div onClick={(e) => e.stopPropagation()}>
+      <select
+        value={localStatus}
+        onChange={handleChange}
+        className={[
+          "appearance-none cursor-pointer rounded-full border px-2.5 py-1 text-xs font-medium",
+          "focus:outline-none focus:ring-2 focus:ring-brand-500/20 transition-colors",
+          colorCls,
+        ].join(" ")}
+        title="Alterar status"
+      >
+        {STATUS_ORDER.map((s) => (
+          <option key={s} value={s}>{STATUS_BADGE[s]?.label ?? s}</option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+// ─── Inline Corretor Select ───────────────────────────────────────────────────
+
+function InlineCorretorSelect({
+  lead,
+  corretores,
+  onInlineEdit,
+}: {
+  lead: Lead;
+  corretores: Corretor[];
+  onInlineEdit?: (leadId: string, patch: Partial<Lead>) => void | Promise<void>;
+}) {
+  const [localId, setLocalId] = useState<string>(lead.assigned_to ?? "");
+
+  useEffect(() => {
+    setLocalId(lead.assigned_to ?? "");
+  }, [lead.assigned_to]);
+
+  if (!onInlineEdit || corretores.length === 0) {
+    return (
+      <span className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
+        {findCorretorName(lead.assigned_to, corretores)}
+      </span>
+    );
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    e.stopPropagation();
+    const newId = e.target.value;
+    setLocalId(newId); // optimistic
+    onInlineEdit?.(lead.id, { assigned_to: newId || null });
+  }
+
+  const displayName = findCorretorName(localId || null, corretores);
+
+  return (
+    <div className="relative" onClick={(e) => e.stopPropagation()}>
+      <select
+        value={localId}
+        onChange={handleChange}
+        className="appearance-none cursor-pointer rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 py-1 pl-2 pr-6 text-sm text-gray-600 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20 max-w-[120px] truncate"
+        title="Atribuir corretor"
+      >
+        <option value="">— Sem corretor —</option>
+        {corretores.map((c) => (
+          <option key={c.id} value={c.id}>{c.full_name}</option>
+        ))}
+      </select>
+      <span className="sr-only">{displayName}</span>
+    </div>
+  );
+}
+
 // ─── LeadsDataTable ───────────────────────────────────────────────────────────
 
 interface LeadsDataTableProps {
   leads: Lead[];
   onSelect?: (lead: Lead) => void;
   headerActions?: React.ReactNode;
+  // Status filter (controlled by parent / KPI strip)
   activeStatus: string;
   onStatusChange: (status: string) => void;
+  // Search
   search: string;
   onSearchChange: (q: string) => void;
+  // Source filter
+  sources?: string[];
+  activeSource?: string;
+  onSourceChange?: (v: string) => void;
+  // Inline editing
+  corretores?: Corretor[];
+  onInlineEdit?: (leadId: string, patch: Partial<Lead>) => void | Promise<void>;
 }
 
 export default function LeadsDataTable({
@@ -174,34 +293,23 @@ export default function LeadsDataTable({
   onStatusChange,
   search,
   onSearchChange,
+  sources = [],
+  activeSource = "",
+  onSourceChange,
+  corretores = [],
+  onInlineEdit,
 }: LeadsDataTableProps) {
   const [pageIndex, setPageIndex] = useState(0);
 
   // Reset page when filters change
   useEffect(() => {
     setPageIndex(0);
-  }, [activeStatus, search]);
+  }, [activeStatus, search, activeSource]);
 
   const totalPages = Math.max(1, Math.ceil(leads.length / PAGE_SIZE));
   const start = leads.length === 0 ? 0 : pageIndex * PAGE_SIZE + 1;
   const end = Math.min((pageIndex + 1) * PAGE_SIZE, leads.length);
   const paginated = leads.slice(pageIndex * PAGE_SIZE, (pageIndex + 1) * PAGE_SIZE);
-
-  // Compute counts from the full (unfiltered by status) prop — but leads is already
-  // filtered by search + status in the parent. We need counts per status from raw
-  // leads. Since we only receive `leads` (already filtered), we approximate counts
-  // by counting in the current `leads` array (which is pre-filtered by search but
-  // NOT by status because parent applies status before passing). Actually, per plan:
-  // LeadsClient passes `tableLeads` which applies search+status together.
-  // So for tab counts we need the parent to pass raw leads separately — but the plan
-  // says "contagem de 'Todos' = leads.length, cada tab = leads.filter(l => l.status === s.value).length"
-  // applied over the `leads` prop (which is already filtered by search only in tableLeads memo).
-  // The simplest correct approach: counts show how many match each status in the current
-  // search-filtered set, which is the leads prop itself.
-  const countForStatus = (statusValue: string) => {
-    if (!statusValue) return leads.length;
-    return leads.filter((l) => l.status === statusValue).length;
-  };
 
   // Visible page numbers (max 5 around current)
   function visiblePages() {
@@ -216,45 +324,17 @@ export default function LeadsDataTable({
     return Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
   }
 
+  const tableColumns = corretores.length > 0
+    ? ["Lead", "WhatsApp", "Status", "Score", "Corretor", "Origem", "Valor Imóvel", "Ações"]
+    : ["Lead", "WhatsApp", "Status", "Score", "Corretor", "Origem", "Valor Imóvel", "Ações"];
+
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
 
       {/* ── Card Header ─────────────────────────────────────────── */}
       <div className="border-b border-gray-200 dark:border-gray-800">
-
-        {/* Status tabs */}
-        <div className="flex overflow-x-auto scrollbar-none">
-          {STATUS_TABS.map((tab) => {
-            const count = countForStatus(tab.value);
-            const isActive = activeStatus === tab.value;
-            return (
-              <button
-                key={tab.value}
-                type="button"
-                onClick={() => onStatusChange(tab.value)}
-                className={`shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
-                  isActive
-                    ? "border-brand-500 text-brand-500 bg-brand-500/5"
-                    : "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                }`}
-              >
-                {tab.label}
-                <span
-                  className={`ml-1.5 rounded-full px-1.5 py-0.5 text-xs font-semibold ${
-                    isActive
-                      ? "bg-brand-500/10 text-brand-600 dark:text-brand-400"
-                      : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
-                  }`}
-                >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Search + action row */}
-        <div className="flex items-center gap-3 px-5 py-3">
+        {/* Search + filters row */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center px-5 py-3">
           {/* Search input */}
           <div className="relative flex-1 max-w-sm">
             <svg
@@ -276,6 +356,20 @@ export default function LeadsDataTable({
             />
           </div>
 
+          {/* Source filter */}
+          {sources.length > 0 && onSourceChange && (
+            <select
+              value={activeSource}
+              onChange={(e) => onSourceChange(e.target.value)}
+              className="min-w-[160px] rounded-xl border border-gray-200 bg-white py-2 px-3 text-sm text-gray-700 outline-none focus:border-brand-500 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90"
+            >
+              <option value="">Todas as origens</option>
+              {sources.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          )}
+
           {/* Slot for external action button (e.g. Novo Lead) */}
           {headerActions && (
             <div className="ml-auto shrink-0">
@@ -290,7 +384,7 @@ export default function LeadsDataTable({
         <Table className="w-full">
           <TableHeader>
             <TableRow className="bg-gray-50 dark:bg-gray-800/40">
-              {["Lead", "WhatsApp", "Status", "Score", "Corretor", "Origem", "Valor Imóvel", "Ações"].map((h) => (
+              {tableColumns.map((h) => (
                 <TableCell
                   key={h}
                   isHeader
@@ -305,7 +399,7 @@ export default function LeadsDataTable({
           <TableBody>
             {paginated.length === 0 ? (
               <tr className="border-b-0">
-                <td colSpan={8} className="py-16 px-5 text-center text-sm text-gray-400">
+                <td colSpan={tableColumns.length} className="py-16 px-5 text-center text-sm text-gray-400">
                   <div className="flex flex-col items-center gap-2">
                     <UserCircleIcon className="size-14 text-gray-200 dark:text-gray-700" />
                     <span>Nenhum lead encontrado</span>
@@ -314,7 +408,6 @@ export default function LeadsDataTable({
               </tr>
             ) : (
               paginated.map((lead) => {
-                const badge = STATUS_BADGE[lead.status] ?? { color: "light" as BadgeColor, label: lead.status };
                 const score = scoreBadge(lead.score);
                 return (
                   <tr
@@ -342,11 +435,9 @@ export default function LeadsDataTable({
                       {formatPhone(lead.phone)}
                     </td>
 
-                    {/* Status */}
+                    {/* Status — inline select */}
                     <td className="py-3.5 px-5">
-                      <Badge size="sm" color={badge.color}>
-                        {badge.label}
-                      </Badge>
+                      <InlineStatusSelect lead={lead} onInlineEdit={onInlineEdit} />
                     </td>
 
                     {/* Score */}
@@ -356,9 +447,9 @@ export default function LeadsDataTable({
                       </Badge>
                     </td>
 
-                    {/* Corretor */}
-                    <td className="py-3.5 px-5 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                      {formatCorretor(lead.assigned_to)}
+                    {/* Corretor — inline select if corretores available */}
+                    <td className="py-3.5 px-5">
+                      <InlineCorretorSelect lead={lead} corretores={corretores} onInlineEdit={onInlineEdit} />
                     </td>
 
                     {/* Origem */}
@@ -408,7 +499,7 @@ export default function LeadsDataTable({
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {leads.length === 0
             ? "Nenhum resultado"
-            : `Showing ${start} to ${end} of ${leads.length} results`}
+            : `Mostrando ${start} a ${end} de ${leads.length} leads`}
         </p>
 
         {/* Pagination buttons */}
@@ -420,7 +511,7 @@ export default function LeadsDataTable({
             className="flex items-center gap-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/[0.03] px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/[0.05] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
             <ChevronLeftIcon />
-            <span className="hidden sm:inline">Prev</span>
+            <span className="hidden sm:inline">Ant.</span>
           </button>
 
           {visiblePages().map((p) => (
@@ -444,7 +535,7 @@ export default function LeadsDataTable({
             onClick={() => setPageIndex((p) => p + 1)}
             className="flex items-center gap-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-white/[0.03] px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/[0.05] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
           >
-            <span className="hidden sm:inline">Next</span>
+            <span className="hidden sm:inline">Próx.</span>
             <ChevronRightIcon />
           </button>
         </div>
