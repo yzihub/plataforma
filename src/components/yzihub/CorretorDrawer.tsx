@@ -3,20 +3,12 @@
 import { useEffect, useState } from "react";
 import type { Broker, BrokerInput } from "@/types/brokers";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const ROLES = [
-  { value: "senior", label: "Sênior" },
-  { value: "junior", label: "Júnior" },
-  { value: "manager", label: "Gerente" },
-];
-
-// ─── Shared field classes (padrão PropertyDrawer) ─────────────────────────────
+// ─── Field classes (TailAdmin padrão) ─────────────────────────────────────────
 
 const fieldCls =
-  "w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm dark:border-gray-700 dark:bg-white/[0.03] dark:text-white/90 focus:outline-none focus:border-brand-500";
+  "w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-sm font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:text-white/90";
 
-const labelCls = "block text-xs font-medium text-gray-400 mb-1";
+const labelCls = "mb-2.5 block text-sm font-medium text-black dark:text-white";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -52,7 +44,6 @@ export default function CorretorDrawer({
   const [deleting, setDeleting] = useState(false);
   const [saveError, setSaveError] = useState(false);
 
-  // Sync form when broker changes
   useEffect(() => {
     if (broker) {
       setForm({
@@ -76,7 +67,6 @@ export default function CorretorDrawer({
   async function handleDeleteClick() {
     if (!broker || !onDelete) return;
     if (!window.confirm("Excluir corretor?")) return;
-
     setDeleting(true);
     try {
       await onDelete(broker.id);
@@ -87,7 +77,11 @@ export default function CorretorDrawer({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.full_name.trim()) return;
+    if (form.full_name.trim().length < 2) {
+      setSaveError(true);
+      setTimeout(() => setSaveError(false), 3000);
+      return;
+    }
 
     setSaving(true);
     setSaveError(false);
@@ -95,12 +89,11 @@ export default function CorretorDrawer({
     try {
       const input: BrokerInput = {
         full_name: form.full_name.trim(),
-        phone: form.phone?.trim() || null,
+        phone: form.phone?.replace(/\D/g, "") || null,
         email: form.email?.trim() || null,
         role: form.role?.trim() || null,
         is_active: form.is_active,
       };
-
       await onSave(input, isEditing ? broker!.id : undefined);
     } catch {
       setSaveError(true);
@@ -114,7 +107,7 @@ export default function CorretorDrawer({
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -122,18 +115,20 @@ export default function CorretorDrawer({
 
       {/* Panel */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white dark:bg-gray-dark shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* ── Header ── */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
           <div>
-            <h2 className="text-base font-semibold text-gray-800 dark:text-white/90">
+            <h2 className="text-base font-semibold text-black dark:text-white">
               {isEditing ? "Editar Corretor" : "Novo Corretor"}
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
-              {isEditing ? "Atualize os dados do corretor" : "Preencha os dados do novo corretor"}
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              {isEditing
+                ? "Atualize os dados do corretor"
+                : "Preencha os dados do novo corretor"}
             </p>
           </div>
           <button
@@ -157,12 +152,12 @@ export default function CorretorDrawer({
 
         {/* ── Form ── */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5">
-          <div className="space-y-4">
+          <div className="space-y-4.5">
 
             {/* Nome completo */}
             <div>
               <label className={labelCls}>
-                Nome completo <span className="text-red-400">*</span>
+                Nome completo <span className="text-meta-1">*</span>
               </label>
               <input
                 type="text"
@@ -198,23 +193,21 @@ export default function CorretorDrawer({
               />
             </div>
 
-            {/* Status do corretor — toggle ACIMA da Funcao */}
+            {/* Status */}
             <div>
-              <label className={labelCls}>Status do corretor</label>
-              <div className="flex items-center gap-3">
+              <label className={labelCls}>Status</label>
+              <div className="flex items-center gap-3 py-1">
                 <button
                   type="button"
                   onClick={() => setField("is_active", !form.is_active)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    form.is_active
-                      ? "bg-brand-500"
-                      : "bg-gray-300 dark:bg-gray-600"
+                    form.is_active ? "bg-primary" : "bg-gray-300 dark:bg-gray-600"
                   }`}
                   aria-checked={form.is_active}
                   role="switch"
                 >
                   <span
-                    className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transform transition-transform ${
+                    className={`inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ${
                       form.is_active ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
@@ -222,8 +215,8 @@ export default function CorretorDrawer({
                 <span
                   className={`text-sm font-medium ${
                     form.is_active
-                      ? "text-emerald-500"
-                      : "text-gray-400"
+                      ? "text-success-600 dark:text-success-500"
+                      : "text-gray-400 dark:text-gray-500"
                   }`}
                 >
                   {form.is_active ? "Ativo" : "Inativo"}
@@ -231,47 +224,35 @@ export default function CorretorDrawer({
               </div>
             </div>
 
-            {/* Função */}
-            <div>
-              <label className={labelCls}>Função</label>
-              <select
-                value={form.role ?? ""}
-                onChange={(e) => setField("role", e.target.value)}
-                className={fieldCls}
-              >
-                <option value="">Selecionar...</option>
-                {ROLES.map(({ value, label }) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Erro + Salvar */}
-            <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+            {/* Actions */}
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
               {saveError && (
-                <p className="text-xs text-red-500 mb-2 text-center">
+                <p className="text-xs text-meta-1 mb-3 text-center">
                   Erro ao salvar. Tente novamente.
                 </p>
               )}
+
               <div className={`flex gap-3 ${isEditing && onDelete ? "justify-between" : ""}`}>
                 {isEditing && onDelete && (
                   <button
                     type="button"
                     onClick={handleDeleteClick}
                     disabled={deleting || saving}
-                    className="rounded-xl border border-red-300 dark:border-red-500/40 px-4 py-2.5 text-sm font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
+                    className="rounded border border-meta-1 py-2.5 px-5 text-sm font-medium text-meta-1 hover:bg-meta-1 hover:text-white transition-colors disabled:opacity-50"
                   >
                     {deleting ? "Excluindo..." : "Excluir"}
                   </button>
                 )}
                 <button
                   type="submit"
-                  disabled={saving || deleting || !form.full_name.trim()}
-                  className="flex-1 rounded-xl bg-brand-500 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 transition-colors disabled:opacity-50"
+                  disabled={saving || deleting || form.full_name.trim().length < 2}
+                  className="flex flex-1 justify-center rounded bg-primary py-2.5 px-5 text-sm font-medium text-white hover:bg-opacity-90 disabled:opacity-50 transition-opacity"
                 >
-                  {saving ? "Salvando..." : isEditing ? "SALVAR ALTERAÇÕES" : "CRIAR CORRETOR"}
+                  {saving
+                    ? "Salvando..."
+                    : isEditing
+                    ? "Salvar Alterações"
+                    : "Criar Corretor"}
                 </button>
               </div>
             </div>

@@ -11,27 +11,14 @@ import CorretoresKpiStrip from "@/components/yzihub/CorretoresKpiStrip";
 
 const BROKERS_TABLE = "brokers";
 
-// ─── Role label helper ────────────────────────────────────────────────────────
-
-const ROLE_LABELS: Record<string, string> = {
-  senior: "Sênior",
-  junior: "Júnior",
-  manager: "Gerente",
-};
-
-function roleLabel(role: string | null): string {
-  if (!role) return "—";
-  return ROLE_LABELS[role] ?? role;
-}
-
-// ─── Loading skeleton (7 columns) ─────────────────────────────────────────────
+// ─── Loading skeleton (4 columns) ─────────────────────────────────────────────
 
 function SkeletonRow() {
   return (
-    <tr className="animate-pulse">
-      {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-        <td key={i} className="px-4 py-3">
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+    <tr className="animate-pulse border-b border-gray-100 dark:border-gray-800">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <td key={i} className="px-5 py-4 sm:px-6">
+          <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded w-3/4" />
         </td>
       ))}
     </tr>
@@ -43,13 +30,13 @@ function SkeletonRow() {
 function StatusBadge({ active }: { active: boolean }) {
   if (active) {
     return (
-      <span className="inline-flex items-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 px-2.5 py-0.5 text-xs font-medium">
+      <span className="rounded-full bg-success-50 px-2 py-0.5 text-theme-xs font-medium text-success-700 dark:bg-success-500/15 dark:text-success-500">
         Ativo
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center rounded-full bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400 px-2.5 py-0.5 text-xs font-medium">
+    <span className="rounded-full bg-gray-100 px-2 py-0.5 text-theme-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
       Inativo
     </span>
   );
@@ -61,13 +48,15 @@ export default function CorretoresClient() {
   const { tenant, loading: tenantLoading } = useTenant();
 
   const [brokers, setBrokers] = useState<Broker[]>([]);
-  const [leads, setLeads] = useState<Array<{ id: string; assigned_to: string | null }>>([]);
+  const [leads, setLeads] = useState<
+    Array<{ id: string; assigned_to: string | null; status: string | null }>
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingBroker, setEditingBroker] = useState<Broker | null>(null);
 
-  // ── Fetch brokers + leads filtered by tenant ─────────────────────────────────
+  // ── Fetch ─────────────────────────────────────────────────────────────────────
 
   useEffect(() => {
     if (tenantLoading) return;
@@ -85,12 +74,14 @@ export default function CorretoresClient() {
       const [brokersResult, leadsResult] = await Promise.all([
         supabase
           .from(BROKERS_TABLE)
-          .select("id, tenant_id, full_name, phone, email, role, is_active, created_at, updated_at")
+          .select(
+            "id, tenant_id, full_name, phone, email, role, is_active, created_at, updated_at"
+          )
           .eq("tenant_id", tenant!.id)
           .order("created_at", { ascending: false }),
         supabase
           .from("leads")
-          .select("id, assigned_to")
+          .select("id, assigned_to, status")
           .eq("tenant_id", tenant!.id),
       ]);
 
@@ -106,13 +97,10 @@ export default function CorretoresClient() {
     }
 
     fetchData();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [tenant?.id, tenantLoading]);
 
-  // ── Lead counts per broker ────────────────────────────────────────────────────
+  // ── Counts por broker ─────────────────────────────────────────────────────────
 
   const leadCounts = useMemo<Record<string, number>>(() => {
     const counts: Record<string, number> = {};
@@ -124,7 +112,17 @@ export default function CorretoresClient() {
     return counts;
   }, [leads]);
 
-  // ── Top 5 ranking ────────────────────────────────────────────────────────────
+  const wonCounts = useMemo<Record<string, number>>(() => {
+    const counts: Record<string, number> = {};
+    for (const lead of leads) {
+      if (lead.assigned_to && lead.status === "won") {
+        counts[lead.assigned_to] = (counts[lead.assigned_to] ?? 0) + 1;
+      }
+    }
+    return counts;
+  }, [leads]);
+
+  // ── Top 5 ranking ─────────────────────────────────────────────────────────────
 
   const rankingTop5 = useMemo(() => {
     return [...brokers]
@@ -136,11 +134,13 @@ export default function CorretoresClient() {
       .slice(0, 5);
   }, [brokers, leadCounts]);
 
-  // ── CRUD handlers ────────────────────────────────────────────────────────────
+  const maxLeads = rankingTop5[0] ? (leadCounts[rankingTop5[0].id] ?? 0) : 0;
+
+  // ── CRUD handlers ─────────────────────────────────────────────────────────────
 
   async function handleSave(input: BrokerInput, id?: string) {
     if (!tenant?.id) return;
-
+    if (!input.full_name || input.full_name.trim().length < 2) throw new Error("Nome inválido");
     const supabase = createClient();
 
     try {
@@ -154,24 +154,16 @@ export default function CorretoresClient() {
           .single();
 
         if (updateError) throw updateError;
-
-        if (data) {
-          setBrokers((prev) =>
-            prev.map((b) => (b.id === id ? (data as Broker) : b))
-          );
-        }
+        if (data) setBrokers((prev) => prev.map((b) => (b.id === id ? (data as Broker) : b)));
       } else {
         const { data, error: insertError } = await supabase
           .from(BROKERS_TABLE)
-          .insert({ ...input, tenant_id: tenant.id })
+          .insert({ ...input, is_active: input.is_active ?? true, tenant_id: tenant.id })
           .select()
           .single();
 
         if (insertError) throw insertError;
-
-        if (data) {
-          setBrokers((prev) => [data as Broker, ...prev]);
-        }
+        if (data) setBrokers((prev) => [data as Broker, ...prev]);
       }
 
       setDrawerOpen(false);
@@ -185,7 +177,6 @@ export default function CorretoresClient() {
 
   async function handleDelete(id: string) {
     if (!tenant?.id) return;
-
     const supabase = createClient();
     const { error: deleteError } = await supabase
       .from(BROKERS_TABLE)
@@ -221,22 +212,24 @@ export default function CorretoresClient() {
     setEditingBroker(null);
   }
 
-  // ── Render ───────────────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────────
 
   return (
     <>
       {/* KPI Strip */}
-      <div className="mb-6">
-        <CorretoresKpiStrip brokers={brokers} leadCounts={leadCounts} />
-      </div>
+      <CorretoresKpiStrip
+        brokers={brokers}
+        leadCounts={leadCounts}
+        wonCounts={wonCounts}
+      />
 
       {/* Error banner */}
       {error && (
-        <div className="flex items-center justify-between gap-3 mb-4 rounded-xl border border-red-200 bg-red-50 dark:bg-red-500/10 dark:border-red-500/30 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+        <div className="flex items-center justify-between gap-3 mt-6 rounded-xl border border-error-200 bg-error-50 dark:bg-error-500/10 dark:border-error-500/30 px-4 py-3 text-sm text-error-600 dark:text-error-400">
           <span>{error}</span>
           <button
             onClick={() => setError(null)}
-            className="shrink-0 text-red-400 hover:text-red-600 transition-colors"
+            className="shrink-0 text-error-400 hover:text-error-600 transition-colors"
             aria-label="Fechar"
           >
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
@@ -246,137 +239,172 @@ export default function CorretoresClient() {
         </div>
       )}
 
-      {/* Header + action */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Equipe comercial
-          </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Corretores vinculados ao tenant ativo
-          </p>
+      {/* ── Tabela de corretores ── */}
+      <div className="mt-6 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        {/* Table header */}
+        <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5">
+          <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
+            Equipe Comercial
+          </h3>
+          <button
+            onClick={openNewDrawer}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition-colors"
+          >
+            <svg viewBox="0 0 20 20" className="size-4 fill-current" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
+            </svg>
+            Novo Corretor
+          </button>
         </div>
-        <button
-          onClick={openNewDrawer}
-          className="flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 transition-colors"
-        >
-          <span className="text-base leading-none">+</span>
-          Novo Corretor
-        </button>
-      </div>
 
-      {/* Table card */}
-      <div className="rounded-2xl border border-gray-200 bg-white dark:bg-white/[0.03] dark:border-gray-800 overflow-hidden">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-gray-100 dark:border-gray-800">
-              {["Nome", "Telefone", "E-mail", "Função", "Status", "Leads", "Ações"].map((col) => (
-                <th
-                  key={col}
-                  className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400"
-                >
-                  {col}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {/* Loading */}
-            {loading && (
-              <>
-                <SkeletonRow />
-                <SkeletonRow />
-                <SkeletonRow />
-              </>
-            )}
-
-            {/* Empty state */}
-            {!loading && brokers.length === 0 && (
-              <tr>
-                <td colSpan={7} className="px-4 py-10 text-center text-sm text-gray-400 dark:text-gray-500">
-                  Nenhum corretor cadastrado ainda. Clique em{" "}
-                  <button
-                    onClick={openNewDrawer}
-                    className="text-brand-500 hover:underline font-medium"
-                  >
-                    + Novo Corretor
-                  </button>{" "}
-                  para começar.
-                </td>
-              </tr>
-            )}
-
-            {/* Rows */}
-            {!loading &&
-              brokers.map((broker) => (
-                <tr
-                  key={broker.id}
-                  className="border-b border-gray-50 dark:border-gray-800/50 last:border-0 hover:bg-gray-50/60 dark:hover:bg-white/[0.02] transition-colors"
-                >
-                  <td className="px-4 py-3 text-sm font-medium text-gray-800 dark:text-white/90">
-                    {broker.full_name}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                    {broker.phone ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                    {broker.email ?? "—"}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-                    {roleLabel(broker.role)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <StatusBadge active={broker.is_active} />
-                  </td>
-                  <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 tabular-nums">
-                    {leadCounts[broker.id] ?? 0}
-                  </td>
-                  <td className="px-4 py-3">
-                    <button
-                      onClick={() => openEditDrawer(broker)}
-                      className="text-xs font-medium text-brand-500 hover:underline"
-                    >
-                      Editar
-                    </button>
-                  </td>
+        {/* Table */}
+        <div className="border-t border-gray-100 dark:border-gray-800">
+          <div className="max-w-full overflow-x-auto">
+            <table className="min-w-full">
+              <thead>
+                <tr className="border-b border-gray-100 dark:border-gray-800">
+                  {["Nome", "Telefone", "Status", "Leads Recebidos", ""].map((col) => (
+                    <th key={col} className="px-5 py-3 sm:px-6">
+                      <div className="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+                          {col}
+                        </p>
+                      </div>
+                    </th>
+                  ))}
                 </tr>
-              ))}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {/* Loading */}
+                {loading && (
+                  <>
+                    <SkeletonRow />
+                    <SkeletonRow />
+                    <SkeletonRow />
+                  </>
+                )}
+
+                {/* Empty state */}
+                {!loading && brokers.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-5 py-10 text-center text-sm text-gray-400 dark:text-gray-500">
+                      Nenhum corretor cadastrado ainda.{" "}
+                      <button onClick={openNewDrawer} className="text-brand-500 hover:underline font-medium">
+                        + Novo Corretor
+                      </button>
+                    </td>
+                  </tr>
+                )}
+
+                {/* Rows */}
+                {!loading &&
+                  brokers.map((broker) => (
+                    <tr key={broker.id}>
+                      <td className="px-5 py-4 sm:px-6">
+                        <div className="flex items-center gap-3">
+                          {/* Avatar initials */}
+                          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-xs font-semibold text-gray-600 dark:text-gray-300 shrink-0 select-none">
+                            {broker.full_name
+                              .trim()
+                              .split(/\s+/)
+                              .slice(0, 2)
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
+                          </div>
+                          <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                            {broker.full_name}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-5 py-4 sm:px-6">
+                        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
+                          {broker.phone ?? "—"}
+                        </p>
+                      </td>
+                      <td className="px-5 py-4 sm:px-6">
+                        <StatusBadge active={broker.is_active} />
+                      </td>
+                      <td className="px-5 py-4 sm:px-6">
+                        <p className="text-gray-500 text-theme-sm dark:text-gray-400 tabular-nums">
+                          {leadCounts[broker.id] ?? 0}
+                        </p>
+                      </td>
+                      <td className="px-5 py-4 sm:px-6">
+                        <button
+                          onClick={() => openEditDrawer(broker)}
+                          className="text-theme-xs font-medium text-brand-500 hover:text-brand-600 transition-colors"
+                        >
+                          Editar
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
-      {/* Ranking por leads */}
-      <div className="mt-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-white/[0.03] p-4">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-white/90 mb-3">
-          Ranking por Leads
-        </h3>
+      {/* ── Ranking por leads ── */}
+      <div className="mt-6 rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
+        <div className="px-5 py-4 sm:px-6 sm:py-5">
+          <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
+            Ranking por Leads
+          </h3>
+        </div>
 
-        {rankingTop5.length === 0 || rankingTop5.every((b) => (leadCounts[b.id] ?? 0) === 0) ? (
-          <p className="text-sm text-gray-400 dark:text-gray-500">
-            Nenhum lead atribuido ainda
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {rankingTop5.map((broker, idx) => (
-              <li
-                key={broker.id}
-                className="flex items-center justify-between gap-3"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="text-xs font-bold text-gray-400 dark:text-gray-500 w-5 shrink-0 text-right">
-                    #{idx + 1}
-                  </span>
-                  <span className="text-sm font-medium text-gray-700 dark:text-white/80 truncate">
-                    {broker.full_name}
-                  </span>
-                </div>
-                <span className="text-sm font-semibold text-brand-500 shrink-0 tabular-nums">
-                  {leadCounts[broker.id] ?? 0}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="border-t border-gray-100 dark:border-gray-800 p-5 sm:p-6">
+          {rankingTop5.length === 0 ||
+          rankingTop5.every((b) => (leadCounts[b.id] ?? 0) === 0) ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500">
+              Nenhum lead atribuído ainda.
+            </p>
+          ) : (
+            <ul className="space-y-4">
+              {rankingTop5.map((broker, idx) => {
+                const count = leadCounts[broker.id] ?? 0;
+                const pct = maxLeads > 0 ? Math.round((count / maxLeads) * 100) : 0;
+                return (
+                  <li key={broker.id} className="flex items-center gap-4">
+                    {/* Rank badge */}
+                    <span
+                      className={`w-6 shrink-0 text-center text-xs font-bold tabular-nums ${
+                        idx === 0
+                          ? "text-warning-500"
+                          : "text-gray-400 dark:text-gray-500"
+                      }`}
+                    >
+                      #{idx + 1}
+                    </span>
+
+                    {/* Name + bar */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-theme-sm font-medium text-gray-700 dark:text-white/80 truncate">
+                          {broker.full_name}
+                        </span>
+                        <span className="text-theme-xs font-semibold text-gray-600 dark:text-gray-300 tabular-nums shrink-0 ml-3">
+                          {count}
+                        </span>
+                      </div>
+                      <div className="h-1.5 w-full rounded-full bg-gray-100 dark:bg-gray-800">
+                        <div
+                          className={`h-1.5 rounded-full transition-all duration-500 ${
+                            idx === 0
+                              ? "bg-brand-500"
+                              : "bg-gray-300 dark:bg-gray-600"
+                          }`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
       </div>
 
       {/* Drawer */}
