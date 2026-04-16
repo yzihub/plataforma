@@ -44,6 +44,7 @@ export default function CorretorDrawer({
     phone: "",
     email: "",
     role: "",
+    is_active: true,
   };
 
   const [form, setForm] = useState<BrokerInput>(emptyForm);
@@ -59,6 +60,7 @@ export default function CorretorDrawer({
         phone: broker.phone ?? "",
         email: broker.email ?? "",
         role: broker.role ?? "",
+        is_active: broker.is_active ?? true,
       });
     } else {
       setForm(emptyForm);
@@ -96,6 +98,7 @@ export default function CorretorDrawer({
         phone: form.phone?.trim() || null,
         email: form.email?.trim() || null,
         role: form.role?.trim() || null,
+        is_active: form.is_active,
       };
 
       await onSave(input, isEditing ? broker!.id : undefined);
@@ -193,6 +196,39 @@ export default function CorretorDrawer({
                 placeholder="Ex: corretor@exemplo.com"
                 className={fieldCls}
               />
+            </div>
+
+            {/* Status do corretor — toggle ACIMA da Funcao */}
+            <div>
+              <label className={labelCls}>Status do corretor</label>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setField("is_active", !form.is_active)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    form.is_active
+                      ? "bg-brand-500"
+                      : "bg-gray-300 dark:bg-gray-600"
+                  }`}
+                  aria-checked={form.is_active}
+                  role="switch"
+                >
+                  <span
+                    className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transform transition-transform ${
+                      form.is_active ? "translate-x-6" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+                <span
+                  className={`text-sm font-medium ${
+                    form.is_active
+                      ? "text-emerald-500"
+                      : "text-gray-400"
+                  }`}
+                >
+                  {form.is_active ? "Ativo" : "Inativo"}
+                </span>
+              </div>
             </div>
 
             {/* Função */}
