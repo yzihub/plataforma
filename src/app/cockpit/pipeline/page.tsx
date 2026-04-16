@@ -60,9 +60,11 @@ async function fetchPipelineData(): Promise<{
         .order("created_at", { ascending: false }),
 
       supabase
-        .from("corretores")
+        .from("brokers")
         .select("id, full_name")
-        .eq("tenant_id", tenantId),
+        .eq("tenant_id", tenantId)
+        .eq("is_active", true)
+        .order("full_name", { ascending: true }),
     ]);
 
     if (stagesRes.error || leadsRes.error || !stagesRes.data || !leadsRes.data) {
