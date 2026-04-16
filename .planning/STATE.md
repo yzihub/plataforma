@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: Completed quick-260415-rd0-PLAN.md
 last_updated: "2026-04-15T07:00:00.000Z"
-last_activity: "2026-04-16 - Completed quick task 260416-ln6: Integração CorretorDrawer/form Supabase — pipeline usa brokers+is_active, validação full_name, phone normalizado"
+last_activity: "2026-04-16 - Completed quick task 260416-rng: API route POST /api/corretores/create via webhook n8n, CorretoresClient.handleSave migrado"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -117,6 +117,7 @@ None yet.
 | 260416-dj5 | KPI strip corretores (4 cards) + migration is_active + toggle ativo/inativo drawer + ranking top 5 por leads | 2026-04-16 | a194a22 | [260416-dj5-incrementar-p-gina-corretores-kpi-strip-](./quick/260416-dj5-incrementar-p-gina-corretores-kpi-strip-/) |
 | 260416-lac | Conectar módulo de Corretores ao Supabase — is_active drift fix no GET /api/brokers | 2026-04-16 | ebd35b3 | [260416-lac-conectar-m-dulo-de-corretores-ao-supabas](./quick/260416-lac-conectar-m-dulo-de-corretores-ao-supabas/) |
 | 260416-ln6 | Integração CorretorDrawer/form Supabase — pipeline usa brokers+is_active, validação full_name, phone normalizado | 2026-04-16 | 136b0f6 | [260416-ln6-integra-o-do-corretordrawer-form-com-sup](./quick/260416-ln6-integra-o-do-corretordrawer-form-com-sup/) |
+| 260416-rng | Criar API route POST /api/corretores/create que chama webhook n8n e ajustar CorretorDrawer para usar essa route ao invés de salvar direto no Supabase | 2026-04-16 | 01d4bc4 | [260416-rng-criar-api-route-post-api-corretores-crea](./quick/260416-rng-criar-api-route-post-api-corretores-crea/) |
 
 ### Blockers/Concerns
 
