@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from "react";
 import Badge from "@/components/ui/badge/Badge";
-import { CloseIcon } from "@/icons";
+import {
+  CloseIcon,
+  ChatIcon,
+  MailIcon,
+  AngleDownIcon,
+  ArrowRightIcon,
+  BoltIcon,
+  PlugInIcon,
+  UserCircleIcon,
+  DocsIcon,
+  CalenderIcon,
+  TaskIcon,
+} from "@/icons";
 import type { Lead, LeadStatus } from "@/lib/crm/types";
 import type { Corretor } from "@/components/yzihub/LeadsClient";
 
@@ -84,14 +96,14 @@ function avatarBg(id: string) {
 type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light" | "dark";
 
 const STATUS_BADGE: Record<LeadStatus, { color: BadgeColor; label: string }> = {
-  new:         { color: "info",    label: "🔥 Novo Lead"   },
-  contacted:   { color: "warning", label: "📞 Contato"     },
-  qualified:   { color: "primary", label: "📅 Agendado"    },
-  meeting:     { color: "primary", label: "📅 Reunião"     },
-  proposal:    { color: "warning", label: "💰 Proposta"    },
-  negotiation: { color: "warning", label: "📋 Contrato"    },
-  won:         { color: "success", label: "✅ Fechado"     },
-  lost:        { color: "dark",    label: "❌ Perdido"     },
+  new:         { color: "info",    label: "Novo Lead"   },
+  contacted:   { color: "warning", label: "Contato"     },
+  qualified:   { color: "primary", label: "Agendado"    },
+  meeting:     { color: "primary", label: "Reunião"     },
+  proposal:    { color: "warning", label: "Proposta"    },
+  negotiation: { color: "warning", label: "Contrato"    },
+  won:         { color: "success", label: "Fechado"     },
+  lost:        { color: "dark",    label: "Perdido"     },
 };
 
 const STATUS_ORDER: LeadStatus[] = [
@@ -99,19 +111,23 @@ const STATUS_ORDER: LeadStatus[] = [
   "proposal", "negotiation", "won", "lost",
 ];
 
-const ACTIVITY_ICON: Record<Atividade["tipo"], string> = {
-  ia: "🤖", n8n: "⚡", status: "🔄", manual: "👤",
+type ActivityIconComponent = React.ComponentType<{ className?: string }>;
+const ACTIVITY_ICON: Record<Atividade["tipo"], ActivityIconComponent> = {
+  ia:     BoltIcon,
+  n8n:    PlugInIcon,
+  status: ArrowRightIcon,
+  manual: UserCircleIcon,
 };
 
 // ─── Tabs config ──────────────────────────────────────────────────────────────
 
 const TABS: { key: Tab; label: string }[] = [
-  { key: "dados",      label: "🧾 Dados"      },
-  { key: "conversas",  label: "💬 Conversas"  },
-  { key: "atividades", label: "📅 Atividades" },
-  { key: "tarefas",    label: "✅ Tarefas"    },
-  { key: "ia",         label: "🤖 IA"         },
-  { key: "arquivos",   label: "📎 Arquivos"   },
+  { key: "dados",      label: "Dados"      },
+  { key: "conversas",  label: "Conversas"  },
+  { key: "atividades", label: "Atividades" },
+  { key: "tarefas",    label: "Tarefas"    },
+  { key: "ia",         label: "IA"         },
+  { key: "arquivos",   label: "Arquivos"   },
 ];
 
 // ─── Form field style constants ───────────────────────────────────────────────
@@ -203,7 +219,7 @@ function QuickActionsBar({
         ].join(" ")}
         onClick={(e) => !hasPhone && e.preventDefault()}
       >
-        <span>💬</span>
+        <ChatIcon className="w-3.5 h-3.5" />
         WhatsApp
       </a>
 
@@ -219,7 +235,9 @@ function QuickActionsBar({
         ].join(" ")}
         onClick={(e) => !hasPhone && e.preventDefault()}
       >
-        <span>📞</span>
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 7V5z" />
+        </svg>
         Ligar
       </a>
 
@@ -319,10 +337,10 @@ function CorretorCard({
         hasCorretor ? (
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-full bg-violet-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
-              {corretor.full_name.slice(0, 1).toUpperCase()}
+              {corretor.name.slice(0, 1).toUpperCase()}
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-800 dark:text-white/90">{corretor.full_name}</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white/90">{corretor.name}</p>
               {corretor.phone && <p className="text-[11px] text-gray-400">{corretor.phone}</p>}
               {corretor.email && <p className="text-[11px] text-gray-400">{corretor.email}</p>}
             </div>
@@ -341,7 +359,7 @@ function CorretorCard({
           >
             <option value="">— Sem corretor —</option>
             {corretores.map((c) => (
-              <option key={c.id} value={c.id}>{c.full_name}</option>
+              <option key={c.id} value={c.id}>{c.name}</option>
             ))}
           </select>
           <button
@@ -362,9 +380,11 @@ function CorretorCard({
 function TabDados({
   lead,
   onLeadSaved,
+  corretores = [],
 }: {
   lead: Lead | null;
   onLeadSaved?: (lead: Lead) => void;
+  corretores?: Corretor[];
 }) {
   const [form, setForm] = useState<FormState>(() => initForm(lead));
   const [saving, setSaving] = useState(false);
@@ -528,8 +548,17 @@ function TabDados({
             <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} className={INPUT_CLS} />
           </div>
           <div>
-            <label className={LABEL_CLS}>Corretor responsável (ID)</label>
-            <input type="text" value={form.assigned_to} onChange={(e) => set("assigned_to", e.target.value)} className={INPUT_CLS} />
+            <label className={LABEL_CLS}>Corretor responsável</label>
+            <select
+              value={form.assigned_to}
+              onChange={(e) => set("assigned_to", e.target.value)}
+              className={SELECT_CLS}
+            >
+              <option value="">— Sem corretor —</option>
+              {corretores.map((c) => (
+                <option key={c.id} value={c.id}>{c.name}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -1054,11 +1083,11 @@ export default function LeadDrawer({
         <div className="flex-1 overflow-y-auto p-5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
           {/* No modo Novo Lead, sempre mostra o form */}
           {!lead && (
-            <TabDados lead={null} onLeadSaved={onLeadSaved} />
+            <TabDados lead={null} onLeadSaved={onLeadSaved} corretores={corretores} />
           )}
 
           {/* No modo Edição, mostra a aba ativa */}
-          {lead && activeTab === "dados"      && <TabDados lead={lead} onLeadSaved={onLeadSaved} />}
+          {lead && activeTab === "dados"      && <TabDados lead={lead} onLeadSaved={onLeadSaved} corretores={corretores} />}
           {lead && activeTab === "conversas"  && <TabConversas lead={lead} />}
           {lead && activeTab === "atividades" && <TabAtividades />}
           {lead && activeTab === "tarefas"    && <TabTarefas />}
