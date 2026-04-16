@@ -7,7 +7,7 @@ import LeadsDataTable from "@/components/yzihub/LeadsDataTable";
 import LeadsKanban from "@/components/yzihub/LeadsKanban";
 import LeadsKpiStrip from "@/components/yzihub/LeadsKpiStrip";
 import type { Lead, PipelineStage } from "@/lib/crm/types";
-import { PlusIcon } from "@/icons";
+import { PlusIcon, GridIcon, ListIcon } from "@/icons";
 
 // ─── Corretor type (shared with drawer) ───────────────────────────────────────
 
@@ -46,7 +46,7 @@ export default function LeadsClient({
 
   // Default is always "table"; "kanban" only when explicit query param
   const initialView = searchParams?.get("view") === "kanban" ? "kanban" : "table";
-  const [view] = useState<"table" | "kanban">(initialView);
+  const [view, setView] = useState<"table" | "kanban">(initialView);
 
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [search, setSearch] = useState("");
@@ -143,7 +143,32 @@ export default function LeadsClient({
               {displayCount} de {leads.length} leads
             </p>
           </div>
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex items-center gap-3 self-start sm:self-auto">
+            {/* Toggle Grid / Kanban */}
+            <div className="inline-flex items-center rounded-lg border border-gray-200 bg-white p-0.5 dark:border-gray-800 dark:bg-gray-900">
+              <button
+                type="button"
+                onClick={() => setView("table")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                  view === "table"
+                    ? "bg-brand-500 text-white shadow-sm"
+                    : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                }`}
+              >
+                <GridIcon className="size-4" /> Grid
+              </button>
+              <button
+                type="button"
+                onClick={() => setView("kanban")}
+                className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                  view === "kanban"
+                    ? "bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                    : "text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                }`}
+              >
+                <ListIcon className="size-3.5" /> Kanban
+              </button>
+            </div>
             <NovoLeadButton onClick={openNewLead} />
           </div>
         </div>
@@ -170,6 +195,7 @@ export default function LeadsClient({
               sources={sources}
               corretores={corretores}
               onInlineEdit={handleInlineEdit}
+              selectedLeadId={selectedLead?.id ?? null}
             />
           </>
         )}
@@ -182,6 +208,7 @@ export default function LeadsClient({
               stages={stages}
               onMoveLead={handleMoveLead}
               onLeadSelect={openLead}
+              selectedLeadId={selectedLead?.id ?? null}
             />
           </>
         )}
