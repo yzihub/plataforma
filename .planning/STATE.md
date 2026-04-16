@@ -115,6 +115,7 @@ None yet.
 | 260415-rd0 | Remover view Kanban do módulo de Imóveis — toggle Tabela/Grade apenas, 5 deleções cirúrgicas | 2026-04-15 | b5d3f2a | [260415-rd0-remover-view-kanban-do-m-dulo-de-im-veis](./quick/260415-rd0-remover-view-kanban-do-m-dulo-de-im-veis/) |
 | 260416-cjl | KPI strip redesign TailAdmin (9 cards horizontais, zero emojis) + highlight forte lead selecionado | 2026-04-16 | 894225f | [260416-cjl-ajustar-tela-de-leads-padronizar-kpi-car](./quick/260416-cjl-ajustar-tela-de-leads-padronizar-kpi-car/) |
 | 260416-dj5 | KPI strip corretores (4 cards) + migration is_active + toggle ativo/inativo drawer + ranking top 5 por leads | 2026-04-16 | a194a22 | [260416-dj5-incrementar-p-gina-corretores-kpi-strip-](./quick/260416-dj5-incrementar-p-gina-corretores-kpi-strip-/) |
+| 260416-s24 | Conectar handoff de lead com corretores ativos | 2026-04-16 | f6136f9 | [260416-s24-conectar-handoff-de-lead-com-corretores-](./quick/260416-s24-conectar-handoff-de-lead-com-corretores-/) |
 | 260416-lac | Conectar módulo de Corretores ao Supabase — is_active drift fix no GET /api/brokers | 2026-04-16 | ebd35b3 | [260416-lac-conectar-m-dulo-de-corretores-ao-supabas](./quick/260416-lac-conectar-m-dulo-de-corretores-ao-supabas/) |
 | 260416-ln6 | Integração CorretorDrawer/form Supabase — pipeline usa brokers+is_active, validação full_name, phone normalizado | 2026-04-16 | 136b0f6 | [260416-ln6-integra-o-do-corretordrawer-form-com-sup](./quick/260416-ln6-integra-o-do-corretordrawer-form-com-sup/) |
 | 260416-rng | Criar API route POST /api/corretores/create que chama webhook n8n e ajustar CorretorDrawer para usar essa route ao invés de salvar direto no Supabase | 2026-04-16 | 01d4bc4 | [260416-rng-criar-api-route-post-api-corretores-crea](./quick/260416-rng-criar-api-route-post-api-corretores-crea/) |
@@ -127,6 +128,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-16T00:00:00.000Z
-Last activity: 2026-04-16 - Completed quick task 260416-dj5: KPI strip corretores + is_active migration + toggle drawer + ranking
+Last activity: 2026-04-16 - Completed quick task 260416-s24: Conectar handoff de lead com corretores ativos
 Stopped at: Completed quick-260416-dj5-PLAN.md
 Resume file: None
