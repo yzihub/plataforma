@@ -25,8 +25,9 @@ export async function GET() {
 
     const { data: brokers, error: brokersError } = await supabase
       .from("brokers")
-      .select("id, tenant_id, full_name, phone, email, role, created_at, updated_at")
+      .select("id, tenant_id, full_name, phone, email, role, is_active, created_at, updated_at")
       .eq("tenant_id", profile.tenant_id)
+      .order("is_active", { ascending: false })
       .order("created_at", { ascending: false });
 
     if (brokersError) {
