@@ -943,7 +943,7 @@ export default function LeadDrawer({
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-gray-900/40 backdrop-blur-sm transition-opacity duration-300 ${
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
@@ -951,23 +951,30 @@ export default function LeadDrawer({
 
       {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-lg bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+        className={`fixed top-0 right-0 z-50 h-full w-full sm:w-[440px] lg:w-[480px] bg-white dark:bg-gray-900 border-l-2 border-brand-500/30 dark:border-brand-500/40 shadow-2xl shadow-brand-500/5 flex flex-col transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* ── Header ── */}
-        <div className="flex items-start justify-between p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
+        <div className="flex items-start justify-between p-5 border-b border-gray-200 dark:border-gray-800 shrink-0 bg-gradient-to-r from-brand-500/5 to-transparent dark:from-brand-500/10 dark:to-transparent">
           <div className="flex items-center gap-3">
-            <div className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold text-white ${avatarClass}`}>
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-base font-bold text-white ${avatarClass}`}>
               {avatarContent}
             </div>
             <div>
-              <h2 className="text-base font-semibold text-gray-800 dark:text-white/90">{title}</h2>
+              <h2 className="text-lg font-bold text-gray-800 dark:text-white">{title}</h2>
               {lead && (
-                <div className="mt-1">
+                <div className="mt-1 flex items-center gap-2">
                   <Badge size="sm" color={STATUS_BADGE[lead.status].color}>
                     {STATUS_BADGE[lead.status].label}
                   </Badge>
+                  <span className="inline-flex items-center gap-1.5 text-xs text-brand-500">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500" />
+                    </span>
+                    Chat ativo
+                  </span>
                 </div>
               )}
               {!lead && (
