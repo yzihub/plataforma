@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick-260415-vau-PLAN.md
-last_updated: "2026-04-15T06:00:00.000Z"
-last_activity: "2026-04-15 - Completed quick task 260415-vau: Toggle Grid/Kanban + highlight lead selecionado + kanban peso reduzido + LeadDrawer essencial"
+stopped_at: Completed quick-260415-rd0-PLAN.md
+last_updated: "2026-04-15T07:00:00.000Z"
+last_activity: "2026-04-15 - Completed quick task 260415-rd0: Remover view Kanban do módulo de Imóveis — apenas Tabela e Grade"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -112,6 +112,7 @@ None yet.
 | 260415-fcb | Reestruturar /cockpit/pipeline como dashboard operacional (5 blocos: Header+Alerts+KPIs+Charts+Lista) com modal de atribuição de corretor | 2026-04-15 | 1e75046 | [260415-fcb-estruturar-p-gina-crm-pipeline-como-dash](./quick/260415-fcb-estruturar-p-gina-crm-pipeline-como-dash/) |
 | 260415-nfv | Redesign PropertyCard com 8 campos elegantes + adicionar faixa de 6 metricas no ImoveisClient | 2026-04-15 | 272b042 | [260415-nfv-redesign-propertycard-com-8-campos-elega](./quick/260415-nfv-redesign-propertycard-com-8-campos-elega/) |
 | 260415-vau | Toggle Grid/Kanban visível + highlight lead selecionado + kanban peso reduzido + LeadDrawer essencial | 2026-04-15 | b703dbd | [260415-vau-ajustes-de-ux-e-hierarquia-na-tela-de-le](./quick/260415-vau-ajustes-de-ux-e-hierarquia-na-tela-de-le/) |
+| 260415-rd0 | Remover view Kanban do módulo de Imóveis — toggle Tabela/Grade apenas, 5 deleções cirúrgicas | 2026-04-15 | b5d3f2a | [260415-rd0-remover-view-kanban-do-m-dulo-de-im-veis](./quick/260415-rd0-remover-view-kanban-do-m-dulo-de-im-veis/) |
 
 ### Blockers/Concerns
 
