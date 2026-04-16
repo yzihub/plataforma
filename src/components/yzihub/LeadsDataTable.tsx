@@ -20,14 +20,14 @@ const PAGE_SIZE = 10;
 type BadgeColor = "primary" | "success" | "error" | "warning" | "info" | "light" | "dark";
 
 const STATUS_BADGE: Record<string, { color: BadgeColor; label: string }> = {
-  new:         { color: "info",    label: "🔥 Novo Lead" },
-  contacted:   { color: "warning", label: "📞 Contato" },
-  qualified:   { color: "primary", label: "📅 Agendado" },
-  meeting:     { color: "primary", label: "📅 Reunião" },
-  proposal:    { color: "warning", label: "💰 Proposta" },
-  negotiation: { color: "warning", label: "📋 Contrato" },
-  won:         { color: "success", label: "✅ Fechado" },
-  lost:        { color: "dark",    label: "❌ Perdido" },
+  new:         { color: "info",    label: "Novo Lead" },
+  contacted:   { color: "warning", label: "Contato" },
+  qualified:   { color: "primary", label: "Agendado" },
+  meeting:     { color: "primary", label: "Reunião" },
+  proposal:    { color: "warning", label: "Proposta" },
+  negotiation: { color: "warning", label: "Contrato" },
+  won:         { color: "success", label: "Fechado" },
+  lost:        { color: "dark",    label: "Perdido" },
 };
 
 const STATUS_ORDER: LeadStatus[] = [
@@ -418,8 +418,8 @@ export default function LeadsDataTable({
                     onClick={() => onSelect?.(lead)}
                     className={`cursor-pointer align-middle border-b border-gray-100 dark:border-gray-800/60 last:border-0 transition-colors ${
                       selectedLeadId === lead.id
-                        ? "bg-brand-50 ring-1 ring-inset ring-brand-500 dark:bg-brand-500/10"
-                        : "hover:bg-gray-50/60 dark:hover:bg-white/[0.02]"
+                        ? "bg-brand-50 ring-2 ring-inset ring-brand-500 dark:bg-brand-500/15 shadow-[inset_0_0_0_1px_rgba(70,95,255,0.3)] border-l-[3px] border-l-brand-500"
+                        : "hover:bg-gray-50/60 dark:hover:bg-white/[0.02] border-l-[3px] border-l-transparent"
                     }`}
                   >
                     {/* Lead: avatar + nome + telefone */}
