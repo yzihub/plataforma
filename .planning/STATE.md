@@ -114,6 +114,7 @@ None yet.
 | 260415-vau | Toggle Grid/Kanban visível + highlight lead selecionado + kanban peso reduzido + LeadDrawer essencial | 2026-04-15 | b703dbd | [260415-vau-ajustes-de-ux-e-hierarquia-na-tela-de-le](./quick/260415-vau-ajustes-de-ux-e-hierarquia-na-tela-de-le/) |
 | 260415-rd0 | Remover view Kanban do módulo de Imóveis — toggle Tabela/Grade apenas, 5 deleções cirúrgicas | 2026-04-15 | b5d3f2a | [260415-rd0-remover-view-kanban-do-m-dulo-de-im-veis](./quick/260415-rd0-remover-view-kanban-do-m-dulo-de-im-veis/) |
 | 260416-cjl | KPI strip redesign TailAdmin (9 cards horizontais, zero emojis) + highlight forte lead selecionado | 2026-04-16 | 894225f | [260416-cjl-ajustar-tela-de-leads-padronizar-kpi-car](./quick/260416-cjl-ajustar-tela-de-leads-padronizar-kpi-car/) |
+| 260416-dj5 | KPI strip corretores (4 cards) + migration is_active + toggle ativo/inativo drawer + ranking top 5 por leads | 2026-04-16 | a194a22 | [260416-dj5-incrementar-p-gina-corretores-kpi-strip-](./quick/260416-dj5-incrementar-p-gina-corretores-kpi-strip-/) |
 
 ### Blockers/Concerns
 
@@ -123,6 +124,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-16T00:00:00.000Z
-Last activity: 2026-04-16 - Completed quick task 260416-cjl: KPI strip TailAdmin + highlight lead selecionado
-Stopped at: Completed quick-260416-cjl-PLAN.md
+Last activity: 2026-04-16 - Completed quick task 260416-dj5: KPI strip corretores + is_active migration + toggle drawer + ranking
+Stopped at: Completed quick-260416-dj5-PLAN.md
 Resume file: None
