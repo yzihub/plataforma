@@ -35,3 +35,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# planning — block workflow payloads that may contain secrets
+.planning/quick/**/*.json
+.planning/debug/**/*.json
