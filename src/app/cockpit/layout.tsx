@@ -22,7 +22,20 @@ function CockpitContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (error || !tenant) {
+  // Network/Supabase error: show warning banner but still render the page
+  if (error) {
+    return (
+      <>
+        <div className="mb-4 rounded-xl border border-yellow-500/30 bg-yellow-500/10 px-4 py-2.5 text-xs text-yellow-400">
+          Falha ao conectar ao Supabase — {error}
+        </div>
+        {children}
+      </>
+    );
+  }
+
+  // No tenant linked: block with setup screen
+  if (!tenant) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="max-w-lg w-full rounded-2xl border border-gray-800 bg-white/[0.03] p-8 text-center">
@@ -38,11 +51,6 @@ function CockpitContent({ children }: { children: React.ReactNode }) {
             Sua conta ainda não está vinculada a um tenant. Entre em contato
             com o administrador para completar a configuração.
           </p>
-          {error && (
-            <p className="mb-4 text-xs text-red-400 bg-red-900/20 rounded-lg px-3 py-2">
-              {error}
-            </p>
-          )}
           <Link
             href="/signin"
             className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium text-gray-800 bg-white rounded-lg hover:bg-gray-100 transition-colors"

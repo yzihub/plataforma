@@ -115,7 +115,11 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       console.log("[DIAG] REMOVE AFTER VALIDATION — profiles query result:", profileErr?.message ?? `tenant_id=${profile?.tenant_id}`); // [DIAG] REMOVE AFTER VALIDATION
 
       if (profileErr || !profile) {
-        console.log("[DIAG] REMOVE AFTER VALIDATION — profiles error:", profileErr); // [DIAG] REMOVE AFTER VALIDATION
+        console.error("[TenantContext] profiles error:", {
+          message: profileErr?.message,
+          details: (profileErr as unknown as { details?: string })?.details,
+          hint: (profileErr as unknown as { hint?: string })?.hint,
+        });
         setError(profileErr?.message ?? "Perfil não encontrado");
         return;
       }
@@ -145,6 +149,11 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         .eq("status", "active");
 
       if (projectsErr) {
+        console.error("[TenantContext] projects error:", {
+          message: projectsErr.message,
+          details: (projectsErr as unknown as { details?: string })?.details,
+          hint: (projectsErr as unknown as { hint?: string })?.hint,
+        });
         setError(projectsErr.message);
         return;
       }
@@ -164,7 +173,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         settings: tenantData.settings ?? {},
       });
     } catch (err) {
-      console.log("[DIAG] REMOVE AFTER VALIDATION — caught error:", err); // [DIAG] REMOVE AFTER VALIDATION
+      console.error("[TenantContext] fetch error:", err);
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
       setLoading(false);
