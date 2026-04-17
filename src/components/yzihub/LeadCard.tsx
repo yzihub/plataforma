@@ -4,6 +4,7 @@ import React from "react";
 import Badge from "@/components/ui/badge/Badge";
 import CommandButton, { CrmAction } from "@/components/yzihub/CommandButton";
 import { Lead, LeadStatus } from "@/lib/crm/types";
+import type { Corretor } from "@/components/yzihub/LeadsClient";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -11,6 +12,7 @@ interface LeadCardProps {
   lead: Lead;
   onActionSuccess?: (leadId: string, jobId: string, action: string) => void;
   onLeadSelect?: (lead: Lead) => void;
+  corretores?: Corretor[];
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -26,7 +28,7 @@ const AVATAR_COLORS = [
 ] as const;
 
 const STATUS_ACTIONS: Record<LeadStatus, CrmAction[]> = {
-  new:         ["contact"],
+  new:         [],
   contacted:   ["schedule"],
   qualified:   ["schedule"],
   meeting:     ["send_proposal", "lose"],
@@ -169,18 +171,67 @@ function EmailIcon() {
   );
 }
 
+function HouseIcon() {
+  return (
+    <svg className="shrink-0" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <path d="M2 7L8 2l6 5v7a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M6 15V9h4v6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function PersonIcon() {
+  return (
+    <svg className="shrink-0" width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="8" cy="5" r="3" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M2 14c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function findCorretorName(assignedTo: string | null | undefined, corretores: Corretor[] = []): string {
+  if (!assignedTo) return "Sem corretor";
+  const c = corretores.find((x) => x.id === assignedTo);
+  return c?.name ?? "Sem corretor";
+}
+
+function getImovelLabel(lead: Lead): string {
+  if (lead.imovel_ref) return lead.imovel_ref;
+  if (lead.interesse_principal && lead.regiao_interesse) {
+    return `${lead.interesse_principal.charAt(0).toUpperCase() + lead.interesse_principal.slice(1)} · ${lead.regiao_interesse}`;
+  }
+  if (lead.interesse_principal) {
+    return lead.interesse_principal.charAt(0).toUpperCase() + lead.interesse_principal.slice(1);
+  }
+  return "";
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function LeadCard({ lead, onActionSuccess, onLeadSelect }: LeadCardProps) {
+export default function LeadCard({ lead, onActionSuccess, onLeadSelect, corretores }: LeadCardProps) {
   const avatarColor = getAvatarColor(lead.name);
   const initials = getInitials(lead.name);
   const scoreColor = getScoreColor(lead.score);
   const statusBadge = STATUS_BADGE[lead.status];
   const actions = STATUS_ACTIONS[lead.status];
   const subline = lead.company ?? lead.source ?? null;
+  const imovelLabel = getImovelLabel(lead);
+  const corretorName = findCorretorName(lead.assigned_to, corretores);
 
   function handleActionSuccess(jobId: string, action: CrmAction) {
     onActionSuccess?.(lead.id, jobId, action);
+  }
+
+  async function enviarParaCorretor(l: Lead) {
+    try {
+      await fetch("/api/actions/execute", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "send_to_broker", lead_id: l.id, tenant_id: l.tenant_id }),
+      });
+    } catch (err) {
+      console.error("[LeadCard] enviarParaCorretor error:", err);
+    }
   }
 
   return (
@@ -245,6 +296,20 @@ export default function LeadCard({ lead, onActionSuccess, onLeadSelect }: LeadCa
         </div>
       )}
 
+      {/* ── Row 3b: Imóvel + Corretor ── */}
+      {(imovelLabel || corretorName !== "Sem corretor") && (
+        <div className="flex flex-col gap-1">
+          <span className="flex items-center gap-1.5 text-theme-xs text-gray-500 dark:text-gray-400">
+            <HouseIcon />
+            <span className="truncate">{imovelLabel || "Nenhum imóvel associado"}</span>
+          </span>
+          <span className="flex items-center gap-1.5 text-theme-xs text-gray-500 dark:text-gray-400">
+            <PersonIcon />
+            <span className="truncate">{corretorName}</span>
+          </span>
+        </div>
+      )}
+
       {/* ── Row 4: Score + Value ── */}
       <div className="flex items-center gap-3">
         {/* Score bar */}
@@ -273,19 +338,24 @@ export default function LeadCard({ lead, onActionSuccess, onLeadSelect }: LeadCa
       </div>
 
       {/* ── Row 5: Action Buttons ── */}
-      {actions.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {actions.map((action) => (
-            <CommandButton
-              key={action}
-              action={action}
-              leadId={lead.id}
-              tenantId={lead.tenant_id}
-              onSuccess={(jobId) => handleActionSuccess(jobId, action)}
-            />
-          ))}
-        </div>
-      )}
+      <div className="flex flex-wrap gap-1">
+        {actions.map((action) => (
+          <CommandButton
+            key={action}
+            action={action}
+            leadId={lead.id}
+            tenantId={lead.tenant_id}
+            onSuccess={(jobId) => handleActionSuccess(jobId, action)}
+          />
+        ))}
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); enviarParaCorretor(lead); }}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-brand-50 px-2.5 py-1 text-xs font-medium text-brand-600 hover:bg-brand-100 dark:bg-brand-500/10 dark:text-brand-400 dark:hover:bg-brand-500/20 transition-colors"
+        >
+          Enviar para Corretor
+        </button>
+      </div>
 
       {/* ── Row 6: Footer ── */}
       <div className="flex items-center justify-between pt-1 border-t border-gray-100 dark:border-gray-700">

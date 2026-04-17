@@ -467,18 +467,40 @@ function TabDados({
       {lead && (
         <div className={SECTION_CLS}>
           <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Imóvel Associado</h4>
-          {form.imovel_ref ? (
-            <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-3 flex items-center justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-gray-800 dark:text-white/90">Ref: {form.imovel_ref}</p>
-                <p className="text-xs text-gray-400 mt-0.5">Imóvel vinculado ao lead</p>
-              </div>
-              <a
-                href={`/cockpit/imoveis?ref=${encodeURIComponent(form.imovel_ref)}`}
-                className="text-xs text-brand-500 hover:underline whitespace-nowrap"
-              >
-                Ver imóvel →
-              </a>
+          {(form.imovel_ref || form.interesse_principal || form.faixa_valor || form.regiao_interesse) ? (
+            <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-2">
+              {form.imovel_ref && (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider">Referência</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white/90">{form.imovel_ref}</p>
+                  </div>
+                  <a
+                    href={`/cockpit/imoveis?ref=${encodeURIComponent(form.imovel_ref)}`}
+                    className="text-xs text-brand-500 hover:underline whitespace-nowrap"
+                  >
+                    Ver imóvel →
+                  </a>
+                </div>
+              )}
+              {form.interesse_principal && (
+                <div>
+                  <p className="text-xs text-gray-400 uppercase tracking-wider">Tipo</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-200 capitalize">{form.interesse_principal}</p>
+                </div>
+              )}
+              {form.faixa_valor && (
+                <div>
+                  <p className="text-xs text-gray-400 uppercase tracking-wider">Faixa de valor</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-200">{form.faixa_valor}</p>
+                </div>
+              )}
+              {form.regiao_interesse && (
+                <div>
+                  <p className="text-xs text-gray-400 uppercase tracking-wider">Região</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-200">{form.regiao_interesse}</p>
+                </div>
+              )}
             </div>
           ) : (
             <div className="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center gap-2 text-center">
