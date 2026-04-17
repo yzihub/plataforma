@@ -150,6 +150,7 @@ export default function ImoveisClient() {
 
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [filterType, setFilterType] = useState("all");
   const [filterNeighborhood, setFilterNeighborhood] = useState("all");
@@ -170,19 +171,23 @@ export default function ImoveisClient() {
 
     async function fetchProperties() {
       setLoading(true);
+      setFetchError(null);
       const supabase = createClient();
       const { data, error } = await supabase
         .from("imoveis")
         .select(
           "id, tenant_id, titulo_comercial, bairro, valor, quartos, suites, vagas, metragem, tipo_de_imovel, finalidade, foto_principal, link_do_imovel, status_publicacao, descricao_imovel, created_at"
         )
-        .eq("tenant_id", "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361")
+        .eq("tenant_id", tenant!.id)
         .eq("status_publicacao", "Publicado")
         .order("created_at", { ascending: false });
 
       if (cancelled) return;
 
-      if (!error && data) {
+      if (error) {
+        console.error("[ImoveisClient] erro ao buscar imóveis:", error.message, error.details ?? "");
+        setFetchError(error.message);
+      } else if (data) {
         setProperties((data as ImoveisRow[]).map(mapImoveisToProperty));
       }
       setLoading(false);
@@ -266,6 +271,15 @@ export default function ImoveisClient() {
     );
   }
 
+  if (fetchError) {
+    return (
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-red-50 py-16 dark:border-red-500/20 dark:bg-red-500/5">
+        <p className="text-sm font-medium text-red-600 dark:text-red-400">Erro ao carregar imóveis</p>
+        <p className="mt-1 text-xs text-red-400 dark:text-red-500">{fetchError}</p>
+      </div>
+    );
+  }
+
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
@@ -342,7 +356,7 @@ export default function ImoveisClient() {
           <button
             onClick={() => setView("table")}
             title="Visualização em tabela"
-            className={`flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
+            className={`flex items-center justify-center gap-2 px-3 h-9 text-sm transition-colors ${
               view === "table"
                 ? "bg-brand-500 text-white"
                 : "bg-white text-gray-500 hover:text-gray-700 dark:bg-white/[0.03] dark:text-gray-400 dark:hover:text-gray-200"
@@ -354,7 +368,7 @@ export default function ImoveisClient() {
           <button
             onClick={() => setView("grid")}
             title="Visualização em grade"
-            className={`flex items-center gap-1.5 px-3 py-2 text-sm transition-colors ${
+            className={`flex items-center justify-center gap-2 px-3 h-9 text-sm transition-colors ${
               view === "grid"
                 ? "bg-brand-500 text-white"
                 : "bg-white text-gray-500 hover:text-gray-700 dark:bg-white/[0.03] dark:text-gray-400 dark:hover:text-gray-200"

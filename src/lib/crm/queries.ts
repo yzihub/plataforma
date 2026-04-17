@@ -48,6 +48,13 @@ export async function getCockpitData(): Promise<KanbanData | null> {
 
   if (tenantRes.error || !tenantRes.data) return null;
 
+  if (stagesRes.error) {
+    console.error("[getCockpitData] stages query error:", stagesRes.error.message);
+  }
+  if (leadsRes.error) {
+    console.error("[getCockpitData] leads query error:", leadsRes.error.message);
+  }
+
   return {
     tenant: tenantRes.data as Tenant,
     stages: (stagesRes.data ?? []) as PipelineStage[],
@@ -78,6 +85,13 @@ export async function getCockpitDataByTenant(tenantId: string): Promise<KanbanDa
   ]);
 
   if (tenantRes.error || !tenantRes.data) return null;
+
+  if (stagesRes.error) {
+    console.error("[getCockpitDataByTenant] stages query error:", stagesRes.error.message);
+  }
+  if (leadsRes.error) {
+    console.error("[getCockpitDataByTenant] leads query error:", leadsRes.error.message);
+  }
 
   return {
     tenant: tenantRes.data as Tenant,

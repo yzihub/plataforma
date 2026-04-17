@@ -72,8 +72,9 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
       if (!user) {
         // DEV_BYPASS controlado
         if (isDevBypass) {
+          // DEV fallback: tenant real da Jurema — somente NODE_ENV=development
           setTenant({
-            id: "dev-tenant",
+            id: "b179ae75-3d56-4de8-8840-fc9c4d9ec21e",
             name: "Jurema Brokers (DEV)",
             plan: "growth",
             activeModules: ["crm", "sdr", "ia_onboarding"],
@@ -86,6 +87,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
 
         setTenant(null);
         setIsGlobalAdmin(false);
+        setLoading(false); // prevent infinite loading when no session
         return;
       }
 
