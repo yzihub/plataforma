@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick-260418-ag6-PLAN.md
-last_updated: "2026-04-18T14:07:51Z"
-last_activity: "2026-04-18 - Completed quick task 260418-ag6: Tela de geracao de contrato no LeadDrawer — GerarContratoDrawer + POST /api/contracts/generate via job_queue"
+stopped_at: Completed quick-260418-go0-PLAN.md
+last_updated: "2026-04-18T15:00:00Z"
+last_activity: "2026-04-18 - Completed quick task 260418-go0: Campo Referencia do Imovel no LeadDrawer — ImovelSearchSelect combobox pesquisavel com fetch real /api/imoveis, UUID persistido em lead.imovel_ref"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -129,6 +129,7 @@ None yet.
 | 260418-604 | Corrigir UUID DEV_BYPASS para Jurema Brokers (82cc7aa9) no TenantContext | 2026-04-18 | e84ae77 | [260418-604-travar-tenant-dev-como-jurema-para-ambie](./quick/260418-604-travar-tenant-dev-como-jurema-para-ambie/) |
 | 260418-8gp | Ajustar UI de corretores: manter padrao visual leads/imoveis e expandir formulario drawer com campos completos | 2026-04-18 | d4fed91 | [260418-8gp-ajustar-ui-de-corretores-manter-padrao-v](./quick/260418-8gp-ajustar-ui-de-corretores-manter-padrao-v/) |
 | 260418-ag6 | Tela de geracao de contrato no LeadDrawer — GerarContratoDrawer + POST /api/contracts/generate via job_queue | 2026-04-18 | f5014c5 | [260418-ag6-criar-tela-de-gera-o-de-contrato-no-fron](./quick/260418-ag6-criar-tela-de-gera-o-de-contrato-no-fron/) |
+| 260418-go0 | Campo Referencia do Imovel no LeadDrawer — ImovelSearchSelect combobox pesquisavel com fetch real /api/imoveis, UUID persistido em lead.imovel_ref | 2026-04-18 | 9a84350 | [260418-go0-adicionar-campo-refer-ncia-do-im-vel-no-](./quick/260418-go0-adicionar-campo-refer-ncia-do-im-vel-no-/) |
 
 ### Blockers/Concerns
 
