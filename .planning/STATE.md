@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: Completed quick-260417-scq-PLAN.md
 last_updated: "2026-04-17T02:58:00.000Z"
-last_activity: "2026-04-17 - Completed quick task 260417-scq: Mapear modelo de dados YZI OS — migration 016 com visitas, comissoes, financeiro, FK corrections"
+last_activity: "2026-04-18 - Completed quick task 260418-604: Corrigir UUID DEV_BYPASS para Jurema Brokers no TenantContext"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -126,6 +126,7 @@ None yet.
 | 260416-t9f | Exibir imóvel e corretor no LeadCard (Row 3b + botão handoff) + drawer com card rico | 2026-04-16 | d71749b | [260416-t9f-exibir-imovel-e-corretor-no-card-e-drawe](./quick/260416-t9f-exibir-imovel-e-corretor-no-card-e-drawe/) |
 | 260417-g4y | Limpar secrets do histórico git e atualizar .gitignore para .planning JSON | 2026-04-17 | c0dde9a | [260417-g4y-limpar-secrets-do-historico-git-e-atuali](./quick/260417-g4y-limpar-secrets-do-historico-git-e-atuali/) |
 | 260417-scq | Migration 016: modelo relacional completo — visitas, comissoes, financeiro, FK corrections, 14 indices | 2026-04-17 | 9774dc0 | [260417-scq-mapear-modelo-de-dados-yzi-os-rela-es-en](./quick/260417-scq-mapear-modelo-de-dados-yzi-os-rela-es-en/) |
+| 260418-604 | Corrigir UUID DEV_BYPASS para Jurema Brokers (82cc7aa9) no TenantContext | 2026-04-18 | e84ae77 | [260418-604-travar-tenant-dev-como-jurema-para-ambie](./quick/260418-604-travar-tenant-dev-como-jurema-para-ambie/) |
 
 ### Blockers/Concerns
 
