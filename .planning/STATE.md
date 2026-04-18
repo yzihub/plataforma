@@ -139,6 +139,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-17T00:00:00.000Z
-Last activity: 2026-04-17 - Completed quick task 260417-scq: mapear modelo de dados YZI OS — relações entre lead, imóvel, corretor, visita, contrato, comissão e financeiro
+Last activity: 2026-04-18 - Completed quick task 260418-go0: Adicionar campo Referência do imóvel no LeadDrawer com select pesquisável carregando imóveis reais do banco e salvando id_imovel
 Stopped at: Completed quick-260417-scq-PLAN.md
 Resume file: None
