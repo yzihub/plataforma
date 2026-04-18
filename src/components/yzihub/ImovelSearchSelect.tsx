@@ -8,6 +8,7 @@ import type { N8nImovel } from "@/types/n8n-payloads";
 interface ImovelSearchSelectProps {
   value: string;                                                  // imovel_ref atual (UUID ou "")
   onChange: (imovelId: string, imovel: N8nImovel | null) => void;
+  onResolve?: (imovel: N8nImovel | null) => void;               // dispara quando lista carrega e value já está setado
   placeholder?: string;
   className?: string;
 }
@@ -43,6 +44,7 @@ const INPUT_CLS =
 export default function ImovelSearchSelect({
   value,
   onChange,
+  onResolve,
   placeholder = "Buscar imóvel por título ou bairro...",
   className,
 }: ImovelSearchSelectProps) {
@@ -74,6 +76,13 @@ export default function ImovelSearchSelect({
   useEffect(() => {
     fetchImoveis();
   }, [fetchImoveis]);
+
+  // Resolve value → imovel object quando lista carrega (cobre leads existentes com imovel_ref)
+  useEffect(() => {
+    if (!onResolve || imoveis.length === 0) return;
+    onResolve(imoveis.find((i) => i.id === value) ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imoveis]);
 
   // ── Close dropdown on outside click ────────────────────────────────────────
   useEffect(() => {

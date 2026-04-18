@@ -395,10 +395,12 @@ function TabDados({
   lead,
   onLeadSaved,
   corretores = [],
+  onImovelSelect,
 }: {
   lead: Lead | null;
   onLeadSaved?: (lead: Lead) => void;
   corretores?: Corretor[];
+  onImovelSelect?: (imovel: N8nImovel | null) => void;
 }) {
   const [form, setForm] = useState<FormState>(() => initForm(lead));
   const [selectedImovel, setSelectedImovel] = useState<N8nImovel | null>(null);
@@ -411,6 +413,7 @@ function TabDados({
   useEffect(() => {
     setForm(initForm(lead));
     setSelectedImovel(null);
+    onImovelSelect?.(null);
     setSaveMsg(null);
     setSent(false);
   }, [lead?.id]);
@@ -571,7 +574,8 @@ function TabDados({
               <label className={LABEL_CLS}>Referência do imóvel</label>
               <ImovelSearchSelect
                 value={form.imovel_ref}
-                onChange={(id, imovel) => { set("imovel_ref", id); setSelectedImovel(imovel); }}
+                onChange={(id, imovel) => { set("imovel_ref", id); setSelectedImovel(imovel); onImovelSelect?.(imovel); }}
+                onResolve={(imovel) => { setSelectedImovel(imovel); onImovelSelect?.(imovel); }}
               />
             </div>
           </div>
@@ -657,7 +661,8 @@ function TabDados({
               <label className={LABEL_CLS}>Referência do imóvel</label>
               <ImovelSearchSelect
                 value={form.imovel_ref}
-                onChange={(id, imovel) => { set("imovel_ref", id); setSelectedImovel(imovel); }}
+                onChange={(id, imovel) => { set("imovel_ref", id); setSelectedImovel(imovel); onImovelSelect?.(imovel); }}
+                onResolve={(imovel) => { setSelectedImovel(imovel); onImovelSelect?.(imovel); }}
               />
             </div>
           </div>
@@ -998,6 +1003,7 @@ export default function LeadDrawer({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [showGerarContrato, setShowGerarContrato] = useState(false);
+  const [selectedImovel, setSelectedImovel] = useState<N8nImovel | null>(null);
 
   // Reset tab when drawer opens
   useEffect(() => {
@@ -1147,11 +1153,11 @@ export default function LeadDrawer({
         <div className="flex-1 overflow-y-auto p-5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
           {/* No modo Novo Lead, sempre mostra o form */}
           {!lead && (
-            <TabDados lead={null} onLeadSaved={onLeadSaved} corretores={corretores} />
+            <TabDados lead={null} onLeadSaved={onLeadSaved} corretores={corretores} onImovelSelect={(imovel) => setSelectedImovel(imovel)} />
           )}
 
           {/* No modo Edição, mostra a aba ativa */}
-          {lead && activeTab === "dados"      && <TabDados lead={lead} onLeadSaved={onLeadSaved} corretores={corretores} />}
+          {lead && activeTab === "dados"      && <TabDados lead={lead} onLeadSaved={onLeadSaved} corretores={corretores} onImovelSelect={(imovel) => setSelectedImovel(imovel)} />}
           {lead && activeTab === "conversas"  && <TabConversas lead={lead} />}
           {lead && activeTab === "atividades" && <TabAtividades />}
           {lead && activeTab === "tarefas"    && <TabTarefas />}
@@ -1166,7 +1172,7 @@ export default function LeadDrawer({
         onClose={() => setShowGerarContrato(false)}
         lead={lead}
         brokerName={corretores.find((c) => c.id === lead?.assigned_to)?.name ?? null}
-        propertyTitle={lead?.imovel_ref ?? null}
+        propertyTitle={selectedImovel?.titulo_comercial ?? null}
       />
     </>
   );
