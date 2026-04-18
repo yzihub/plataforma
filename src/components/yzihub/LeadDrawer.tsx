@@ -17,7 +17,9 @@ import {
 } from "@/icons";
 import type { Lead, LeadStatus } from "@/lib/crm/types";
 import type { Corretor } from "@/components/yzihub/LeadsClient";
+import type { N8nImovel } from "@/types/n8n-payloads";
 import GerarContratoDrawer from "@/components/yzihub/Contratos/GerarContratoDrawer";
+import ImovelSearchSelect from "@/components/yzihub/ImovelSearchSelect";
 
 // ─── Types internos do Drawer ─────────────────────────────────────────────────
 
@@ -131,6 +133,15 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "arquivos",   label: "Arquivos"   },
 ];
 
+// ─── Bairros disponíveis (Jurema Brokers — João Pessoa) ──────────────────────
+
+const BAIRROS_JP = [
+  "Aeroclube", "Altiplano", "Bancários", "Bessa", "Cabo Branco", "Camboinha",
+  "Centro", "Cidade Universitária", "Dos Estados", "Intermares", "Jardim Luna",
+  "Jardim Oceania", "Manaíra", "Mangabeira", "Miramar", "Portal do Sol",
+  "Tambaú", "Tambauzinho",
+];
+
 // ─── Form field style constants ───────────────────────────────────────────────
 
 const INPUT_CLS = "h-11 w-full rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-500 dark:focus:border-brand-800";
@@ -150,6 +161,7 @@ type FormState = {
   objetivo: string;
   faixa_valor: string;
   regiao_interesse: string;
+  bairro_interesse: string;
   imovel_ref: string;
   data_agendamento: string;
   status_agendamento: string;
@@ -171,6 +183,7 @@ function initForm(lead: Lead | null): FormState {
     objetivo:            lead?.objetivo ?? "",
     faixa_valor:         lead?.faixa_valor ?? "",
     regiao_interesse:    lead?.regiao_interesse ?? "",
+    bairro_interesse:    lead?.bairro_interesse ?? "",
     imovel_ref:          lead?.imovel_ref ?? "",
     data_agendamento:    lead?.data_agendamento ?? "",
     status_agendamento:  lead?.status_agendamento ?? "",
@@ -388,6 +401,7 @@ function TabDados({
   corretores?: Corretor[];
 }) {
   const [form, setForm] = useState<FormState>(() => initForm(lead));
+  const [selectedImovel, setSelectedImovel] = useState<N8nImovel | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [sending, setSending] = useState(false);
@@ -396,6 +410,7 @@ function TabDados({
   // Reset form when lead changes
   useEffect(() => {
     setForm(initForm(lead));
+    setSelectedImovel(null);
     setSaveMsg(null);
     setSent(false);
   }, [lead?.id]);
@@ -468,13 +483,18 @@ function TabDados({
       {lead && (
         <div className={SECTION_CLS}>
           <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Imóvel Associado</h4>
-          {(form.imovel_ref || form.interesse_principal || form.faixa_valor || form.regiao_interesse) ? (
+          {(form.imovel_ref || form.interesse_principal || form.faixa_valor || form.bairro_interesse) ? (
             <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4 space-y-2">
               {form.imovel_ref && (
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">Referência</p>
-                    <p className="text-sm font-medium text-gray-800 dark:text-white/90">{form.imovel_ref}</p>
+                    <p className="text-xs text-gray-400 uppercase tracking-wider">Imóvel</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+                      {selectedImovel?.titulo_comercial ?? `Ref: ${form.imovel_ref.slice(0, 8)}...`}
+                    </p>
+                    {selectedImovel?.bairro && (
+                      <p className="text-[11px] text-gray-400">{selectedImovel.bairro}</p>
+                    )}
                   </div>
                   <a
                     href={`/cockpit/imoveis?ref=${encodeURIComponent(form.imovel_ref)}`}
@@ -496,24 +516,18 @@ function TabDados({
                   <p className="text-sm text-gray-700 dark:text-gray-200">{form.faixa_valor}</p>
                 </div>
               )}
-              {form.regiao_interesse && (
+              {form.bairro_interesse && (
                 <div>
-                  <p className="text-xs text-gray-400 uppercase tracking-wider">Região</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-200">{form.regiao_interesse}</p>
+                  <p className="text-xs text-gray-400 uppercase tracking-wider">Bairro</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-200">{form.bairro_interesse}</p>
                 </div>
               )}
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center gap-2 text-center">
+            <div className="rounded-xl border border-dashed border-gray-200 dark:border-gray-700 p-4 flex flex-col items-center gap-1 text-center">
               <span className="text-2xl">🏠</span>
               <p className="text-sm text-gray-400">Nenhum imóvel associado</p>
-              <button
-                type="button"
-                className="text-xs text-brand-500 hover:underline"
-                onClick={() => { /* TODO: modal de seleção de imóvel */ }}
-              >
-                Associar imóvel
-              </button>
+              <p className="text-[11px] text-gray-400">Use o campo &quot;Referência do imóvel&quot; abaixo para associar</p>
             </div>
           )}
         </div>
@@ -543,12 +557,22 @@ function TabDados({
               </select>
             </div>
             <div>
-              <label className={LABEL_CLS}>Região / Bairro</label>
-              <input type="text" value={form.regiao_interesse} onChange={(e) => set("regiao_interesse", e.target.value)} className={INPUT_CLS} />
+              <label className={LABEL_CLS}>Bairro de interesse</label>
+              <select value={form.bairro_interesse} onChange={(e) => set("bairro_interesse", e.target.value)} className={SELECT_CLS}>
+                <option value="">—</option>
+                {BAIRROS_JP.map((b) => <option key={b} value={b}>{b}</option>)}
+              </select>
             </div>
             <div>
               <label className={LABEL_CLS}>Faixa de valor</label>
               <input type="text" value={form.faixa_valor} onChange={(e) => set("faixa_valor", e.target.value)} placeholder="ex: R$ 700k – R$ 1M" className={INPUT_CLS} />
+            </div>
+            <div className="col-span-2">
+              <label className={LABEL_CLS}>Referência do imóvel</label>
+              <ImovelSearchSelect
+                value={form.imovel_ref}
+                onChange={(id, imovel) => { set("imovel_ref", id); setSelectedImovel(imovel); }}
+              />
             </div>
           </div>
         </div>
@@ -623,12 +647,18 @@ function TabDados({
               <input type="text" value={form.faixa_valor} onChange={(e) => set("faixa_valor", e.target.value)} placeholder="ex: R$ 700k – R$ 1M" className={INPUT_CLS} />
             </div>
             <div>
-              <label className={LABEL_CLS}>Região / Bairro</label>
-              <input type="text" value={form.regiao_interesse} onChange={(e) => set("regiao_interesse", e.target.value)} className={INPUT_CLS} />
+              <label className={LABEL_CLS}>Bairro de interesse</label>
+              <select value={form.bairro_interesse} onChange={(e) => set("bairro_interesse", e.target.value)} className={SELECT_CLS}>
+                <option value="">—</option>
+                {BAIRROS_JP.map((b) => <option key={b} value={b}>{b}</option>)}
+              </select>
             </div>
-            <div>
+            <div className="col-span-2">
               <label className={LABEL_CLS}>Referência do imóvel</label>
-              <input type="text" value={form.imovel_ref} onChange={(e) => set("imovel_ref", e.target.value)} className={INPUT_CLS} />
+              <ImovelSearchSelect
+                value={form.imovel_ref}
+                onChange={(id, imovel) => { set("imovel_ref", id); setSelectedImovel(imovel); }}
+              />
             </div>
           </div>
         </div>
