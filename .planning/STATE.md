@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick-260415-rd0-PLAN.md
-last_updated: "2026-04-15T07:00:00.000Z"
-last_activity: "2026-04-17 - Completed quick task 260417-g4y: limpar secrets do historico git e atualizar gitignore para planning"
+stopped_at: Completed quick-260417-scq-PLAN.md
+last_updated: "2026-04-17T02:58:00.000Z"
+last_activity: "2026-04-17 - Completed quick task 260417-scq: Mapear modelo de dados YZI OS — migration 016 com visitas, comissoes, financeiro, FK corrections"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -59,6 +59,9 @@ Recent decisions affecting current work:
 - UI: TailAdmin dark is the base; all custom components go in src/components/yzihub/
 - Action Flow: frontend never calls n8n directly — always via POST /api/actions/execute → job_queue
 - [Phase quick-260409-ltv]: Used DO block to dynamically find and drop all status CHECK constraints (handles unnamed inline constraints from migration 011)
+- [Phase quick-260417-scq]: leads.assigned_to mantido como legado; broker_id e o campo canonico para corretores
+- [Phase quick-260417-scq]: contracts.corretor_id migrado de profiles para brokers via migration 016
+- [Phase quick-260417-scq]: comissoes.broker_id usa ON DELETE RESTRICT para preservar historico financeiro
 
 ### Pending Todos
 
@@ -122,6 +125,7 @@ None yet.
 | 260416-rng | Criar API route POST /api/corretores/create que chama webhook n8n e ajustar CorretorDrawer para usar essa route ao invés de salvar direto no Supabase | 2026-04-16 | 01d4bc4 | [260416-rng-criar-api-route-post-api-corretores-crea](./quick/260416-rng-criar-api-route-post-api-corretores-crea/) |
 | 260416-t9f | Exibir imóvel e corretor no LeadCard (Row 3b + botão handoff) + drawer com card rico | 2026-04-16 | d71749b | [260416-t9f-exibir-imovel-e-corretor-no-card-e-drawe](./quick/260416-t9f-exibir-imovel-e-corretor-no-card-e-drawe/) |
 | 260417-g4y | Limpar secrets do histórico git e atualizar .gitignore para .planning JSON | 2026-04-17 | c0dde9a | [260417-g4y-limpar-secrets-do-historico-git-e-atuali](./quick/260417-g4y-limpar-secrets-do-historico-git-e-atuali/) |
+| 260417-scq | Migration 016: modelo relacional completo — visitas, comissoes, financeiro, FK corrections, 14 indices | 2026-04-17 | 9774dc0 | [260417-scq-mapear-modelo-de-dados-yzi-os-rela-es-en](./quick/260417-scq-mapear-modelo-de-dados-yzi-os-rela-es-en/) |
 
 ### Blockers/Concerns
 
