@@ -91,12 +91,14 @@ export default function GerarContratoDrawer({
   );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   // Re-inicializa o formulario quando o lead muda ou o drawer abre
   useEffect(() => {
     if (isOpen) {
       setForm(initForm(lead, brokerName, propertyTitle));
       setError(null);
+      setSuccess(false);
     }
   }, [isOpen, lead?.id]);
 
@@ -156,7 +158,11 @@ export default function GerarContratoDrawer({
         return;
       }
 
-      onClose();
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        onClose();
+      }, 1500);
     } catch {
       setError("Erro de conexao. Tente novamente.");
     } finally {
@@ -358,6 +364,14 @@ export default function GerarContratoDrawer({
               </div>
             </div>
 
+            {/* Sucesso */}
+            {success && (
+              <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
+                <svg className="size-4 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
+                Contrato enfileirado para geração.
+              </div>
+            )}
+
             {/* Erro */}
             {error && (
               <div className="rounded-xl bg-red-50 dark:bg-red-500/10 px-4 py-2.5 text-sm text-red-600 dark:text-red-400">
@@ -377,7 +391,7 @@ export default function GerarContratoDrawer({
             </button>
             <button
               type="submit"
-              disabled={submitting || !form.modelo}
+              disabled={submitting || success || !form.modelo}
               className="flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors active:scale-95"
             >
               {submitting ? (

@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 const ALLOWED_UPDATE_FIELDS = [
   "stage_id", "name", "email", "phone", "company", "source", "status",
   "score", "value", "assigned_to", "notes",
-  "janela_visita", "regiao_interesse", "objetivo", "interesse_principal",
+  "janela_visita", "regiao_interesse", "bairro_interesse", "objetivo", "interesse_principal",
   "finalidade", "faixa_valor", "imovel_ref", "status_agendamento", "data_agendamento",
 ] as const;
 

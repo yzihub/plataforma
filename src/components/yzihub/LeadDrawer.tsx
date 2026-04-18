@@ -210,11 +210,23 @@ function QuickActionsBar({
   const hasPhone = !!lead.phone;
   const hasEmail = !!lead.email;
 
-  function moveStatus(newStatus: LeadStatus) {
+  async function moveStatus(newStatus: LeadStatus) {
     setShowStatusMenu(false);
-    if (onLeadSaved) {
-      onLeadSaved({ ...lead, status: newStatus, last_action_at: new Date().toISOString() });
+    try {
+      const res = await fetch(`/api/leads/${lead.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        const saved = await res.json() as Lead;
+        onLeadSaved?.(saved);
+        return;
+      }
+    } catch {
+      // fallthrough to optimistic update
     }
+    onLeadSaved?.({ ...lead, status: newStatus, last_action_at: new Date().toISOString() });
   }
 
   return (
@@ -326,10 +338,24 @@ function CorretorCard({
   const corretor = corretores.find((c) => c.id === lead.assigned_to);
   const hasCorretor = !!corretor;
 
-  function handleAssign() {
+  async function handleAssign() {
     if (!onLeadSaved) return;
-    onLeadSaved({ ...lead, assigned_to: selectedId || null });
     setEditing(false);
+    try {
+      const res = await fetch(`/api/leads/${lead.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ assigned_to: selectedId || null }),
+      });
+      if (res.ok) {
+        const saved = await res.json() as Lead;
+        onLeadSaved(saved);
+        return;
+      }
+    } catch {
+      // fallthrough to optimistic update
+    }
+    onLeadSaved({ ...lead, assigned_to: selectedId || null });
   }
 
   return (
@@ -446,7 +472,7 @@ function TabDados({
         res = await fetch("/api/leads", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...payload, tenant_id: "mock" }),
+          body: JSON.stringify(payload),
         });
       }
 
