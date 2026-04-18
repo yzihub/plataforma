@@ -50,12 +50,21 @@ export async function POST(req: NextRequest) {
       canais?: { whatsapp: boolean; email: boolean };
     };
 
-    // 4. Validar campo obrigatorio
+    // 4. Validar campos obrigatorios
     if (!body.modelo || body.modelo.trim() === "") {
-      return NextResponse.json(
-        { error: "Campo 'modelo' e obrigatorio" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Campo 'modelo' e obrigatorio" }, { status: 400 });
+    }
+    if (!body.lead_id) {
+      return NextResponse.json({ error: "Lead e obrigatorio" }, { status: 400 });
+    }
+    if (!body.property_id) {
+      return NextResponse.json({ error: "Imovel e obrigatorio" }, { status: 400 });
+    }
+    if (!body.broker_id) {
+      return NextResponse.json({ error: "Corretor e obrigatorio" }, { status: 400 });
+    }
+    if (!body.valor || body.valor.trim() === "" || parseFloat(body.valor) <= 0) {
+      return NextResponse.json({ error: "Valor e obrigatorio" }, { status: 400 });
     }
 
     const valor = body.valor ? parseFloat(body.valor) : 0;

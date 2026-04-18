@@ -20,13 +20,9 @@ interface GerarContratoDrawerProps {
 
 interface GerarContratoForm {
   modelo: ContractModel;
-  comprador: string;
   vendedor: string;
-  imovel: string;
-  corretor: string;
   valor: string;
   forma_pagamento: string;
-  comissao: string;
   observacoes: string;
   canais: { whatsapp: boolean; email: boolean };
 }
@@ -54,23 +50,17 @@ const FORMA_PAGAMENTO_OPTIONS = [
 const inputCls =
   "w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/20 transition-colors";
 const labelCls = "block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1";
+const readonlyCls =
+  "w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400 cursor-not-allowed select-none";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function initForm(
-  lead: Lead | null,
-  brokerName?: string | null,
-  propertyTitle?: string | null,
-): GerarContratoForm {
+function initForm(lead: Lead | null): GerarContratoForm {
   return {
     modelo:          "",
-    comprador:       lead?.name ?? "",
     vendedor:        "",
-    imovel:          propertyTitle ?? lead?.imovel_ref ?? "",
-    corretor:        brokerName ?? "",
     valor:           lead && lead.value > 0 ? String(lead.value) : "",
     forma_pagamento: "",
-    comissao:        "",
     observacoes:     lead?.notes ?? "",
     canais: {
       whatsapp: !!lead?.phone,
@@ -90,9 +80,7 @@ export default function GerarContratoDrawer({
   propertyId,
   propertyTitle,
 }: GerarContratoDrawerProps) {
-  const [form, setForm] = useState<GerarContratoForm>(() =>
-    initForm(lead, brokerName, propertyTitle),
-  );
+  const [form, setForm] = useState<GerarContratoForm>(() => initForm(lead));
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -100,7 +88,7 @@ export default function GerarContratoDrawer({
   // Re-inicializa o formulario quando o lead muda ou o drawer abre
   useEffect(() => {
     if (isOpen) {
-      setForm(initForm(lead, brokerName, propertyTitle));
+      setForm(initForm(lead));
       setError(null);
       setSuccess(false);
     }
@@ -120,19 +108,19 @@ export default function GerarContratoDrawer({
     }));
   }
 
+  const imovelDisplay = propertyTitle ?? lead?.imovel_ref ?? null;
+  const canSubmit =
+    !!form.modelo && !!lead && !!propertyId && !!brokerId && !!form.valor;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
 
-    if (!form.modelo) {
-      setError("Selecione um modelo de contrato.");
-      return;
-    }
-
-    if (!lead) {
-      setError("Nenhum lead selecionado.");
-      return;
-    }
+    if (!form.modelo) { setError("Selecione um modelo de contrato."); return; }
+    if (!lead) { setError("Nenhum lead selecionado."); return; }
+    if (!propertyId) { setError("Nenhum imóvel vinculado."); return; }
+    if (!brokerId) { setError("Nenhum corretor vinculado."); return; }
+    if (!form.valor) { setError("Informe o valor do contrato."); return; }
 
     setSubmitting(true);
     try {
@@ -141,17 +129,16 @@ export default function GerarContratoDrawer({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lead_id:         lead.id,
-          property_id:     propertyId ?? null,
-          broker_id:       brokerId ?? null,
+          property_id:     propertyId,
+          broker_id:       brokerId,
           tenant_id:       lead.tenant_id,
           modelo:          form.modelo,
-          comprador:       form.comprador,
+          comprador:       lead.name,
           vendedor:        form.vendedor,
-          imovel:          form.imovel,
-          corretor:        form.corretor,
+          imovel:          imovelDisplay,
+          corretor:        brokerName ?? null,
           valor:           form.valor,
           forma_pagamento: form.forma_pagamento,
-          comissao:        form.comissao,
           observacoes:     form.observacoes,
           canais:          form.canais,
         }),
@@ -243,13 +230,7 @@ export default function GerarContratoDrawer({
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className={labelCls}>Comprador / Locatario</label>
-                <input
-                  type="text"
-                  value={form.comprador}
-                  onChange={(e) => set("comprador", e.target.value)}
-                  className={inputCls}
-                  placeholder="Nome do comprador"
-                />
+                <div className={readonlyCls}>{lead?.name ?? "—"}</div>
               </div>
               <div>
                 <label className={labelCls}>Vendedor / Locador</label>
@@ -266,31 +247,23 @@ export default function GerarContratoDrawer({
             {/* 3. Imovel */}
             <div>
               <label className={labelCls}>Imovel</label>
-              <input
-                type="text"
-                value={form.imovel}
-                onChange={(e) => set("imovel", e.target.value)}
-                className={inputCls}
-                placeholder="Referencia ou descricao do imovel"
-              />
+              <div className={readonlyCls}>
+                {imovelDisplay ?? <span className="text-red-400">Imóvel não vinculado</span>}
+              </div>
             </div>
 
             {/* 4. Corretor Responsavel */}
             <div>
               <label className={labelCls}>Corretor Responsavel</label>
-              <input
-                type="text"
-                value={form.corretor}
-                onChange={(e) => set("corretor", e.target.value)}
-                className={inputCls}
-                placeholder="Nome do corretor"
-              />
+              <div className={readonlyCls}>
+                {brokerName ?? <span className="text-red-400">Corretor não vinculado</span>}
+              </div>
             </div>
 
-            {/* 5. Valor + Comissao */}
+            {/* 5. Valor + Comissao (auto 5%) */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className={labelCls}>Valor (R$)</label>
+                <label className={labelCls}>Valor (R$) <span className="text-red-400">*</span></label>
                 <input
                   type="number"
                   value={form.valor}
@@ -302,17 +275,12 @@ export default function GerarContratoDrawer({
                 />
               </div>
               <div>
-                <label className={labelCls}>Comissao (%)</label>
-                <input
-                  type="number"
-                  value={form.comissao}
-                  onChange={(e) => set("comissao", e.target.value)}
-                  className={inputCls}
-                  placeholder="ex: 6"
-                  min={0}
-                  max={100}
-                  step="0.01"
-                />
+                <label className={labelCls}>Comissao (5% auto)</label>
+                <div className={readonlyCls}>
+                  {form.valor
+                    ? `R$ ${(parseFloat(form.valor) * 0.05).toFixed(2)}`
+                    : "—"}
+                </div>
               </div>
             </div>
 
@@ -397,7 +365,7 @@ export default function GerarContratoDrawer({
             </button>
             <button
               type="submit"
-              disabled={submitting || success || !form.modelo}
+              disabled={submitting || success || !canSubmit}
               className="flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors active:scale-95"
             >
               {submitting ? (
