@@ -17,6 +17,7 @@ import {
 } from "@/icons";
 import type { Lead, LeadStatus } from "@/lib/crm/types";
 import type { Corretor } from "@/components/yzihub/LeadsClient";
+import GerarContratoDrawer from "@/components/yzihub/Contratos/GerarContratoDrawer";
 
 // ─── Types internos do Drawer ─────────────────────────────────────────────────
 
@@ -966,6 +967,7 @@ export default function LeadDrawer({
   const [activeTab, setActiveTab] = useState<Tab>("dados");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [showGerarContrato, setShowGerarContrato] = useState(false);
 
   // Reset tab when drawer opens
   useEffect(() => {
@@ -1035,6 +1037,16 @@ export default function LeadDrawer({
           </div>
 
           <div className="flex items-center gap-1">
+            {/* Novo Contrato (só em modo edição) */}
+            {lead && (
+              <button
+                type="button"
+                onClick={() => setShowGerarContrato(true)}
+                className="flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-600 active:scale-95 transition-all"
+              >
+                Novo Contrato
+              </button>
+            )}
             {/* Excluir (só em modo edição) */}
             {lead && !confirmDelete && (
               <button
@@ -1117,6 +1129,15 @@ export default function LeadDrawer({
           {lead && activeTab === "arquivos"   && <TabArquivos />}
         </div>
       </div>
+
+      {/* ── Drawer de Geracao de Contrato ── */}
+      <GerarContratoDrawer
+        isOpen={showGerarContrato}
+        onClose={() => setShowGerarContrato(false)}
+        lead={lead}
+        brokerName={corretores.find((c) => c.id === lead?.assigned_to)?.name ?? null}
+        propertyTitle={lead?.imovel_ref ?? null}
+      />
     </>
   );
 }
