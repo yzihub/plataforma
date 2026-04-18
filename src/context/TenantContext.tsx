@@ -53,6 +53,28 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
     setError(null);
 
     try {
+      // DEV_BYPASS: skip ALL network calls and set fallback tenant immediately.
+      // This must run BEFORE any supabase.auth.getUser() call — if DNS is unreachable,
+      // that call hangs indefinitely and the loading spinner never resolves.
+      // Never bypass in production.
+      const isDevBypass =
+        process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
+        process.env.NODE_ENV !== "production";
+
+      if (isDevBypass) {
+        console.log("[TenantContext] DEV_BYPASS active — skipping Supabase auth, using Jurema Brokers fallback");
+        setTenant({
+          id: "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+          name: "Jurema Brokers (DEV)",
+          plan: "growth",
+          activeModules: ["crm", "sdr", "ia_onboarding"],
+          settings: { agent_name: "Luana", primary_color: "#465FFF" },
+        });
+        setIsGlobalAdmin(false);
+        setLoading(false);
+        return;
+      }
+
       const supabase = createClient();
 
       const {
@@ -61,30 +83,7 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
 
       console.log("[DIAG] REMOVE AFTER VALIDATION — getUser result:", user?.id ?? "no user"); // [DIAG] REMOVE AFTER VALIDATION
 
-      const isDevBypass =
-        process.env.NEXT_PUBLIC_DEV_BYPASS === "true";
-
-      // 🚨 proteção: nunca permitir bypass em produção
-      if (process.env.NODE_ENV === "production" && isDevBypass) {
-        throw new Error("DEV_BYPASS ATIVO EM PRODUÇÃO ❌");
-      }
-
       if (!user) {
-        // DEV_BYPASS controlado
-        if (isDevBypass) {
-          // DEV fallback: tenant real da Jurema — somente NODE_ENV=development
-          setTenant({
-            id: "b179ae75-3d56-4de8-8840-fc9c4d9ec21e",
-            name: "Jurema Brokers (DEV)",
-            plan: "growth",
-            activeModules: ["crm", "sdr", "ia_onboarding"],
-            settings: { agent_name: "Luana", primary_color: "#465FFF" },
-          });
-          setIsGlobalAdmin(false);
-          setLoading(false);
-          return;
-        }
-
         setTenant(null);
         setIsGlobalAdmin(false);
         setLoading(false); // prevent infinite loading when no session
