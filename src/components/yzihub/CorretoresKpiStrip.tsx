@@ -13,11 +13,12 @@ import {
 interface CorretoresKpiStripProps {
   brokers: Broker[];
   leadCounts: Record<string, number>;
+  wonCounts?: Record<string, number>;
 }
 
 // ─── CorretoresKpiStrip ───────────────────────────────────────────────────────
 
-export default function CorretoresKpiStrip({ brokers, leadCounts }: CorretoresKpiStripProps) {
+export default function CorretoresKpiStrip({ brokers, leadCounts, wonCounts: _wonCounts }: CorretoresKpiStripProps) {
   const totalAtivos = brokers.filter((b) => b.is_active).length;
   const totalInativos = brokers.filter((b) => !b.is_active).length;
 
@@ -27,11 +28,11 @@ export default function CorretoresKpiStrip({ brokers, leadCounts }: CorretoresKp
     const sorted = [...brokers].sort((a, b) => {
       const diff = (leadCounts[b.id] ?? 0) - (leadCounts[a.id] ?? 0);
       if (diff !== 0) return diff;
-      return a.full_name.localeCompare(b.full_name);
+      return a.name.localeCompare(b.name);
     });
     const leader = sorted[0];
     if (leader && (leadCounts[leader.id] ?? 0) > 0) {
-      topCorretor = leader.full_name.split(" ")[0]; // primeiro nome para caber no card
+      topCorretor = leader.name.split(" ")[0];
     }
   }
 

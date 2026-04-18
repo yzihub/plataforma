@@ -82,7 +82,7 @@ function scoreBadge(score: number): { color: BadgeColor; label: string } {
 function findCorretorName(assigned_to: string | null, corretores: Corretor[]): string {
   if (!assigned_to) return "—";
   const corretor = corretores.find((c) => c.id === assigned_to);
-  if (corretor) return corretor.full_name;
+  if (corretor) return corretor.name;
   const isUuid = /^[0-9a-f-]{32,}$/i.test(assigned_to.replace(/-/g, ""));
   if (isUuid) return `@${assigned_to.slice(0, 8)}`;
   return assigned_to;
@@ -256,7 +256,7 @@ function InlineCorretorSelect({
       >
         <option value="">— Sem corretor —</option>
         {corretores.map((c) => (
-          <option key={c.id} value={c.id}>{c.full_name}</option>
+          <option key={c.id} value={c.id}>{c.name}</option>
         ))}
       </select>
       <span className="sr-only">{displayName}</span>

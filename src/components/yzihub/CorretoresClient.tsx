@@ -75,7 +75,7 @@ export default function CorretoresClient() {
         supabase
           .from(BROKERS_TABLE)
           .select(
-            "id, tenant_id, name, phone, email, role, is_active, created_at, updated_at"
+            "id, tenant_id, name, phone, email, role, tipo, cpf, is_active, address, city, state, zip_code, bank, bank_agency, bank_account, bank_account_type, pix_key, pix_key_type, pix_beneficiary, notes, created_at, updated_at"
           )
           .eq("tenant_id", tenant!.id)
           .order("created_at", { ascending: false }),
@@ -143,7 +143,7 @@ export default function CorretoresClient() {
     const supabase = createClient();
     const { data, error: brokersError } = await supabase
       .from(BROKERS_TABLE)
-      .select("id, tenant_id, name, phone, email, role, is_active, created_at, updated_at")
+      .select("id, tenant_id, name, phone, email, role, tipo, cpf, is_active, address, city, state, zip_code, bank, bank_agency, bank_account, bank_account_type, pix_key, pix_key_type, pix_beneficiary, notes, created_at, updated_at")
       .eq("tenant_id", tenant.id)
       .order("created_at", { ascending: false });
     if (!brokersError && data) setBrokers(data as Broker[]);
@@ -174,10 +174,23 @@ export default function CorretoresClient() {
           tenant_id: tenant.id,
           name: input.name,
           email: input.email ?? null,
-          phone: input.phone ?? null, // já normalizado pelo CorretorDrawer
+          phone: input.phone ?? null,
           is_active: input.is_active ?? true,
           role: input.role ?? null,
-          notes: null, // reservado para uso futuro
+          tipo: input.tipo ?? null,
+          cpf: input.cpf ?? null,
+          address: input.address ?? null,
+          city: input.city ?? null,
+          state: input.state ?? null,
+          zip_code: input.zip_code ?? null,
+          bank: input.bank ?? null,
+          bank_agency: input.bank_agency ?? null,
+          bank_account: input.bank_account ?? null,
+          bank_account_type: input.bank_account_type ?? null,
+          pix_key: input.pix_key ?? null,
+          pix_key_type: input.pix_key_type ?? null,
+          pix_beneficiary: input.pix_beneficiary ?? null,
+          notes: input.notes ?? null,
         };
 
         const res = await fetch("/api/corretores/create", {

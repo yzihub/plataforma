@@ -3,12 +3,15 @@
 import { useEffect, useState } from "react";
 import type { Broker, BrokerInput } from "@/types/brokers";
 
-// ─── Field classes (TailAdmin padrão) ─────────────────────────────────────────
+// ─── Field / label classes (TailAdmin dark padrão) ────────────────────────────
 
 const fieldCls =
   "w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-sm font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:text-white/90";
 
 const labelCls = "mb-2.5 block text-sm font-medium text-black dark:text-white";
+
+const sectionTitleCls =
+  "text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 mt-1";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -19,6 +22,30 @@ interface CorretorDrawerProps {
   onSave: (input: BrokerInput, id?: string) => Promise<void>;
   onDelete?: (id: string) => Promise<void> | void;
 }
+
+// ─── Empty form ───────────────────────────────────────────────────────────────
+
+const emptyForm: BrokerInput = {
+  name: "",
+  phone: null,
+  email: null,
+  role: null,
+  tipo: null,
+  cpf: null,
+  is_active: true,
+  address: null,
+  city: null,
+  state: null,
+  zip_code: null,
+  bank: null,
+  bank_agency: null,
+  bank_account: null,
+  bank_account_type: null,
+  pix_key: null,
+  pix_key_type: null,
+  pix_beneficiary: null,
+  notes: null,
+};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -31,14 +58,6 @@ export default function CorretorDrawer({
 }: CorretorDrawerProps) {
   const isEditing = broker !== null;
 
-  const emptyForm: BrokerInput = {
-    full_name: "",
-    phone: "",
-    email: "",
-    role: "",
-    is_active: true,
-  };
-
   const [form, setForm] = useState<BrokerInput>(emptyForm);
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -47,11 +66,25 @@ export default function CorretorDrawer({
   useEffect(() => {
     if (broker) {
       setForm({
-        full_name: broker.full_name,
-        phone: broker.phone ?? "",
-        email: broker.email ?? "",
-        role: broker.role ?? "",
+        name: broker.name ?? "",
+        phone: broker.phone ?? null,
+        email: broker.email ?? null,
+        role: broker.role ?? null,
+        tipo: broker.tipo ?? null,
+        cpf: broker.cpf ?? null,
         is_active: broker.is_active ?? true,
+        address: broker.address ?? null,
+        city: broker.city ?? null,
+        state: broker.state ?? null,
+        zip_code: broker.zip_code ?? null,
+        bank: broker.bank ?? null,
+        bank_agency: broker.bank_agency ?? null,
+        bank_account: broker.bank_account ?? null,
+        bank_account_type: broker.bank_account_type ?? null,
+        pix_key: broker.pix_key ?? null,
+        pix_key_type: broker.pix_key_type ?? null,
+        pix_beneficiary: broker.pix_beneficiary ?? null,
+        notes: broker.notes ?? null,
       });
     } else {
       setForm(emptyForm);
@@ -60,8 +93,16 @@ export default function CorretorDrawer({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [broker, open]);
 
+  function str(val: string | null | undefined): string {
+    return val ?? "";
+  }
+
   function setField<K extends keyof BrokerInput>(key: K, value: BrokerInput[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function nullIfEmpty(v: string): string | null {
+    return v.trim() === "" ? null : v.trim();
   }
 
   async function handleDeleteClick() {
@@ -77,7 +118,7 @@ export default function CorretorDrawer({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (form.full_name.trim().length < 2) {
+    if (form.name.trim().length < 2) {
       setSaveError(true);
       setTimeout(() => setSaveError(false), 3000);
       return;
@@ -88,11 +129,25 @@ export default function CorretorDrawer({
 
     try {
       const input: BrokerInput = {
-        full_name: form.full_name.trim(),
-        phone: form.phone?.replace(/\D/g, "") || null,
-        email: form.email?.trim() || null,
-        role: form.role?.trim() || null,
+        name: form.name.trim(),
+        phone: nullIfEmpty(str(form.phone))?.replace(/\D/g, "") ?? null,
+        email: nullIfEmpty(str(form.email)),
+        role: nullIfEmpty(str(form.role)),
+        tipo: nullIfEmpty(str(form.tipo)),
+        cpf: nullIfEmpty(str(form.cpf)),
         is_active: form.is_active,
+        address: nullIfEmpty(str(form.address)),
+        city: nullIfEmpty(str(form.city)),
+        state: nullIfEmpty(str(form.state)),
+        zip_code: nullIfEmpty(str(form.zip_code)),
+        bank: nullIfEmpty(str(form.bank)),
+        bank_agency: nullIfEmpty(str(form.bank_agency)),
+        bank_account: nullIfEmpty(str(form.bank_account)),
+        bank_account_type: nullIfEmpty(str(form.bank_account_type)),
+        pix_key: nullIfEmpty(str(form.pix_key)),
+        pix_key_type: nullIfEmpty(str(form.pix_key_type)),
+        pix_beneficiary: nullIfEmpty(str(form.pix_beneficiary)),
+        notes: nullIfEmpty(str(form.notes)),
       };
       await onSave(input, isEditing ? broker!.id : undefined);
     } catch {
@@ -152,9 +207,12 @@ export default function CorretorDrawer({
 
         {/* ── Form ── */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5">
-          <div className="space-y-4.5">
+          <div className="space-y-4">
 
-            {/* Nome completo */}
+            {/* ── Dados Pessoais ─────────────────────────────────────── */}
+            <p className={sectionTitleCls}>Dados Pessoais</p>
+
+            {/* Nome */}
             <div>
               <label className={labelCls}>
                 Nome completo <span className="text-meta-1">*</span>
@@ -162,8 +220,8 @@ export default function CorretorDrawer({
               <input
                 type="text"
                 required
-                value={form.full_name}
-                onChange={(e) => setField("full_name", e.target.value)}
+                value={str(form.name)}
+                onChange={(e) => setField("name", e.target.value)}
                 placeholder="Ex: João Silva"
                 className={fieldCls}
               />
@@ -174,7 +232,7 @@ export default function CorretorDrawer({
               <label className={labelCls}>Telefone</label>
               <input
                 type="tel"
-                value={form.phone ?? ""}
+                value={str(form.phone)}
                 onChange={(e) => setField("phone", e.target.value)}
                 placeholder="Ex: 85999999999"
                 className={fieldCls}
@@ -186,11 +244,51 @@ export default function CorretorDrawer({
               <label className={labelCls}>E-mail</label>
               <input
                 type="email"
-                value={form.email ?? ""}
+                value={str(form.email)}
                 onChange={(e) => setField("email", e.target.value)}
                 placeholder="Ex: corretor@exemplo.com"
                 className={fieldCls}
               />
+            </div>
+
+            {/* CPF */}
+            <div>
+              <label className={labelCls}>CPF</label>
+              <input
+                type="text"
+                value={str(form.cpf)}
+                onChange={(e) => setField("cpf", e.target.value)}
+                placeholder="Ex: 000.000.000-00"
+                className={fieldCls}
+              />
+            </div>
+
+            {/* Tipo / Role em linha */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelCls}>Tipo</label>
+                <select
+                  value={str(form.tipo)}
+                  onChange={(e) => setField("tipo", e.target.value)}
+                  className={fieldCls}
+                >
+                  <option value="">Selecione</option>
+                  <option value="autonomo">Autônomo</option>
+                  <option value="pj">PJ</option>
+                  <option value="clt">CLT</option>
+                  <option value="estagiario">Estagiário</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Role / Cargo</label>
+                <input
+                  type="text"
+                  value={str(form.role)}
+                  onChange={(e) => setField("role", e.target.value)}
+                  placeholder="Ex: Corretor Sênior"
+                  className={fieldCls}
+                />
+              </div>
             </div>
 
             {/* Status */}
@@ -224,11 +322,178 @@ export default function CorretorDrawer({
               </div>
             </div>
 
-            {/* Actions */}
+            {/* ── Endereço ───────────────────────────────────────────── */}
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
+              <p className={sectionTitleCls}>Endereço</p>
+            </div>
+
+            {/* Endereço */}
+            <div>
+              <label className={labelCls}>Endereço</label>
+              <input
+                type="text"
+                value={str(form.address)}
+                onChange={(e) => setField("address", e.target.value)}
+                placeholder="Rua, número, complemento"
+                className={fieldCls}
+              />
+            </div>
+
+            {/* Cidade / Estado em linha */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelCls}>Cidade</label>
+                <input
+                  type="text"
+                  value={str(form.city)}
+                  onChange={(e) => setField("city", e.target.value)}
+                  placeholder="Ex: Fortaleza"
+                  className={fieldCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Estado</label>
+                <input
+                  type="text"
+                  value={str(form.state)}
+                  onChange={(e) => setField("state", e.target.value)}
+                  placeholder="Ex: CE"
+                  maxLength={2}
+                  className={fieldCls}
+                />
+              </div>
+            </div>
+
+            {/* CEP */}
+            <div>
+              <label className={labelCls}>CEP</label>
+              <input
+                type="text"
+                value={str(form.zip_code)}
+                onChange={(e) => setField("zip_code", e.target.value)}
+                placeholder="Ex: 60000-000"
+                className={fieldCls}
+              />
+            </div>
+
+            {/* ── Financeiro & PIX ───────────────────────────────────── */}
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
+              <p className={sectionTitleCls}>Financeiro & PIX</p>
+            </div>
+
+            {/* Banco */}
+            <div>
+              <label className={labelCls}>Banco</label>
+              <input
+                type="text"
+                value={str(form.bank)}
+                onChange={(e) => setField("bank", e.target.value)}
+                placeholder="Ex: Nubank, Itaú, Bradesco"
+                className={fieldCls}
+              />
+            </div>
+
+            {/* Agência / Conta em linha */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelCls}>Agência</label>
+                <input
+                  type="text"
+                  value={str(form.bank_agency)}
+                  onChange={(e) => setField("bank_agency", e.target.value)}
+                  placeholder="Ex: 0001"
+                  className={fieldCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>Conta</label>
+                <input
+                  type="text"
+                  value={str(form.bank_account)}
+                  onChange={(e) => setField("bank_account", e.target.value)}
+                  placeholder="Ex: 12345-6"
+                  className={fieldCls}
+                />
+              </div>
+            </div>
+
+            {/* Tipo de conta */}
+            <div>
+              <label className={labelCls}>Tipo de Conta</label>
+              <select
+                value={str(form.bank_account_type)}
+                onChange={(e) => setField("bank_account_type", e.target.value)}
+                className={fieldCls}
+              >
+                <option value="">Selecione</option>
+                <option value="corrente">Corrente</option>
+                <option value="poupanca">Poupança</option>
+                <option value="pagamento">Pagamento</option>
+              </select>
+            </div>
+
+            {/* Chave PIX / Tipo em linha */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelCls}>Tipo de Chave PIX</label>
+                <select
+                  value={str(form.pix_key_type)}
+                  onChange={(e) => setField("pix_key_type", e.target.value)}
+                  className={fieldCls}
+                >
+                  <option value="">Selecione</option>
+                  <option value="cpf">CPF</option>
+                  <option value="cnpj">CNPJ</option>
+                  <option value="email">E-mail</option>
+                  <option value="telefone">Telefone</option>
+                  <option value="aleatoria">Aleatória</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Chave PIX</label>
+                <input
+                  type="text"
+                  value={str(form.pix_key)}
+                  onChange={(e) => setField("pix_key", e.target.value)}
+                  placeholder="Chave PIX"
+                  className={fieldCls}
+                />
+              </div>
+            </div>
+
+            {/* Favorecido */}
+            <div>
+              <label className={labelCls}>Favorecido</label>
+              <input
+                type="text"
+                value={str(form.pix_beneficiary)}
+                onChange={(e) => setField("pix_beneficiary", e.target.value)}
+                placeholder="Nome do favorecido"
+                className={fieldCls}
+              />
+            </div>
+
+            {/* ── Observações ────────────────────────────────────────── */}
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
+              <p className={sectionTitleCls}>Observações</p>
+            </div>
+
+            <div>
+              <label className={labelCls}>Observações</label>
+              <textarea
+                rows={3}
+                value={str(form.notes)}
+                onChange={(e) => setField("notes", e.target.value)}
+                placeholder="Anotações internas sobre o corretor..."
+                className={`${fieldCls} resize-none`}
+              />
+            </div>
+
+            {/* ── Ações ─────────────────────────────────────────────── */}
             <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
               {saveError && (
                 <p className="text-xs text-meta-1 mb-3 text-center">
-                  Erro ao salvar. Tente novamente.
+                  Erro ao salvar. Verifique os dados e tente novamente.
                 </p>
               )}
 
@@ -245,7 +510,7 @@ export default function CorretorDrawer({
                 )}
                 <button
                   type="submit"
-                  disabled={saving || deleting || form.full_name.trim().length < 2}
+                  disabled={saving || deleting || form.name.trim().length < 2}
                   className="flex flex-1 justify-center rounded bg-primary py-2.5 px-5 text-sm font-medium text-white hover:bg-opacity-90 disabled:opacity-50 transition-opacity"
                 >
                   {saving
@@ -256,6 +521,7 @@ export default function CorretorDrawer({
                 </button>
               </div>
             </div>
+
           </div>
         </form>
       </div>

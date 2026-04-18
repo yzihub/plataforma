@@ -64,12 +64,27 @@ export async function POST(request: Request) {
     const rawPhone = typeof body.phone === "string" ? body.phone : null;
     const phone = rawPhone ? rawPhone.replace(/\D/g, "") || null : null;
 
-    const email =
-      typeof body.email === "string" && body.email.trim() ? body.email.trim() : null;
-    const role =
-      typeof body.role === "string" && body.role.trim() ? body.role.trim() : null;
-    const notes =
-      typeof body.notes === "string" && body.notes.trim() ? body.notes.trim() : null;
+    function str(key: string): string | null {
+      const v = body[key];
+      return typeof v === "string" && v.trim() ? v.trim() : null;
+    }
+
+    const email = str("email");
+    const role = str("role");
+    const notes = str("notes");
+    const tipo = str("tipo");
+    const cpf = str("cpf");
+    const address = str("address");
+    const city = str("city");
+    const state = str("state");
+    const zip_code = str("zip_code");
+    const bank = str("bank");
+    const bank_agency = str("bank_agency");
+    const bank_account = str("bank_account");
+    const bank_account_type = str("bank_account_type");
+    const pix_key = str("pix_key");
+    const pix_key_type = str("pix_key_type");
+    const pix_beneficiary = str("pix_beneficiary");
 
     const isActive = typeof body.is_active === "boolean" ? body.is_active : true;
 
@@ -82,6 +97,19 @@ export async function POST(request: Request) {
       phone,
       is_active: isActive,
       role,
+      tipo,
+      cpf,
+      address,
+      city,
+      state,
+      zip_code,
+      bank,
+      bank_agency,
+      bank_account,
+      bank_account_type,
+      pix_key,
+      pix_key_type,
+      pix_beneficiary,
       notes,
     };
 
