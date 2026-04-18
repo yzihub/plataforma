@@ -35,7 +35,7 @@ export async function GET() {
     // Buscar contratos do tenant
     const { data: contracts, error: contractsError } = await supabase
       .from("contracts")
-      .select("id, tenant_id, lead_id, lead_name, project_name, corretor_name, title, type, status, value, signed_at, expires_at, created_at, updated_at")
+      .select("id, tenant_id, lead_id, broker_id, lead_name, project_name, corretor_name, title, type, status, value, signed_at, expires_at, created_at, updated_at")
       .eq("tenant_id", tenantId)
       .order("updated_at", { ascending: false });
 
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       lead_name:     body.lead_name.trim(),
       project_id:    body.project_id    || null,
       project_name:  body.project_name  || null,
-      corretor_id:   body.corretor_id   || null,
+      broker_id:     body.broker_id     || null,
       corretor_name: body.corretor_name || null,
       title:         body.title         || null,
       type:          body.type          || "venda",

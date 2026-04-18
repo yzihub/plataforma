@@ -35,6 +35,8 @@ export async function POST(req: NextRequest) {
     // 3. Ler body
     const body = await req.json() as {
       lead_id?: string | null;
+      property_id?: string | null;
+      broker_id?: string | null;
       tenant_id?: string | null;
       modelo?: string;
       comprador?: string | null;
@@ -56,28 +58,61 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 5. Inserir em job_queue
+    const valor = body.valor ? parseFloat(body.valor) : 0;
+
+    // 5. Criar registro em contracts com IDs reais
+    const { data: contract, error: contractError } = await supabase
+      .from("contracts")
+      .insert({
+        tenant_id:     tenantId,
+        lead_id:       body.lead_id    ?? null,
+        project_id:    body.property_id ?? null,
+        broker_id:     body.broker_id  ?? null,
+        lead_name:     body.comprador  ?? null,
+        project_name:  body.imovel     ?? null,
+        corretor_name: body.corretor   ?? null,
+        title:         body.modelo     ? `${body.modelo} — ${body.comprador ?? "sem comprador"}` : null,
+        type:          body.modelo     ?? "venda",
+        status:        "rascunho",
+        value:         valor,
+        notes:         body.observacoes ?? null,
+      })
+      .select("id")
+      .single();
+
+    if (contractError) {
+      console.error("[POST /api/contracts/generate] contract insert error:", contractError);
+      return NextResponse.json(
+        { error: "Erro ao registrar contrato" },
+        { status: 500 },
+      );
+    }
+
+    // 6. Inserir em job_queue com contract_id
     const { error: insertError } = await supabase.from("job_queue").insert({
       tenant_id: tenantId,
       action: "gerar_contrato",
       status: "pending",
       payload: {
-        lead_id:         body.lead_id ?? null,
+        contract_id:     contract.id,
+        lead_id:         body.lead_id      ?? null,
+        property_id:     body.property_id  ?? null,
+        broker_id:       body.broker_id    ?? null,
         modelo:          body.modelo.trim(),
-        comprador:       body.comprador ?? null,
-        vendedor:        body.vendedor ?? null,
-        imovel:          body.imovel ?? null,
-        corretor:        body.corretor ?? null,
-        valor:           body.valor ? parseFloat(body.valor) : null,
+        comprador:       body.comprador    ?? null,
+        vendedor:        body.vendedor     ?? null,
+        imovel:          body.imovel       ?? null,
+        corretor:        body.corretor     ?? null,
+        valor,
         forma_pagamento: body.forma_pagamento ?? null,
         comissao:        body.comissao ? parseFloat(body.comissao) : null,
-        observacoes:     body.observacoes ?? null,
-        canais:          body.canais ?? { whatsapp: false, email: false },
+        observacoes:     body.observacoes  ?? null,
+        canais:          body.canais       ?? { whatsapp: false, email: false },
       },
     });
 
     if (insertError) {
-      console.error("[POST /api/contracts/generate] insert error:", insertError);
+      console.error("[POST /api/contracts/generate] job_queue insert error:", insertError);
       return NextResponse.json(
         { error: "Erro ao enfileirar geracao de contrato" },
         { status: 500 },

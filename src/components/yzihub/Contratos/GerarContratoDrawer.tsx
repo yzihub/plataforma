@@ -12,7 +12,9 @@ interface GerarContratoDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   lead: Lead | null;
+  brokerId?: string | null;
   brokerName?: string | null;
+  propertyId?: string | null;
   propertyTitle?: string | null;
 }
 
@@ -83,7 +85,9 @@ export default function GerarContratoDrawer({
   isOpen,
   onClose,
   lead,
+  brokerId,
   brokerName,
+  propertyId,
   propertyTitle,
 }: GerarContratoDrawerProps) {
   const [form, setForm] = useState<GerarContratoForm>(() =>
@@ -137,6 +141,8 @@ export default function GerarContratoDrawer({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           lead_id:         lead.id,
+          property_id:     propertyId ?? null,
+          broker_id:       brokerId ?? null,
           tenant_id:       lead.tenant_id,
           modelo:          form.modelo,
           comprador:       form.comprador,

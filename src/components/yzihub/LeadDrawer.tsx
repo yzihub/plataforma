@@ -1197,7 +1197,9 @@ export default function LeadDrawer({
         isOpen={showGerarContrato}
         onClose={() => setShowGerarContrato(false)}
         lead={lead}
+        brokerId={lead?.assigned_to ?? null}
         brokerName={corretores.find((c) => c.id === lead?.assigned_to)?.name ?? null}
+        propertyId={selectedImovel?.id ?? lead?.imovel_ref ?? null}
         propertyTitle={selectedImovel?.titulo_comercial ?? null}
       />
     </>
