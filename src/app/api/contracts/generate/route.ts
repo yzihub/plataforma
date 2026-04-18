@@ -59,23 +59,27 @@ export async function POST(req: NextRequest) {
     }
 
     const valor = body.valor ? parseFloat(body.valor) : 0;
+    const commissionPercentage = 5;
+    const commissionAmount = parseFloat((valor * commissionPercentage / 100).toFixed(2));
 
     // 5. Criar registro em contracts com IDs reais
     const { data: contract, error: contractError } = await supabase
       .from("contracts")
       .insert({
-        tenant_id:     tenantId,
-        lead_id:       body.lead_id    ?? null,
-        project_id:    body.property_id ?? null,
-        broker_id:     body.broker_id  ?? null,
-        lead_name:     body.comprador  ?? null,
-        project_name:  body.imovel     ?? null,
-        corretor_name: body.corretor   ?? null,
-        title:         body.modelo     ? `${body.modelo} — ${body.comprador ?? "sem comprador"}` : null,
-        type:          body.modelo     ?? "venda",
-        status:        "rascunho",
-        value:         valor,
-        notes:         body.observacoes ?? null,
+        tenant_id:             tenantId,
+        lead_id:               body.lead_id    ?? null,
+        project_id:            body.property_id ?? null,
+        broker_id:             body.broker_id  ?? null,
+        lead_name:             body.comprador  ?? null,
+        project_name:          body.imovel     ?? null,
+        corretor_name:         body.corretor   ?? null,
+        title:                 body.modelo     ? `${body.modelo} — ${body.comprador ?? "sem comprador"}` : null,
+        type:                  body.modelo     ?? "venda",
+        status:                "rascunho",
+        value:                 valor,
+        commission_percentage: commissionPercentage,
+        commission_amount:     commissionAmount,
+        notes:                 body.observacoes ?? null,
       })
       .select("id")
       .single();
