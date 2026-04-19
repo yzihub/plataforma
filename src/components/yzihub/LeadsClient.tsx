@@ -59,13 +59,15 @@ export default function LeadsClient({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/brokers", { cache: "no-store" });
+        const res = await fetch("/api/corretores", { cache: "no-store" });
         if (!res.ok) return;
-        const data = await res.json();
-        if (!Array.isArray(data) || cancelled) return;
-        const active: Corretor[] = data
-          .filter((b: { is_active?: boolean }) => b.is_active !== false)
-          .map((b: { id: string; name: string; phone?: string | null; email?: string | null }) => ({
+        const json = await res.json() as { data?: unknown[] };
+        const raw = Array.isArray(json?.data) ? json.data : [];
+        if (cancelled) return;
+        type BrokerRaw = { id: string; name: string; phone?: string | null; email?: string | null; is_active?: boolean };
+        const active: Corretor[] = (raw as BrokerRaw[])
+          .filter((b) => b.is_active !== false)
+          .map((b) => ({
             id: b.id,
             name: b.name,
             phone: b.phone ?? undefined,
