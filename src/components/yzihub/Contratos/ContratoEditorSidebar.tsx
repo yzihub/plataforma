@@ -37,6 +37,10 @@ export interface ContratoEditorSidebarProps {
   onSelectLead?: (lead: Lead | null) => void;
   onSelectProperty?: (property: PropertyData | null) => void;
   onSelectBroker?: (broker: BrokerData | null) => void;
+  canalEmail: boolean;
+  canalWhatsapp: boolean;
+  onChangeCanalEmail: (v: boolean) => void;
+  onChangeCanalWhatsapp: (v: boolean) => void;
 }
 
 type TemplateSource = "interno" | "upload";
@@ -225,6 +229,10 @@ export default function ContratoEditorSidebar({
   onSelectLead,
   onSelectProperty,
   onSelectBroker,
+  canalEmail,
+  canalWhatsapp,
+  onChangeCanalEmail,
+  onChangeCanalWhatsapp,
 }: ContratoEditorSidebarProps) {
   const [source, setSource] = useState<TemplateSource>("interno");
   const [dragOver, setDragOver] = useState(false);
@@ -366,6 +374,41 @@ export default function ContratoEditorSidebar({
               </p>
             </div>
           )}
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-gray-200 dark:border-gray-800" />
+
+        {/* Bloco: Canais de Envio */}
+        <div>
+          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
+            Canais de Envio <span className="text-red-400">*</span>
+          </p>
+          <div className="space-y-2">
+            <label className="flex items-center gap-2.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={canalEmail}
+                onChange={(e) => onChangeCanalEmail(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-brand-500 focus:ring-brand-500/20 bg-white dark:bg-gray-800"
+              />
+              <span className="text-sm text-gray-700 dark:text-gray-200">E-mail</span>
+            </label>
+            <label className="flex items-center gap-2.5 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={canalWhatsapp}
+                onChange={(e) => onChangeCanalWhatsapp(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-brand-500 focus:ring-brand-500/20 bg-white dark:bg-gray-800"
+              />
+              <span className="text-sm text-gray-700 dark:text-gray-200">WhatsApp</span>
+            </label>
+            {!canalEmail && !canalWhatsapp && (
+              <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                Selecione ao menos um canal para enviar o contrato.
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Divider */}

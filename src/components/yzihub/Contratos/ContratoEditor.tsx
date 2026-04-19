@@ -110,6 +110,8 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
   const [successMessage, setSuccessMessage]     = useState<string | null>(null);
   const [submitting, setSubmitting]             = useState(false);
   const [draftId, setDraftId]                   = useState<string | null>(null);
+  const [canalEmail, setCanalEmail]             = useState(true);
+  const [canalWhatsapp, setCanalWhatsapp]       = useState(true);
 
   // Mapa de variáveis resolvidas — atualizado sempre que lead/property/broker mudar
   const vars: Record<string, string> = useMemo(() => {
@@ -295,6 +297,10 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
       setError("O template está vazio. Selecione um modelo ou faça upload de um arquivo.");
       return;
     }
+    if (!canalEmail && !canalWhatsapp) {
+      setError("Selecione ao menos um canal de envio: e-mail ou WhatsApp.");
+      return;
+    }
     const valor = property?.valor ?? lead?.value ?? 0;
     if (valor <= 0) { setError("O imóvel ou lead precisa ter um valor definido."); return; }
 
@@ -317,7 +323,7 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
           valor:       String(valor),
           // Envia o corpo já renderizado (vars substituídas)
           observacoes: renderedBody,
-          canais:      { whatsapp: true, email: true },
+          canais:      { whatsapp: canalWhatsapp, email: canalEmail },
         }),
       });
 
@@ -342,7 +348,7 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
 
   // Usar state (não URL params) para habilitar ações — mocks também são válidos para preview/rascunho
   const canSaveDraft = !!lead && !!property && !!broker && !submitting;
-  const canGenerate  = canSaveDraft && rawBody.trim().length > 0;
+  const canGenerate  = canSaveDraft && rawBody.trim().length > 0 && (canalEmail || canalWhatsapp);
 
   return (
     <div className="flex flex-col bg-gray-50 dark:bg-gray-950" style={{ height: "calc(100vh - 200px)", minHeight: 500 }}>
@@ -432,6 +438,10 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
             onSelectLead={handleSelectLead}
             onSelectProperty={handleSelectProperty}
             onSelectBroker={handleSelectBroker}
+            canalEmail={canalEmail}
+            canalWhatsapp={canalWhatsapp}
+            onChangeCanalEmail={setCanalEmail}
+            onChangeCanalWhatsapp={setCanalWhatsapp}
           />
 
           {/* Coluna 2: Editor de Template ── */}
