@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useTenantContext } from "@/context/TenantContext";
 import { CONTRACT_STATUS_CONFIG } from "@/types/contracts";
 import type { Contract, ContractStatus } from "@/types/contracts";
@@ -9,7 +10,6 @@ import ContractsTable, {
   ContractsEmptyState,
 } from "./ContractsTable";
 import ContractDrawer from "./ContractDrawer";
-import NewContractModal from "./NewContractModal";
 
 // ─── useContracts hook ────────────────────────────────────────────────────────
 
@@ -132,6 +132,7 @@ const STATUS_OPTIONS: { value: ContractStatus | "all"; label: string }[] = [
 // ─── Main Client Component ────────────────────────────────────────────────────
 
 export default function ContractsClient() {
+  const router = useRouter();
   const { tenant, loading: tenantLoading } = useTenantContext();
   const { contracts, isLoading, error, refetch, createContract, updateContractLocal } =
     useContracts(tenant?.id ?? null);
@@ -139,7 +140,6 @@ export default function ContractsClient() {
   const [search, setSearch]           = useState("");
   const [statusFilter, setStatusFilter] = useState<ContractStatus | "all">("all");
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // When contract is updated (from drawer), update selectedContract too
   function handleContractUpdated(updated: Contract) {
@@ -204,7 +204,7 @@ export default function ContractsClient() {
           </p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => router.push("/cockpit/contratos/novo")}
           className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 active:scale-95 transition-all shadow-sm"
         >
           <span className="text-base leading-none">+</span>
@@ -308,12 +308,6 @@ export default function ContractsClient() {
         onContractUpdated={handleContractUpdated}
       />
 
-      {/* New Contract Modal */}
-      <NewContractModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={createContract}
-      />
     </div>
   );
 }
