@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { CloseIcon } from "@/icons";
 import type { Lead } from "@/lib/crm/types";
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
-
-type ContractModel = string;
 
 interface GerarContratoDrawerProps {
   isOpen: boolean;
@@ -18,55 +16,17 @@ interface GerarContratoDrawerProps {
   propertyTitle?: string | null;
 }
 
-interface GerarContratoForm {
-  modelo: ContractModel;
-  vendedor: string;
-  valor: string;
-  forma_pagamento: string;
-  observacoes: string;
-  canais: { whatsapp: boolean; email: boolean };
-}
-
-// ─── Constantes ───────────────────────────────────────────────────────────────
-
-const CONTRACT_MODELS = [
-  { value: "compra_venda_padrao",  label: "Compra e Venda — Padrao" },
-  { value: "compra_venda_casa",    label: "Compra e Venda — Casa" },
-  { value: "compra_venda_permuta", label: "Compra e Venda — Permuta" },
-  { value: "compra_venda_area",    label: "Compra e Venda — Area" },
-  { value: "locacao",              label: "Locacao" },
-  { value: "honorarios",           label: "Honorarios" },
-];
-
-const FORMA_PAGAMENTO_OPTIONS = [
-  "A vista",
-  "Financiamento bancario",
-  "Parcelado entre as partes",
-  "FGTS",
-  "Permuta",
-];
-
-// Padrao visual aprovado (copiado de NewContractModal)
-const inputCls =
-  "w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/20 transition-colors";
-const labelCls = "block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1";
+// Padrão visual aprovado (mantido do original)
 const readonlyCls =
   "w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400 cursor-not-allowed select-none";
+const labelCls = "block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-function initForm(lead: Lead | null): GerarContratoForm {
-  return {
-    modelo:          "",
-    vendedor:        "",
-    valor:           lead && lead.value > 0 ? String(lead.value) : "",
-    forma_pagamento: "",
-    observacoes:     lead?.notes ?? "",
-    canais: {
-      whatsapp: !!lead?.phone,
-      email:    !!lead?.email,
-    },
-  };
+function formatBRL(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    minimumFractionDigits: 2,
+  }).format(value);
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -80,87 +40,25 @@ export default function GerarContratoDrawer({
   propertyId,
   propertyTitle,
 }: GerarContratoDrawerProps) {
-  const [form, setForm] = useState<GerarContratoForm>(() => initForm(lead));
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const router = useRouter();
 
-  // Re-inicializa o formulario quando o lead muda ou o drawer abre
-  useEffect(() => {
-    if (isOpen) {
-      setForm(initForm(lead));
-      setError(null);
-      setSuccess(false);
-    }
-  }, [isOpen, lead?.id]);
-
-  function set<K extends keyof GerarContratoForm>(
-    key: K,
-    value: GerarContratoForm[K],
-  ) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  }
-
-  function setCanal(canal: "whatsapp" | "email", value: boolean) {
-    setForm((prev) => ({
-      ...prev,
-      canais: { ...prev.canais, [canal]: value },
-    }));
-  }
-
+  // Verificar requisitos mínimos
   const imovelDisplay = propertyTitle ?? lead?.imovel_ref ?? null;
-  const canSubmit =
-    !!form.modelo && !!lead && !!propertyId && !!brokerId && !!form.valor;
+  const canOpen = !!lead && !!propertyId && !!brokerId;
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
+  const missingItems: string[] = [];
+  if (!lead) missingItems.push("lead");
+  if (!propertyId) missingItems.push("imóvel");
+  if (!brokerId) missingItems.push("corretor");
 
-    if (!form.modelo) { setError("Selecione um modelo de contrato."); return; }
-    if (!lead) { setError("Nenhum lead selecionado."); return; }
-    if (!propertyId) { setError("Nenhum imóvel vinculado."); return; }
-    if (!brokerId) { setError("Nenhum corretor vinculado."); return; }
-    if (!form.valor) { setError("Informe o valor do contrato."); return; }
-
-    setSubmitting(true);
-    try {
-      const res = await fetch("/api/contracts/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lead_id:         lead.id,
-          property_id:     propertyId,
-          broker_id:       brokerId,
-          tenant_id:       lead.tenant_id,
-          modelo:          form.modelo,
-          comprador:       lead.name,
-          vendedor:        form.vendedor,
-          imovel:          imovelDisplay,
-          corretor:        brokerName ?? null,
-          valor:           form.valor,
-          forma_pagamento: form.forma_pagamento,
-          observacoes:     form.observacoes,
-          canais:          form.canais,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error ?? "Erro ao gerar contrato.");
-        return;
-      }
-
-      setSuccess(true);
-      setTimeout(() => {
-        setSuccess(false);
-        onClose();
-      }, 1500);
-    } catch {
-      setError("Erro de conexao. Tente novamente.");
-    } finally {
-      setSubmitting(false);
-    }
+  function handleOpenEditor() {
+    if (!canOpen) return;
+    const params = new URLSearchParams();
+    if (lead?.id) params.set("lead_id", lead.id);
+    if (propertyId) params.set("property_id", propertyId);
+    if (brokerId) params.set("broker_id", brokerId);
+    router.push(`/cockpit/contratos/novo?${params.toString()}`);
+    onClose();
   }
 
   return (
@@ -200,185 +98,80 @@ export default function GerarContratoDrawer({
         </div>
 
         {/* ── Body ── */}
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col flex-1 min-h-0"
-        >
-          <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
+        <div className="flex flex-col flex-1 min-h-0 px-6 py-5 overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
 
-            {/* 1. Modelo de Contrato */}
+          {/* Mensagem explicativa */}
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-5">
+            Voce sera levado ao editor completo do contrato, com escolha de template e edicao livre do texto antes de enviar.
+          </p>
+
+          {/* Card resumo */}
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 p-4 space-y-3 mb-5">
+            <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1">
+              Dados do Contrato
+            </p>
+
             <div>
-              <label className={labelCls}>
-                Modelo de Contrato <span className="text-red-400">*</span>
-              </label>
-              <select
-                value={form.modelo}
-                onChange={(e) => set("modelo", e.target.value)}
-                className={inputCls}
-                required
-              >
-                <option value="">Selecionar modelo...</option>
-                {CONTRACT_MODELS.map((m) => (
-                  <option key={m.value} value={m.value}>
-                    {m.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 2. Comprador + Vendedor */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls}>Comprador / Locatario</label>
-                <div className={readonlyCls}>{lead?.name ?? "—"}</div>
-              </div>
-              <div>
-                <label className={labelCls}>Vendedor / Locador</label>
-                <input
-                  type="text"
-                  value={form.vendedor}
-                  onChange={(e) => set("vendedor", e.target.value)}
-                  className={inputCls}
-                  placeholder="Nome do vendedor"
-                />
+              <label className={labelCls}>Comprador / Locatario</label>
+              <div className={readonlyCls}>
+                {lead?.name ?? <span className="text-red-400">Lead nao selecionado</span>}
               </div>
             </div>
 
-            {/* 3. Imovel */}
             <div>
               <label className={labelCls}>Imovel</label>
               <div className={readonlyCls}>
-                {imovelDisplay ?? <span className="text-red-400">Imóvel não vinculado</span>}
+                {imovelDisplay ?? <span className="text-red-400">Imovel nao vinculado</span>}
               </div>
             </div>
 
-            {/* 4. Corretor Responsavel */}
             <div>
               <label className={labelCls}>Corretor Responsavel</label>
               <div className={readonlyCls}>
-                {brokerName ?? <span className="text-red-400">Corretor não vinculado</span>}
+                {brokerName ?? <span className="text-red-400">Corretor nao vinculado</span>}
               </div>
             </div>
 
-            {/* 5. Valor + Comissao (auto 5%) */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls}>Valor (R$) <span className="text-red-400">*</span></label>
-                <input
-                  type="number"
-                  value={form.valor}
-                  onChange={(e) => set("valor", e.target.value)}
-                  className={inputCls}
-                  placeholder="0,00"
-                  min={0}
-                  step="0.01"
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Comissao (5% auto)</label>
-                <div className={readonlyCls}>
-                  {form.valor
-                    ? `R$ ${(parseFloat(form.valor) * 0.05).toFixed(2)}`
-                    : "—"}
+            {lead && lead.value > 0 && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={labelCls}>Valor</label>
+                  <div className={readonlyCls}>{formatBRL(lead.value)}</div>
+                </div>
+                <div>
+                  <label className={labelCls}>Comissao (5%)</label>
+                  <div className={readonlyCls}>{formatBRL(lead.value * 0.05)}</div>
                 </div>
               </div>
-            </div>
-
-            {/* 6. Forma de Pagamento */}
-            <div>
-              <label className={labelCls}>Forma de Pagamento</label>
-              <select
-                value={form.forma_pagamento}
-                onChange={(e) => set("forma_pagamento", e.target.value)}
-                className={inputCls}
-              >
-                <option value="">Selecionar...</option>
-                {FORMA_PAGAMENTO_OPTIONS.map((o) => (
-                  <option key={o} value={o}>
-                    {o}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 7. Observacoes */}
-            <div>
-              <label className={labelCls}>Observacoes</label>
-              <textarea
-                value={form.observacoes}
-                onChange={(e) => set("observacoes", e.target.value)}
-                rows={3}
-                className={`${inputCls} resize-none`}
-                placeholder="Observacoes adicionais sobre o contrato..."
-              />
-            </div>
-
-            {/* 8. Canais de Envio */}
-            <div>
-              <p className={labelCls}>Canais de Envio</p>
-              <div className="flex items-center gap-4 mt-1">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.canais.whatsapp}
-                    onChange={(e) => setCanal("whatsapp", e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500/20 cursor-pointer"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">WhatsApp</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={form.canais.email}
-                    onChange={(e) => setCanal("email", e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300 text-brand-500 focus:ring-brand-500/20 cursor-pointer"
-                  />
-                  <span className="text-sm text-gray-700 dark:text-gray-200">Email</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Sucesso */}
-            {success && (
-              <div className="rounded-xl bg-emerald-50 dark:bg-emerald-500/10 px-4 py-2.5 text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2">
-                <svg className="size-4 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/></svg>
-                Contrato enfileirado para geração.
-              </div>
-            )}
-
-            {/* Erro */}
-            {error && (
-              <div className="rounded-xl bg-red-50 dark:bg-red-500/10 px-4 py-2.5 text-sm text-red-600 dark:text-red-400">
-                {error}
-              </div>
             )}
           </div>
 
-          {/* ── Footer ── */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-800 shrink-0">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={submitting || success || !canSubmit}
-              className="flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors active:scale-95"
-            >
-              {submitting ? (
-                <>
-                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                  Gerando...
-                </>
-              ) : (
-                "Gerar e Enviar"
-              )}
-            </button>
-          </div>
-        </form>
+          {/* Aviso de itens faltando */}
+          {!canOpen && (
+            <div className="rounded-xl bg-red-50 dark:bg-red-500/10 px-4 py-2.5 text-sm text-red-600 dark:text-red-400 mb-4">
+              Faltando: {missingItems.join(", ")} — vincule os dados ao lead antes de gerar o contrato.
+            </div>
+          )}
+        </div>
+
+        {/* ── Footer ── */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-800 shrink-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-xl border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            onClick={handleOpenEditor}
+            disabled={!canOpen}
+            className="flex items-center gap-2 rounded-xl bg-brand-500 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors active:scale-95"
+          >
+            Abrir Editor
+          </button>
+        </div>
       </div>
     </>
   );
