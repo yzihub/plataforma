@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import type { Lead } from "@/lib/crm/types";
 import { renderTemplate } from "@/lib/contracts/templates";
@@ -35,7 +35,16 @@ interface ContratoEditorProps {
   brokerId: string | null;
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// Variáveis disponíveis para substituição no template
+const AVAILABLE_VARS = [
+  { key: "comprador",    hint: "Nome do comprador" },
+  { key: "imovel",       hint: "Título do imóvel" },
+  { key: "corretor",     hint: "Nome do corretor" },
+  { key: "valor",        hint: "Valor em BRL" },
+  { key: "comissao",     hint: "Comissão (5%)" },
+  { key: "data",         hint: "Data de hoje" },
+  { key: "valor_extenso",hint: "Valor por extenso" },
+];
 
 function formatBRL(value: number): string {
   return new Intl.NumberFormat("pt-BR", {
@@ -50,19 +59,40 @@ function formatBRL(value: number): string {
 export default function ContratoEditor({ leadId, propertyId, brokerId }: ContratoEditorProps) {
   const router = useRouter();
 
-  // ── State ──────────────────────────────────────────────────────────────────
-  const [templates, setTemplates] = useState<TemplateOption[]>([]);
+  // rawBody = template com {{vars}} visíveis — o que o usuário edita
+  const [rawBody, setRawBody]                   = useState("");
+  const [templates, setTemplates]               = useState<TemplateOption[]>([]);
   const [selectedTemplateId, setSelectedTemplateId] = useState("");
-  const [currentBody, setCurrentBody] = useState("");
-  const [lead, setLead] = useState<Lead | null>(null);
-  const [property, setProperty] = useState<PropertyData | null>(null);
-  const [broker, setBroker] = useState<BrokerData | null>(null);
+  const [lead, setLead]                         = useState<Lead | null>(null);
+  const [property, setProperty]                 = useState<PropertyData | null>(null);
+  const [broker, setBroker]                     = useState<BrokerData | null>(null);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [draftId, setDraftId] = useState<string | null>(null);
+  const [loading, setLoading]                   = useState(true);
+  const [uploadLoading, setUploadLoading]       = useState(false);
+  const [error, setError]                       = useState<string | null>(null);
+  const [successMessage, setSuccessMessage]     = useState<string | null>(null);
+  const [submitting, setSubmitting]             = useState(false);
+  const [draftId, setDraftId]                   = useState<string | null>(null);
+
+  // Mapa de variáveis resolvidas — atualizado sempre que lead/property/broker mudar
+  const vars: Record<string, string> = useMemo(() => {
+    const valor = lead?.value ?? 0;
+    return {
+      comprador:     lead?.name ?? "{{comprador}}",
+      imovel:        property?.titulo_comercial ?? "{{imovel}}",
+      corretor:      broker?.full_name ?? "{{corretor}}",
+      valor:         formatBRL(valor),
+      comissao:      formatBRL(valor * 0.05),
+      data:          new Date().toLocaleDateString("pt-BR"),
+      valor_extenso: `(${formatBRL(valor)})`,
+    };
+  }, [lead, property, broker]);
+
+  // renderedBody = rawBody com vars substituídas — usado no preview e no generate
+  const renderedBody = useMemo(
+    () => (rawBody ? renderTemplate(rawBody, vars) : ""),
+    [rawBody, vars]
+  );
 
   // ── Carregar dados iniciais em paralelo ────────────────────────────────────
   useEffect(() => {
@@ -74,7 +104,6 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
 
       const tasks: Promise<void>[] = [];
 
-      // Templates (lista resumida)
       tasks.push(
         fetch("/api/contracts/templates")
           .then((r) => r.json())
@@ -82,7 +111,6 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
           .catch(() => { if (!cancelled) setError("Erro ao carregar templates."); })
       );
 
-      // Lead
       if (leadId) {
         tasks.push(
           fetch(`/api/leads/${leadId}`)
@@ -92,7 +120,6 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
         );
       }
 
-      // Imóvel — GET /api/imoveis filtrando no client pelo id
       if (propertyId) {
         tasks.push(
           fetch("/api/imoveis")
@@ -107,7 +134,6 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
         );
       }
 
-      // Corretor
       if (brokerId) {
         tasks.push(
           fetch(`/api/brokers/${brokerId}`)
@@ -125,48 +151,49 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
     return () => { cancelled = true; };
   }, [leadId, propertyId, brokerId]);
 
-  // ── Carregar template quando selecionado ───────────────────────────────────
-  const handleSelectTemplate = useCallback(
-    async (templateId: string) => {
-      setSelectedTemplateId(templateId);
-      if (!templateId) { setCurrentBody(""); return; }
+  // ── Carregar template interno (raw — sem substituição) ─────────────────────
+  const handleSelectTemplate = useCallback(async (templateId: string) => {
+    setSelectedTemplateId(templateId);
+    if (!templateId) { setRawBody(""); return; }
 
-      try {
-        const res = await fetch(`/api/contracts/templates?id=${templateId}`);
-        if (!res.ok) { setError("Erro ao carregar template."); return; }
-        const tmpl = await res.json() as { body: string };
+    try {
+      const res = await fetch(`/api/contracts/templates?id=${templateId}`);
+      if (!res.ok) { setError("Erro ao carregar template."); return; }
+      const tmpl = await res.json() as { body: string };
+      // Carrega o body RAW com {{vars}} visíveis — o usuário edita antes de gerar
+      setRawBody(tmpl.body);
+    } catch {
+      setError("Erro ao carregar template.");
+    }
+  }, []);
 
-        const valor = lead?.value ?? 0;
-        const vars: Record<string, string> = {
-          comprador: lead?.name ?? "{{comprador}}",
-          imovel:    property?.titulo_comercial ?? "{{imovel}}",
-          corretor:  broker?.full_name ?? "{{corretor}}",
-          valor:     formatBRL(valor),
-          comissao:  formatBRL(valor * 0.05),
-          data:      new Date().toLocaleDateString("pt-BR"),
-          valor_extenso: `(${formatBRL(valor)})`,
-        };
+  // ── Upload de .docx → extrai texto via API ────────────────────────────────
+  const handleUploadDocx = useCallback(async (file: File) => {
+    setUploadLoading(true);
+    setError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch("/api/contracts/extract-docx", { method: "POST", body: form });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error ?? "Erro ao processar o arquivo."); return; }
+      setRawBody(data.text ?? "");
+      setSelectedTemplateId(""); // limpa seleção de template interno
+    } catch {
+      setError("Erro ao processar o arquivo.");
+    } finally {
+      setUploadLoading(false);
+    }
+  }, []);
 
-        setCurrentBody(renderTemplate(tmpl.body, vars));
-      } catch {
-        setError("Erro ao carregar template.");
-      }
-    },
-    [lead, property, broker]
-  );
-
-  // ── Handlers de ação ───────────────────────────────────────────────────────
-
+  // ── Salvar rascunho ────────────────────────────────────────────────────────
   async function handleSaveDraft() {
     if (!leadId || !propertyId || !brokerId) {
       setError("Lead, imóvel e corretor são obrigatórios para salvar o rascunho.");
       return;
     }
     const valor = lead?.value ?? 0;
-    if (valor <= 0) {
-      setError("O lead precisa ter um valor definido.");
-      return;
-    }
+    if (valor <= 0) { setError("O lead precisa ter um valor definido."); return; }
 
     setSubmitting(true);
     setError(null);
@@ -180,23 +207,20 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
           lead_id:     leadId,
           property_id: propertyId,
           broker_id:   brokerId,
-          modelo:      selectedTemplateId || "rascunho",
+          modelo:      selectedTemplateId || "upload",
           comprador:   lead?.name ?? null,
           imovel:      property?.titulo_comercial ?? null,
           corretor:    broker?.full_name ?? null,
           valor,
           comissao:    valor * 0.05,
-          body:        currentBody,
+          // Salva o raw body para permitir re-edição futura
+          body:        rawBody,
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Erro ao salvar rascunho.");
-        return;
-      }
+      if (!res.ok) { setError(data.error ?? "Erro ao salvar rascunho."); return; }
 
-      // Extrair id do contrato criado
       const createdId = data?.data?.[0]?.id ?? null;
       if (createdId) setDraftId(createdId);
 
@@ -209,20 +233,18 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
     }
   }
 
+  // ── Gerar e enviar (usa o corpo renderizado) ───────────────────────────────
   async function handleGenerateAndSend() {
     if (!leadId || !propertyId || !brokerId) {
       setError("Lead, imóvel e corretor são obrigatórios.");
       return;
     }
-    if (!selectedTemplateId) {
-      setError("Selecione um template antes de gerar.");
+    if (!rawBody.trim()) {
+      setError("O template está vazio. Selecione um modelo ou faça upload de um arquivo.");
       return;
     }
     const valor = lead?.value ?? 0;
-    if (valor <= 0) {
-      setError("O lead precisa ter um valor definido.");
-      return;
-    }
+    if (valor <= 0) { setError("O lead precisa ter um valor definido."); return; }
 
     setSubmitting(true);
     setError(null);
@@ -233,29 +255,25 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          lead_id:         leadId,
-          property_id:     propertyId,
-          broker_id:       brokerId,
-          modelo:          selectedTemplateId,
-          comprador:       lead?.name ?? null,
-          imovel:          property?.titulo_comercial ?? null,
-          corretor:        broker?.full_name ?? null,
-          valor:           String(valor),
-          observacoes:     currentBody,
-          canais:          { whatsapp: true, email: true },
+          lead_id:     leadId,
+          property_id: propertyId,
+          broker_id:   brokerId,
+          modelo:      selectedTemplateId || "upload",
+          comprador:   lead?.name ?? null,
+          imovel:      property?.titulo_comercial ?? null,
+          corretor:    broker?.full_name ?? null,
+          valor:       String(valor),
+          // Envia o corpo já renderizado (vars substituídas)
+          observacoes: renderedBody,
+          canais:      { whatsapp: true, email: true },
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "Erro ao gerar contrato.");
-        return;
-      }
+      if (!res.ok) { setError(data.error ?? "Erro ao gerar contrato."); return; }
 
       setSuccessMessage("Contrato gerado e enfileirado com sucesso. Redirecionando...");
-      setTimeout(() => {
-        router.push("/cockpit/contratos");
-      }, 1500);
+      setTimeout(() => router.push("/cockpit/contratos"), 1500);
     } catch {
       setError("Erro de conexao. Tente novamente.");
     } finally {
@@ -264,17 +282,14 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
   }
 
   function handleGeneratePDF() {
-    if (!draftId) {
-      alert("Salve o rascunho primeiro para gerar o PDF.");
-      return;
-    }
+    if (!draftId) { alert("Salve o rascunho primeiro para gerar o PDF."); return; }
     window.open(`/api/contracts/${draftId}/pdf`, "_blank");
   }
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
   const canSaveDraft = !!leadId && !!propertyId && !!brokerId && !submitting;
-  const canGenerate = canSaveDraft && !!selectedTemplateId;
+  const canGenerate  = canSaveDraft && rawBody.trim().length > 0;
 
   return (
     <div className="flex flex-col bg-gray-50 dark:bg-gray-950" style={{ height: "calc(100vh - 200px)", minHeight: 500 }}>
@@ -285,22 +300,15 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
           <h1 className="text-base font-semibold text-gray-800 dark:text-white">
             Editor de Contrato
           </h1>
-          {lead && (
-            <p className="text-xs text-gray-400 mt-0.5">{lead.name}</p>
-          )}
+          {lead && <p className="text-xs text-gray-400 mt-0.5">{lead.name}</p>}
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Feedback de sucesso inline */}
           {successMessage && (
-            <span className="text-sm text-emerald-600 dark:text-emerald-400 mr-2">
-              {successMessage}
-            </span>
+            <span className="text-sm text-emerald-600 dark:text-emerald-400 mr-2">{successMessage}</span>
           )}
           {error && (
-            <span className="text-sm text-red-500 dark:text-red-400 mr-2 max-w-xs truncate">
-              {error}
-            </span>
+            <span className="text-sm text-red-500 dark:text-red-400 mr-2 max-w-xs truncate">{error}</span>
           )}
 
           <button
@@ -339,14 +347,12 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
                 <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 Gerando...
               </>
-            ) : (
-              "Gerar e Enviar"
-            )}
+            ) : "Gerar e Enviar"}
           </button>
         </div>
       </div>
 
-      {/* ── Loading state ── */}
+      {/* ── Loading ── */}
       {loading && (
         <div className="flex items-center justify-center flex-1">
           <div className="flex items-center gap-2 text-sm text-gray-400">
@@ -365,32 +371,52 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
             templates={templates}
             selectedTemplateId={selectedTemplateId}
             onSelectTemplate={handleSelectTemplate}
+            onUploadDocx={handleUploadDocx}
+            uploadLoading={uploadLoading}
             lead={lead}
             property={property}
             broker={broker}
           />
 
-          {/* Coluna 2: Editor (textarea) */}
+          {/* Coluna 2: Editor de Template ── */}
           <div className="flex flex-col min-h-0 bg-white dark:bg-gray-900">
-            <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800 shrink-0">
+            <div className="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-800 shrink-0">
               <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
-                Editor
+                Template
               </span>
+              {/* Chips de variáveis disponíveis */}
+              <div className="flex items-center gap-1 flex-wrap justify-end">
+                {AVAILABLE_VARS.map((v) => (
+                  <button
+                    key={v.key}
+                    type="button"
+                    title={v.hint}
+                    onClick={() => {
+                      const tag = `{{${v.key}}}`;
+                      setRawBody((prev) => prev + tag);
+                    }}
+                    className="rounded-md bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 font-mono text-[10px] text-gray-500 dark:text-gray-400 hover:bg-brand-100 dark:hover:bg-brand-500/20 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                  >
+                    {`{{${v.key}}}`}
+                  </button>
+                ))}
+              </div>
             </div>
             <textarea
-              value={currentBody}
-              onChange={(e) => setCurrentBody(e.target.value)}
+              value={rawBody}
+              onChange={(e) => setRawBody(e.target.value)}
               placeholder={
-                selectedTemplateId
-                  ? "Edite o texto do contrato aqui..."
-                  : "Selecione um template no painel esquerdo para começar..."
+                rawBody === ""
+                  ? "Selecione um template ou faça upload de um .docx para começar...\n\nVocê pode usar os botões acima para inserir variáveis como {{comprador}}, {{imovel}}, {{valor}}."
+                  : undefined
               }
+              spellCheck={false}
               className="flex-1 resize-none p-6 font-mono text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 focus:outline-none leading-relaxed [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600"
             />
           </div>
 
-          {/* Coluna 3: Preview */}
-          <ContratoEditorPreview body={currentBody} />
+          {/* Coluna 3: Preview (vars resolvidas) ── */}
+          <ContratoEditorPreview body={renderedBody} />
         </div>
       )}
     </div>
