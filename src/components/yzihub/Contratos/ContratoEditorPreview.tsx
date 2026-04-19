@@ -17,30 +17,75 @@ export default function ContratoEditorPreview({ body }: ContratoEditorPreviewPro
         </span>
       </div>
 
-      {/* Área da folha de papel */}
-      <div className="flex-1 overflow-y-auto bg-gray-100 dark:bg-gray-800 px-6 py-8 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
-        <div className="mx-auto max-w-[640px] min-h-[800px] bg-white border border-gray-200 rounded-sm shadow-lg px-12 py-10">
-          {/* Cabeçalho do documento */}
-          <div className="text-center mb-8">
+      {/* Área da folha de papel — simula desktop/mesa */}
+      <div className="flex-1 overflow-y-auto bg-gray-200 dark:bg-gray-700 px-8 py-8 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-500">
+        {/* Folha A4 — sempre branca, independente do tema */}
+        <div
+          className="mx-auto bg-white border border-gray-300 shadow-lg flex flex-col"
+          style={{
+            width: "210mm",
+            minHeight: "297mm",
+            padding: "20mm 25mm 20mm 25mm",
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            fontSize: "12px",
+            color: "#000",
+          }}
+        >
+          {/* Cabeçalho: logo à esquerda */}
+          <div className="flex items-start mb-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/jurema/logo-black.svg"
               alt="Jurema Brokers"
-              className="h-12 mx-auto mb-2"
+              style={{ height: "48px", width: "auto" }}
             />
-            <div className="mx-auto h-px w-24 bg-gray-300" />
           </div>
+
+          {/* Linha separadora */}
+          <div style={{ borderTop: "1px solid #ccc", marginBottom: "16px" }} />
 
           {/* Corpo do contrato */}
           {body ? (
-            <div className="whitespace-pre-wrap font-serif text-[14px] leading-relaxed text-gray-900">
-              {body}
+            <div
+              style={{
+                flex: 1,
+                whiteSpace: "pre-wrap",
+                lineHeight: "1.0",
+                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+                fontSize: "12px",
+                color: "#000",
+              }}
+            >
+              {body.split(/\n\n+/).map((paragraph, i) => (
+                <p
+                  key={i}
+                  style={{
+                    marginTop: "0.6pt",
+                    marginBottom: "12pt",
+                    whiteSpace: "pre-wrap",
+                    lineHeight: "1.0",
+                  }}
+                >
+                  {paragraph}
+                </p>
+              ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400 italic text-center mt-20">
-              Selecione um template para ver o preview
-            </p>
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <p style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "12px" }}>
+                Selecione um template para ver o preview
+              </p>
+            </div>
           )}
+
+          {/* Rodapé fixo */}
+          <div style={{ borderTop: "1px solid #ccc", marginTop: "24px", paddingTop: "8px" }}>
+            <p style={{ fontSize: "9px", color: "#6b7280", lineHeight: "1.4", textAlign: "center" }}>
+              JUREMA BK NEGOCIOS IMOBILIARIOS LTDA<br />
+              Rua Josita Almeida, 240, sala 18, Cabo Branco Altiplano – João Pessoa/PB<br />
+              CNPJ: 32.140.721/0001-93 | CRECI: 1340 J
+            </p>
+          </div>
         </div>
       </div>
     </div>
