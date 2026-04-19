@@ -1,6 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+// ─── GET /api/leads/[id] ─────────────────────────────────────────────────────
+// Busca um lead pelo id (para uso do ContratoEditor e outros)
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id: leadId } = await params;
+    const supabase = await createClient();
+
+    const tenantId = await resolveTenant(supabase);
+    if (!tenantId) {
+      return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+    }
+
+    const { data: lead, error } = await supabase
+      .from("leads")
+      .select("*")
+      .eq("id", leadId)
+      .eq("tenant_id", tenantId)
+      .single();
+
+    if (error || !lead) {
+      return NextResponse.json({ error: "Lead nao encontrado" }, { status: 404 });
+    }
+
+    return NextResponse.json(lead, { status: 200 });
+  } catch (err) {
+    console.error("[GET /api/leads/:id] unexpected:", err);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
+  }
+}
+
 // Campos permitidos para PATCH
 const ALLOWED_UPDATE_FIELDS = [
   "stage_id", "name", "email", "phone", "company", "source", "status",
