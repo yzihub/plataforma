@@ -35,6 +35,42 @@ interface ContratoEditorProps {
   brokerId: string | null;
 }
 
+// ─── Mocks (usados quando leadId/propertyId/brokerId são null na URL) ─────────
+
+const MOCK_LEAD: Lead = {
+  id: "mock-lead-001",
+  tenant_id: "mock-tenant",
+  stage_id: null,
+  name: "Joao Silva (Mock)",
+  email: "joao.mock@example.com",
+  phone: "(21) 99999-0001",
+  company: null,
+  source: null,
+  status: "qualified",
+  score: 80,
+  value: 850000,
+  notes: null,
+  assigned_to: null,
+  last_action_at: null,
+  created_at: new Date().toISOString(),
+};
+
+const MOCK_PROPERTY: PropertyData = {
+  id: "mock-prop-001",
+  titulo_comercial: "Sitio Sao Joao (Mock)",
+  bairro: "Vargem Grande",
+  valor: 850000,
+};
+
+const MOCK_BROKER: BrokerData = {
+  id: "mock-broker-001",
+  full_name: "Luana Corretor (Mock)",
+  email: "luana.mock@juremabrokers.com",
+  phone: "(21) 99999-0002",
+};
+
+// ─── Variáveis disponíveis para substituição no template ──────────────────────
+
 // Variáveis disponíveis para substituição no template
 const AVAILABLE_VARS = [
   { key: "comprador",    hint: "Nome do comprador" },
@@ -104,6 +140,11 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
       setLoading(true);
       setError(null);
 
+      // Aplicar mocks imediatamente quando IDs são null (antes dos fetches)
+      if (!leadId)     setLead(MOCK_LEAD);
+      if (!propertyId) setProperty(MOCK_PROPERTY);
+      if (!brokerId)   setBroker(MOCK_BROKER);
+
       const tasks: Promise<void>[] = [];
 
       tasks.push(
@@ -148,6 +189,11 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
     return () => { cancelled = true; };
   }, [leadId, propertyId, brokerId]);
 
+  // ── Callbacks para seleção na sidebar ─────────────────────────────────────
+  const handleSelectLead     = useCallback((l: Lead | null)         => setLead(l), []);
+  const handleSelectProperty = useCallback((p: PropertyData | null) => setProperty(p), []);
+  const handleSelectBroker   = useCallback((b: BrokerData | null)   => setBroker(b), []);
+
   // ── Carregar template interno (raw — sem substituição) ─────────────────────
   const handleSelectTemplate = useCallback(async (templateId: string) => {
     setSelectedTemplateId(templateId);
@@ -185,8 +231,13 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
 
   // ── Salvar rascunho ────────────────────────────────────────────────────────
   async function handleSaveDraft() {
-    if (!leadId || !propertyId || !brokerId) {
+    if (!lead || !property || !broker) {
       setError("Lead, imóvel e corretor são obrigatórios para salvar o rascunho.");
+      return;
+    }
+    // Se os IDs são mocks, alertar que não se pode salvar
+    if (lead.id.startsWith("mock-") || property.id.startsWith("mock-") || broker.id.startsWith("mock-")) {
+      setError("Selecione lead, imóvel e corretor reais para salvar o rascunho.");
       return;
     }
     const valor = property?.valor ?? lead?.value ?? 0;
@@ -201,9 +252,9 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          lead_id:     leadId,
-          property_id: propertyId,
-          broker_id:   brokerId,
+          lead_id:     lead.id,
+          property_id: property.id,
+          broker_id:   broker.id,
           modelo:      selectedTemplateId || "upload",
           comprador:   lead?.name ?? null,
           imovel:      property?.titulo_comercial ?? null,
@@ -232,8 +283,12 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
 
   // ── Gerar e enviar (usa o corpo renderizado) ───────────────────────────────
   async function handleGenerateAndSend() {
-    if (!leadId || !propertyId || !brokerId) {
+    if (!lead || !property || !broker) {
       setError("Lead, imóvel e corretor são obrigatórios.");
+      return;
+    }
+    if (lead.id.startsWith("mock-") || property.id.startsWith("mock-") || broker.id.startsWith("mock-")) {
+      setError("Selecione lead, imóvel e corretor reais para gerar o contrato.");
       return;
     }
     if (!rawBody.trim()) {
@@ -252,9 +307,9 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          lead_id:     leadId,
-          property_id: propertyId,
-          broker_id:   brokerId,
+          lead_id:     lead.id,
+          property_id: property.id,
+          broker_id:   broker.id,
           modelo:      selectedTemplateId || "upload",
           comprador:   lead?.name ?? null,
           imovel:      property?.titulo_comercial ?? null,
@@ -285,7 +340,8 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
-  const canSaveDraft = !!leadId && !!propertyId && !!brokerId && !submitting;
+  // Usar state (não URL params) para habilitar ações — mocks também são válidos para preview/rascunho
+  const canSaveDraft = !!lead && !!property && !!broker && !submitting;
   const canGenerate  = canSaveDraft && rawBody.trim().length > 0;
 
   return (
@@ -373,6 +429,9 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
             lead={lead}
             property={property}
             broker={broker}
+            onSelectLead={handleSelectLead}
+            onSelectProperty={handleSelectProperty}
+            onSelectBroker={handleSelectBroker}
           />
 
           {/* Coluna 2: Editor de Template ── */}

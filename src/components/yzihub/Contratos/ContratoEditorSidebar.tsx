@@ -2,7 +2,7 @@
 
 // ─── ContratoEditorSidebar ────────────────────────────────────────────────────
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import type { Lead } from "@/lib/crm/types";
 
 interface TemplateOption {
@@ -34,6 +34,9 @@ export interface ContratoEditorSidebarProps {
   lead: Lead | null;
   property: PropertyData | null;
   broker: BrokerData | null;
+  onSelectLead?: (lead: Lead | null) => void;
+  onSelectProperty?: (property: PropertyData | null) => void;
+  onSelectBroker?: (broker: BrokerData | null) => void;
 }
 
 type TemplateSource = "interno" | "upload";
@@ -52,13 +55,163 @@ function formatBRL(value: number): string {
   }).format(value);
 }
 
-function Missing({ label }: { label: string }) {
+// ─── SearchSelect genérico ────────────────────────────────────────────────────
+
+interface SearchSelectProps<T extends { id: string }> {
+  label: string;
+  value: T | null;
+  fetchUrl: string;
+  getLabel: (item: T) => string;
+  getSublabel?: (item: T) => string | null;
+  extractItems: (data: unknown) => T[];
+  onSelect: (item: T | null) => void;
+}
+
+function SearchSelect<T extends { id: string }>({
+  label,
+  value,
+  fetchUrl,
+  getLabel,
+  getSublabel,
+  extractItems,
+  onSelect,
+}: SearchSelectProps<T>) {
+  const [query, setQuery]       = useState("");
+  const [items, setItems]       = useState<T[]>([]);
+  const [open, setOpen]         = useState(false);
+  const [fetched, setFetched]   = useState(false);
+  const containerRef            = useRef<HTMLDivElement>(null);
+
+  // Sincronizar query com o valor externo
+  useEffect(() => {
+    setQuery(value ? getLabel(value) : "");
+  }, [value]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Click-outside fecha dropdown
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
+
+  const doFetch = useCallback(async () => {
+    if (fetched) return;
+    try {
+      const res = await fetch(fetchUrl);
+      if (!res.ok) return;
+      const data = await res.json();
+      setItems(extractItems(data));
+      setFetched(true);
+    } catch {
+      // silencioso
+    }
+  }, [fetchUrl, fetched, extractItems]);
+
+  function handleFocus() {
+    doFetch();
+    setOpen(true);
+  }
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    setQuery(e.target.value);
+    if (!open) setOpen(true);
+    doFetch();
+  }
+
+  function handleSelectItem(item: T) {
+    onSelect(item);
+    setQuery(getLabel(item));
+    setOpen(false);
+  }
+
+  function handleClear(e: React.MouseEvent) {
+    e.stopPropagation();
+    onSelect(null);
+    setQuery("");
+    setOpen(false);
+  }
+
+  const filtered = query.trim()
+    ? items.filter((item) =>
+        getLabel(item).toLowerCase().includes(query.toLowerCase())
+      )
+    : items;
+
   return (
-    <div className={readonlyCls}>
-      <span className="text-red-400">{label} nao vinculado</span>
+    <div ref={containerRef} className="relative">
+      <label className={labelCls}>{label}</label>
+      <div className="relative">
+        <input
+          type="text"
+          className={inputCls + " pr-7"}
+          placeholder={`Buscar ${label}...`}
+          value={query}
+          onFocus={handleFocus}
+          onChange={handleChange}
+        />
+        {value && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            title="Limpar selecao"
+          >
+            <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
+      {open && filtered.length > 0 && (
+        <ul className="absolute z-10 mt-1 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg max-h-64 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full">
+          {filtered.slice(0, 8).map((item) => {
+            const sublabel = getSublabel ? getSublabel(item) : null;
+            return (
+              <li
+                key={item.id}
+                onMouseDown={() => handleSelectItem(item)}
+                className="px-3 py-2 cursor-pointer hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors"
+              >
+                <span className="text-sm text-gray-700 dark:text-gray-200">{getLabel(item)}</span>
+                {sublabel && (
+                  <span className="block text-xs text-gray-400 mt-0.5">{sublabel}</span>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }
+
+// Funções de extração estáveis (fora do componente para evitar re-criação)
+function extractLeads(data: unknown): Lead[] {
+  if (Array.isArray(data)) return data as Lead[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d?.leads)) return d.leads as Lead[];
+  return [];
+}
+
+function extractImoveis(data: unknown): PropertyData[] {
+  if (Array.isArray(data)) return data as PropertyData[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d?.imoveis)) return d.imoveis as PropertyData[];
+  return [];
+}
+
+function extractBrokers(data: unknown): BrokerData[] {
+  if (Array.isArray(data)) return data as BrokerData[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d?.brokers)) return d.brokers as BrokerData[];
+  return [];
+}
+
+// ─── Componente principal ────────────────────────────────────────────────────
 
 export default function ContratoEditorSidebar({
   templates,
@@ -69,12 +222,15 @@ export default function ContratoEditorSidebar({
   lead,
   property,
   broker,
+  onSelectLead,
+  onSelectProperty,
+  onSelectBroker,
 }: ContratoEditorSidebarProps) {
   const [source, setSource] = useState<TemplateSource>("interno");
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const valor = lead?.value ?? 0;
+  const valor = property?.valor ?? lead?.value ?? 0;
   const comissao = valor * 0.05;
 
   async function handleFile(file: File) {
@@ -222,37 +378,75 @@ export default function ContratoEditorSidebar({
           </p>
           <div className="space-y-3">
 
-            <div>
-              <label className={labelCls}>Comprador / Locatario</label>
-              {lead ? (
-                <div className={readonlyCls}>{lead.name}</div>
-              ) : (
-                <Missing label="Lead" />
-              )}
-            </div>
+            {/* Lead */}
+            {onSelectLead ? (
+              <SearchSelect<Lead>
+                label="Comprador / Locatario"
+                value={lead}
+                fetchUrl="/api/leads"
+                getLabel={(l) => l.name}
+                extractItems={extractLeads}
+                onSelect={onSelectLead}
+              />
+            ) : (
+              <div>
+                <label className={labelCls}>Comprador / Locatario</label>
+                {lead ? (
+                  <div className={readonlyCls}>{lead.name}</div>
+                ) : (
+                  <div className={readonlyCls}><span className="text-red-400">Lead nao vinculado</span></div>
+                )}
+              </div>
+            )}
 
-            <div>
-              <label className={labelCls}>Imovel</label>
-              {property ? (
-                <div className={readonlyCls}>
-                  {property.titulo_comercial}
-                  {property.bairro ? (
-                    <span className="block text-xs text-gray-400 mt-0.5">{property.bairro}</span>
-                  ) : null}
-                </div>
-              ) : (
-                <Missing label="Imovel" />
-              )}
-            </div>
+            {/* Imóvel */}
+            {onSelectProperty ? (
+              <SearchSelect<PropertyData>
+                label="Imovel"
+                value={property}
+                fetchUrl="/api/imoveis?status_publicacao=Publicado"
+                getLabel={(p) => p.titulo_comercial}
+                getSublabel={(p) => p.bairro}
+                extractItems={extractImoveis}
+                onSelect={onSelectProperty}
+              />
+            ) : (
+              <div>
+                <label className={labelCls}>Imovel</label>
+                {property ? (
+                  <div className={readonlyCls}>
+                    {property.titulo_comercial}
+                    {property.bairro ? (
+                      <span className="block text-xs text-gray-400 mt-0.5">{property.bairro}</span>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className={readonlyCls}><span className="text-red-400">Imovel nao vinculado</span></div>
+                )}
+              </div>
+            )}
 
-            <div>
-              <label className={labelCls}>Corretor Responsavel</label>
-              {broker ? (
-                <div className={readonlyCls}>{broker.full_name}</div>
-              ) : (
-                <Missing label="Corretor" />
-              )}
-            </div>
+            {/* Corretor */}
+            {onSelectBroker ? (
+              <SearchSelect<BrokerData>
+                label="Corretor Responsavel"
+                value={broker}
+                fetchUrl="/api/brokers"
+                getLabel={(b) => b.full_name}
+                getSublabel={(b) => b.email}
+                extractItems={extractBrokers}
+                onSelect={onSelectBroker}
+              />
+            ) : (
+              <div>
+                <label className={labelCls}>Corretor Responsavel</label>
+                {broker ? (
+                  <div className={readonlyCls}>{broker.full_name}</div>
+                ) : (
+                  <div className={readonlyCls}><span className="text-red-400">Corretor nao vinculado</span></div>
+                )}
+              </div>
+            )}
 
             <div>
               <label className={labelCls}>Valor</label>
