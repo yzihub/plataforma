@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Badge from "@/components/ui/badge/Badge";
 import {
   CloseIcon,
@@ -18,7 +19,6 @@ import {
 import type { Lead, LeadStatus } from "@/lib/crm/types";
 import type { Corretor } from "@/components/yzihub/LeadsClient";
 import type { N8nImovel } from "@/types/n8n-payloads";
-import GerarContratoDrawer from "@/components/yzihub/Contratos/GerarContratoDrawer";
 import ImovelSearchSelect from "@/components/yzihub/ImovelSearchSelect";
 
 // ─── Types internos do Drawer ─────────────────────────────────────────────────
@@ -854,9 +854,11 @@ function TabAtividades() {
     <div className="space-y-3">
       <p className="text-xs text-gray-400">Histórico automático + manual</p>
       <ol className="space-y-3">
-        {MOCK_ATIVIDADES.map((a) => (
+        {MOCK_ATIVIDADES.map((a) => {
+          const Icon = ACTIVITY_ICON[a.tipo];
+          return (
           <li key={a.id} className="flex gap-3">
-            <span className="text-base shrink-0 mt-0.5">{ACTIVITY_ICON[a.tipo]}</span>
+            <span className="shrink-0 mt-0.5 text-gray-400"><Icon className="w-4 h-4" /></span>
             <div className="flex-1 border-b border-gray-50 dark:border-gray-800 pb-3">
               <p className="text-sm text-gray-700 dark:text-gray-200">{a.descricao}</p>
               <div className="flex items-center gap-2 mt-1">
@@ -872,7 +874,8 @@ function TabAtividades() {
               </div>
             </div>
           </li>
-        ))}
+          );
+        })}
       </ol>
     </div>
   );
@@ -1025,11 +1028,22 @@ export default function LeadDrawer({
   onLeadDeleted,
   corretores = [],
 }: LeadDrawerProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<Tab>("dados");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [showGerarContrato, setShowGerarContrato] = useState(false);
   const [selectedImovel, setSelectedImovel] = useState<N8nImovel | null>(null);
+
+  function handleNovoContrato() {
+    if (!lead) return;
+    const params = new URLSearchParams();
+    params.set("lead_id", lead.id);
+    const propertyId = selectedImovel?.id ?? lead.imovel_ref ?? null;
+    if (propertyId) params.set("property_id", propertyId);
+    if (lead.assigned_to) params.set("broker_id", lead.assigned_to);
+    router.push(`/cockpit/contratos/novo?${params.toString()}`);
+    onClose();
+  }
 
   // Reset tab when drawer opens
   useEffect(() => {
@@ -1103,7 +1117,7 @@ export default function LeadDrawer({
             {lead && (
               <button
                 type="button"
-                onClick={() => setShowGerarContrato(true)}
+                onClick={handleNovoContrato}
                 className="flex items-center gap-1.5 rounded-lg bg-brand-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-600 active:scale-95 transition-all"
               >
                 Novo Contrato
@@ -1192,16 +1206,6 @@ export default function LeadDrawer({
         </div>
       </div>
 
-      {/* ── Drawer de Geracao de Contrato ── */}
-      <GerarContratoDrawer
-        isOpen={showGerarContrato}
-        onClose={() => setShowGerarContrato(false)}
-        lead={lead}
-        brokerId={lead?.assigned_to ?? null}
-        brokerName={corretores.find((c) => c.id === lead?.assigned_to)?.name ?? null}
-        propertyId={selectedImovel?.id ?? lead?.imovel_ref ?? null}
-        propertyTitle={selectedImovel?.titulo_comercial ?? null}
-      />
     </>
   );
 }
