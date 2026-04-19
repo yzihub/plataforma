@@ -44,6 +44,7 @@ const AVAILABLE_VARS = [
   { key: "comissao",     hint: "Comissão (5%)" },
   { key: "data",         hint: "Data de hoje" },
   { key: "valor_extenso",hint: "Valor por extenso" },
+  { key: "id_imovel",    hint: "UUID do imóvel" },
 ];
 
 function formatBRL(value: number): string {
@@ -76,7 +77,7 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
 
   // Mapa de variáveis resolvidas — atualizado sempre que lead/property/broker mudar
   const vars: Record<string, string> = useMemo(() => {
-    const valor = lead?.value ?? 0;
+    const valor = property?.valor ?? lead?.value ?? 0;
     return {
       comprador:     lead?.name ?? "{{comprador}}",
       imovel:        property?.titulo_comercial ?? "{{imovel}}",
@@ -85,6 +86,7 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
       comissao:      formatBRL(valor * 0.05),
       data:          new Date().toLocaleDateString("pt-BR"),
       valor_extenso: `(${formatBRL(valor)})`,
+      id_imovel:     property?.id ?? "{{id_imovel}}",
     };
   }, [lead, property, broker]);
 
@@ -122,14 +124,9 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
 
       if (propertyId) {
         tasks.push(
-          fetch("/api/imoveis")
-            .then((r) => r.json())
-            .then((envelope: { data?: PropertyData[] }) => {
-              if (!cancelled) {
-                const found = (envelope.data ?? []).find((p) => p.id === propertyId);
-                if (found) setProperty(found);
-              }
-            })
+          fetch(`/api/imoveis/${propertyId}`)
+            .then((r) => r.ok ? r.json() : null)
+            .then((d) => { if (!cancelled && d?.id) setProperty(d as PropertyData); })
             .catch(() => {})
         );
       }
@@ -192,8 +189,8 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
       setError("Lead, imóvel e corretor são obrigatórios para salvar o rascunho.");
       return;
     }
-    const valor = lead?.value ?? 0;
-    if (valor <= 0) { setError("O lead precisa ter um valor definido."); return; }
+    const valor = property?.valor ?? lead?.value ?? 0;
+    if (valor <= 0) { setError("O imóvel ou lead precisa ter um valor definido."); return; }
 
     setSubmitting(true);
     setError(null);
@@ -243,8 +240,8 @@ export default function ContratoEditor({ leadId, propertyId, brokerId }: Contrat
       setError("O template está vazio. Selecione um modelo ou faça upload de um arquivo.");
       return;
     }
-    const valor = lead?.value ?? 0;
-    if (valor <= 0) { setError("O lead precisa ter um valor definido."); return; }
+    const valor = property?.valor ?? lead?.value ?? 0;
+    if (valor <= 0) { setError("O imóvel ou lead precisa ter um valor definido."); return; }
 
     setSubmitting(true);
     setError(null);
