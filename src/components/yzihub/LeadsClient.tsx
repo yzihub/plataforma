@@ -125,12 +125,21 @@ export default function LeadsClient({
     );
   };
 
-  // Inline edit handler — optimistic update; persist to Supabase via PATCH /api/leads/:id (TODO)
   function handleInlineEdit(leadId: string, patch: Partial<Lead>) {
     setLeads((prev) =>
       prev.map((l) => l.id === leadId ? { ...l, ...patch } : l)
     );
-    // TODO: persist to Supabase via PATCH /api/leads/:id
+    fetch(`/api/leads/${leadId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patch),
+    }).then(async (res) => {
+      if (res.ok) {
+        const saved = await res.json() as Lead;
+        setLeads((prev) => prev.map((l) => l.id === leadId ? saved : l));
+        if (selectedLead?.id === leadId) setSelectedLead(saved);
+      }
+    }).catch(() => { /* optimistic update remains */ });
   }
 
   // Kanban: all 3 filters
