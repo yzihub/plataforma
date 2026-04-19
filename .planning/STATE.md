@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: Completed quick-260418-go0-PLAN.md
 last_updated: "2026-04-18T15:00:00Z"
-last_activity: "2026-04-18 - Completed quick task 260418-h4g: conectar GerarContratoDrawer com dados reais do banco (lead, imóvel, corretor)"
+last_activity: "2026-04-19 - Completed quick task 260418-vrr: Criar tela de editor de contrato"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -131,6 +131,9 @@ None yet.
 | 260418-ag6 | Tela de geracao de contrato no LeadDrawer — GerarContratoDrawer + POST /api/contracts/generate via job_queue | 2026-04-18 | f5014c5 | [260418-ag6-criar-tela-de-gera-o-de-contrato-no-fron](./quick/260418-ag6-criar-tela-de-gera-o-de-contrato-no-fron/) |
 | 260418-go0 | Campo Referencia do Imovel no LeadDrawer — ImovelSearchSelect combobox pesquisavel com fetch real /api/imoveis, UUID persistido em lead.imovel_ref | 2026-04-18 | 9a84350 | [260418-go0-adicionar-campo-refer-ncia-do-im-vel-no-](./quick/260418-go0-adicionar-campo-refer-ncia-do-im-vel-no-/) |
 | 260418-h4g | conectar GerarContratoDrawer com dados reais do banco (lead, imóvel, corretor) | 2026-04-18 | 4ea8ab6 | [260418-h4g-conectar-gerarcontratodrawer-com-dados-r](./quick/260418-h4g-conectar-gerarcontratodrawer-com-dados-r/) |
+| 260418-p3r | Corrigir persistência real nos drawers: bairro_interesse no whitelist PATCH, moveStatus+handleAssign chamam API, success feedback no GerarContratoDrawer | 2026-04-18 | 95a6e09 | — |
+| 260418-idx | Indexar contrato com lead, imóvel e corretor reais — migration broker_id + colunas ausentes, GerarContratoDrawer envia IDs, /generate cria contracts + job_queue | 2026-04-18 | c7d924d | — |
+| 260418-vrr | Criar tela de editor de contrato | 2026-04-19 | 3960e9a | [260418-vrr-criar-tela-de-editor-de-contrato](./quick/260418-vrr-criar-tela-de-editor-de-contrato/) |
 
 ### Blockers/Concerns
 
