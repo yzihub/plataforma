@@ -3,9 +3,9 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: unknown
-stopped_at: Completed quick-260419-bq3-PLAN.md
-last_updated: "2026-04-19T11:37:10Z"
-last_activity: "2026-04-19 - Completed quick task 260419-bq3: Conectar editor de contrato com dados reais (GET /api/imoveis/[id] + ContratoEditor vars)"
+stopped_at: Completed quick-260419-coq-PLAN.md
+last_updated: "2026-04-19T12:30:00Z"
+last_activity: "2026-04-19 - Completed quick task 260419-coq: Editor de contratos melhorado — logos Jurema, seletores reais Lead/Imovel/Corretor, mocks automaticos, preview folha de papel"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -135,6 +135,7 @@ None yet.
 | 260418-idx | Indexar contrato com lead, imóvel e corretor reais — migration broker_id + colunas ausentes, GerarContratoDrawer envia IDs, /generate cria contracts + job_queue | 2026-04-18 | c7d924d | — |
 | 260418-vrr | Criar tela de editor de contrato | 2026-04-19 | 3960e9a | [260418-vrr-criar-tela-de-editor-de-contrato](./quick/260418-vrr-criar-tela-de-editor-de-contrato/) |
 | 260419-bq3 | Conectar editor de contrato com dados reais — GET /api/imoveis/[id] + ContratoEditor fetch pontual, valor de property, chip id_imovel | 2026-04-19 | b79d5a1 | [260419-bq3-conectar-editor-de-contrato-com-dados-re](./quick/260419-bq3-conectar-editor-de-contrato-com-dados-re/) |
+| 260419-coq | Melhorar editor de contratos — logos Jurema copiadas, 3 seletores reais (Lead/Imovel/Corretor) com SearchSelect generico, mocks automaticos quando IDs null, preview folha de papel branca com logo preta | 2026-04-19 | decab1a | [260419-coq-melhorar-editor-de-contratos-copiar-logo](./quick/260419-coq-melhorar-editor-de-contratos-copiar-logo/) |
 
 ### Blockers/Concerns
 
