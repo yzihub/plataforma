@@ -7,10 +7,6 @@ import type { Broker, BrokerInput } from "@/types/brokers";
 import CorretorDrawer from "@/components/yzihub/CorretorDrawer";
 import CorretoresKpiStrip from "@/components/yzihub/CorretoresKpiStrip";
 
-// ─── Table name ───────────────────────────────────────────────────────────────
-
-const BROKERS_TABLE = "corretores";
-
 // ─── Loading skeleton (4 columns) ─────────────────────────────────────────────
 
 function SkeletonRow() {
@@ -71,14 +67,8 @@ export default function CorretoresClient() {
       setLoading(true);
       const supabase = createClient();
 
-      const [brokersResult, leadsResult] = await Promise.all([
-        supabase
-          .from(BROKERS_TABLE)
-          .select(
-            "id, tenant_id, name, phone, email, role, tipo, cpf, is_active, address, city, state, zip_code, bank, bank_agency, bank_account, bank_account_type, pix_key, pix_key_type, pix_beneficiary, notes, created_at, updated_at"
-          )
-          .eq("tenant_id", tenant!.id)
-          .order("created_at", { ascending: false }),
+      const [brokersRes, leadsResult] = await Promise.all([
+        fetch("/api/corretores"),
         supabase
           .from("leads")
           .select("id, assigned_to, status")
@@ -87,8 +77,9 @@ export default function CorretoresClient() {
 
       if (cancelled) return;
 
-      if (!brokersResult.error && brokersResult.data) {
-        setBrokers(brokersResult.data as Broker[]);
+      if (brokersRes.ok) {
+        const body = await brokersRes.json() as { data: Broker[] };
+        setBrokers(body.data ?? []);
       }
       if (!leadsResult.error && leadsResult.data) {
         setLeads(leadsResult.data);
@@ -136,17 +127,14 @@ export default function CorretoresClient() {
 
   const maxLeads = rankingTop5[0] ? (leadCounts[rankingTop5[0].id] ?? 0) : 0;
 
-  // ── Refetch brokers (chamado após CREATE via webhook para sincronizar a lista) ──
+  // ── Refetch brokers (chamado após CREATE/EDIT/DELETE para sincronizar a lista) ──
 
   async function refetchBrokers() {
-    if (!tenant?.id) return;
-    const supabase = createClient();
-    const { data, error: brokersError } = await supabase
-      .from(BROKERS_TABLE)
-      .select("id, tenant_id, name, phone, email, role, tipo, cpf, is_active, address, city, state, zip_code, bank, bank_agency, bank_account, bank_account_type, pix_key, pix_key_type, pix_beneficiary, notes, created_at, updated_at")
-      .eq("tenant_id", tenant.id)
-      .order("created_at", { ascending: false });
-    if (!brokersError && data) setBrokers(data as Broker[]);
+    const res = await fetch("/api/corretores");
+    if (res.ok) {
+      const body = await res.json() as { data: Broker[] };
+      setBrokers(body.data ?? []);
+    }
   }
 
   // ── CRUD handlers ─────────────────────────────────────────────────────────────
@@ -154,20 +142,23 @@ export default function CorretoresClient() {
   async function handleSave(input: BrokerInput, id?: string) {
     if (!tenant?.id) return;
     if (!input.name || input.name.trim().length < 2) throw new Error("Nome inválido");
-    const supabase = createClient();
 
     try {
       if (id) {
-        const { data, error: updateError } = await supabase
-          .from(BROKERS_TABLE)
-          .update({ ...input, updated_at: new Date().toISOString() })
-          .eq("id", id)
-          .eq("tenant_id", tenant.id)
-          .select()
-          .single();
+        // UPDATE via API route (admin client — bypassa RLS)
+        const res = await fetch("/api/corretores", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id, ...input }),
+        });
 
-        if (updateError) throw updateError;
-        if (data) setBrokers((prev) => prev.map((b) => (b.id === id ? (data as Broker) : b)));
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error((body as { error?: string })?.error ?? "Falha ao atualizar corretor");
+        }
+
+        const { data } = await res.json() as { data: Broker };
+        if (data) setBrokers((prev) => prev.map((b) => (b.id === id ? data : b)));
       } else {
         // CREATE → delega ao webhook n8n via API route (Regra de Ouro: frontend nunca escreve em fontes de automação).
         const payload = {
@@ -204,9 +195,39 @@ export default function CorretoresClient() {
           throw new Error((body as { error?: string })?.error ?? "Falha ao criar corretor");
         }
 
-        // Refresh: refazer o fetch da lista a partir do Supabase, já que a source of truth
-        // (criada pelo n8n) precisa ser lida depois.
-        await refetchBrokers();
+        // Inserção otimista: adicionar o corretor localmente imediatamente para
+        // feedback instantâneo, enquanto n8n processa a inserção real no banco.
+        // Um refetch em background após 1.5s confirma o estado real.
+        const now = new Date().toISOString();
+        const optimisticBroker: Broker = {
+          id: `optimistic-${Date.now()}`,
+          tenant_id: tenant!.id,
+          name: payload.name,
+          phone: payload.phone,
+          email: payload.email,
+          role: payload.role,
+          tipo: payload.tipo,
+          cpf: payload.cpf,
+          is_active: payload.is_active,
+          address: payload.address,
+          city: payload.city,
+          state: payload.state,
+          zip_code: payload.zip_code,
+          bank: payload.bank,
+          bank_agency: payload.bank_agency,
+          bank_account: payload.bank_account,
+          bank_account_type: payload.bank_account_type,
+          pix_key: payload.pix_key,
+          pix_key_type: payload.pix_key_type,
+          pix_beneficiary: payload.pix_beneficiary,
+          notes: payload.notes,
+          created_at: now,
+          updated_at: now,
+        };
+        setBrokers((prev) => [optimisticBroker, ...prev]);
+
+        // Refetch em background para substituir o otimista pelo registro real do banco.
+        setTimeout(() => { refetchBrokers(); }, 1500);
       }
 
       setDrawerOpen(false);
@@ -221,15 +242,17 @@ export default function CorretoresClient() {
 
   async function handleDelete(id: string) {
     if (!tenant?.id) return;
-    const supabase = createClient();
-    const { error: deleteError } = await supabase
-      .from(BROKERS_TABLE)
-      .delete()
-      .eq("id", id)
-      .eq("tenant_id", tenant.id);
 
-    if (deleteError) {
-      console.error("[CorretoresClient] handleDelete error:", deleteError);
+    // DELETE via API route (admin client — bypassa RLS)
+    const res = await fetch("/api/corretores", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      console.error("[CorretoresClient] handleDelete error:", body);
       setError("Erro ao excluir corretor. Tente novamente.");
       return;
     }
