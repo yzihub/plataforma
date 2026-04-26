@@ -3,15 +3,12 @@
 import { useEffect, useState } from "react";
 import type { Broker, BrokerInput } from "@/types/brokers";
 
-// ─── Field / label classes (TailAdmin dark padrão) ────────────────────────────
+// ─── Field / label classes — padrão PropertyDrawer ────────────────────────────
 
 const fieldCls =
-  "w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-sm font-medium outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary dark:text-white/90";
+  "w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500";
 
-const labelCls = "mb-2.5 block text-sm font-medium text-black dark:text-white";
-
-const sectionTitleCls =
-  "text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3 mt-1";
+const labelCls = "block text-xs font-medium text-gray-400 mb-1";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -162,31 +159,33 @@ export default function CorretorDrawer({
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${
+        className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
           open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
       />
 
       {/* Panel */}
-      <div
-        className={`fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white dark:bg-gray-dark shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+      <form
+        onSubmit={handleSubmit}
+        className={`fixed top-0 right-0 z-50 h-full w-full max-w-lg bg-white dark:bg-gray-900 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         {/* ── Header ── */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-gray-800 shrink-0">
-          <div>
-            <h2 className="text-base font-semibold text-black dark:text-white">
+        <div className="flex items-start justify-between p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
+          <div className="flex-1 min-w-0 pr-4">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90 leading-snug">
               {isEditing ? "Editar Corretor" : "Novo Corretor"}
             </h2>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="text-sm text-gray-400 mt-0.5">
               {isEditing
                 ? "Atualize os dados do corretor"
                 : "Preencha os dados do novo corretor"}
             </p>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 rounded-lg transition-colors"
             aria-label="Fechar"
@@ -205,326 +204,321 @@ export default function CorretorDrawer({
           </button>
         </div>
 
-        {/* ── Form ── */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5">
-          <div className="space-y-4">
+        {/* ── Scrollable content ── */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-4 [scrollbar-width:thin] [scrollbar-color:rgba(156,163,175,0.4)_transparent] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400/40">
 
-            {/* ── Dados Pessoais ─────────────────────────────────────── */}
-            <p className={sectionTitleCls}>Dados Pessoais</p>
+          {/* ── Dados Pessoais ─────────────────────────────────────── */}
+          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+            Dados Pessoais
+          </p>
 
-            {/* Nome */}
-            <div>
-              <label className={labelCls}>
-                Nome completo <span className="text-meta-1">*</span>
-              </label>
-              <input
-                type="text"
-                required
-                value={str(form.name)}
-                onChange={(e) => setField("name", e.target.value)}
-                placeholder="Ex: João Silva"
-                className={fieldCls}
-              />
-            </div>
+          <div>
+            <label className={labelCls}>
+              Nome completo <span className="text-red-400">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={str(form.name)}
+              onChange={(e) => setField("name", e.target.value)}
+              placeholder="Ex: João Silva"
+              className={fieldCls}
+            />
+          </div>
 
-            {/* Telefone */}
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className={labelCls}>Telefone</label>
               <input
                 type="tel"
                 value={str(form.phone)}
                 onChange={(e) => setField("phone", e.target.value)}
-                placeholder="Ex: 85999999999"
+                placeholder="85999999999"
                 className={fieldCls}
               />
             </div>
-
-            {/* E-mail */}
-            <div>
-              <label className={labelCls}>E-mail</label>
-              <input
-                type="email"
-                value={str(form.email)}
-                onChange={(e) => setField("email", e.target.value)}
-                placeholder="Ex: corretor@exemplo.com"
-                className={fieldCls}
-              />
-            </div>
-
-            {/* CPF */}
             <div>
               <label className={labelCls}>CPF</label>
               <input
                 type="text"
                 value={str(form.cpf)}
                 onChange={(e) => setField("cpf", e.target.value)}
-                placeholder="Ex: 000.000.000-00"
+                placeholder="000.000.000-00"
                 className={fieldCls}
               />
             </div>
+          </div>
 
-            {/* Tipo / Role em linha */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls}>Tipo</label>
-                <select
-                  value={str(form.tipo)}
-                  onChange={(e) => setField("tipo", e.target.value)}
-                  className={fieldCls}
-                >
-                  <option value="">Selecione</option>
-                  <option value="autonomo">Autônomo</option>
-                  <option value="pj">PJ</option>
-                  <option value="clt">CLT</option>
-                  <option value="estagiario">Estagiário</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelCls}>Role / Cargo</label>
-                <input
-                  type="text"
-                  value={str(form.role)}
-                  onChange={(e) => setField("role", e.target.value)}
-                  placeholder="Ex: Corretor Sênior"
-                  className={fieldCls}
-                />
-              </div>
-            </div>
+          <div>
+            <label className={labelCls}>E-mail</label>
+            <input
+              type="email"
+              value={str(form.email)}
+              onChange={(e) => setField("email", e.target.value)}
+              placeholder="corretor@exemplo.com"
+              className={fieldCls}
+            />
+          </div>
 
-            {/* Status */}
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelCls}>Status</label>
-              <div className="flex items-center gap-3 py-1">
-                <button
-                  type="button"
-                  onClick={() => setField("is_active", !form.is_active)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    form.is_active ? "bg-primary" : "bg-gray-300 dark:bg-gray-600"
-                  }`}
-                  aria-checked={form.is_active}
-                  role="switch"
-                >
-                  <span
-                    className={`inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ${
-                      form.is_active ? "translate-x-6" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-                <span
-                  className={`text-sm font-medium ${
-                    form.is_active
-                      ? "text-success-600 dark:text-success-500"
-                      : "text-gray-400 dark:text-gray-500"
-                  }`}
-                >
-                  {form.is_active ? "Ativo" : "Inativo"}
-                </span>
-              </div>
-            </div>
-
-            {/* ── Endereço ───────────────────────────────────────────── */}
-            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
-              <p className={sectionTitleCls}>Endereço</p>
-            </div>
-
-            {/* Endereço */}
-            <div>
-              <label className={labelCls}>Endereço</label>
-              <input
-                type="text"
-                value={str(form.address)}
-                onChange={(e) => setField("address", e.target.value)}
-                placeholder="Rua, número, complemento"
-                className={fieldCls}
-              />
-            </div>
-
-            {/* Cidade / Estado em linha */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls}>Cidade</label>
-                <input
-                  type="text"
-                  value={str(form.city)}
-                  onChange={(e) => setField("city", e.target.value)}
-                  placeholder="Ex: Fortaleza"
-                  className={fieldCls}
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Estado</label>
-                <input
-                  type="text"
-                  value={str(form.state)}
-                  onChange={(e) => setField("state", e.target.value)}
-                  placeholder="Ex: CE"
-                  maxLength={2}
-                  className={fieldCls}
-                />
-              </div>
-            </div>
-
-            {/* CEP */}
-            <div>
-              <label className={labelCls}>CEP</label>
-              <input
-                type="text"
-                value={str(form.zip_code)}
-                onChange={(e) => setField("zip_code", e.target.value)}
-                placeholder="Ex: 60000-000"
-                className={fieldCls}
-              />
-            </div>
-
-            {/* ── Financeiro & PIX ───────────────────────────────────── */}
-            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
-              <p className={sectionTitleCls}>Financeiro & PIX</p>
-            </div>
-
-            {/* Banco */}
-            <div>
-              <label className={labelCls}>Banco</label>
-              <input
-                type="text"
-                value={str(form.bank)}
-                onChange={(e) => setField("bank", e.target.value)}
-                placeholder="Ex: Nubank, Itaú, Bradesco"
-                className={fieldCls}
-              />
-            </div>
-
-            {/* Agência / Conta em linha */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls}>Agência</label>
-                <input
-                  type="text"
-                  value={str(form.bank_agency)}
-                  onChange={(e) => setField("bank_agency", e.target.value)}
-                  placeholder="Ex: 0001"
-                  className={fieldCls}
-                />
-              </div>
-              <div>
-                <label className={labelCls}>Conta</label>
-                <input
-                  type="text"
-                  value={str(form.bank_account)}
-                  onChange={(e) => setField("bank_account", e.target.value)}
-                  placeholder="Ex: 12345-6"
-                  className={fieldCls}
-                />
-              </div>
-            </div>
-
-            {/* Tipo de conta */}
-            <div>
-              <label className={labelCls}>Tipo de Conta</label>
+              <label className={labelCls}>Tipo</label>
               <select
-                value={str(form.bank_account_type)}
-                onChange={(e) => setField("bank_account_type", e.target.value)}
+                value={str(form.tipo)}
+                onChange={(e) => setField("tipo", e.target.value)}
                 className={fieldCls}
               >
-                <option value="">Selecione</option>
-                <option value="corrente">Corrente</option>
-                <option value="poupanca">Poupança</option>
-                <option value="pagamento">Pagamento</option>
+                <option value="">Selecionar...</option>
+                <option value="autonomo">Autônomo</option>
+                <option value="pj">PJ</option>
+                <option value="clt">CLT</option>
+                <option value="estagiario">Estagiário</option>
               </select>
             </div>
-
-            {/* Chave PIX / Tipo em linha */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className={labelCls}>Tipo de Chave PIX</label>
-                <select
-                  value={str(form.pix_key_type)}
-                  onChange={(e) => setField("pix_key_type", e.target.value)}
-                  className={fieldCls}
-                >
-                  <option value="">Selecione</option>
-                  <option value="cpf">CPF</option>
-                  <option value="cnpj">CNPJ</option>
-                  <option value="email">E-mail</option>
-                  <option value="telefone">Telefone</option>
-                  <option value="aleatoria">Aleatória</option>
-                </select>
-              </div>
-              <div>
-                <label className={labelCls}>Chave PIX</label>
-                <input
-                  type="text"
-                  value={str(form.pix_key)}
-                  onChange={(e) => setField("pix_key", e.target.value)}
-                  placeholder="Chave PIX"
-                  className={fieldCls}
-                />
-              </div>
-            </div>
-
-            {/* Favorecido */}
             <div>
-              <label className={labelCls}>Favorecido</label>
+              <label className={labelCls}>Cargo</label>
               <input
                 type="text"
-                value={str(form.pix_beneficiary)}
-                onChange={(e) => setField("pix_beneficiary", e.target.value)}
-                placeholder="Nome do favorecido"
+                value={str(form.role)}
+                onChange={(e) => setField("role", e.target.value)}
+                placeholder="Ex: Corretor Sênior"
                 className={fieldCls}
               />
             </div>
+          </div>
 
-            {/* ── Observações ────────────────────────────────────────── */}
-            <div className="pt-2 border-t border-gray-100 dark:border-gray-800">
-              <p className={sectionTitleCls}>Observações</p>
-            </div>
+          <div className="flex items-center gap-3 py-1">
+            <button
+              type="button"
+              onClick={() => setField("is_active", !form.is_active)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                form.is_active ? "bg-brand-500" : "bg-gray-300 dark:bg-gray-600"
+              }`}
+              aria-checked={form.is_active}
+              role="switch"
+            >
+              <span
+                className={`inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ${
+                  form.is_active ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+            <span
+              className={`text-xs font-medium ${
+                form.is_active ? "text-emerald-500" : "text-gray-400"
+              }`}
+            >
+              {form.is_active ? "Ativo" : "Inativo"}
+            </span>
+          </div>
 
+          {/* ── Endereço ───────────────────────────────────────────── */}
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Endereço
+            </p>
+          </div>
+
+          <div>
+            <label className={labelCls}>Endereço</label>
+            <input
+              type="text"
+              value={str(form.address)}
+              onChange={(e) => setField("address", e.target.value)}
+              placeholder="Rua, número, complemento"
+              className={fieldCls}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelCls}>Observações</label>
-              <textarea
-                rows={3}
-                value={str(form.notes)}
-                onChange={(e) => setField("notes", e.target.value)}
-                placeholder="Anotações internas sobre o corretor..."
-                className={`${fieldCls} resize-none`}
+              <label className={labelCls}>Cidade</label>
+              <input
+                type="text"
+                value={str(form.city)}
+                onChange={(e) => setField("city", e.target.value)}
+                placeholder="Fortaleza"
+                className={fieldCls}
               />
             </div>
-
-            {/* ── Ações ─────────────────────────────────────────────── */}
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
-              {saveError && (
-                <p className="text-xs text-meta-1 mb-3 text-center">
-                  Erro ao salvar. Verifique os dados e tente novamente.
-                </p>
-              )}
-
-              <div className={`flex gap-3 ${isEditing && onDelete ? "justify-between" : ""}`}>
-                {isEditing && onDelete && (
-                  <button
-                    type="button"
-                    onClick={handleDeleteClick}
-                    disabled={deleting || saving}
-                    className="rounded border border-meta-1 py-2.5 px-5 text-sm font-medium text-meta-1 hover:bg-meta-1 hover:text-white transition-colors disabled:opacity-50"
-                  >
-                    {deleting ? "Excluindo..." : "Excluir"}
-                  </button>
-                )}
-                <button
-                  type="submit"
-                  disabled={saving || deleting || form.name.trim().length < 2}
-                  className="flex flex-1 justify-center rounded bg-primary py-2.5 px-5 text-sm font-medium text-white hover:bg-opacity-90 disabled:opacity-50 transition-opacity"
-                >
-                  {saving
-                    ? "Salvando..."
-                    : isEditing
-                    ? "Salvar Alterações"
-                    : "Criar Corretor"}
-                </button>
-              </div>
+            <div>
+              <label className={labelCls}>Estado</label>
+              <input
+                type="text"
+                value={str(form.state)}
+                onChange={(e) => setField("state", e.target.value)}
+                placeholder="CE"
+                maxLength={2}
+                className={fieldCls}
+              />
             </div>
-
           </div>
-        </form>
-      </div>
+
+          <div>
+            <label className={labelCls}>CEP</label>
+            <input
+              type="text"
+              value={str(form.zip_code)}
+              onChange={(e) => setField("zip_code", e.target.value)}
+              placeholder="60000-000"
+              className={fieldCls}
+            />
+          </div>
+
+          {/* ── Dados Bancários ────────────────────────────────────── */}
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Dados Bancários
+            </p>
+          </div>
+
+          <div>
+            <label className={labelCls}>Banco</label>
+            <input
+              type="text"
+              value={str(form.bank)}
+              onChange={(e) => setField("bank", e.target.value)}
+              placeholder="Nubank, Itaú, Bradesco..."
+              className={fieldCls}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelCls}>Agência</label>
+              <input
+                type="text"
+                value={str(form.bank_agency)}
+                onChange={(e) => setField("bank_agency", e.target.value)}
+                placeholder="0001"
+                className={fieldCls}
+              />
+            </div>
+            <div>
+              <label className={labelCls}>Conta</label>
+              <input
+                type="text"
+                value={str(form.bank_account)}
+                onChange={(e) => setField("bank_account", e.target.value)}
+                placeholder="12345-6"
+                className={fieldCls}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>Tipo de Conta</label>
+            <select
+              value={str(form.bank_account_type)}
+              onChange={(e) => setField("bank_account_type", e.target.value)}
+              className={fieldCls}
+            >
+              <option value="">Selecionar...</option>
+              <option value="corrente">Corrente</option>
+              <option value="poupanca">Poupança</option>
+              <option value="pagamento">Pagamento</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelCls}>Tipo de Chave PIX</label>
+              <select
+                value={str(form.pix_key_type)}
+                onChange={(e) => setField("pix_key_type", e.target.value)}
+                className={fieldCls}
+              >
+                <option value="">Selecionar...</option>
+                <option value="cpf">CPF</option>
+                <option value="cnpj">CNPJ</option>
+                <option value="email">E-mail</option>
+                <option value="telefone">Telefone</option>
+                <option value="aleatoria">Aleatória</option>
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>Chave PIX</label>
+              <input
+                type="text"
+                value={str(form.pix_key)}
+                onChange={(e) => setField("pix_key", e.target.value)}
+                placeholder="Chave PIX"
+                className={fieldCls}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={labelCls}>Nome do Favorecido</label>
+            <input
+              type="text"
+              value={str(form.pix_beneficiary)}
+              onChange={(e) => setField("pix_beneficiary", e.target.value)}
+              placeholder="Nome do favorecido"
+              className={fieldCls}
+            />
+          </div>
+
+          {/* ── Informações Operacionais ────────────────────────────── */}
+          <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+              Informações Operacionais
+            </p>
+          </div>
+
+          <div>
+            <label className={labelCls}>Observações</label>
+            <textarea
+              rows={3}
+              value={str(form.notes)}
+              onChange={(e) => setField("notes", e.target.value)}
+              placeholder="Anotações internas sobre o corretor..."
+              className={`${fieldCls} resize-none`}
+            />
+          </div>
+
+        </div>
+
+        {/* ── Footer fixo ── */}
+        <div className="shrink-0 border-t border-gray-100 dark:border-gray-800 p-5">
+          {saveError && (
+            <p className="text-xs text-red-500 mb-3 text-center">
+              Erro ao salvar. Verifique os dados e tente novamente.
+            </p>
+          )}
+          <div className="flex gap-3">
+            {isEditing && onDelete && (
+              <button
+                type="button"
+                onClick={handleDeleteClick}
+                disabled={deleting || saving}
+                className="rounded-xl border border-red-300 dark:border-red-700 py-2.5 px-4 text-sm font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors disabled:opacity-50"
+              >
+                {deleting ? "Excluindo..." : "Excluir"}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={saving || deleting}
+              className="flex-1 rounded-xl border border-gray-200 dark:border-gray-700 py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={saving || deleting || form.name.trim().length < 2}
+              className="flex-1 rounded-xl bg-brand-500 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 transition-colors disabled:opacity-50"
+            >
+              {saving
+                ? "Salvando..."
+                : isEditing
+                ? "Salvar Corretor"
+                : "Criar Corretor"}
+            </button>
+          </div>
+        </div>
+      </form>
     </>
   );
 }
