@@ -79,8 +79,8 @@ const SECTIONS: NavSection[] = [
         icon: <GroupIcon />,
         submenuKey: "leads",
         children: [
-          { name: "Lista",   path: "/cockpit/leads" },
-          { name: "Kanban",  path: "/cockpit/leads?view=kanban" },
+          { name: "Lista",        path: "/cockpit/leads" },
+          { name: "Kanban Lead",  path: "/cockpit/jurema" },
         ],
       },
       { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,      path: "/cockpit/crm" },
@@ -126,6 +126,7 @@ const SECTIONS: NavSection[] = [
       { name: "YZI CONTROL",     icon: <BoxIcon />,          path: "/control",         adminOnly: true },
       { name: "YZI FACTORY",     icon: <PlugInIcon />,       path: "/factory",         adminOnly: true },
       { name: "Action Logs",     icon: <DocsIcon />,         path: "/control/logs",    adminOnly: true },
+      { name: "Teste Ju",        icon: <BoltIcon />,         path: "/cockpit/jurema-teste" },
     ],
   },
 ];
