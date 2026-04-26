@@ -45,6 +45,7 @@ export interface Lead {
   // Campos específicos imobiliário (Jurema) — opcionais para compatibilidade com outros tenants
   janela_visita?: string | null        // ex: "Sábado manhã"
   regiao_interesse?: string | null     // ex: "Barra da Tijuca"
+  bairro_interesse?: string | null     // bairro específico (select)
   objetivo?: 'investimento' | 'moradia' | string | null
   interesse_principal?: 'apartamento' | 'casa' | 'terreno' | 'cobertura' | string | null
   finalidade?: 'compra' | 'aluguel' | string | null

@@ -40,7 +40,7 @@ export async function getCockpitData(): Promise<KanbanData | null> {
     supabase
       .from("leads")
       .select(
-        "id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, notes, assigned_to, last_action_at, created_at"
+        "id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, notes, metadata, assigned_to, last_action_at, created_at, updated_at, ai_status, ai_temperature, ai_last_summary, ai_last_intent, ai_qualified_at, ai_hot_at, phone_normalized, corretor_id"
       )
       .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false }),
@@ -78,7 +78,7 @@ export async function getCockpitDataByTenant(tenantId: string): Promise<KanbanDa
     admin
       .from("leads")
       .select(
-        "id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, notes, assigned_to, last_action_at, created_at"
+        "id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, notes, metadata, assigned_to, last_action_at, created_at, updated_at, ai_status, ai_temperature, ai_last_summary, ai_last_intent, ai_qualified_at, ai_hot_at, phone_normalized, corretor_id"
       )
       .eq("tenant_id", tenantId)
       .order("created_at", { ascending: false }),
