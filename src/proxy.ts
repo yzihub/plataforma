@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { requireEnv } from '@/lib/env-validation'
 
 const PUBLIC_ROUTES = ['/signin', '/signup', '/reset-password', '/auth/callback', '/unauthorized', '/error-404']
 const CONTROL_ROUTE = '/control'
@@ -8,8 +9,8 @@ export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireEnv('NEXT_PUBLIC_SUPABASE_URL'),
+    requireEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
     {
       cookies: {
         getAll() {
@@ -29,11 +30,27 @@ export async function proxy(request: NextRequest) {
   )
 
   // Atualiza a sessão (obrigatório para SSR)
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (err) {
+    console.error('[proxy] Supabase unreachable, allowing request through:', err instanceof Error ? err.message : err)
+    return supabaseResponse
+  }
 
   const { pathname } = request.nextUrl
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r))
   const isControlRoute = pathname.startsWith(CONTROL_ROUTE)
+
+  // DEV_BYPASS: skip all auth guards in development — TenantContext handles the fallback tenant client-side
+  // Never bypass in production (double-check even if env var leaks)
+  const isDevBypass =
+    process.env.NEXT_PUBLIC_DEV_BYPASS === 'true' &&
+    process.env.NODE_ENV !== 'production'
+  if (isDevBypass) {
+    return supabaseResponse
+  }
 
   // Usuário autenticado tentando acessar login/signup → redireciona
   if (user && isPublicRoute) {

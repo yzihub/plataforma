@@ -26,6 +26,17 @@ export default function UserDropdown() {
   const { isGlobalAdmin } = useTenant();
 
   useEffect(() => {
+    // DEV_BYPASS: skip network call — DNS may be unreachable in dev environments.
+    // Without this, supabase.auth.getUser() hangs forever and the header shows "…" indefinitely.
+    const isDevBypass =
+      process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
+      process.env.NODE_ENV !== "production";
+
+    if (isDevBypass) {
+      setUser({ name: "Dev User", email: "dev@yzihub.local", initials: "DU" });
+      return;
+    }
+
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
       if (!data.user) return;
@@ -38,6 +49,8 @@ export default function UserDropdown() {
         email: data.user.email ?? "",
         initials: getInitials(name),
       });
+    }).catch(() => {
+      // Supabase unreachable — leave user as null, show "…" gracefully
     });
   }, []);
 

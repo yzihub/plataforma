@@ -62,7 +62,17 @@ function CockpitContent({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
+        process.env.NODE_ENV !== "production" && (
+          <div className="mb-3 rounded-lg border border-blue-500/30 bg-blue-500/10 px-3 py-1.5 text-xs text-blue-400 font-mono">
+            [DEV] tenant_id: {tenant.id} — {tenant.name}
+          </div>
+        )}
+      {children}
+    </>
+  );
 }
 
 // ─── Layout ───────────────────────────────────────────────────────────────────
