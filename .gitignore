@@ -36,6 +36,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# local MCP config (may contain secrets)
+.mcp.json
+
+# Claude Code local permissions (machine-specific, never commit)
+.claude/settings.local.json
+
 # planning — block workflow payloads that may contain secrets
 .planning/quick/**/*.json
 .planning/debug/**/*.json
