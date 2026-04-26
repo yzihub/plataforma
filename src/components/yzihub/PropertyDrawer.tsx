@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Property } from "@/types/properties";
@@ -127,7 +126,11 @@ export default function PropertyDrawer({
   const isOpen = property !== null;
 
   const [form, setForm] = useState<FormState>(
-    property ? propertyToForm(property) : ({} as FormState)
+    property ? propertyToForm(property) : {
+      title: "", priceFormatted: "", neighborhood: "", location: "",
+      area_sqm: "", notes: "", property_type: "", purpose: "",
+      construction_status: "", publication_status: "", tags: [],
+    }
   );
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -234,12 +237,12 @@ export default function PropertyDrawer({
             {/* ── Header ── */}
             <div className="flex items-start justify-between p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
               <div className="flex-1 min-w-0 pr-4">
-                <h2 className="text-base font-semibold text-gray-800 dark:text-white/90 truncate">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90 leading-snug">
                   {property.title}
                 </h2>
-                <p className="text-xs text-gray-400 mt-0.5 truncate">
-                  {property.location}
-                </p>
+                {property.neighborhood && (
+                  <p className="text-sm text-gray-400 mt-0.5 truncate">{property.neighborhood}</p>
+                )}
               </div>
               <button
                 onClick={onClose}
@@ -260,101 +263,80 @@ export default function PropertyDrawer({
               </button>
             </div>
 
-            {/* ── Detail view ── */}
-            <div className="shrink-0 border-b border-gray-100 dark:border-gray-800">
-              {/* Hero photo */}
-              {property.photo_url && (
-                <div className="relative w-full h-48 bg-gray-100 dark:bg-gray-800">
-                  <Image
-                    src={property.photo_url}
-                    alt={property.title}
-                    fill
-                    className="object-cover"
-                    sizes="512px"
-                  />
-                </div>
-              )}
+            {/* ── Summary strip ── */}
+            <div className="shrink-0 px-5 pt-4 pb-4 border-b border-gray-100 dark:border-gray-800 space-y-3">
+              {/* Price */}
+              <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
+                {property.price > 0
+                  ? property.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })
+                  : "Sob consulta"}
+              </p>
 
-              <div className="p-5 space-y-3">
-                {/* Badges row */}
-                <div className="flex flex-wrap gap-1.5">
-                  {property.purpose && (
-                    <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                      property.purpose === "Venda"
-                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
-                        : property.purpose === "Aluguel"
-                        ? "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300"
-                        : "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
-                    }`}>
-                      {property.purpose.toUpperCase()}
-                    </span>
-                  )}
-                  {property.property_type && (
-                    <span className="rounded-full bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 text-[10px] font-medium text-gray-600 dark:text-gray-400">
-                      {property.property_type}
-                    </span>
-                  )}
-                  {property.publication_status && (
-                    <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${
-                      property.publication_status === "published" || property.publication_status === "Publicado"
-                        ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
-                        : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
-                    }`}>
-                      {property.publication_status === "published" ? "Publicado" : property.publication_status}
-                    </span>
-                  )}
-                </div>
-
-                {/* Price */}
-                <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {property.price > 0
-                    ? property.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 })
-                    : "Sob consulta"}
-                </p>
-
-                {/* Specs strip */}
-                {(() => {
-                  const parse = (suffix: string) => {
-                    const t = property.tags?.find(t => t.endsWith(suffix));
-                    return t ? parseInt(t) : null;
-                  };
-                  const quartos = parse("Q");
-                  const suites  = parse("S");
-                  const vagas   = parse("V");
-                  const items = [
-                    quartos != null && { label: "Quartos", value: quartos },
-                    suites  != null && suites > 0 && { label: "Suítes", value: suites },
-                    vagas   != null && { label: "Vagas",   value: vagas   },
-                    property.area_sqm != null && { label: "m²", value: property.area_sqm },
-                  ].filter(Boolean) as { label: string; value: number }[];
-
-                  if (items.length === 0) return null;
-                  return (
-                    <div className="flex flex-wrap gap-3">
-                      {items.map(({ label, value }) => (
-                        <div key={label} className="flex flex-col items-center rounded-xl border border-gray-100 dark:border-gray-800 px-3 py-2 min-w-[56px]">
-                          <span className="text-base font-bold text-gray-800 dark:text-white">{value}</span>
-                          <span className="text-[10px] text-gray-400">{label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
-
-                {/* Neighborhood */}
-                {property.neighborhood && (
-                  <p className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
-                    <svg className="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                      <circle cx="12" cy="11" r="3" />
-                    </svg>
-                    {property.neighborhood}
-                  </p>
+              {/* Badges row */}
+              <div className="flex flex-wrap gap-1.5">
+                {property.purpose && (
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
+                    property.purpose === "Venda"
+                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300"
+                      : property.purpose === "Aluguel"
+                      ? "bg-sky-100 text-sky-700 dark:bg-sky-500/20 dark:text-sky-300"
+                      : "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
+                  }`}>
+                    {property.purpose.toUpperCase()}
+                  </span>
                 )}
+                {property.property_type && (
+                  <span className="rounded-full bg-gray-100 dark:bg-gray-800 px-2.5 py-0.5 text-[10px] font-medium text-gray-600 dark:text-gray-400">
+                    {property.property_type}
+                  </span>
+                )}
+                {property.publication_status && (
+                  <span className={`rounded-full px-2.5 py-0.5 text-[10px] font-medium ${
+                    property.publication_status === "published" || property.publication_status === "Publicado"
+                      ? "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400"
+                      : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                  }`}>
+                    {property.publication_status === "published" ? "Publicado" : property.publication_status}
+                  </span>
+                )}
+              </div>
 
+              {/* Specs grid */}
+              {(() => {
+                const parse = (suffix: string) => {
+                  const t = property.tags?.find(t => t.endsWith(suffix));
+                  return t ? parseInt(t) : null;
+                };
+                const quartos = parse("Q");
+                const suites  = parse("S");
+                const vagas   = parse("V");
+                const items = [
+                  quartos != null && { label: "Quartos", value: quartos },
+                  suites  != null && suites > 0 && { label: "Suítes", value: suites },
+                  vagas   != null && { label: "Vagas",   value: vagas   },
+                  property.area_sqm != null && { label: "m²", value: property.area_sqm },
+                ].filter(Boolean) as { label: string; value: number }[];
+
+                if (items.length === 0) return null;
+                return (
+                  <div className="flex flex-wrap gap-3">
+                    {items.map(({ label, value }) => (
+                      <div key={label} className="flex flex-col items-center rounded-xl border border-gray-100 dark:border-gray-800 px-3 py-2 min-w-[56px]">
+                        <span className="text-base font-bold text-gray-800 dark:text-white">{value}</span>
+                        <span className="text-[10px] text-gray-400">{label}</span>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* ── Scrollable content ── */}
+            <div className="flex-1 overflow-y-auto p-5 [scrollbar-width:thin] [scrollbar-color:rgba(156,163,175,0.4)_transparent] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-400/40">
+              <div className="space-y-4">
                 {/* Description */}
                 {property.description && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed line-clamp-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                     {property.description}
                   </p>
                 )}
@@ -373,12 +355,7 @@ export default function PropertyDrawer({
                     Ver no site
                   </a>
                 )}
-              </div>
-            </div>
 
-            {/* ── Scrollable form content ── */}
-            <div className="flex-1 overflow-y-auto p-5">
-              <div className="space-y-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Editar Imóvel</p>
 
                 {/* ── Classificação ── */}

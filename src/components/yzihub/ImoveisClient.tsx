@@ -2,8 +2,8 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useTenant } from "@/hooks/useTenant";
-import { createClient } from "@/lib/supabase/client";
 import type { Property } from "@/types/properties";
+import type { N8nEnvelope, N8nImovel } from "@/types/n8n-payloads";
 import PropertyCard from "@/components/yzihub/PropertyCard";
 import PropertyDrawer from "@/components/yzihub/PropertyDrawer";
 import PropertyTable from "@/components/yzihub/PropertyTable";
@@ -14,48 +14,13 @@ function formatBRL(v: number) {
   return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 }
 
-// ─── Imoveis table row type ───────────────────────────────────────────────────
 
-interface ImoveisRow {
-  id: string;
-  tenant_id: string;
-  titulo_comercial: string | null;
-  bairro: string | null;
-  valor: number | null;
-  quartos: number | null;
-  suites: number | null;
-  vagas: number | null;
-  metragem: number | null;
-  tipo_de_imovel: string | null;
-  finalidade: string | null;
-  foto_principal: { url?: string } | string | null;
-  link_do_imovel: string | null;
-  status_publicacao: string | null;
-  descricao_imovel: string | null;
-  created_at: string | null;
-}
-
-function mapImoveisToProperty(row: ImoveisRow): Property {
-  // Extrair URL da foto_principal (pode ser JSON object ou string)
-  let photoUrl: string | null = null;
-  if (row.foto_principal) {
-    if (typeof row.foto_principal === "string") {
-      try {
-        const parsed = JSON.parse(row.foto_principal);
-        photoUrl = parsed?.url ?? null;
-      } catch {
-        photoUrl = row.foto_principal; // pode ser URL direta
-      }
-    } else if (typeof row.foto_principal === "object" && row.foto_principal !== null) {
-      photoUrl = (row.foto_principal as { url?: string }).url ?? null;
-    }
-  }
-
+function mapN8nImovelToProperty(row: N8nImovel): Property {
   return {
     id: row.id,
     tenant_id: row.tenant_id,
     title: row.titulo_comercial ?? "Sem titulo",
-    photo_url: photoUrl,
+    photo_url: row.foto_principal ?? null,
     price: row.valor ?? 0,
     location: row.bairro ?? "Localizacao nao informada",
     area_sqm: row.metragem ?? null,
@@ -63,7 +28,7 @@ function mapImoveisToProperty(row: ImoveisRow): Property {
     link: row.link_do_imovel ?? null,
     notes: row.descricao_imovel ?? null,
     created_at: row.created_at ?? new Date().toISOString(),
-    updated_at: row.created_at ?? new Date().toISOString(),
+    updated_at: row.updated_at ?? new Date().toISOString(),
     property_type: row.tipo_de_imovel ?? null,
     construction_status: null,
     publication_status: row.status_publicacao ?? null,
@@ -172,25 +137,24 @@ export default function ImoveisClient() {
     async function fetchProperties() {
       setLoading(true);
       setFetchError(null);
-      const supabase = createClient();
-      const { data, error } = await supabase
-        .from("imoveis")
-        .select(
-          "id, tenant_id, titulo_comercial, bairro, valor, quartos, suites, vagas, metragem, tipo_de_imovel, finalidade, foto_principal, link_do_imovel, status_publicacao, descricao_imovel, created_at"
-        )
-        .eq("tenant_id", tenant!.id)
-        .eq("status_publicacao", "Publicado")
-        .order("created_at", { ascending: false });
 
-      if (cancelled) return;
-
-      if (error) {
-        console.error("[ImoveisClient] erro ao buscar imóveis:", error.message, error.details ?? "");
-        setFetchError(error.message);
-      } else if (data) {
-        setProperties((data as ImoveisRow[]).map(mapImoveisToProperty));
+      try {
+        const res = await fetch("/api/imoveis");
+        if (cancelled) return;
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          setFetchError(body?.error ?? `HTTP ${res.status}`);
+          return;
+        }
+        const envelope = (await res.json()) as N8nEnvelope<N8nImovel>;
+        setProperties(envelope.data.map(mapN8nImovelToProperty));
+      } catch (err) {
+        if (cancelled) return;
+        console.error("[ImoveisClient] fetch error:", err);
+        setFetchError(err instanceof Error ? err.message : "Erro ao buscar imóveis");
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
     }
 
     fetchProperties();
@@ -262,7 +226,7 @@ export default function ImoveisClient() {
             <div key={i} className="h-10 w-40 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-800" />
           ))}
         </div>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="h-64 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-800" />
           ))}
@@ -414,7 +378,7 @@ export default function ImoveisClient() {
               <p className="mt-3 text-sm text-gray-400">Nenhum imóvel encontrado</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
               {filtered.map((property) => (
                 <PropertyCard
                   key={property.id}

@@ -58,7 +58,7 @@ export default function PropertyCard({ property, onClick }: { property: Property
       onClick={() => onClick?.(property)}
     >
       {/* Foto h-44 */}
-      <div className="relative h-44 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
         {property.photo_url ? (
           <Image
             src={property.photo_url}

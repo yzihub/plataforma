@@ -150,7 +150,14 @@ export function toN8nImovel(row: any): N8nImovel {
     vagas: row.vagas ?? 0,
     metragem: row.metragem ?? null,
     descricao_imovel: row.descricao_imovel ?? null,
-    foto_principal: row.foto_principal ?? null,
+    foto_principal: (() => {
+      const f = row.foto_principal;
+      if (!f) return null;
+      if (typeof f === "string") {
+        try { return JSON.parse(f)?.url ?? f; } catch { return f; }
+      }
+      return (f as { url?: string })?.url ?? null;
+    })(),
     tipo_de_imovel: row.tipo_de_imovel ?? null,
     finalidade: row.finalidade ?? null,
     link_do_imovel: row.link_do_imovel ?? null,
