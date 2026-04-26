@@ -28,7 +28,7 @@ export async function GET() {
 
     const { data: leads, error: leadsError } = await supabase
       .from("leads")
-      .select("id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, assigned_to, last_action_at, created_at, updated_at")
+      .select("id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, notes, metadata, assigned_to, last_action_at, created_at, updated_at, ai_status, ai_temperature, ai_last_summary, ai_last_intent, ai_qualified_at, ai_hot_at, phone_normalized, corretor_id")
       .eq("tenant_id", tenantId)
       .order("updated_at", { ascending: false });
 
@@ -89,15 +89,6 @@ export async function POST(req: NextRequest) {
         assigned_to: body.assigned_to ?? null,
         notes: body.notes ?? null,
         stage_id: body.stage_id ?? null,
-        janela_visita: body.janela_visita ?? null,
-        regiao_interesse: body.regiao_interesse ?? null,
-        objetivo: body.objetivo ?? null,
-        interesse_principal: body.interesse_principal ?? null,
-        finalidade: body.finalidade ?? null,
-        faixa_valor: body.faixa_valor ?? null,
-        imovel_ref: body.imovel_ref ?? null,
-        status_agendamento: body.status_agendamento ?? null,
-        data_agendamento: body.data_agendamento ?? null,
       })
       .select()
       .single();
