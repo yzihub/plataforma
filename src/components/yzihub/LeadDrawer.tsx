@@ -477,7 +477,14 @@ function TabDados({
       }
 
       if (!res.ok) {
-        setSaveMsg({ ok: false, text: "Erro ao salvar. Tente novamente." });
+        let errorText = "Erro ao salvar. Tente novamente.";
+        try {
+          const errBody = await res.json() as { error?: string };
+          if (errBody?.error) errorText = errBody.error;
+        } catch {
+          // ignore parse failure
+        }
+        setSaveMsg({ ok: false, text: errorText });
         return;
       }
 
