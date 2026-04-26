@@ -2,7 +2,7 @@ import type { BadgeVariant } from '@/types/crm'
 
 // ─── Status & Type enums ──────────────────────────────────────────────────────
 
-export type ContractStatus = 'pendente' | 'assinado' | 'cancelado' | 'rascunho' | 'expirado'
+export type ContractStatus = 'draft' | 'sent' | 'signed' | 'cancelled'
 export type ContractType = 'venda' | 'locacao' | 'servico' | 'parceria'
 
 // ─── Contract entity ──────────────────────────────────────────────────────────
@@ -15,7 +15,7 @@ export interface Contract {
   lead_avatar?: string | null
   project_id?: string | null
   project_name?: string | null
-  corretor_id?: string | null
+  broker_id?: string | null
   corretor_name?: string | null
   title?: string | null
   type: ContractType
@@ -38,11 +38,10 @@ export interface ContractStatusConfig {
 }
 
 export const CONTRACT_STATUS_CONFIG: Record<ContractStatus, ContractStatusConfig> = {
-  rascunho: { color: 'light',   label: 'Rascunho' },
-  pendente: { color: 'warning', label: 'Pendente' },
-  assinado: { color: 'success', label: 'Assinado' },
-  cancelado: { color: 'error',  label: 'Cancelado' },
-  expirado:  { color: 'dark',   label: 'Expirado' },
+  draft:     { color: 'light',   label: 'Rascunho' },
+  sent:      { color: 'warning', label: 'Enviado'  },
+  signed:    { color: 'success', label: 'Assinado' },
+  cancelled: { color: 'error',   label: 'Cancelado' },
 }
 
 // ─── Type labels ──────────────────────────────────────────────────────────────

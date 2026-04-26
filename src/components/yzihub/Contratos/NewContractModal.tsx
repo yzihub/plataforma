@@ -13,7 +13,7 @@ interface NewContractForm {
   lead_name:    string;
   project_id:   string;
   project_name: string;
-  corretor_id:  string;
+  broker_id:    string;
   corretor_name: string;
   title:        string;
   value:        string;
@@ -42,12 +42,12 @@ const INITIAL_FORM: NewContractForm = {
   lead_name:     "",
   project_id:    "",
   project_name:  "",
-  corretor_id:   "",
+  broker_id:     "",
   corretor_name: "",
   title:         "",
   value:         "",
   type:          "venda",
-  status:        "rascunho",
+  status:        "draft",
   notes:         "",
 };
 
@@ -59,11 +59,10 @@ const CONTRACT_TYPE_OPTIONS: { value: ContractType; label: string }[] = [
 ];
 
 const CONTRACT_STATUS_OPTIONS: { value: ContractStatus; label: string }[] = [
-  { value: "rascunho",  label: "Rascunho"  },
-  { value: "pendente",  label: "Pendente"  },
-  { value: "assinado",  label: "Assinado"  },
-  { value: "cancelado", label: "Cancelado" },
-  { value: "expirado",  label: "Expirado"  },
+  { value: "draft",     label: "Rascunho"  },
+  { value: "sent",      label: "Enviado"   },
+  { value: "signed",    label: "Assinado"  },
+  { value: "cancelled", label: "Cancelado" },
 ];
 
 // ─── Input helper ─────────────────────────────────────────────────────────────
@@ -175,7 +174,7 @@ export default function NewContractModal({
         lead_name:     form.lead_name.trim(),
         project_id:    form.project_id    || null,
         project_name:  form.project_name  || null,
-        corretor_id:   form.corretor_id   || null,
+        broker_id:     form.broker_id     || null,
         corretor_name: form.corretor_name || null,
         title:         form.title.trim()  || null,
         value:         parseFloat(form.value),
@@ -333,10 +332,10 @@ export default function NewContractModal({
             <div>
               <label className={labelCls}>Corretor</label>
               <select
-                value={form.corretor_id}
+                value={form.broker_id}
                 onChange={(e) => {
                   const selected = corretores.find((c) => c.id === e.target.value);
-                  handleChange("corretor_id", e.target.value);
+                  handleChange("broker_id", e.target.value);
                   handleChange("corretor_name", selected?.full_name ?? "");
                 }}
                 className={inputCls}

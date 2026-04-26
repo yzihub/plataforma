@@ -26,11 +26,10 @@ function InfoRow({
 // ─── Status options ───────────────────────────────────────────────────────────
 
 const STATUS_OPTIONS: { value: ContractStatus; label: string }[] = [
-  { value: "rascunho",  label: "Rascunho"  },
-  { value: "pendente",  label: "Pendente"  },
-  { value: "assinado",  label: "Assinado"  },
-  { value: "cancelado", label: "Cancelado" },
-  { value: "expirado",  label: "Expirado"  },
+  { value: "draft",     label: "Rascunho"  },
+  { value: "sent",      label: "Enviado"   },
+  { value: "signed",    label: "Assinado"  },
+  { value: "cancelled", label: "Cancelado" },
 ];
 
 // ─── ContractDrawer ───────────────────────────────────────────────────────────
@@ -139,7 +138,7 @@ export default function ContractDrawer({
       const res = await fetch(`/api/contracts/${contract.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "assinado" }),
+        body: JSON.stringify({ status: "signed" }),
       });
       if (!res.ok) throw new Error("Erro ao marcar como assinado");
       const updated: Contract = await res.json();
@@ -403,7 +402,7 @@ export default function ContractDrawer({
                   </div>
 
                   {/* Marcar como assinado */}
-                  {contract.status !== "assinado" && (
+                  {contract.status !== "signed" && (
                     <>
                       {confirmAssinado ? (
                         <div className="rounded-xl border border-emerald-200 dark:border-emerald-500/30 bg-emerald-50 dark:bg-emerald-500/5 p-3">

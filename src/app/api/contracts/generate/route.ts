@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
         corretor_name:         body.corretor   ?? null,
         title:                 body.modelo     ? `${body.modelo} — ${body.comprador ?? "sem comprador"}` : null,
         type:                  body.modelo     ?? "venda",
-        status:                "rascunho",
+        status:                "sent",
         value:                 valor,
         commission_percentage: commissionPercentage,
         commission_amount:     commissionAmount,

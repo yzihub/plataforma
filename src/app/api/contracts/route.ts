@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       corretor_name: body.corretor_name || null,
       title:         body.title         || null,
       type:          body.type          || "venda",
-      status:        body.status        || "rascunho",
+      status:        body.status        || "draft",
       value:         numericValue,
       notes:         body.notes         || null,
       expires_at:    body.expires_at    || null,

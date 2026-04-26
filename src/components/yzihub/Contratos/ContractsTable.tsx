@@ -125,7 +125,7 @@ function ActionMenu({
         >
           Editar
         </button>
-        {contract.status !== "cancelado" && (
+        {contract.status !== "cancelled" && (
           <button
             onClick={() => onCancel(contract.id)}
             className="flex w-full items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-b-xl transition-colors"

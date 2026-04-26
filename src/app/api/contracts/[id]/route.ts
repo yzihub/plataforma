@@ -86,7 +86,7 @@ export async function PATCH(
     }
 
     // Auto-set signed_at quando status muda para 'assinado' sem signed_at informado
-    if (updateData.status === "assinado" && !updateData.signed_at) {
+    if (updateData.status === "signed" && !updateData.signed_at) {
       updateData.signed_at = new Date().toISOString();
     }
 

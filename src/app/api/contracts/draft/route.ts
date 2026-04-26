@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     const commissionPercentage = 5;
     const commissionAmount = parseFloat((valor * commissionPercentage / 100).toFixed(2));
 
-    // 5. Insert em contracts com status='rascunho'
+    // 5. Insert em contracts com status='draft'
     // TODO: quando houver coluna dedicada 'content'/'body', mover texto do contrato para lá.
     // Por ora, armazenar em notes (coluna text já existente na tabela).
     const { data: contract, error: contractError } = await supabase
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
         type:                  input.modelo === "locacao"      ? "locacao"
                              : input.modelo === "exclusividade" ? "servico"
                              : "venda",
-        status:                "rascunho",
+        status:                "draft",
         value:                 valor,
         commission_percentage: commissionPercentage,
         commission_amount:     commissionAmount,
