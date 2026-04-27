@@ -28,9 +28,10 @@ export async function GET() {
 
     const { data: properties, error: propertiesError } = await supabase
       .from("imoveis")
-      .select("id, tenant_id, titulo_comercial, bairro, valor, quartos, suites, vagas, metragem, descricao_imovel, foto_principal, tipo_de_imovel, finalidade, link_do_imovel, status_publicacao, created_at, updated_at")
+      .select("id, tenant_id, titulo_comercial, bairro, valor, quartos, suites, vagas, metragem, descricao_imovel, foto_principal, imagem_card, tipo_de_imovel, finalidade, link_do_imovel, status_publicacao, status_operacional, created_at, updated_at")
       .eq("tenant_id", tenantId)
       .eq("status_publicacao", "Publicado")
+      .eq("status_operacional", "disponivel")
       .order("updated_at", { ascending: false });
 
     if (propertiesError) {

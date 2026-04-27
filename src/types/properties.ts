@@ -18,6 +18,8 @@ export interface Property {
   property_type: string | null;
   construction_status: string | null;
   publication_status: string | null;
+  operational_status: string | null;
+  card_image: string | null;
   tags: string[] | null;
   neighborhood: string | null;
   purpose: string | null;

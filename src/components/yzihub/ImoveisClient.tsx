@@ -20,7 +20,8 @@ function mapN8nImovelToProperty(row: N8nImovel): Property {
     id: row.id,
     tenant_id: row.tenant_id,
     title: row.titulo_comercial ?? "Sem titulo",
-    photo_url: row.foto_principal ?? null,
+    photo_url: row.imagem_card ?? row.foto_principal ?? null,
+    card_image: row.imagem_card ?? null,
     price: row.valor ?? 0,
     location: row.bairro ?? "Localizacao nao informada",
     area_sqm: row.metragem ?? null,
@@ -32,6 +33,7 @@ function mapN8nImovelToProperty(row: N8nImovel): Property {
     property_type: row.tipo_de_imovel ?? null,
     construction_status: null,
     publication_status: row.status_publicacao ?? null,
+    operational_status: row.status_operacional ?? null,
     tags: [
       row.quartos != null ? `${row.quartos}Q` : null,
       row.suites != null && row.suites > 0 ? `${row.suites}S` : null,

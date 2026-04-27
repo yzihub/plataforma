@@ -57,10 +57,12 @@ export interface N8nImovel {
   metragem: number | null;
   descricao_imovel: string | null;
   foto_principal: string | null;
+  imagem_card: string | null;
   tipo_de_imovel: string | null;
   finalidade: string | null;
   link_do_imovel: string | null;
   status_publicacao: string;
+  status_operacional: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -158,10 +160,12 @@ export function toN8nImovel(row: any): N8nImovel {
       }
       return (f as { url?: string })?.url ?? null;
     })(),
+    imagem_card: row.imagem_card ?? null,
     tipo_de_imovel: row.tipo_de_imovel ?? null,
     finalidade: row.finalidade ?? null,
     link_do_imovel: row.link_do_imovel ?? null,
     status_publicacao: row.status_publicacao ?? "",
+    status_operacional: row.status_operacional ?? null,
     created_at: row.created_at,
     updated_at: row.updated_at,
   };
