@@ -13,7 +13,9 @@ export interface Contract {
   lead_id: string
   lead_name: string
   lead_avatar?: string | null
+  /** @deprecated use imovel_id — mantido por compatibilidade temporária */
   project_id?: string | null
+  imovel_id?: string | null
   project_name?: string | null
   broker_id?: string | null
   corretor_name?: string | null

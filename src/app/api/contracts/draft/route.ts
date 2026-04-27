@@ -91,6 +91,7 @@ export async function POST(req: NextRequest) {
         tenant_id:             tenantId,
         lead_id:               input.lead_id,
         project_id:            input.property_id,
+        imovel_id:             input.property_id,
         broker_id:             input.broker_id,
         lead_name:             input.comprador  ?? null,
         project_name:          input.imovel     ?? null,

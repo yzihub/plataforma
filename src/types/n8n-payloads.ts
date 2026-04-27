@@ -72,6 +72,9 @@ export interface N8nContract {
   tenant_id: string;
   lead_id: string | null;
   lead_name: string;
+  /** @deprecated use imovel_id */
+  project_id: string | null;
+  imovel_id: string | null;
   project_name: string | null;
   corretor_name: string | null;
   title: string | null;
@@ -178,6 +181,8 @@ export function toN8nContract(row: any): N8nContract {
     tenant_id: row.tenant_id,
     lead_id: row.lead_id ?? null,
     lead_name: row.lead_name,
+    project_id: row.project_id ?? null,
+    imovel_id: row.imovel_id ?? null,
     project_name: row.project_name ?? null,
     corretor_name: row.corretor_name ?? null,
     title: row.title ?? null,
