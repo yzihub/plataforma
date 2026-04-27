@@ -1062,7 +1062,11 @@ export default function LeadDrawer({
     if (!lead) return;
     setDeleting(true);
     try {
-      await fetch(`/api/leads/${lead.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/leads/${lead.id}`, { method: "DELETE" });
+      if (!res.ok) {
+        console.error("[LeadDrawer] falha ao excluir lead:", res.status);
+        return;
+      }
       onLeadDeleted?.(lead.id);
       onClose();
     } finally {
