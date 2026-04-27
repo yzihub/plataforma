@@ -11,7 +11,7 @@ import type { ContractStatus, ContractType, Contract } from "@/types/contracts";
 interface NewContractForm {
   lead_id:      string;
   lead_name:    string;
-  project_id:   string;
+  imovel_id:    string;
   project_name: string;
   broker_id:    string;
   corretor_name: string;
@@ -40,7 +40,7 @@ interface ProfileOption {
 const INITIAL_FORM: NewContractForm = {
   lead_id:       "",
   lead_name:     "",
-  project_id:    "",
+  imovel_id:     "",
   project_name:  "",
   broker_id:     "",
   corretor_name: "",
@@ -117,10 +117,12 @@ export default function NewContractModal({
             .eq("tenant_id", tenant!.id)
             .order("name"),
           supabase
-            .from("properties")
-            .select("id, title")
+            .from("imoveis")
+            .select("id, titulo_comercial")
             .eq("tenant_id", tenant!.id)
-            .order("title"),
+            .eq("status_operacional", "disponivel")
+            .eq("status_publicacao", "Publicado")
+            .order("titulo_comercial"),
           supabase
             .from("profiles")
             .select("id, full_name")
@@ -133,7 +135,7 @@ export default function NewContractModal({
         }
         if (propsRes.data) {
           setProperties(
-            propsRes.data.map((p: { id: string; title: string }) => ({ id: p.id, name: p.title }))
+            propsRes.data.map((p: { id: string; titulo_comercial: string }) => ({ id: p.id, name: p.titulo_comercial ?? p.id }))
           );
         }
         if (profilesRes.data) {
@@ -172,7 +174,8 @@ export default function NewContractModal({
       const body: Record<string, unknown> = {
         lead_id:       form.lead_id       || null,
         lead_name:     form.lead_name.trim(),
-        project_id:    form.project_id    || null,
+        imovel_id:     form.imovel_id     || null,
+        project_id:    form.imovel_id     || null,   // backward compat
         project_name:  form.project_name  || null,
         broker_id:     form.broker_id     || null,
         corretor_name: form.corretor_name || null,
@@ -311,10 +314,10 @@ export default function NewContractModal({
             <div>
               <label className={labelCls}>Imovel / Projeto</label>
               <select
-                value={form.project_id}
+                value={form.imovel_id}
                 onChange={(e) => {
                   const selected = properties.find((p) => p.id === e.target.value);
-                  handleChange("project_id", e.target.value);
+                  handleChange("imovel_id", e.target.value);
                   handleChange("project_name", selected?.name ?? "");
                 }}
                 className={inputCls}

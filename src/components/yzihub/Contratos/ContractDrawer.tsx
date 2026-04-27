@@ -186,6 +186,9 @@ export default function ContractDrawer({
   }
 
   const statusCfg = contract ? CONTRACT_STATUS_CONFIG[contract.status] : null;
+  const imovelDisplay = contract
+    ? (contract.project_name ?? (contract.imovel_id ?? contract.project_id ?? null))
+    : null;
 
   return (
     <>
@@ -248,6 +251,9 @@ export default function ContractDrawer({
                 </h3>
                 <div className="space-y-3">
                   <InfoRow label="Lead vinculado" value={contract.lead_name} />
+                  {imovelDisplay && (
+                    <InfoRow label="Imovel" value={imovelDisplay} />
+                  )}
                   <InfoRow
                     label="Valor"
                     value={
