@@ -28,8 +28,9 @@ function useContracts(tenantId: string | null) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error ?? "Erro ao buscar contratos");
       }
-      const data: Contract[] = await res.json();
-      setContracts(data);
+      const json = await res.json();
+      const arr: Contract[] = Array.isArray(json) ? json : Array.isArray(json?.data) ? json.data : [];
+      setContracts(arr);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
       setContracts([]);
