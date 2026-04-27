@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { buildN8nEnvelope, toN8nImovel } from "@/types/n8n-payloads";
 
+const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
+
 // ─── GET /api/imoveis ─────────────────────────────────────────────────────────
 // Retorna imóveis do tenant autenticado em formato padronizado para n8n
 
@@ -9,22 +11,33 @@ export async function GET() {
   try {
     const supabase = await createClient();
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+    // DEV_BYPASS: skip auth in development — consistent with proxy.ts and TenantContext
+    const isDevBypass =
+      process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
+      process.env.NODE_ENV !== "production";
+
+    let tenantId: string;
+
+    if (isDevBypass) {
+      tenantId = DEV_JUREMA_TENANT_ID;
+    } else {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+      }
+
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("tenant_id")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError || !profile?.tenant_id) {
+        return NextResponse.json({ error: "Perfil nao encontrado" }, { status: 401 });
+      }
+
+      tenantId = profile.tenant_id as string;
     }
-
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("tenant_id")
-      .eq("id", user.id)
-      .single();
-
-    if (profileError || !profile?.tenant_id) {
-      return NextResponse.json({ error: "Perfil nao encontrado" }, { status: 401 });
-    }
-
-    const tenantId = profile.tenant_id as string;
 
     const { data: properties, error: propertiesError } = await supabase
       .from("imoveis")
