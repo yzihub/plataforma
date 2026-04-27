@@ -1,10 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
+
 // ─── Helper: autenticar e resolver tenant_id ──────────────────────────────────
 
 async function getAuthContext() {
   const supabase = await createClient();
+
+  // DEV_BYPASS: skip auth in development — consistent with proxy.ts and TenantContext
+  const isDevBypass =
+    process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
+    process.env.NODE_ENV !== "production";
+
+  if (isDevBypass) {
+    return { supabase, user: null, tenantId: DEV_JUREMA_TENANT_ID, error: null, status: 200 };
+  }
 
   const {
     data: { user },

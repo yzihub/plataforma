@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
+
 // ─── POST /api/contracts/generate ────────────────────────────────────────────
 // Enfileira a geracao de contrato no job_queue para processamento via n8n.
 // Nunca chama o n8n diretamente — segue o Action Flow padrao YZIHUB.
@@ -9,28 +11,39 @@ export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
 
-    // 1. Verificar autenticacao
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // DEV_BYPASS: skip auth in development — consistent with proxy.ts and TenantContext
+    const isDevBypass =
+      process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
+      process.env.NODE_ENV !== "production";
 
-    if (authError || !user) {
-      return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+    let tenantId: string;
+
+    if (isDevBypass) {
+      tenantId = DEV_JUREMA_TENANT_ID;
+    } else {
+      // 1. Verificar autenticacao
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
+      }
+
+      // 2. Buscar tenant_id do usuario
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("tenant_id")
+        .eq("id", user.id)
+        .single();
+
+      if (profileError || !profile?.tenant_id) {
+        return NextResponse.json({ error: "Perfil nao encontrado" }, { status: 401 });
+      }
+
+      tenantId = profile.tenant_id as string;
     }
-
-    // 2. Buscar tenant_id do usuario
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("tenant_id")
-      .eq("id", user.id)
-      .single();
-
-    if (profileError || !profile?.tenant_id) {
-      return NextResponse.json({ error: "Perfil nao encontrado" }, { status: 401 });
-    }
-
-    const tenantId = profile.tenant_id as string;
 
     // 3. Ler body
     const body = await req.json() as {
