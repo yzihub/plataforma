@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "**" },
+    ],
+  },
   async redirects() {
     return [
       // Root → cockpit (proxy handles auth; unauthenticated lands on /signin via proxy)
