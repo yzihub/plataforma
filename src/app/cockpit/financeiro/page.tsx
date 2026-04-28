@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import FinanceiroClient from "@/components/yzihub/Financeiro/FinanceiroClient";
 
 export default function FinanceiroPage() {
-  redirect("/cockpit/contratos");
+  return <FinanceiroClient />;
 }
