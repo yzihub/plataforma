@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { buildN8nEnvelope, toN8nContract } from "@/types/n8n-payloads";
 
 const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
@@ -9,12 +10,12 @@ const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
 
 export async function GET() {
   try {
-    const supabase = await createClient();
-
     // DEV_BYPASS: skip auth in development — consistent with proxy.ts and TenantContext
     const isDevBypass =
       process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
       process.env.NODE_ENV !== "production";
+
+    const supabase = isDevBypass ? createAdminClient() : await createClient();
 
     let tenantId: string;
 
@@ -68,12 +69,12 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createClient();
-
     // DEV_BYPASS: skip auth in development — consistent with proxy.ts and TenantContext
     const isDevBypass =
       process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
       process.env.NODE_ENV !== "production";
+
+    const supabase = isDevBypass ? createAdminClient() : await createClient();
 
     let tenantId: string;
 
