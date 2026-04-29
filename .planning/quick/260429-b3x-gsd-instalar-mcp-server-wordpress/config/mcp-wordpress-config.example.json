@@ -1,0 +1,43 @@
+{
+  "_comment": "Exemplo de configuracao MCP para conectar Claude Desktop (ou outro cliente MCP) ao WordPress via mcp-wp/mcp-server.",
+  "_comment2": "Copie este arquivo para ~/.config/claude/claude_desktop_config.json (Mac/Linux) ou %APPDATA%/Claude/claude_desktop_config.json (Windows) e substitua os valores REPLACE_WITH_* pelos valores reais.",
+  "_docs": "https://github.com/Automattic/mcp-wp",
+  "_mcp_spec": "https://modelcontextprotocol.io",
+  "_auth_note": "O WordPress usa HTTP Basic Auth com Application Password. O mcp-remote injeta o header Authorization automaticamente se o URL incluir as credenciais, ou via variavel de ambiente.",
+
+  "mcpServers": {
+    "wordpress-jurema": {
+      "_comment": "Conecta ao WordPress juremabksimoveis.com.br via mcp-remote (SSE transport).",
+      "_comment2": "mcp-remote e um proxy local que converte stdio MCP para HTTP SSE. Requer Node.js 18+ instalado.",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://juremabksimoveis.com.br/wp-json/mcp/v1/sse",
+        "--header",
+        "Authorization: Basic REPLACE_WITH_BASE64_USER_APPPASSWORD"
+      ],
+      "_how_to_generate_base64": "No terminal: echo -n 'mcp-bot:xxxxxxxxxxxxxxxxxxxxxxxxxxxx' | base64 (sem espacos no Application Password)",
+      "env": {
+        "NODE_TLS_REJECT_UNAUTHORIZED": "1"
+      }
+    },
+
+    "wordpress-jurema-env": {
+      "_comment": "Alternativa usando variaveis de ambiente em vez de base64 inline.",
+      "_comment2": "Requer que mcp-remote suporte --env-auth (verificar versao do mcp-remote).",
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://juremabksimoveis.com.br/wp-json/mcp/v1/sse"
+      ],
+      "env": {
+        "WP_URL": "https://juremabksimoveis.com.br",
+        "WP_USER": "mcp-bot",
+        "WP_APP_PASSWORD": "REPLACE_WITH_APPLICATION_PASSWORD",
+        "_note": "Application Password formato: 'xxxx xxxx xxxx xxxx xxxx xxxx' (com ou sem espacos — o script normaliza)"
+      }
+    }
+  }
+}

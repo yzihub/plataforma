@@ -39,9 +39,13 @@ next-env.d.ts
 # local MCP config (may contain secrets)
 .mcp.json
 
+# MCP credentials (Application Passwords — jamais commitar)
+.planning/quick/260429-b3x-gsd-instalar-mcp-server-wordpress/.env.mcp
+
 # Claude Code local permissions (machine-specific, never commit)
 .claude/settings.local.json
 
 # planning — block workflow payloads that may contain secrets
 .planning/quick/**/*.json
+!.planning/quick/**/*.example.json
 .planning/debug/**/*.json
