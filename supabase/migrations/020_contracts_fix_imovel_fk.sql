@@ -3,25 +3,8 @@
 -- De: properties(id)  →  Para: imoveis(id)
 -- ============================================================
 
--- 1. Dropar FK existente (aponta para properties)
-DO $$
-BEGIN
-  IF EXISTS (
-    SELECT 1 FROM pg_constraint
-    WHERE conrelid = 'contracts'::regclass
-      AND contype = 'f'
-      AND conname LIKE '%imovel%'
-  ) THEN
-    EXECUTE (
-      SELECT 'ALTER TABLE contracts DROP CONSTRAINT ' || quote_ident(conname)
-      FROM pg_constraint
-      WHERE conrelid = 'contracts'::regclass
-        AND contype = 'f'
-        AND conname LIKE '%imovel%'
-      LIMIT 1
-    );
-  END IF;
-END $$;
+-- 1. Dropar FK existente (aponta para properties) — pelo nome exato
+ALTER TABLE contracts DROP CONSTRAINT IF EXISTS contracts_imovel_id_fkey;
 
 -- 2. Zerar imovel_id orfao (UUIDs que nao existem em imoveis)
 UPDATE contracts
