@@ -136,6 +136,7 @@ None yet.
 | 260418-vrr | Criar tela de editor de contrato | 2026-04-19 | 3960e9a | [260418-vrr-criar-tela-de-editor-de-contrato](./quick/260418-vrr-criar-tela-de-editor-de-contrato/) |
 | 260419-bq3 | Conectar editor de contrato com dados reais — GET /api/imoveis/[id] + ContratoEditor fetch pontual, valor de property, chip id_imovel | 2026-04-19 | b79d5a1 | [260419-bq3-conectar-editor-de-contrato-com-dados-re](./quick/260419-bq3-conectar-editor-de-contrato-com-dados-re/) |
 | 260419-coq | Melhorar editor de contratos — logos Jurema copiadas, 3 seletores reais (Lead/Imovel/Corretor) com SearchSelect generico, mocks automaticos quando IDs null, preview folha de papel branca com logo preta | 2026-04-19 | decab1a | [260419-coq-melhorar-editor-de-contratos-copiar-logo](./quick/260419-coq-melhorar-editor-de-contratos-copiar-logo/) |
+| 260501-gwj | Especificar endpoint POST /webhook/imoveis no YZI OS — contrato HTTP v1 (bearer auth, upsert/delete/unpublish, 18 colunas, merge parcial, respostas HTTP) | 2026-05-01 | 3034b7f | [260501-gwj-especificar-endpoint-yzi-os-para-imoveis](./quick/260501-gwj-especificar-endpoint-yzi-os-para-imoveis/) |
 
 ### Blockers/Concerns
 
@@ -145,6 +146,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-17T00:00:00.000Z
-Last activity: 2026-04-18 - Completed quick task 260418-go0: Adicionar campo Referência do imóvel no LeadDrawer com select pesquisável carregando imóveis reais do banco e salvando id_imovel
+Last activity: 2026-05-01 - Completed quick task 260501-gwj: Especificar endpoint POST /webhook/imoveis no YZI OS
 Stopped at: Completed quick-260417-scq-PLAN.md
 Resume file: None
