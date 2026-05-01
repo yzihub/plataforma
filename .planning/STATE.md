@@ -138,6 +138,7 @@ None yet.
 | 260419-coq | Melhorar editor de contratos — logos Jurema copiadas, 3 seletores reais (Lead/Imovel/Corretor) com SearchSelect generico, mocks automaticos quando IDs null, preview folha de papel branca com logo preta | 2026-04-19 | decab1a | [260419-coq-melhorar-editor-de-contratos-copiar-logo](./quick/260419-coq-melhorar-editor-de-contratos-copiar-logo/) |
 | 260501-gwj | Especificar endpoint POST /webhook/imoveis no YZI OS — contrato HTTP v1 (bearer auth, upsert/delete/unpublish, 18 colunas, merge parcial, respostas HTTP) | 2026-05-01 | 3034b7f | [260501-gwj-especificar-endpoint-yzi-os-para-imoveis](./quick/260501-gwj-especificar-endpoint-yzi-os-para-imoveis/) |
 | 260501-n24 | Implementar endpoint POST /webhook/imoveis no YZI OS | 2026-05-01 | 72575eb | [260501-n24-implementar-endpoint-post-webhook-imovei](./quick/260501-n24-implementar-endpoint-post-webhook-imovei/) |
+| 260501-rg3 | Preparar producao webhook imoveis — URL, secret, Vercel env, wp-config.php, checklist | 2026-05-01 | bc35572 | [260501-rg3-preparar-producao-webhook-imoveis](./quick/260501-rg3-preparar-producao-webhook-imoveis/) |
 
 ### Blockers/Concerns
 
@@ -147,6 +148,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-04-17T00:00:00.000Z
-Last activity: 2026-05-01 - Completed quick task 260501-n24: Implementar endpoint POST /webhook/imoveis no YZI OS
+Last activity: 2026-05-01 - Completed quick task 260501-rg3: Preparar producao webhook imoveis — URL, secret, Vercel env, wp-config.php, checklist
 Stopped at: Completed quick-260417-scq-PLAN.md
 Resume file: None
