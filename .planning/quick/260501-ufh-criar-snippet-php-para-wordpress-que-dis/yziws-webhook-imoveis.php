@@ -9,7 +9,7 @@
  * Dependencias (configurar em wp-config.php antes de ativar):
  *   define('YZIWS_WEBHOOK_SECRET', 'SEU_SECRET_AQUI');
  *   define('YZIWS_WEBHOOK_URL', 'https://plataforma.yzihub.com/api/webhook/imoveis');
- *   // Opcional: define('YZIWS_CPT', 'imovel'); // default 'imovel'
+ *   // Opcional: define('YZIWS_CPT', 'imoveis'); // default 'imoveis'
  *
  * @package     YZIHub
  * @author      YZI Hub
@@ -28,12 +28,12 @@ if ( ! defined( 'YZIWS_TENANT_ID' ) ) {
 }
 
 /**
- * Retorna o CPT configurado, com fallback para 'imovel'.
+ * Retorna o CPT configurado, com fallback para 'imoveis'.
  *
  * @return string Nome do Custom Post Type a ser monitorado.
  */
 function yziws_get_cpt() {
-    return defined( 'YZIWS_CPT' ) ? YZIWS_CPT : 'imovel';
+    return defined( 'YZIWS_CPT' ) ? YZIWS_CPT : 'imoveis';
 }
 
 /**
@@ -64,17 +64,29 @@ function yziws_can_send() {
 
 /**
  * Resolve o identificador unico do imovel.
- * Tenta: meta 'id_imovel' → slug do post → 'post-{ID}'.
+ * Tenta na ordem: meta 'codigo-do-imovel' (JetEngine real) →
+ * meta 'id_imovel' (legacy) → meta '_id_imovel' (legacy underscore) →
+ * slug do post → 'post-{ID}'.
  * Trunca para no maximo 100 caracteres.
  *
  * @param WP_Post $post Objeto do post WordPress.
  * @return string Identificador do imovel.
  */
 function yziws_get_id_imovel( $post ) {
-    $meta = get_post_meta( $post->ID, 'id_imovel', true );
+    $candidates = array(
+        get_post_meta( $post->ID, 'codigo-do-imovel', true ),
+        get_post_meta( $post->ID, 'id_imovel', true ),
+        get_post_meta( $post->ID, '_id_imovel', true ),
+    );
 
-    if ( ! empty( $meta ) ) {
-        return substr( (string) $meta, 0, 100 );
+    foreach ( $candidates as $candidate ) {
+        if ( $candidate === null || $candidate === false ) {
+            continue;
+        }
+        $value = trim( (string) $candidate );
+        if ( $value !== '' ) {
+            return substr( $value, 0, 100 );
+        }
     }
 
     if ( ! empty( $post->post_name ) ) {
