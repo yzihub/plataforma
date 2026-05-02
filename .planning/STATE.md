@@ -142,6 +142,7 @@ None yet.
 | 260501-ufh | Snippet PHP standalone yziws-webhook-imoveis.php com hooks save/transition/delete para sincronizar JetEngine com /api/webhook/imoveis + INSTALACAO.md | 2026-05-02 | 176f9a4 | [260501-ufh-criar-snippet-php-para-wordpress-que-dis](./quick/260501-ufh-criar-snippet-php-para-wordpress-que-dis/) |
 | 260501-vnn | Corrigir snippet final imóveis | 2026-05-02 | 2742984 | [260501-vnn-corrigir-snippet-final-im-veis](./quick/260501-vnn-corrigir-snippet-final-im-veis/) |
 | 260502-dnq | Instalar webhook WordPress mu-plugin (guia SSH criado — aguardando execução manual) | 2026-05-02 | 8a59716 | [260502-dnq-instalar-webhook-wordpress-mu-plugin](./quick/260502-dnq-instalar-webhook-wordpress-mu-plugin/) |
+| 260502-r3s | Validar imóveis da Jurema Brokers no Cockpit (34 imóveis, typecheck PASS, checkpoint humano pendente) | 2026-05-02 | pending | [260502-r3s-gsd-validar-im-veis-da-jurema-brokers-no](./quick/260502-r3s-gsd-validar-im-veis-da-jurema-brokers-no/) |
 
 ### Blockers/Concerns
 
@@ -151,6 +152,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-05-02T18:04:21.307Z
-Last activity: 2026-05-02 - Completed quick task 260501-ufh: Snippet PHP yziws-webhook-imoveis.php + INSTALACAO.md para sincronizacao WordPress → Supabase
+Last activity: 2026-05-02 - Completed quick task 260502-r3s: Validar imóveis Jurema no Cockpit — 34 imóveis, typecheck PASS, checkpoint humano pendente
 Stopped at: Completed quick-260502-kis-PLAN.md (checkpoint:human-verify task 3)
 Resume file: None
