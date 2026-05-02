@@ -21,6 +21,9 @@ import {
   PlugInIcon,
   DocsIcon,
   HorizontaLDots,
+  UserIcon,
+  CalenderIcon,
+  ChatIcon,
 } from "../icons/index";
 
 // ── Chevron icon for submenus ──────────────────────────────────────────────────
@@ -74,6 +77,7 @@ const SECTIONS: NavSection[] = [
   {
     label: "CRM",
     items: [
+      { name: "Corretores",      icon: <UserIcon />,        path: "/cockpit/corretores" },
       {
         name: "Leads",
         icon: <GroupIcon />,
@@ -83,7 +87,9 @@ const SECTIONS: NavSection[] = [
           { name: "Kanban Lead",  path: "/cockpit/jurema" },
         ],
       },
-      { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,      path: "/cockpit/crm" },
+      { name: "Evolution",       icon: <ChatIcon />,        path: "/cockpit/evolution" },
+      { name: "Calendario",      icon: <CalenderIcon />,    path: "/cockpit/calendario" },
+      { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,     path: "/cockpit/crm" },
       {
         name: "Imoveis",
         icon: <BoxIcon />,
