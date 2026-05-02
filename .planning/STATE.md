@@ -143,6 +143,7 @@ None yet.
 | 260501-vnn | Corrigir snippet final imóveis | 2026-05-02 | 2742984 | [260501-vnn-corrigir-snippet-final-im-veis](./quick/260501-vnn-corrigir-snippet-final-im-veis/) |
 | 260502-dnq | Instalar webhook WordPress mu-plugin (guia SSH criado — aguardando execução manual) | 2026-05-02 | 8a59716 | [260502-dnq-instalar-webhook-wordpress-mu-plugin](./quick/260502-dnq-instalar-webhook-wordpress-mu-plugin/) |
 | 260502-r3s | Validar imóveis da Jurema Brokers no Cockpit (34 imóveis, typecheck PASS, checkpoint humano pendente) | 2026-05-02 | pending | [260502-r3s-gsd-validar-im-veis-da-jurema-brokers-no](./quick/260502-r3s-gsd-validar-im-veis-da-jurema-brokers-no/) |
+| 260502-rm8 | Menu operacional Jurema Brokers validado — Corretores primeiro, Leads submenu, Evolution, Calendario, TypeScript PASS | 2026-05-02 | 4d34836 | [260502-rm8-ajustar-menu-operacional-da-jurema-broke](./quick/260502-rm8-ajustar-menu-operacional-da-jurema-broke/) |
 
 ### Blockers/Concerns
 
@@ -151,7 +152,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-05-02T18:04:21.307Z
-Last activity: 2026-05-02 - Completed quick task 260502-r3s: Validar imóveis Jurema no Cockpit — 34 imóveis, typecheck PASS, checkpoint humano pendente
-Stopped at: Completed quick-260502-kis-PLAN.md (checkpoint:human-verify task 3)
+Last session: 2026-05-02T18:30:00.000Z
+Last activity: 2026-05-02 - Completed quick task 260502-rm8: Menu operacional Jurema Brokers validado no AppSidebar — TypeScript PASS
+Stopped at: Completed quick-260502-rm8-PLAN.md
 Resume file: None
