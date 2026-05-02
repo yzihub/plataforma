@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: Completed quick-260419-coq-PLAN.md
 last_updated: "2026-04-19T12:30:00Z"
-last_activity: "2026-04-19 - Completed quick task 260419-coq: Editor de contratos melhorado — logos Jurema, seletores reais Lead/Imovel/Corretor, mocks automaticos, preview folha de papel"
+last_activity: "2026-05-02 - Completed quick task 260501-vnn: Corrigir snippet final imóveis"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -140,6 +140,7 @@ None yet.
 | 260501-n24 | Implementar endpoint POST /webhook/imoveis no YZI OS | 2026-05-01 | 72575eb | [260501-n24-implementar-endpoint-post-webhook-imovei](./quick/260501-n24-implementar-endpoint-post-webhook-imovei/) |
 | 260501-rg3 | Preparar producao webhook imoveis — URL, secret, Vercel env, wp-config.php, checklist | 2026-05-01 | bc35572 | [260501-rg3-preparar-producao-webhook-imoveis](./quick/260501-rg3-preparar-producao-webhook-imoveis/) |
 | 260501-ufh | Snippet PHP standalone yziws-webhook-imoveis.php com hooks save/transition/delete para sincronizar JetEngine com /api/webhook/imoveis + INSTALACAO.md | 2026-05-02 | 176f9a4 | [260501-ufh-criar-snippet-php-para-wordpress-que-dis](./quick/260501-ufh-criar-snippet-php-para-wordpress-que-dis/) |
+| 260501-vnn | Corrigir snippet final imóveis | 2026-05-02 | 2742984 | [260501-vnn-corrigir-snippet-final-im-veis](./quick/260501-vnn-corrigir-snippet-final-im-veis/) |
 
 ### Blockers/Concerns
 
