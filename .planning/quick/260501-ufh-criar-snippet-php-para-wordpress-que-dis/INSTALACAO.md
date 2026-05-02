@@ -12,7 +12,7 @@ Antes de instalar, confirme os itens abaixo:
 
 - **WordPress 6.x** com o plugin **Code Snippets** instalado e ativo.
   - Link: https://wordpress.org/plugins/code-snippets/
-- **Plugin JetEngine** configurado com o CPT `imovel` (ou o nome customizado do seu CPT).
+- **Plugin JetEngine** configurado com o CPT `imoveis` (ou o nome customizado do seu CPT).
 - **Constantes** `YZIWS_WEBHOOK_SECRET` e `YZIWS_WEBHOOK_URL` ja definidas no `wp-config.php`
   (ver PRODUCAO.md em quick-260501-rg3 para gerir o secret na Vercel).
 - **Endpoint no ar**: `POST /api/webhook/imoveis` em https://plataforma.yzihub.com.
@@ -32,8 +32,8 @@ Adicionar as linhas abaixo no arquivo `wp-config.php` do WordPress,
 ```php
 define('YZIWS_WEBHOOK_SECRET', 'COLAR_O_SECRET_DA_VERCEL_AQUI');
 define('YZIWS_WEBHOOK_URL', 'https://plataforma.yzihub.com/api/webhook/imoveis');
-// Opcional — somente se o CPT do JetEngine NAO for 'imovel':
-// define('YZIWS_CPT', 'imovel');
+// Opcional — somente se o CPT do JetEngine NAO for 'imoveis':
+// define('YZIWS_CPT', 'imoveis');
 ```
 
 O valor de `YZIWS_WEBHOOK_SECRET` DEVE ser identico ao secret configurado
@@ -60,7 +60,7 @@ O snippet sera ativado imediatamente. Nenhum reinicio de servidor e necessario.
 
 ## 4. Customizar o CPT (opcional)
 
-Por padrao, o snippet escuta apenas posts do CPT `imovel`.
+Por padrao, o snippet escuta apenas posts do CPT `imoveis`.
 Se o JetEngine estiver configurado com outro nome de CPT, adicionar a constante abaixo
 no `wp-config.php` (junto com as demais constantes da secao 2):
 
@@ -68,7 +68,7 @@ no `wp-config.php` (junto com as demais constantes da secao 2):
 define('YZIWS_CPT', 'meu_cpt_customizado');
 ```
 
-Sem essa constante, o snippet usa `imovel` como valor padrao.
+Sem essa constante, o snippet usa `imoveis` como valor padrao.
 
 ---
 
