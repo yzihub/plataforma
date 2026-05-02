@@ -139,6 +139,7 @@ None yet.
 | 260501-gwj | Especificar endpoint POST /webhook/imoveis no YZI OS — contrato HTTP v1 (bearer auth, upsert/delete/unpublish, 18 colunas, merge parcial, respostas HTTP) | 2026-05-01 | 3034b7f | [260501-gwj-especificar-endpoint-yzi-os-para-imoveis](./quick/260501-gwj-especificar-endpoint-yzi-os-para-imoveis/) |
 | 260501-n24 | Implementar endpoint POST /webhook/imoveis no YZI OS | 2026-05-01 | 72575eb | [260501-n24-implementar-endpoint-post-webhook-imovei](./quick/260501-n24-implementar-endpoint-post-webhook-imovei/) |
 | 260501-rg3 | Preparar producao webhook imoveis — URL, secret, Vercel env, wp-config.php, checklist | 2026-05-01 | bc35572 | [260501-rg3-preparar-producao-webhook-imoveis](./quick/260501-rg3-preparar-producao-webhook-imoveis/) |
+| 260501-ufh | Snippet PHP standalone yziws-webhook-imoveis.php com hooks save/transition/delete para sincronizar JetEngine com /api/webhook/imoveis + INSTALACAO.md | 2026-05-02 | 176f9a4 | [260501-ufh-criar-snippet-php-para-wordpress-que-dis](./quick/260501-ufh-criar-snippet-php-para-wordpress-que-dis/) |
 
 ### Blockers/Concerns
 
@@ -147,7 +148,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-17T00:00:00.000Z
-Last activity: 2026-05-01 - Completed quick task 260501-rg3: Preparar producao webhook imoveis — URL, secret, Vercel env, wp-config.php, checklist
-Stopped at: Completed quick-260417-scq-PLAN.md
+Last session: 2026-05-02T01:00:00.000Z
+Last activity: 2026-05-02 - Completed quick task 260501-ufh: Snippet PHP yziws-webhook-imoveis.php + INSTALACAO.md para sincronizacao WordPress → Supabase
+Stopped at: Completed quick-260501-ufh-PLAN.md
 Resume file: None
