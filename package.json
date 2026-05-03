@@ -6,7 +6,9 @@
     "dev": "next dev --webpack --port 3002",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.19",
@@ -43,11 +45,14 @@
     "@types/react": "^19.2.1",
     "@types/react-dom": "^19.2.1",
     "@types/react-transition-group": "^4.4.12",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9.39.1",
     "eslint-config-next": "16.0.7",
+    "jsdom": "^25.0.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
   },
   "overrides": {
     "@react-jvectormap/core": {
