@@ -21,6 +21,7 @@ import {
   PlugInIcon,
   DocsIcon,
   HorizontaLDots,
+  CalenderIcon,
 } from "../icons/index";
 
 // ── Chevron icon for submenus ──────────────────────────────────────────────────
@@ -107,6 +108,7 @@ const SECTIONS: NavSection[] = [
           { name: "Geral",     path: "/cockpit/financeiro" },
         ],
       },
+      { name: "Calendario",  icon: <CalenderIcon />, path: "/cockpit/calendario" },
     ],
   },
   {
