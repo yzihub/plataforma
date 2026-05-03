@@ -129,9 +129,10 @@ const SECTIONS: NavSection[] = [
   {
     label: "Admin",
     items: [
-      { name: "YZI CONTROL",     icon: <BoxIcon />,          path: "/control",         adminOnly: true },
-      { name: "YZI FACTORY",     icon: <PlugInIcon />,       path: "/factory",         adminOnly: true },
-      { name: "Action Logs",     icon: <DocsIcon />,         path: "/control/logs",    adminOnly: true },
+      { name: "YZI CONTROL",     icon: <BoxIcon />,          path: "/control",                    adminOnly: true },
+      { name: "YZI FACTORY",     icon: <PlugInIcon />,       path: "/factory",                    adminOnly: true },
+      { name: "Action Logs",     icon: <DocsIcon />,         path: "/control/logs",               adminOnly: true },
+      { name: "Observabilidade", icon: <BoltIcon />,         path: "/cockpit/observabilidade",    adminOnly: true },
       { name: "Teste Ju",        icon: <BoltIcon />,         path: "/cockpit/jurema-teste" },
     ],
   },
