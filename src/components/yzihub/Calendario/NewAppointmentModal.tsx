@@ -211,7 +211,6 @@ export default function NewAppointmentModal({
               onClick={handleClose}
               className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/[0.04] transition-colors"
             >
-              {/* @ts-expect-error — SVG icon accepts className at runtime via @svgr/webpack */}
               <CloseIcon className="size-5" />
             </button>
           </div>

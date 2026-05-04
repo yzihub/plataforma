@@ -5,7 +5,7 @@ milestone_name: milestone
 status: unknown
 stopped_at: Completed quick-260503-0pt-PLAN.md
 last_updated: "2026-05-03T03:40:06Z"
-last_activity: "2026-05-03 - Completed quick task 260503-0pt: CI mínimo GitHub Actions — typecheck script + .github/workflows/ci.yml"
+last_activity: "2026-05-04 - Completed quick task 260503-l3h: Calendário operacional v1 — /cockpit/calendario funcional com Supabase"
 progress:
   total_phases: 6
   completed_phases: 0
@@ -147,6 +147,7 @@ None yet.
 | 260502-rm8 | Menu operacional Jurema Brokers validado — Corretores primeiro, Leads submenu, Evolution, Calendario, TypeScript PASS | 2026-05-02 | 4d34836 | [260502-rm8-ajustar-menu-operacional-da-jurema-broke](./quick/260502-rm8-ajustar-menu-operacional-da-jurema-broke/) |
 | 260502-rxe | Criar smoke tests mínimos para rotas da plataforma YZI | 2026-05-02 | a0da6c7 | [260502-rxe-criar-smoke-tests-m-nimos-para-rotas-da-](./quick/260502-rxe-criar-smoke-tests-m-nimos-para-rotas-da-/) |
 | 260503-0pt | CI mínimo GitHub Actions — typecheck script + .github/workflows/ci.yml (npm ci + typecheck + lint + test + build) | 2026-05-03 | fef8c3c | [260503-0pt-criar-ci-m-nimo-com-github-actions-verif](./quick/260503-0pt-criar-ci-m-nimo-com-github-actions-verif/) |
+| 260503-l3h | Calendário operacional v1 — /cockpit/calendario com lista, modal "Novo compromisso", persistência Supabase, banner integração n8n/Google | 2026-05-03 | e0502a2 | [260503-l3h-calend-rio-operacional-v1](./quick/260503-l3h-calend-rio-operacional-v1/) |
 
 ### Blockers/Concerns
 

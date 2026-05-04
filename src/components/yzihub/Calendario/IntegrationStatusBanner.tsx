@@ -57,8 +57,6 @@ export default function IntegrationStatusBanner({
       <div className="flex items-start gap-3">
         {/* Ícone */}
         <div className="shrink-0 mt-0.5 text-gray-400 dark:text-gray-500">
-          {/* SVG icons — className prop pattern used across codebase (SVGR handles at runtime) */}
-          {/* @ts-expect-error — SVG components accept className at runtime via @svgr/webpack */}
           {provider ? <PlugInIcon className="size-5" /> : <InfoIcon className="size-5" />}
         </div>
 
