@@ -113,6 +113,7 @@ const SECTIONS: NavSection[] = [
           { name: "Geral",     path: "/cockpit/financeiro" },
         ],
       },
+      { name: "Calendario",  icon: <CalenderIcon />, path: "/cockpit/calendario" },
     ],
   },
   {
