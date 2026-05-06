@@ -88,6 +88,7 @@ const SECTIONS: NavSection[] = [
         ],
       },
       { name: "Evolution",       icon: <ChatIcon />,        path: "/cockpit/evolution" },
+      { name: "Chat",            icon: <ChatIcon />,        path: "/cockpit/chat" },
       { name: "Calendario",      icon: <CalenderIcon />,    path: "/cockpit/calendario" },
       { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,     path: "/cockpit/crm" },
       {
