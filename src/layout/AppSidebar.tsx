@@ -5,26 +5,23 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import { useTenant } from "@/hooks/useTenant";
-import UpgradeCard from "@/components/yzihub/UpgradeCard";
-import UpgradeModal from "@/components/yzihub/UpgradeModal";
 import type { TenantPlan } from "@/lib/control/types";
-import {
-  GridIcon,
-  GroupIcon,
-  BoxCubeIcon,
-  ShootingStarIcon,
-  PaperPlaneIcon,
-  PieChartIcon,
-  BoltIcon,
-  DollarLineIcon,
-  BoxIcon,
-  PlugInIcon,
-  DocsIcon,
-  HorizontaLDots,
-  UserIcon,
-  CalenderIcon,
-  ChatIcon,
-} from "../icons/index";
+// DIAGNOSTIC TEST — direct imports (bypass barrel to isolate @svgr/webpack hang)
+import GridIcon from "../icons/grid.svg";
+import GroupIcon from "../icons/group.svg";
+import ShootingStarIcon from "../icons/shooting-star.svg";
+import PaperPlaneIcon from "../icons/paper-plane.svg";
+import PieChartIcon from "../icons/pie-chart.svg";
+import BoltIcon from "../icons/bolt.svg";
+import DollarLineIcon from "../icons/dollar-line.svg";
+import BoxIcon from "../icons/box.svg";
+import PlugInIcon from "../icons/plug-in.svg";
+import DocsIcon from "../icons/docs.svg";
+import HorizontaLDots from "../icons/horizontal-dots.svg";
+import UserIcon from "../icons/user-line.svg";
+import CalenderIcon from "../icons/calender-line.svg";
+import ChatIcon from "../icons/chat.svg";
+import TaskIcon from "../icons/task.svg";
 
 // ── Chevron icon for submenus ──────────────────────────────────────────────────
 const ChevronDownIcon = ({ open }: { open: boolean }) => (
@@ -59,6 +56,7 @@ type NavItem = {
   requiredPlan?: 'growth' | 'enterprise';  // two-level plan gating
   children?: NavChild[];    // submenu items
   submenuKey?: string;      // unique key for tracking open state
+  lockedBadge?: string;     // always renders as disabled with this badge text
 };
 
 type NavSection = {
@@ -84,13 +82,11 @@ const SECTIONS: NavSection[] = [
         submenuKey: "leads",
         children: [
           { name: "Lista",        path: "/cockpit/leads" },
-          { name: "Kanban Lead",  path: "/cockpit/jurema" },
+          { name: "Kanban Lead",  path: "/cockpit/leads/kanban" },
         ],
       },
-      { name: "Evolution",       icon: <ChatIcon />,        path: "/cockpit/evolution" },
       { name: "Chat",            icon: <ChatIcon />,        path: "/cockpit/chat" },
-      { name: "Calendario",      icon: <CalenderIcon />,    path: "/cockpit/calendario" },
-      { name: "CRM / Pipeline",  icon: <BoxCubeIcon />,     path: "/cockpit/crm" },
+      { name: "Follow-ups",      icon: <TaskIcon />,        path: "/cockpit/followups" },
       {
         name: "Imoveis",
         icon: <BoxIcon />,
@@ -120,12 +116,11 @@ const SECTIONS: NavSection[] = [
   {
     label: "Modulos",
     items: [
-      { name: "Radar",           icon: <ShootingStarIcon />, path: "/cockpit/radar",     module: "radar",        requiredPlan: 'growth' },
-      { name: "Social",          icon: <PaperPlaneIcon />,   path: "/cockpit/social",    module: "social" },
-      { name: "Trafego Pago",    icon: <PieChartIcon />,     path: "/cockpit/traffic",   module: "paid_traffic", requiredPlan: 'growth' },
-      { name: "AI Assistant",    icon: <BoltIcon />,         path: "/cockpit/ai",        module: "ia_onboarding" },
-      { name: "Conteudo IA",     icon: <DocsIcon />,         path: "/cockpit/conteudo",  module: "ia_content",   requiredPlan: 'enterprise' },
-      { name: "E-commerce",      icon: <DollarLineIcon />,   path: "/cockpit/ecommerce", module: "ecommerce" },
+      { name: "Radar",        icon: <ShootingStarIcon />, path: "/cockpit/radar",    module: "radar",         requiredPlan: 'growth' },
+      { name: "Trafego Pago", icon: <PieChartIcon />,     path: "/cockpit/traffic",  module: "paid_traffic",  requiredPlan: 'growth' },
+      { name: "AI Assistant", icon: <BoltIcon />,         path: "/cockpit/ai",       module: "ia_onboarding", requiredPlan: 'growth' },
+      { name: "Conteudo IA",  icon: <DocsIcon />,         path: "/cockpit/conteudo", module: "ia_content",    requiredPlan: 'growth' },
+      { name: "Growth",       icon: <PaperPlaneIcon />,   path: "/cockpit/growth",                            requiredPlan: 'growth' },
     ],
   },
   {
@@ -145,8 +140,6 @@ const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
   const { tenant, isGlobalAdmin, loading } = useTenant();
-  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
-  const [upgradeTarget, setUpgradeTarget] = useState<'growth' | 'enterprise' | null>(null);
   const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>(() => {
     // Auto-open submenus whose child matches current pathname
     const initial: Record<string, boolean> = {};
@@ -220,15 +213,46 @@ const AppSidebar: React.FC = () => {
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Logo */}
-      <div className={`py-8 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"}`}>
-        <Link href="/cockpit">
+      <div className={`py-6 flex ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start px-1"}`}>
+        <Link href="/cockpit" prefetch={false} className="flex items-center" aria-label="Jurema Brokers">
           {showLabel ? (
             <>
-              <Image className="dark:hidden" src="/images/logo/logo.svg" alt="YZIHUB" width={150} height={40} />
-              <Image className="hidden dark:block" src="/images/logo/logo-dark.svg" alt="YZIHUB" width={150} height={40} />
+              <Image
+                src="/images/jurema/logo-black-official.svg"
+                alt="Jurema Brokers"
+                width={196}
+                height={64}
+                priority
+                className="block dark:hidden h-12 w-auto max-w-[196px]"
+              />
+              <Image
+                src="/images/jurema/logo-white-official.svg"
+                alt="Jurema Brokers"
+                width={196}
+                height={64}
+                priority
+                className="hidden dark:block h-12 w-auto max-w-[196px]"
+              />
             </>
           ) : (
-            <Image src="/images/logo/logo-icon.svg" alt="YZIHUB" width={32} height={32} />
+            <>
+              <Image
+                src="/images/jurema/logo-black-official.svg"
+                alt="Jurema Brokers"
+                width={40}
+                height={40}
+                priority
+                className="block h-10 w-10 object-contain dark:hidden"
+              />
+              <Image
+                src="/images/jurema/logo-white-official.svg"
+                alt="Jurema Brokers"
+                width={40}
+                height={40}
+                priority
+                className="hidden h-10 w-10 object-contain dark:block"
+              />
+            </>
           )}
         </Link>
       </div>
@@ -295,6 +319,7 @@ const AppSidebar: React.FC = () => {
                                     <li key={child.path}>
                                       <Link
                                         href={child.path}
+                                        prefetch={false}
                                         className={`flex items-center gap-2 rounded-lg pl-10 pr-3 py-2 text-xs transition-colors ${
                                           childActive
                                             ? "font-medium text-brand-500 bg-brand-500/5"
@@ -313,17 +338,38 @@ const AppSidebar: React.FC = () => {
                       );
                     }
 
+                    // ── Always-locked item ───────────────────────────────────
+                    if (item.lockedBadge) {
+                      return (
+                        <li key={item.name}>
+                          <button
+                            disabled
+                            className={`menu-item group menu-item-inactive w-full opacity-50 cursor-not-allowed ${
+                              !isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"
+                            }`}
+                          >
+                            <span className="menu-item-icon-inactive">{item.icon}</span>
+                            {showLabel && (
+                              <>
+                                <span className="menu-item-text">{item.name}</span>
+                                <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded">
+                                  {item.lockedBadge}
+                                </span>
+                              </>
+                            )}
+                          </button>
+                        </li>
+                      );
+                    }
+
                     // ── Regular item (flat) ───────────────────────────────────
                     const itemPath = item.path!;
                     return (
                       <li key={itemPath}>
                         {isLockedForPlan(item) ? (
                           <button
-                            onClick={() => {
-                              setUpgradeTarget(item.requiredPlan!);
-                              setUpgradeModalOpen(true);
-                            }}
-                            className={`menu-item group menu-item-inactive w-full ${
+                            disabled
+                            className={`menu-item group menu-item-inactive w-full opacity-50 cursor-not-allowed ${
                               !isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"
                             }`}
                           >
@@ -334,7 +380,7 @@ const AppSidebar: React.FC = () => {
                               <>
                                 <span className="menu-item-text">{item.name}</span>
                                 <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
-                                  {item.requiredPlan === 'enterprise' ? 'GROWTH' : 'PRO'}
+                                  GROWTH
                                 </span>
                               </>
                             )}
@@ -342,6 +388,7 @@ const AppSidebar: React.FC = () => {
                         ) : (
                           <Link
                             href={itemPath}
+                            prefetch={false}
                             className={`menu-item group ${
                               isActive(itemPath) ? "menu-item-active" : "menu-item-inactive"
                             } ${!isExpanded && !isHovered ? "lg:justify-center" : "lg:justify-start"}`}
@@ -354,7 +401,14 @@ const AppSidebar: React.FC = () => {
                               {item.icon}
                             </span>
                             {showLabel && (
-                              <span className="menu-item-text">{item.name}</span>
+                              <>
+                                <span className="menu-item-text">{item.name}</span>
+                                {item.requiredPlan && (
+                                  <span className="ml-auto text-[10px] font-bold uppercase tracking-wider text-brand-400 bg-brand-500/10 px-1.5 py-0.5 rounded">
+                                    Growth
+                                  </span>
+                                )}
+                              </>
                             )}
                           </Link>
                         )}
@@ -368,19 +422,9 @@ const AppSidebar: React.FC = () => {
         </nav>
       </div>
 
-      {/* Upgrade Card — visible for starter and growth plans when sidebar is expanded */}
-      {showLabel && tenant && tenant.plan !== 'enterprise' && (
-        <div className="mt-auto px-0 pb-3">
-          <UpgradeCard
-            onUpgradeClick={() => setUpgradeModalOpen(true)}
-            tenantPlan={tenant.plan as 'starter' | 'growth'}
-          />
-        </div>
-      )}
-
       {/* Tenant badge (collapsed = hidden) */}
       {showLabel && tenant && (
-        <div className={tenant.plan !== 'enterprise' ? "pb-6" : "mt-auto pb-6"}>
+        <div className="mt-auto pb-6">
           <div className="rounded-xl border border-gray-200 dark:border-gray-800 px-3 py-2">
             <p className="text-xs font-medium text-gray-500 dark:text-gray-400 truncate">{tenant.name}</p>
             <p className="text-[10px] text-gray-400 dark:text-gray-600 uppercase tracking-wider">{tenant.plan}</p>
@@ -388,12 +432,6 @@ const AppSidebar: React.FC = () => {
         </div>
       )}
 
-      {/* Upgrade Modal */}
-      <UpgradeModal
-        isOpen={upgradeModalOpen}
-        onClose={() => { setUpgradeModalOpen(false); setUpgradeTarget(null); }}
-        requiredPlan={upgradeTarget ?? 'growth'}
-      />
     </aside>
   );
 };

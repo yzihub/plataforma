@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useTenant } from "@/hooks/useTenant";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -89,7 +88,7 @@ const SCROLLBAR_THIN =
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ChatPage() {
-  const { tenant, loading: tenantLoading } = useTenant();
+  const { loading: tenantLoading } = useTenant();
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -102,66 +101,43 @@ export default function ChatPage() {
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // ── Tenant ID (with fallback) ─────────────────────────────────────────────
-
-  const tenantId = useMemo(() => {
-    if (tenant?.id) return tenant.id;
-    return (
-      process.env.NEXT_PUBLIC_JUREMA_TENANT_ID ??
-      "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361"
-    );
-  }, [tenant?.id]);
-
-  // ── Load conversations list ───────────────────────────────────────────────
+  // ── Load conversations list via API route (bypasses RLS) ─────────────────
 
   useEffect(() => {
-    // Wait until tenant loading finishes (or use fallback)
     if (tenantLoading) return;
-
-    const supabase = createClient();
 
     const load = async () => {
       setLoadingList(true);
       setErrorList(null);
 
-      const { data, error } = await supabase
-        .from("conversations")
-        .select(
-          "id, tenant_id, lead_id, ai_paused, last_message, last_message_at, created_at, leads(id, name, phone)"
-        )
-        .eq("tenant_id", tenantId)
-        .order("last_message_at", { ascending: false, nullsFirst: false })
-        .limit(100);
+      try {
+        const res = await fetch("/api/conversations");
+        const json = await res.json();
 
-      if (error) {
-        console.error("[ChatInbox] conversations error:", error.message);
-        setErrorList(error.message);
+        if (!res.ok) {
+          const msg = json?.error ?? `HTTP ${res.status}`;
+          console.error("[ChatInbox] conversations error:", msg, "| tenantId:", json?.tenantId);
+          setErrorList(msg);
+          setLoadingList(false);
+          return;
+        }
+
+        const convs: Conversation[] = json.data ?? [];
+        console.log("[ChatInbox] conversations loaded:", convs.length, "| tenantId:", json.tenantId);
+        setConversations(convs);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Erro ao carregar";
+        console.error("[ChatInbox] fetch error:", msg);
+        setErrorList(msg);
+      } finally {
         setLoadingList(false);
-        return;
       }
-
-      // Normalize leads: Supabase may return array or object depending on FK cardinality
-      const convs: Conversation[] = (data ?? []).map((row) => {
-        const raw = row as ConversationRaw;
-        const lead = Array.isArray(raw.leads)
-          ? (raw.leads[0] ?? null)
-          : (raw.leads ?? null);
-        return { ...raw, leads: lead };
-      });
-      setConversations(convs);
-
-      // Auto-select first conversation
-      if (convs.length > 0 && selectedId === null) {
-        setSelectedId(convs[0].id);
-      }
-
-      setLoadingList(false);
     };
 
     load();
-  }, [tenantLoading, tenantId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [tenantLoading]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Load messages for selected conversation ───────────────────────────────
+  // ── Load messages via API route (bypasses RLS) ───────────────────────────
 
   useEffect(() => {
     if (!selectedId) {
@@ -169,29 +145,31 @@ export default function ChatPage() {
       return;
     }
 
-    const supabase = createClient();
-
     const load = async () => {
       setLoadingMsgs(true);
       setErrorMsgs(null);
 
-      const { data, error } = await supabase
-        .from("conversation_messages")
-        .select("id, conversation_id, content, direction, sender_type, created_at")
-        .eq("conversation_id", selectedId)
-        .order("created_at", { ascending: true })
-        .limit(500);
+      try {
+        const res = await fetch(`/api/conversations/${selectedId}/messages`);
+        const json = await res.json();
 
-      if (error) {
-        console.error("[ChatInbox] messages error:", error.message);
-        setErrorMsgs(error.message);
+        if (!res.ok) {
+          const msg = json?.error ?? `HTTP ${res.status}`;
+          console.error("[ChatInbox] messages error:", msg);
+          setErrorMsgs(msg);
+          setMessages([]);
+          return;
+        }
+
+        setMessages((json.data ?? []) as Message[]);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Erro ao carregar";
+        console.error("[ChatInbox] fetch messages error:", msg);
+        setErrorMsgs(msg);
         setMessages([]);
+      } finally {
         setLoadingMsgs(false);
-        return;
       }
-
-      setMessages((data ?? []) as Message[]);
-      setLoadingMsgs(false);
     };
 
     load();
@@ -217,24 +195,29 @@ export default function ChatPage() {
     setTogglingPause(true);
 
     const next = !selectedConv.ai_paused;
-    const supabase = createClient();
 
-    const { error } = await supabase
-      .from("conversations")
-      .update({ ai_paused: next })
-      .eq("id", selectedConv.id);
+    try {
+      const res = await fetch(`/api/conversations/${selectedConv.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ai_paused: next }),
+      });
 
-    if (!error) {
-      setConversations((prev) =>
-        prev.map((c) =>
-          c.id === selectedConv.id ? { ...c, ai_paused: next } : c
-        )
-      );
-    } else {
-      console.error("[ChatInbox] toggle pause error:", error.message);
+      if (res.ok) {
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.id === selectedConv.id ? { ...c, ai_paused: next } : c
+          )
+        );
+      } else {
+        const json = await res.json().catch(() => ({}));
+        console.error("[ChatInbox] toggle pause error:", json?.error ?? res.status);
+      }
+    } catch (err) {
+      console.error("[ChatInbox] toggle pause fetch error:", err);
+    } finally {
+      setTogglingPause(false);
     }
-
-    setTogglingPause(false);
   }, [selectedConv]);
 
   // ── Render ────────────────────────────────────────────────────────────────

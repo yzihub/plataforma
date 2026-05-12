@@ -1,52 +1,31 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Claude Code
+.claude/
+.claude/worktrees/
 
-# dependencies
-/.idea
-/node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
+# logs
+*.log
 
-# testing
-/coverage
-/.vitest-cache
+# local runtime
+supabase/.temp/
 
-# next.js
-/.next/
-/out/
+# oauth / credentials
+google_oauth_token.json
+credentials/
 
-# production
-/build
+# patches temporários
+*.patch
+node_modules
 
-# misc
-.DS_Store
-*.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-# local MCP config (may contain secrets)
+.claude/
+.vercel/
+.next/
+supabase/.temp/
+*.log
+*.patch
 .mcp.json
 
-# MCP credentials (Application Passwords — jamais commitar)
-.planning/quick/260429-b3x-gsd-instalar-mcp-server-wordpress/.env.mcp
+workflow-template.json
+buscar_lancamentos.json
 
-# Claude Code local permissions (machine-specific, never commit)
-.claude/settings.local.json
-
-# planning — block workflow payloads that may contain secrets
 .planning/quick/**/*.json
-!.planning/quick/**/*.example.json
-.planning/debug/**/*.json
+n8n/workflows-list.json

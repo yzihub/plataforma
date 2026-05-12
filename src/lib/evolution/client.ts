@@ -10,6 +10,7 @@ import type {
   EvolutionStatusValue,
   EvolutionTestSendInput,
   EvolutionTestSendResponse,
+  EvolutionWebhookResponse,
 } from "./types";
 
 // ─── Env helpers ─────────────────────────────────────────────────────────────
@@ -207,6 +208,110 @@ export async function disconnectInstance(): Promise<EvolutionDisconnectResponse>
       ok: true,
       configured: true,
       status: "erro",
+    };
+  }
+}
+
+// ─── Webhook helpers ──────────────────────────────────────────────────────────
+
+/** URL publica esperada do webhook YZI OS para a Evolution. */
+export const EXPECTED_WEBHOOK_URL = "https://yzi-os.yzihub.com/webhook/evolution";
+
+/**
+ * GET webhook config da instancia na Evolution.
+ * Endpoint: GET {baseUrl}/webhook/find/{instance}
+ * Resposta tipica: { url, enabled, events, webhookByEvents, webhookBase64 }
+ * Retorna safe stub quando env vars nao estao configuradas.
+ */
+export async function getInstanceWebhook(): Promise<EvolutionWebhookResponse> {
+  if (!isEvolutionConfigured()) {
+    return {
+      ok: true,
+      configured: false,
+      status: "pendente_configuracao",
+      webhook_url: null,
+      expected_url: EXPECTED_WEBHOOK_URL,
+      message: "Integracao pendente de configuracao no servidor",
+    };
+  }
+
+  const { baseUrl, apiKey, instance } = (function readEnvLocal() {
+    return {
+      baseUrl: process.env.EVOLUTION_BASE_URL ?? "",
+      apiKey: process.env.EVOLUTION_API_KEY ?? "",
+      instance: process.env.EVOLUTION_INSTANCE_NAME ?? "",
+    };
+  })();
+
+  try {
+    const res = await fetch(`${baseUrl}/webhook/find/${instance}`, {
+      headers: { apikey: apiKey },
+      cache: "no-store",
+    });
+
+    // Evolution retorna 404 quando webhook ausente — tratar como "ausente"
+    if (res.status === 404) {
+      return {
+        ok: true,
+        configured: true,
+        status: "ausente",
+        webhook_url: null,
+        expected_url: EXPECTED_WEBHOOK_URL,
+      };
+    }
+
+    if (!res.ok) {
+      return {
+        ok: true,
+        configured: true,
+        status: "erro",
+        webhook_url: null,
+        expected_url: EXPECTED_WEBHOOK_URL,
+        message: `Falha ao consultar webhook: HTTP ${res.status}`,
+      };
+    }
+
+    const data = await res.json();
+    const url: string | null = data?.url ?? data?.webhook?.url ?? null;
+    const events: string[] | null = Array.isArray(data?.events) ? data.events : null;
+    const enabled: boolean | undefined =
+      typeof data?.enabled === "boolean" ? data.enabled : undefined;
+
+    if (!url) {
+      return {
+        ok: true,
+        configured: true,
+        status: "ausente",
+        webhook_url: null,
+        expected_url: EXPECTED_WEBHOOK_URL,
+        events,
+        enabled,
+      };
+    }
+
+    const status: EvolutionWebhookResponse["status"] =
+      url.trim().replace(/\/+$/, "") ===
+      EXPECTED_WEBHOOK_URL.trim().replace(/\/+$/, "")
+        ? "configurado"
+        : "divergente";
+
+    return {
+      ok: true,
+      configured: true,
+      status,
+      webhook_url: url,
+      expected_url: EXPECTED_WEBHOOK_URL,
+      events,
+      enabled,
+    };
+  } catch {
+    return {
+      ok: true,
+      configured: true,
+      status: "erro",
+      webhook_url: null,
+      expected_url: EXPECTED_WEBHOOK_URL,
+      message: "Falha ao consultar webhook",
     };
   }
 }

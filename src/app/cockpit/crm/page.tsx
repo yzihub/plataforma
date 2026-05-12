@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Badge from "@/components/ui/badge/Badge";
 import CommandButton, { CrmAction } from "@/components/yzihub/CommandButton";
@@ -12,12 +12,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cafePamData } from "@/lib/crm/mock-data";
+import { createClient } from "@/lib/supabase/client";
 import type { Lead, LeadStatus, PipelineStage } from "@/lib/crm/types";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const STAGE_PAGAMENTO_CONFIRMADO = "stage-cafepam-04";
+const JUREMA_TENANT_ID =
+  process.env.NEXT_PUBLIC_JUREMA_TENANT_ID ??
+  "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
 
 const STAGE_ACTIONS: Record<LeadStatus, CrmAction[]> = {
   new:         ["contact"],
@@ -57,15 +59,14 @@ const AVATAR_COLORS = [
   "bg-amber-500","bg-rose-500","bg-cyan-500","bg-orange-500",
 ];
 
-// ─── Mock chat messages ───────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-const MOCK_MSGS = [
-  { id: "1", de: "agente" as const, texto: "Olá! Sou a Nina, assistente da Café com Pam. Vi seu interesse em design de interiores. Posso te ajudar?", hora: "10:02" },
-  { id: "2", de: "lead" as const, texto: "Oi! Sim, quero reformar a sala e dois quartos do meu apê.", hora: "10:05" },
-  { id: "3", de: "agente" as const, texto: "Que projeto incrível! Qual é o tamanho aproximado do apartamento?", hora: "10:06" },
-  { id: "4", de: "lead" as const, texto: "Uns 90m². Fica no Itaim Bibi.", hora: "10:08" },
-  { id: "5", de: "agente" as const, texto: "Perfeito! Vou passar seus dados para a Pam entrar em contato e agendar uma visita técnica. 🏡", hora: "10:09" },
-];
+type ChatMessage = {
+  id: string;
+  direction: string;
+  body: string;
+  created_at: string;
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -88,6 +89,12 @@ function formatCurrency(v: number) {
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR", {
     day: "2-digit", month: "2-digit", year: "2-digit",
+  });
+}
+
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("pt-BR", {
+    hour: "2-digit", minute: "2-digit",
   });
 }
 
@@ -120,14 +127,45 @@ function OrigemBadge({ source }: { source: string | null }) {
 }
 
 // ─── Scrollbar utility class ──────────────────────────────────────────────────
-// Applied via className where needed
 const SCROLLBAR_THIN =
-  "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600";
+  "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/60 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700";
 
 // ─── Chat Panel ───────────────────────────────────────────────────────────────
 
 function ChatPanel({ lead }: { lead: Lead | null }) {
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [loadingMsgs, setLoadingMsgs] = useState(false);
+
+  useEffect(() => {
+    if (!lead) {
+      setMessages([]);
+      return;
+    }
+
+    const supabase = createClient();
+    setLoadingMsgs(true);
+
+    const load = async () => {
+      try {
+        const { data: byLead } = await supabase
+          .from("messages")
+          .select("id, direction, body, created_at")
+          .eq("tenant_id", lead.tenant_id)
+          .eq("lead_id", lead.id)
+          .order("created_at", { ascending: true })
+          .limit(100);
+
+        setMessages((byLead as ChatMessage[]) ?? []);
+      } catch {
+        setMessages([]);
+      } finally {
+        setLoadingMsgs(false);
+      }
+    };
+
+    load();
+  }, [lead?.id]);
 
   if (!lead) {
     return (
@@ -145,6 +183,10 @@ function ChatPanel({ lead }: { lead: Lead | null }) {
 
   const actions = STAGE_ACTIONS[lead.status];
   const firstName = lead.name.split(" ")[0];
+
+  // 'in' / 'received' / 'inbound' / 'RECEIVED' = mensagem vinda do lead
+  const isFromLead = (dir: string) =>
+    dir === "in" || dir === "received" || dir === "inbound" || dir === "RECEIVED";
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -180,29 +222,52 @@ function ChatPanel({ lead }: { lead: Lead | null }) {
       </div>
 
       {/* Messages */}
-      <div
-        className={`flex-1 overflow-y-auto space-y-2.5 min-h-0 pr-1 ${SCROLLBAR_THIN}`}
-      >
-        {MOCK_MSGS.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex ${msg.de === "agente" ? "justify-start" : "justify-end"}`}
-          >
-            <div
-              className={`max-w-[85%] px-4 py-3 text-sm shadow-sm ${
-                msg.de === "agente"
-                  ? "rounded-xl rounded-tl-sm bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                  : "rounded-xl rounded-tr-sm bg-brand-500 text-white"
-              }`}
-              style={{ borderRadius: "12px", ...(msg.de === "agente" ? { borderTopLeftRadius: "4px" } : { borderTopRightRadius: "4px" }) }}
-            >
-              <p className="leading-relaxed">{msg.texto}</p>
-              <p className={`text-[10px] mt-1.5 ${msg.de === "agente" ? "text-gray-400" : "text-white/60"}`}>
-                {msg.hora} · {msg.de === "agente" ? "Nina" : firstName}
-              </p>
-            </div>
+      <div className={`flex-1 overflow-y-auto space-y-2.5 min-h-0 pr-1 ${SCROLLBAR_THIN}`}>
+        {loadingMsgs ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="w-5 h-5 rounded-full border-2 border-brand-500 border-t-transparent animate-spin" />
           </div>
-        ))}
+        ) : messages.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full gap-2 text-center select-none">
+            <span className="text-2xl">💬</span>
+            <p className="text-xs text-gray-400 dark:text-gray-500">
+              Nenhuma conversa encontrada.
+            </p>
+          </div>
+        ) : (
+          messages.map((msg) => {
+            const fromLead = isFromLead(msg.direction);
+            return (
+              <div
+                key={msg.id}
+                className={`flex ${fromLead ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-[85%] px-4 py-3 text-sm shadow-sm ${
+                    fromLead
+                      ? "rounded-xl rounded-tr-sm bg-brand-500 text-white"
+                      : "rounded-xl rounded-tl-sm bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                  }`}
+                  style={{
+                    borderRadius: "12px",
+                    ...(fromLead
+                      ? { borderTopRightRadius: "4px" }
+                      : { borderTopLeftRadius: "4px" }),
+                  }}
+                >
+                  <p className="leading-relaxed">{msg.body}</p>
+                  <p
+                    className={`text-[10px] mt-1.5 ${
+                      fromLead ? "text-white/60" : "text-gray-400"
+                    }`}
+                  >
+                    {formatTime(msg.created_at)} · {fromLead ? firstName : "Ju"}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
 
       {/* Input */}
@@ -378,17 +443,15 @@ function KanbanCard({
 // ─── Kanban Column ────────────────────────────────────────────────────────────
 
 function KanbanColumn({
-  stage, leads, totalLeads, columnRef, isDragOver, onDragEnd, onClickLead,
+  stage, leads, columnRef, isDragOver, onDragEnd, onClickLead,
 }: {
   stage: PipelineStage;
   leads: Lead[];
-  totalLeads?: number;
   columnRef: (el: HTMLDivElement | null) => void;
   isDragOver: boolean;
   onDragEnd: (leadId: string, point: { x: number; y: number }) => void;
   onClickLead: (lead: Lead) => void;
 }) {
-
   return (
     <motion.div
       ref={columnRef}
@@ -399,7 +462,7 @@ function KanbanColumn({
           : "border-gray-800 bg-gray-900/60"
       }`}
     >
-      {/* Column header — sober, minimal */}
+      {/* Column header */}
       <div className="flex items-center gap-2 px-3 pt-3 pb-2.5">
         <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: stage.color }} />
         <span className="text-xs font-semibold text-gray-300 truncate flex-1">{stage.name}</span>
@@ -408,7 +471,7 @@ function KanbanColumn({
         </span>
       </div>
 
-      {/* Cards area — no-scrollbar */}
+      {/* Cards area */}
       <div
         className={`flex flex-col gap-2 p-2 flex-1 overflow-y-auto max-h-[calc(100vh-280px)] min-h-[72px] no-scrollbar transition-colors ${
           isDragOver ? "bg-brand-500/5" : ""
@@ -432,13 +495,14 @@ function KanbanColumn({
 // ─── Kanban View ──────────────────────────────────────────────────────────────
 
 function KanbanView({
-  leads, onLeadsChange, onClickLead,
+  leads, stages, onLeadsChange, onClickLead,
 }: {
   leads: Lead[];
+  stages: PipelineStage[];
   onLeadsChange: (leads: Lead[]) => void;
   onClickLead: (lead: Lead) => void;
 }) {
-  const stages = [...cafePamData.stages].sort((a, b) => a.position - b.position);
+  const sortedStages = [...stages].sort((a, b) => a.position - b.position);
   const columnRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const [dragOverStageId, setDragOverStageId] = useState<string | null>(null);
 
@@ -459,7 +523,7 @@ function KanbanView({
       }
       setDragOverStageId(null);
       if (!targetStageId) return;
-      const targetStage = stages.find((s) => s.id === targetStageId);
+      const targetStage = sortedStages.find((s) => s.id === targetStageId);
       if (!targetStage) return;
       const newStatus = statusMap[targetStage.position] ?? "new";
       onLeadsChange(
@@ -470,23 +534,25 @@ function KanbanView({
         )
       );
     },
-    [leads, onLeadsChange, stages]
+    [leads, onLeadsChange, sortedStages]
   );
 
   const totalLeads = leads.length;
-  const pipelineValue = leads.filter((l) => l.stage_id === STAGE_PAGAMENTO_CONFIRMADO).reduce((s, l) => s + l.value, 0);
   const concludedLeads = leads.filter((l) => l.status === "won").length;
   const convRate = totalLeads > 0 ? Math.round((concludedLeads / totalLeads) * 100) : 0;
+  const pipelineValue = leads
+    .filter((l) => !sortedStages.find((s) => s.id === l.stage_id)?.is_lost)
+    .reduce((s, l) => s + (l.value ?? 0), 0);
 
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: "Total Leads",    value: totalLeads },
-          { label: "Valor Pipeline", value: formatCurrency(pipelineValue), hint: "Pagamento Confirmado" },
+          { label: "Valor Pipeline", value: formatCurrency(pipelineValue) },
           { label: "Concluídos",     value: concludedLeads },
           { label: "Conversão",      value: `${convRate}%` },
-        ].map(({ label, value, hint }, i) => (
+        ].map(({ label, value }, i) => (
           <motion.div
             key={label}
             initial={{ opacity: 0, y: 8 }}
@@ -496,24 +562,18 @@ function KanbanView({
           >
             <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
             <p className="mt-1 text-lg font-bold text-gray-800 dark:text-white/90">{value}</p>
-            {hint && (
-              <p className="mt-0.5 text-[10px] text-emerald-500 dark:text-emerald-400 font-medium">
-                💳 {hint}
-              </p>
-            )}
           </motion.div>
         ))}
       </div>
 
       <div className={`flex gap-4 overflow-x-auto pb-3 ${SCROLLBAR_THIN}`}>
-        {stages.map((stage) => {
+        {sortedStages.map((stage) => {
           const stageLeads = leads.filter((l) => l.stage_id === stage.id);
           return (
             <KanbanColumn
               key={stage.id}
               stage={stage}
               leads={stageLeads}
-              totalLeads={totalLeads}
               columnRef={(el) => { columnRefs.current[stage.id] = el; }}
               isDragOver={dragOverStageId === stage.id}
               onDragEnd={handleDragEnd}
@@ -521,6 +581,11 @@ function KanbanView({
             />
           );
         })}
+        {sortedStages.length === 0 && (
+          <div className="flex items-center justify-center w-full h-32 text-sm text-gray-400">
+            Nenhuma etapa configurada para este tenant.
+          </div>
+        )}
       </div>
     </div>
   );
@@ -530,11 +595,56 @@ function KanbanView({
 
 export default function CrmPage() {
   const [tab, setTab] = useState<"grid" | "kanban">("grid");
-  const [leads, setLeads] = useState<Lead[]>(cafePamData.leads);
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [stages, setStages] = useState<PipelineStage[]>([]);
+  const [tenantName, setTenantName] = useState("Jurema Brokers");
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
   const [chatLead, setChatLead] = useState<Lead | null>(null);
   const [drawerLead, setDrawerLead] = useState<Lead | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const load = async () => {
+      try {
+        const [tenantRes, stagesRes, leadsRes] = await Promise.all([
+          supabase
+            .from("tenants")
+            .select("id, name, slug")
+            .eq("id", JUREMA_TENANT_ID)
+            .single(),
+          supabase
+            .from("pipeline_stages")
+            .select("id, tenant_id, name, color, position, is_won, is_lost")
+            .eq("tenant_id", JUREMA_TENANT_ID)
+            .order("position"),
+          supabase
+            .from("leads")
+            .select(
+              "id, tenant_id, stage_id, name, email, phone, company, source, status, score, value, notes, assigned_to, last_action_at, created_at"
+            )
+            .eq("tenant_id", JUREMA_TENANT_ID)
+            .order("created_at", { ascending: false })
+            .limit(300),
+        ]);
+
+        if (tenantRes.data?.name) setTenantName(tenantRes.data.name);
+        setStages((stagesRes.data ?? []) as PipelineStage[]);
+        setLeads((leadsRes.data ?? []) as Lead[]);
+
+        if (leadsRes.error) console.error("[CrmPage] leads error:", leadsRes.error.message);
+        if (stagesRes.error) console.error("[CrmPage] stages error:", stagesRes.error.message);
+      } catch (err) {
+        console.error("[CrmPage] load error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    load();
+  }, []);
 
   const filteredLeads = useMemo(() => {
     return leads.filter((l) => {
@@ -557,7 +667,7 @@ export default function CrmPage() {
           <div className="mr-1">
             <h1 className="text-xl font-bold text-gray-800 dark:text-white/90 leading-tight">CRM</h1>
             <p className="text-xs text-gray-400 dark:text-gray-500">
-              {cafePamData.tenant.name} · {filteredLeads.length} leads
+              {tenantName} · {filteredLeads.length} leads
             </p>
           </div>
 
@@ -636,38 +746,45 @@ export default function CrmPage() {
 
           {/* Left 70% — Grid or Kanban */}
           <div className={`flex-[7] min-w-0 overflow-y-auto overflow-x-hidden ${SCROLLBAR_THIN}`}>
-            <AnimatePresence mode="wait">
-              {tab === "grid" ? (
-                <motion.div
-                  key="grid"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.18 }}
-                >
-                  <GridView
-                    leads={filteredLeads}
-                    onSelect={setChatLead}
-                    onOpenDrawer={setDrawerLead}
-                  />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="kanban"
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.18 }}
-                  className="overflow-x-auto pb-2"
-                >
-                  <KanbanView
-                    leads={filteredLeads}
-                    onLeadsChange={setLeads}
-                    onClickLead={setChatLead}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="w-8 h-8 rounded-full border-2 border-brand-500 border-t-transparent animate-spin" />
+              </div>
+            ) : (
+              <AnimatePresence mode="wait">
+                {tab === "grid" ? (
+                  <motion.div
+                    key="grid"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.18 }}
+                  >
+                    <GridView
+                      leads={filteredLeads}
+                      onSelect={setChatLead}
+                      onOpenDrawer={setDrawerLead}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="kanban"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.18 }}
+                    className={`overflow-x-auto pb-2 ${SCROLLBAR_THIN}`}
+                  >
+                    <KanbanView
+                      leads={filteredLeads}
+                      stages={stages}
+                      onLeadsChange={setLeads}
+                      onClickLead={setChatLead}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
 
           {/* Divider */}

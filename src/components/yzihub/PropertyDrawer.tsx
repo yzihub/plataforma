@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import type { Property } from "@/types/properties";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -63,6 +62,11 @@ function parseBRL(formatted: string): number {
   return parseInt(digits, 10) / 100;
 }
 
+function cleanMetadataValue(value: string) {
+  const trimmed = value.trim();
+  return trimmed.length > 0 ? trimmed : null;
+}
+
 // ─── Form state type ──────────────────────────────────────────────────────────
 
 interface FormState {
@@ -77,9 +81,21 @@ interface FormState {
   construction_status: string;
   publication_status: string;
   tags: string[];
+  endereco_completo: string;
+  descricao_juridica: string;
+  matricula: string;
+  cartorio: string;
+  area_privativa: string;
+  area_construida: string;
+  area_terreno: string;
+  medidas_confrontacoes: string;
+  inscricao_municipal: string;
+  observacoes_contratuais: string;
 }
 
 function propertyToForm(p: Property): FormState {
+  const metadata = p.metadata ?? {};
+
   return {
     title: p.title,
     priceFormatted: p.price
@@ -98,6 +114,16 @@ function propertyToForm(p: Property): FormState {
     construction_status: p.construction_status ?? "",
     publication_status: p.publication_status ?? "",
     tags: p.tags ?? [],
+    endereco_completo: typeof metadata.endereco_completo === "string" ? metadata.endereco_completo : "",
+    descricao_juridica: typeof metadata.descricao_juridica === "string" ? metadata.descricao_juridica : "",
+    matricula: typeof metadata.matricula === "string" ? metadata.matricula : "",
+    cartorio: typeof metadata.cartorio === "string" ? metadata.cartorio : "",
+    area_privativa: typeof metadata.area_privativa === "string" || typeof metadata.area_privativa === "number" ? String(metadata.area_privativa) : "",
+    area_construida: typeof metadata.area_construida === "string" || typeof metadata.area_construida === "number" ? String(metadata.area_construida) : "",
+    area_terreno: typeof metadata.area_terreno === "string" || typeof metadata.area_terreno === "number" ? String(metadata.area_terreno) : "",
+    medidas_confrontacoes: typeof metadata.medidas_confrontacoes === "string" ? metadata.medidas_confrontacoes : "",
+    inscricao_municipal: typeof metadata.inscricao_municipal === "string" ? metadata.inscricao_municipal : "",
+    observacoes_contratuais: typeof metadata.observacoes_contratuais === "string" ? metadata.observacoes_contratuais : "",
   };
 }
 
@@ -107,6 +133,30 @@ const fieldCls =
   "w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500";
 
 const labelCls = "block text-xs font-medium text-gray-400 mb-1";
+
+const emptyForm: FormState = {
+  title: "",
+  priceFormatted: "",
+  neighborhood: "",
+  location: "",
+  area_sqm: "",
+  notes: "",
+  property_type: "",
+  purpose: "",
+  construction_status: "",
+  publication_status: "",
+  tags: [],
+  endereco_completo: "",
+  descricao_juridica: "",
+  matricula: "",
+  cartorio: "",
+  area_privativa: "",
+  area_construida: "",
+  area_terreno: "",
+  medidas_confrontacoes: "",
+  inscricao_municipal: "",
+  observacoes_contratuais: "",
+};
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -126,11 +176,7 @@ export default function PropertyDrawer({
   const isOpen = property !== null;
 
   const [form, setForm] = useState<FormState>(
-    property ? propertyToForm(property) : {
-      title: "", priceFormatted: "", neighborhood: "", location: "",
-      area_sqm: "", notes: "", property_type: "", purpose: "",
-      construction_status: "", publication_status: "", tags: [],
-    }
+    property ? propertyToForm(property) : emptyForm
   );
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
@@ -169,28 +215,39 @@ export default function PropertyDrawer({
     setSaveError(false);
 
     const parsedPrice = parseBRL(form.priceFormatted);
+    const metadataPatch = {
+      endereco_completo: cleanMetadataValue(form.endereco_completo),
+      descricao_juridica: cleanMetadataValue(form.descricao_juridica),
+      matricula: cleanMetadataValue(form.matricula),
+      cartorio: cleanMetadataValue(form.cartorio),
+      area_privativa: cleanMetadataValue(form.area_privativa),
+      area_construida: cleanMetadataValue(form.area_construida),
+      area_terreno: cleanMetadataValue(form.area_terreno),
+      medidas_confrontacoes: cleanMetadataValue(form.medidas_confrontacoes),
+      inscricao_municipal: cleanMetadataValue(form.inscricao_municipal),
+      observacoes_contratuais: cleanMetadataValue(form.observacoes_contratuais),
+    };
+    const res = await fetch(`/api/imoveis/${property.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        titulo_comercial: form.title,
+        valor: parsedPrice,
+        bairro: form.neighborhood || null,
+        metragem: form.area_sqm ? Number(form.area_sqm) : null,
+        descricao_imovel: form.notes || null,
+        tipo_de_imovel: form.property_type || null,
+        finalidade: form.purpose || null,
+        metadata: metadataPatch,
+      }),
+    });
 
-    const supabase = createClient();
-    const { error } = await supabase
-      .from("properties")
-      .update({
-        title: form.title,
-        price: parsedPrice,
-        neighborhood: form.neighborhood || null,
-        location: form.location,
-        area_sqm: form.area_sqm ? Number(form.area_sqm) : null,
-        notes: form.notes || null,
-        property_type: form.property_type || null,
-        purpose: form.purpose || null,
-        construction_status: form.construction_status || null,
-        publication_status: form.publication_status || null,
-        tags: form.tags.length > 0 ? form.tags : null,
-      })
-      .eq("id", property.id);
+    const data = await res.json().catch(() => null) as { imovel?: { metadata?: Record<string, unknown> | null }; error?: string } | null;
+    const nextMetadata = data?.imovel?.metadata ?? property.metadata ?? {};
 
     setSaving(false);
 
-    if (!error) {
+    if (res.ok) {
       onSaved?.({
         ...property,
         title: form.title,
@@ -204,6 +261,7 @@ export default function PropertyDrawer({
         construction_status: form.construction_status || null,
         publication_status: form.publication_status || null,
         tags: form.tags.length > 0 ? form.tags : null,
+        metadata: nextMetadata,
       });
       onClose();
     } else {
@@ -493,6 +551,117 @@ export default function PropertyDrawer({
                       rows={3}
                       value={form.notes}
                       onChange={(e) => setField("notes", e.target.value)}
+                      className={`${fieldCls} resize-none`}
+                    />
+                  </div>
+                </div>
+
+                {/* Dados para contrato */}
+                <div className="border-t border-gray-100 dark:border-gray-800 pt-4 space-y-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                    Dados para contrato
+                  </p>
+
+                  <div>
+                    <label className={labelCls}>Endereço completo</label>
+                    <input
+                      type="text"
+                      value={form.endereco_completo}
+                      onChange={(e) => setField("endereco_completo", e.target.value)}
+                      className={fieldCls}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelCls}>Descrição jurídica do imóvel</label>
+                    <textarea
+                      rows={4}
+                      value={form.descricao_juridica}
+                      onChange={(e) => setField("descricao_juridica", e.target.value)}
+                      className={`${fieldCls} resize-none`}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
+                      <label className={labelCls}>Matrícula</label>
+                      <input
+                        type="text"
+                        value={form.matricula}
+                        onChange={(e) => setField("matricula", e.target.value)}
+                        className={fieldCls}
+                      />
+                    </div>
+
+                    <div>
+                      <label className={labelCls}>Cartório</label>
+                      <input
+                        type="text"
+                        value={form.cartorio}
+                        onChange={(e) => setField("cartorio", e.target.value)}
+                        className={fieldCls}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div>
+                      <label className={labelCls}>Área privativa</label>
+                      <input
+                        type="text"
+                        value={form.area_privativa}
+                        onChange={(e) => setField("area_privativa", e.target.value)}
+                        className={fieldCls}
+                      />
+                    </div>
+
+                    <div>
+                      <label className={labelCls}>Área construída</label>
+                      <input
+                        type="text"
+                        value={form.area_construida}
+                        onChange={(e) => setField("area_construida", e.target.value)}
+                        className={fieldCls}
+                      />
+                    </div>
+
+                    <div>
+                      <label className={labelCls}>Área do terreno</label>
+                      <input
+                        type="text"
+                        value={form.area_terreno}
+                        onChange={(e) => setField("area_terreno", e.target.value)}
+                        className={fieldCls}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className={labelCls}>Medidas e confrontações</label>
+                    <textarea
+                      rows={3}
+                      value={form.medidas_confrontacoes}
+                      onChange={(e) => setField("medidas_confrontacoes", e.target.value)}
+                      className={`${fieldCls} resize-none`}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelCls}>Inscrição municipal / cadastro PMJP</label>
+                    <input
+                      type="text"
+                      value={form.inscricao_municipal}
+                      onChange={(e) => setField("inscricao_municipal", e.target.value)}
+                      className={fieldCls}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={labelCls}>Observações contratuais</label>
+                    <textarea
+                      rows={3}
+                      value={form.observacoes_contratuais}
+                      onChange={(e) => setField("observacoes_contratuais", e.target.value)}
                       className={`${fieldCls} resize-none`}
                     />
                   </div>

@@ -1,0 +1,31 @@
+# ─── Cursor AI — ignore list ──────────────────────────────────────────────────
+# Keeps sensitive data out of Cursor's context window and indexing.
+# Format mirrors .gitignore.
+
+# ── Environment & secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ── Client data (CSV exports, RAG files, tokens) ──────────────────────────────
+# Protect Airtable export tokens baked into CDN URLs inside these CSVs.
+docs/clients/data/
+D:/dev/YZI-OS-Docs/clientes/**/data/
+D:/dev/YZI-OS-Docs/clientes/**/RAG-*.xml
+
+# ── Build output ──────────────────────────────────────────────────────────────
+.next/
+out/
+dist/
+
+# ── Dependencies ──────────────────────────────────────────────────────────────
+node_modules/
+
+# ── Supabase local ────────────────────────────────────────────────────────────
+supabase/.branches/
+supabase/.temp/

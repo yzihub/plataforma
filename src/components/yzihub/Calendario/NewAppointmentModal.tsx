@@ -3,13 +3,13 @@
 import { useState, useEffect } from "react";
 import { CloseIcon } from "@/icons";
 import { useTenantContext } from "@/context/TenantContext";
-import { createClient } from "@/lib/supabase/client";
 import {
   APPOINTMENT_TYPE_LABELS,
   type AppointmentType,
   type AppointmentStatus,
   type NewAppointmentInput,
 } from "@/types/appointments";
+import type { N8nImovel, N8nLead } from "@/types/n8n-payloads";
 
 // ─── Input styles (mesmo padrão de Contratos/NewContractModal.tsx) ────────────
 
@@ -22,13 +22,23 @@ const labelCls =
 // ─── Option types ─────────────────────────────────────────────────────────────
 
 interface LeadOption {
-  id:   string;
-  name: string;
+  id:    string;
+  name:  string;
+  phone: string | null;
 }
 
 interface BrokerOption {
-  id:        string;
-  full_name: string;
+  id:    string;
+  name:  string;
+  email: string | null;
+}
+
+interface ImovelOption {
+  id:               string;
+  titulo_seo:       string | null;
+  titulo_comercial: string;
+  bairro:           string | null;
+  valor:            number;
 }
 
 // ─── Initial form state ───────────────────────────────────────────────────────
@@ -38,6 +48,7 @@ interface FormState {
   appointment_type: AppointmentType;
   lead_id:          string;
   broker_id:        string;
+  imovel_id:        string;
   start_at:         string;
   end_at:           string;
   location:         string;
@@ -49,18 +60,38 @@ const INITIAL_FORM: FormState = {
   appointment_type: "visita",
   lead_id:          "",
   broker_id:        "",
+  imovel_id:        "",
   start_at:         "",
   end_at:           "",
   location:         "",
   description:      "",
 };
 
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function formatValor(valor: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style:    "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(valor);
+}
+
+function imovelLabel(i: ImovelOption): string {
+  const titulo = i.titulo_seo || i.titulo_comercial;
+  const parts = [titulo];
+  if (i.bairro) parts.push(i.bairro);
+  parts.push(formatValor(i.valor));
+  return parts.join(" — ");
+}
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface NewAppointmentModalProps {
-  isOpen:    boolean;
-  onClose:   () => void;
-  onCreated: () => void;
+  isOpen:          boolean;
+  onClose:         () => void;
+  onCreated:       () => void;
+  defaultStartAt?: string;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -69,48 +100,81 @@ export default function NewAppointmentModal({
   isOpen,
   onClose,
   onCreated,
+  defaultStartAt,
 }: NewAppointmentModalProps) {
   const { tenant } = useTenantContext();
 
-  const [form, setForm]             = useState<FormState>(INITIAL_FORM);
-  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm]               = useState<FormState>(INITIAL_FORM);
+  const [submitting, setSubmitting]   = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const [leads, setLeads]     = useState<LeadOption[]>([]);
   const [brokers, setBrokers] = useState<BrokerOption[]>([]);
+  const [imoveis, setImoveis] = useState<ImovelOption[]>([]);
   const [loadingData, setLoadingData] = useState(false);
 
-  // Buscar leads e corretores quando modal abre
+  // Reset form (com data padrão opcional) quando modal abre
+  useEffect(() => {
+    if (isOpen) {
+      setForm({ ...INITIAL_FORM, start_at: defaultStartAt ?? "" });
+      setSubmitError(null);
+    }
+  }, [isOpen, defaultStartAt]);
+
+  // Buscar leads, corretores e imóveis quando modal abre
   useEffect(() => {
     if (!isOpen || !tenant?.id) return;
 
-    const supabase = createClient();
     setLoadingData(true);
 
     async function fetchData() {
       try {
-        const [leadsRes, brokersRes] = await Promise.all([
-          supabase
-            .from("leads")
-            .select("id, name")
-            .eq("tenant_id", tenant!.id)
-            .order("name"),
-          supabase
-            .from("brokers")
-            .select("id, full_name")
-            .eq("tenant_id", tenant!.id)
-            .eq("is_active", true)
-            .order("full_name"),
+        const [leadsRes, brokersRes, imoveisRes] = await Promise.all([
+          fetch("/api/leads")
+            .then((r) => r.ok ? r.json() : Promise.resolve({ data: [] }))
+            .catch(() => ({ data: [] })),
+          fetch("/api/corretores")
+            .then((r) => r.ok ? r.json() : Promise.resolve({ data: [] }))
+            .catch(() => ({ data: [] })),
+          fetch("/api/imoveis"),
         ]);
 
-        if (leadsRes.data) {
-          setLeads(leadsRes.data as LeadOption[]);
-        }
-        if (brokersRes.data) {
-          setBrokers(brokersRes.data as BrokerOption[]);
+        const leadsData = Array.isArray(leadsRes?.data) ? leadsRes.data : [];
+        setLeads(
+          leadsData.map((lead: N8nLead) => ({
+            id: lead.id,
+            name: lead.name,
+            phone: lead.phone,
+          }))
+        );
+
+        const brokersData = Array.isArray(brokersRes?.data) ? brokersRes.data : [];
+        setBrokers(
+          brokersData
+            .filter((b: { is_active?: boolean }) => b.is_active !== false)
+            .map((b: { id: string; name: string | null; email: string | null }) => ({
+              id:    b.id,
+              name:  b.name ?? b.id,
+              email: b.email,
+            }))
+        );
+
+        if (imoveisRes.ok) {
+          const json = await imoveisRes.json();
+          if (Array.isArray(json.data)) {
+            setImoveis(
+              (json.data as N8nImovel[]).map((item) => ({
+                id:               item.id,
+                titulo_seo:       item.titulo_seo ?? null,
+                titulo_comercial: item.titulo_comercial,
+                bairro:           item.bairro ?? null,
+                valor:            item.valor,
+              }))
+            );
+          }
         }
       } catch {
-        // Non-fatal — usuário pode continuar sem selecionar lead/corretor
+        // Non-fatal — usuário pode continuar sem selecionar lead/corretor/imóvel
       } finally {
         setLoadingData(false);
       }
@@ -121,6 +185,17 @@ export default function NewAppointmentModal({
 
   function handleChange<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function handleImovelChange(imovelId: string) {
+    const updates: Partial<FormState> = { imovel_id: imovelId };
+    if (!form.title.trim() && imovelId) {
+      const selected = imoveis.find((i) => i.id === imovelId);
+      if (selected) {
+        updates.title = `Visita — ${selected.titulo_seo || selected.titulo_comercial}`;
+      }
+    }
+    setForm((prev) => ({ ...prev, ...updates }));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -152,6 +227,20 @@ export default function NewAppointmentModal({
       if (form.broker_id)   body.broker_id   = form.broker_id;
       if (form.location)    body.location    = form.location.trim() || null;
       if (form.description) body.description = form.description.trim() || null;
+
+      if (form.imovel_id) {
+        const selected = imoveis.find((i) => i.id === form.imovel_id);
+        if (selected) {
+          body.metadata = {
+            imovel: {
+              id:    selected.id,
+              titulo: selected.titulo_seo || selected.titulo_comercial,
+              bairro: selected.bairro,
+              valor:  selected.valor,
+            },
+          };
+        }
+      }
 
       const res = await fetch("/api/appointments", {
         method:  "POST",
@@ -254,6 +343,29 @@ export default function NewAppointmentModal({
               </select>
             </div>
 
+            {/* Imóvel (opcional) */}
+            <div>
+              <label className={labelCls}>
+                Imóvel{" "}
+                <span className="text-gray-400 font-normal">(opcional)</span>
+                {loadingData && (
+                  <span className="ml-1 text-gray-400">(carregando...)</span>
+                )}
+              </label>
+              <select
+                value={form.imovel_id}
+                onChange={(e) => handleImovelChange(e.target.value)}
+                className={inputCls}
+              >
+                <option value="">— Sem imóvel —</option>
+                {imoveis.map((i) => (
+                  <option key={i.id} value={i.id}>
+                    {imovelLabel(i)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             {/* Lead (opcional) */}
             <div>
               <label className={labelCls}>
@@ -266,12 +378,13 @@ export default function NewAppointmentModal({
               <select
                 value={form.lead_id}
                 onChange={(e) => handleChange("lead_id", e.target.value)}
+                disabled={loadingData}
                 className={inputCls}
               >
                 <option value="">— Sem lead —</option>
                 {leads.map((l) => (
                   <option key={l.id} value={l.id}>
-                    {l.name}
+                    {l.name}{l.phone ? ` — ${l.phone}` : ""}
                   </option>
                 ))}
               </select>
@@ -282,16 +395,20 @@ export default function NewAppointmentModal({
               <label className={labelCls}>
                 Responsável{" "}
                 <span className="text-gray-400 font-normal">(opcional)</span>
+                {loadingData && (
+                  <span className="ml-1 text-gray-400">(carregando...)</span>
+                )}
               </label>
               <select
                 value={form.broker_id}
                 onChange={(e) => handleChange("broker_id", e.target.value)}
+                disabled={loadingData}
                 className={inputCls}
               >
                 <option value="">— Sem responsável —</option>
                 {brokers.map((b) => (
                   <option key={b.id} value={b.id}>
-                    {b.full_name}
+                    {b.name}{b.email ? ` — ${b.email}` : ""}
                   </option>
                 ))}
               </select>

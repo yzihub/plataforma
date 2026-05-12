@@ -6,7 +6,19 @@ const PUBLIC_ROUTES = ['/signin', '/signup', '/reset-password', '/auth/callback'
 const CONTROL_ROUTE = '/control'
 
 export async function proxy(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({ request })
+  const baseResponse = NextResponse.next({ request })
+
+  // DEV_BYPASS: skip ALL Supabase calls in development — avoids network round-trip on every request.
+  // TenantContext handles the fallback tenant client-side.
+  // Never bypass in production (double-check even if env var leaks).
+  const isDevBypass =
+    process.env.NEXT_PUBLIC_DEV_BYPASS === 'true' &&
+    process.env.NODE_ENV !== 'production'
+  if (isDevBypass) {
+    return baseResponse
+  }
+
+  let supabaseResponse = baseResponse
 
   const supabase = createServerClient(
     requireEnv('NEXT_PUBLIC_SUPABASE_URL'),
@@ -42,15 +54,6 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r))
   const isControlRoute = pathname.startsWith(CONTROL_ROUTE)
-
-  // DEV_BYPASS: skip all auth guards in development — TenantContext handles the fallback tenant client-side
-  // Never bypass in production (double-check even if env var leaks)
-  const isDevBypass =
-    process.env.NEXT_PUBLIC_DEV_BYPASS === 'true' &&
-    process.env.NODE_ENV !== 'production'
-  if (isDevBypass) {
-    return supabaseResponse
-  }
 
   // Usuário autenticado tentando acessar login/signup → redireciona
   if (user && isPublicRoute) {

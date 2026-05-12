@@ -21,16 +21,18 @@ export default function AuthLayout({
               {/* <!-- ===== Common Grid Shape Start ===== --> */}
               <GridShape />
               <div className="flex flex-col items-center max-w-xs">
-                <Link href="/" className="block mb-4">
+                <Link href="/" className="block mb-5">
                   <Image
-                    width={231}
-                    height={48}
-                    src="./images/logo/auth-logo.svg"
-                    alt="Logo"
+                    width={240}
+                    height={78}
+                    src="/images/jurema/logo-white-official.svg"
+                    alt="Jurema Brokers"
+                    priority
+                    className="h-16 w-auto"
                   />
                 </Link>
-                <p className="text-center text-gray-400 dark:text-white/60">
-                  Free and Open-Source Tailwind CSS Admin Dashboard Template
+                <p className="text-center text-sm leading-6 text-gray-300 dark:text-white/60">
+                  Cockpit operacional da Jurema Brokers
                 </p>
               </div>
             </div>

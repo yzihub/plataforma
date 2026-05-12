@@ -56,9 +56,39 @@ function avatarColor(id: string) {
   return AVATAR_COLORS[id.charCodeAt(id.length - 1) % AVATAR_COLORS.length];
 }
 
-function formatCurrency(v: number) {
-  if (!v) return "—";
-  return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+function formatValorImovel(lead: Lead) {
+  const qualificacao = lead.metadata?.qualificacao as Record<string, unknown> | null | undefined;
+  const value = lead.metadata?.faixa_valor ?? qualificacao?.faixa_valor;
+
+  if (value == null || value === "") return "";
+
+  const parsed = parseValorImovel(value);
+  if (parsed != null) {
+    return parsed.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+
+  return String(value);
+}
+
+function parseValorImovel(value: unknown): number | null {
+  if (typeof value === "number") return Number.isFinite(value) ? value : null;
+  if (typeof value !== "string") return null;
+
+  const raw = value.trim();
+  if (!raw) return null;
+
+  const normalized = raw.toLowerCase();
+  const numericText = normalized
+    .replace(/r\$/g, "")
+    .replace(/\s+/g, "")
+    .replace(/\./g, "")
+    .replace(",", ".");
+
+  const multiplier =
+    normalized.includes("mil") || normalized.endsWith("k") ? 1000 : 1;
+  const number = Number(numericText.replace(/k$/i, "").replace(/mil/g, ""));
+
+  return Number.isFinite(number) ? number * multiplier : null;
 }
 
 function formatPhone(phone: string | null) {
@@ -79,13 +109,17 @@ function scoreBadge(score: number): { color: BadgeColor; label: string } {
   return { color: "error", label: `▼ ${score}` };
 }
 
-function findCorretorName(assigned_to: string | null, corretores: Corretor[]): string {
-  if (!assigned_to) return "—";
-  const corretor = corretores.find((c) => c.id === assigned_to);
+function getCorretorId(lead: Lead): string {
+  return lead.corretor_id ?? lead.assigned_to ?? "";
+}
+
+function findCorretorName(corretorId: string | null, corretores: Corretor[]): string {
+  if (!corretorId) return "—";
+  const corretor = corretores.find((c) => c.id === corretorId);
   if (corretor) return corretor.name;
-  const isUuid = /^[0-9a-f-]{32,}$/i.test(assigned_to.replace(/-/g, ""));
-  if (isUuid) return `@${assigned_to.slice(0, 8)}`;
-  return assigned_to;
+  const isUuid = /^[0-9a-f-]{32,}$/i.test(corretorId.replace(/-/g, ""));
+  if (isUuid) return `@${corretorId.slice(0, 8)}`;
+  return corretorId;
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -223,16 +257,16 @@ function InlineCorretorSelect({
   corretores: Corretor[];
   onInlineEdit?: (leadId: string, patch: Partial<Lead>) => void | Promise<void>;
 }) {
-  const [localId, setLocalId] = useState<string>(lead.assigned_to ?? "");
+  const [localId, setLocalId] = useState<string>(getCorretorId(lead));
 
   useEffect(() => {
-    setLocalId(lead.assigned_to ?? "");
-  }, [lead.assigned_to]);
+    setLocalId(getCorretorId(lead));
+  }, [lead.corretor_id, lead.assigned_to]);
 
   if (!onInlineEdit || corretores.length === 0) {
     return (
       <span className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
-        {findCorretorName(lead.assigned_to, corretores)}
+        {findCorretorName(getCorretorId(lead), corretores)}
       </span>
     );
   }
@@ -241,7 +275,7 @@ function InlineCorretorSelect({
     e.stopPropagation();
     const newId = e.target.value;
     setLocalId(newId); // optimistic
-    onInlineEdit?.(lead.id, { assigned_to: newId || null });
+    onInlineEdit?.(lead.id, { corretor_id: newId || null });
   }
 
   const displayName = findCorretorName(localId || null, corretores);
@@ -466,7 +500,7 @@ export default function LeadsDataTable({
 
                     {/* Valor Imóvel */}
                     <td className="py-3.5 px-5 text-sm font-medium text-gray-700 dark:text-gray-200 whitespace-nowrap">
-                      {formatCurrency(lead.value)}
+                      {formatValorImovel(lead)}
                     </td>
 
                     {/* Ações */}

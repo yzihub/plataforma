@@ -1,28 +1,42 @@
 import { Suspense } from "react";
 import { getCockpitData } from "@/lib/crm/queries";
-import type { Lead, PipelineStage } from "@/lib/crm/types";
 import LeadsClient from "@/components/yzihub/LeadsClient";
 
-// ─── Busca leads e stages do tenant autenticado ──────────────────────────────
+async function LeadsLoader() {
+  const data = await getCockpitData();
 
-async function fetchLeadsAndStages(): Promise<{ leads: Lead[]; stages: PipelineStage[] }> {
-  try {
-    const data = await getCockpitData();
-    if (!data) return { leads: [], stages: [] };
-    return { leads: data.leads, stages: data.stages };
-  } catch (err) {
-    console.error("[LeadsPage] erro ao buscar dados:", err);
-    return { leads: [], stages: [] };
+  if (!data) {
+    return <LeadsClient initialLeads={[]} stages={[]} operationalKanban={null} />;
   }
+
+  return (
+    <LeadsClient
+      initialLeads={data.leads}
+      stages={data.stages}
+      operationalKanban={data.operationalKanban ?? null}
+    />
+  );
 }
 
-// ─── Page (Server Component) ─────────────────────────────────────────────────
-
-export default async function LeadsPage() {
-  const { leads, stages } = await fetchLeadsAndStages();
+function LeadsSkeleton() {
   return (
-    <Suspense fallback={null}>
-      <LeadsClient initialLeads={leads} stages={stages} />
+    <div className="space-y-4 animate-pulse">
+      <div className="flex items-center justify-between gap-3">
+        <div className="space-y-2">
+          <div className="h-7 w-28 rounded-lg bg-gray-200 dark:bg-gray-800" />
+          <div className="h-4 w-36 rounded-lg bg-gray-200 dark:bg-gray-800" />
+        </div>
+        <div className="h-10 w-28 rounded-xl bg-gray-200 dark:bg-gray-800" />
+      </div>
+      <div className="h-64 rounded-2xl bg-gray-200 dark:bg-gray-800" />
+    </div>
+  );
+}
+
+export default function LeadsPage() {
+  return (
+    <Suspense fallback={<LeadsSkeleton />}>
+      <LeadsLoader />
     </Suspense>
   );
 }

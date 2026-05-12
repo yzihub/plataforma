@@ -1,0 +1,13 @@
+﻿ID Contrato,Nome do Cliente (from GESTÃO DE LEADS),Email do Cliente,Telefone,CPF / CNPJ,Endereço,Tipo de Contrato,Status do Contrato,Imóvel Relacionado,Corretor Responsável,Documento do Contrato,Data de Envio,Responsável pelo Follow-up,STATUS CALCULADO DO CONTRATO,✉️NOTAS DO GESTOR,ENVIO AUTOMÁTICO POR E-MAIL,Contrato Assinado,Data de Assinatura,ENVIO AUTOMÁTICO POR E-MAIL copy,Dias sem Retorno
+CONT-202601,Eric Luna Freire Vieira,yzihub.ia@gmail.com,5583981681119,01263741479,"Rua Exemplo, 123 – João Pessoa/PB",Intermediação - Venda,📤 Enviado,JP-3150,Poka,CONT-202601 - CONT-202601 - Contrato -  INSTRUMENTO PARTICULAR DE CONTRATO DE LOCAÇÃO RESIDENCIAL (https://v5.airtableusercontent.com/v3/u/51/51/1774296000000/Pv3DnWFOesA1ie6afNd0Wg/scQZVzmln2kgPhBbkkpN6prxhgEFdeyYoF_MU2pdbiOLmaKlqhuWeROIppn8NNSwgYFPOMJxfFk5mSulRzL0eit0MFo2ZnstBO-f72ruYXuYoyZSacWr8_6dLqB5jTn97NZ9AK5lE6ZzAUS74jtu5HVqElE5TKvvG7gR9oQgGVxADkdz8t5TgEVlF27r3gpr_j0ZafV0B-hy4zCWNu1R0hhWdCRl3BDPfz4ua9yFvS9lPqT-hRcxhyQ3UO8mNRgn/ydr2TOg4gdDSYn-37b-p70YSQPMtPfHFiEe65eFwkqU),24/2/2026 8:11pm,Poka,🔴 Travado,"Intermediação para venda do imóvel localizado na Rua Exemplo, 123 – João Pessoa/PB.
+
+Valor pretendido para venda: R$ 850.000,00.
+
+Comissão de 6% sobre o valor final da venda.
+
+Contrato com exclusividade pelo prazo de 90 dias.
+
+Caso o proprietário venda diretamente para cliente apresentado pela imobiliária durante a vigência, a comissão será devida integralmente.
+
+Pagamento da comissão no ato da assinatura do contrato de compra e venda.",https://api.yzihub.com/webhook/enviar-contrato?record_id=recW1vwggWEeGqt88,,,https://api.yzihub.com/webhook/enviar-contrato?record_id=recW1vwggWEeGqt88,26
+CONT-202603,,,,,,,,,,,,,🟡 Em andamento,,https://api.yzihub.com/webhook/enviar-contrato?record_id=recMOyTQsuQ3zCWxB,,,https://api.yzihub.com/webhook/enviar-contrato?record_id=recMOyTQsuQ3zCWxB,0

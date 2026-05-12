@@ -99,12 +99,14 @@ export function ContractsEmptyState({ hasFilters }: { hasFilters: boolean }) {
 
 function ActionMenu({
   contract,
-  onView,
+  onOpen,
   onCancel,
+  onDelete,
 }: {
   contract: Contract;
-  onView: (c: Contract) => void;
+  onOpen: (c: Contract) => void;
   onCancel: (id: string) => void;
+  onDelete: (id: string) => void;
 }) {
   return (
     <div className="group relative inline-block">
@@ -114,16 +116,22 @@ function ActionMenu({
       {/* Dropdown */}
       <div className="absolute right-0 top-full z-50 mt-1 w-44 origin-top-right scale-95 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-150 rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
         <button
-          onClick={() => onView(contract)}
+          onClick={() => onOpen(contract)}
           className="flex w-full items-center gap-2 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/[0.04] rounded-t-xl transition-colors"
         >
-          Ver detalhes
+          Abrir
         </button>
         <button
-          onClick={() => onView(contract)}
+          onClick={() => onOpen(contract)}
           className="flex w-full items-center gap-2 px-3 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/[0.04] transition-colors"
         >
           Editar
+        </button>
+        <button
+          onClick={() => onDelete(contract.id)}
+          className="flex w-full items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+        >
+          Excluir
         </button>
         {contract.status !== "cancelled" && (
           <button
@@ -144,12 +152,14 @@ interface ContractsTableProps {
   contracts: Contract[];
   onRowClick: (contract: Contract) => void;
   onCancelContract?: (id: string) => void;
+  onDeleteContract?: (id: string) => void;
 }
 
 export default function ContractsTable({
   contracts,
   onRowClick,
   onCancelContract,
+  onDeleteContract,
 }: ContractsTableProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800">
@@ -244,8 +254,9 @@ export default function ContractsTable({
                   <div onClick={(e) => e.stopPropagation()}>
                     <ActionMenu
                       contract={contract}
-                      onView={onRowClick}
+                      onOpen={onRowClick}
                       onCancel={onCancelContract ?? (() => {})}
+                      onDelete={onDeleteContract ?? (() => {})}
                     />
                   </div>
                 </TableCell>

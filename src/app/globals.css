@@ -275,6 +275,93 @@
   }
 }
 
+/* ── FullCalendar — YZI calendar wrapper ─────────────────────────────────── */
+
+.yzi-calendar .fc {
+  --fc-border-color: #e4e7ec;
+  --fc-today-bg-color: rgba(70, 95, 255, 0.05);
+  --fc-neutral-bg-color: transparent;
+  --fc-page-bg-color: transparent;
+  font-family: inherit;
+}
+
+.yzi-calendar .fc-toolbar.fc-header-toolbar {
+  display: none;
+}
+
+.yzi-calendar .fc-daygrid-day-number,
+.yzi-calendar .fc-col-header-cell-cushion {
+  color: #344054;
+  text-decoration: none;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.yzi-calendar .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
+  color: #98a2b3;
+}
+
+.yzi-calendar .fc-event {
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 2px 5px;
+  cursor: pointer;
+}
+
+.yzi-calendar .fc-event:hover {
+  filter: brightness(1.08);
+}
+
+.yzi-calendar .fc-timegrid-slot-label-cushion {
+  font-size: 0.75rem;
+  color: #667085;
+}
+
+/* Dark mode overrides */
+
+.dark .yzi-calendar .fc {
+  --fc-border-color: rgba(255, 255, 255, 0.07);
+  --fc-today-bg-color: rgba(70, 95, 255, 0.08);
+  --fc-neutral-bg-color: transparent;
+  --fc-page-bg-color: transparent;
+  --fc-neutral-text-color: #98a2b3;
+  --fc-list-event-hover-bg-color: rgba(255, 255, 255, 0.04);
+}
+
+.dark .yzi-calendar .fc-daygrid-day-number,
+.dark .yzi-calendar .fc-col-header-cell-cushion {
+  color: #d0d5dd;
+}
+
+.dark .yzi-calendar .fc-daygrid-day.fc-day-other .fc-daygrid-day-number {
+  color: #475467;
+}
+
+.dark .yzi-calendar .fc-timegrid-slot-label-cushion {
+  color: #667085;
+}
+
+.dark .yzi-calendar .fc-scrollgrid,
+.dark .yzi-calendar .fc-scrollgrid-section > td,
+.dark .yzi-calendar .fc-scrollgrid-section > th {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.dark .yzi-calendar .fc-timegrid-axis {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.dark .yzi-calendar .fc-more-popover {
+  background: #1d2939;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .yzi-calendar .fc-more-popover .fc-popover-header {
+  background: #1a2231;
+  color: #d0d5dd;
+}
+
 .dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background-color: #344054;
 }

@@ -54,6 +54,7 @@ export interface NewAppointmentInput {
   end_at?:          string | null;
   location?:        string | null;
   description?:     string | null;
+  metadata?:        Record<string, unknown> | null;
 }
 
 // ─── Labels em pt-BR ─────────────────────────────────────────────────────────

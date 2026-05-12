@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { CloseIcon } from "@/icons";
 import { useTenantContext } from "@/context/TenantContext";
 import { createClient } from "@/lib/supabase/client";
+import { formatBRLMoney, parseBRLMoney } from "@/lib/contracts/money";
 import type { ContractStatus, ContractType, Contract } from "@/types/contracts";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -30,11 +31,21 @@ interface LeadOption {
 interface PropertyOption {
   id:   string;
   name: string;
+  valor?: number | null;
 }
 
 interface ProfileOption {
-  id:        string;
-  full_name: string | null;
+  id:   string;
+  name: string | null;
+}
+
+function extractCorretores(data: unknown): ProfileOption[] {
+  if (Array.isArray(data)) return data as ProfileOption[];
+  const d = data as Record<string, unknown>;
+  if (Array.isArray(d?.data)) return d.data as ProfileOption[];
+  if (Array.isArray(d?.brokers)) return d.brokers as ProfileOption[];
+  if (Array.isArray(d?.corretores)) return d.corretores as ProfileOption[];
+  return [];
 }
 
 const INITIAL_FORM: NewContractForm = {
@@ -110,7 +121,7 @@ export default function NewContractModal({
 
     async function fetchData() {
       try {
-        const [leadsRes, propsRes, profilesRes] = await Promise.all([
+        const [leadsRes, propsRes, corretoresRes] = await Promise.all([
           supabase
             .from("leads")
             .select("id, name")
@@ -118,16 +129,14 @@ export default function NewContractModal({
             .order("name"),
           supabase
             .from("imoveis")
-            .select("id, titulo_comercial")
+            .select("id, titulo_comercial, id_imovel, referencia_unica, bairro, valor")
             .eq("tenant_id", tenant!.id)
             .eq("status_operacional", "disponivel")
             .eq("status_publicacao", "Publicado")
             .order("titulo_comercial"),
-          supabase
-            .from("profiles")
-            .select("id, full_name")
-            .eq("tenant_id", tenant!.id)
-            .order("full_name"),
+          fetch("/api/corretores")
+            .then((r) => r.ok ? r.json() : Promise.resolve([]))
+            .catch(() => []),
         ]);
 
         if (leadsRes.data) {
@@ -135,12 +144,14 @@ export default function NewContractModal({
         }
         if (propsRes.data) {
           setProperties(
-            propsRes.data.map((p: { id: string; titulo_comercial: string }) => ({ id: p.id, name: p.titulo_comercial ?? p.id }))
+            propsRes.data.map((p: { id: string; titulo_comercial: string | null; id_imovel?: string | null; referencia_unica?: string | null; bairro?: string | null; valor?: number | null }) => ({
+              id: p.id,
+              name: [p.titulo_comercial, p.referencia_unica ?? p.id_imovel, p.bairro].filter(Boolean).join(" · ") || p.id,
+              valor: p.valor ?? null,
+            }))
           );
         }
-        if (profilesRes.data) {
-          setCorretores(profilesRes.data as ProfileOption[]);
-        }
+        setCorretores(extractCorretores(corretoresRes));
       } catch {
         // Non-fatal: user can still type manually
       } finally {
@@ -155,6 +166,16 @@ export default function NewContractModal({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
+  function setCurrencyValue(raw: string) {
+    if (!raw.trim()) {
+      handleChange("value", "");
+      return;
+    }
+
+    const formatted = formatBRLMoney(parseBRLMoney(raw));
+    handleChange("value", formatted);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -162,7 +183,8 @@ export default function NewContractModal({
       setSubmitError("Selecione ou informe o nome do lead");
       return;
     }
-    if (!form.value || parseFloat(form.value) < 0) {
+    const value = parseBRLMoney(form.value);
+    if (!form.value || !Number.isFinite(value) || value <= 0) {
       setSubmitError("Informe um valor valido");
       return;
     }
@@ -180,7 +202,7 @@ export default function NewContractModal({
         broker_id:     form.broker_id     || null,
         corretor_name: form.corretor_name || null,
         title:         form.title.trim()  || null,
-        value:         parseFloat(form.value),
+        value,
         type:          form.type,
         status:        form.status,
         notes:         form.notes.trim()  || null,
@@ -319,6 +341,7 @@ export default function NewContractModal({
                   const selected = properties.find((p) => p.id === e.target.value);
                   handleChange("imovel_id", e.target.value);
                   handleChange("project_name", selected?.name ?? "");
+                  if (selected?.valor) handleChange("value", formatBRLMoney(selected.valor));
                 }}
                 className={inputCls}
               >
@@ -339,14 +362,14 @@ export default function NewContractModal({
                 onChange={(e) => {
                   const selected = corretores.find((c) => c.id === e.target.value);
                   handleChange("broker_id", e.target.value);
-                  handleChange("corretor_name", selected?.full_name ?? "");
+                  handleChange("corretor_name", selected?.name ?? "");
                 }}
                 className={inputCls}
               >
                 <option value="">Selecionar corretor...</option>
                 {corretores.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.full_name ?? c.id}
+                    {c.name ?? c.id}
                   </option>
                 ))}
               </select>
@@ -357,10 +380,11 @@ export default function NewContractModal({
               <div>
                 <label className={labelCls}>Valor (R$) *</label>
                 <input
-                  type="number"
-                  placeholder="Ex: 320000"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="Ex: R$ 320.000,00"
                   value={form.value}
-                  onChange={(e) => handleChange("value", e.target.value)}
+                  onChange={(e) => setCurrencyValue(e.target.value)}
                   min={0}
                   required
                   className={inputCls}

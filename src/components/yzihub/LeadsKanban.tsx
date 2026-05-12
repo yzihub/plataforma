@@ -336,7 +336,10 @@ export default function LeadsKanban({
   }, []);
 
   return (
-    <div className="overflow-x-auto pb-4" onDragEnd={handleDragEnd}>
+    <div
+      className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300/60 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700"
+      onDragEnd={handleDragEnd}
+    >
       <div className="flex gap-4 min-w-max">
         {sortedStages.map((stage) => {
           const stageLeads = leads.filter((l) => l.stage_id === stage.id);

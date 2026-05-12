@@ -1,0 +1,180 @@
+<yzi_knowledge version="1.0" cliente="jurema-brokers">
+
+  <!-- ========================= -->
+  <!-- 🧠 IDENTIDADE DO NEGÓCIO -->
+  <!-- ========================= -->
+  <business_identity>
+    <nome>Jurema Brokers</nome>
+    <segmento>Imobiliária de alto padrão</segmento>
+    <cidade>João Pessoa</cidade>
+    <posicionamento>
+      Especialista em imóveis com potencial de valorização e qualidade de vida na orla e regiões premium.
+    </posicionamento>
+  </business_identity>
+
+
+  <!-- ========================= -->
+  <!-- 📊 INTELIGÊNCIA DE MERCADO -->
+  <!-- ========================= -->
+  <market_intelligence>
+
+    <fatos>
+      <fato id="orla_limitada">
+        A orla de João Pessoa possui restrição de altura, criando escassez de imóveis com vista para o mar e impulsionando a valorização.
+      </fato>
+
+      <fato id="custo_beneficio">
+        João Pessoa apresenta um dos melhores custos-benefícios do Nordeste, atraindo investidores do Sudeste.
+      </fato>
+    </fatos>
+
+    <gatilhos>
+      <gatilho id="escassez_orla">
+        Terrenos próximos à orla estão escassos, pressionando o valor do metro quadrado.
+      </gatilho>
+
+      <gatilho id="valorizacao_obra">
+        Lançamentos tendem a valorizar significativamente durante a obra.
+      </gatilho>
+    </gatilhos>
+
+  </market_intelligence>
+
+
+  <!-- ========================= -->
+  <!-- 🗺️ CURADORIA DE BAIRROS -->
+  <!-- ========================= -->
+  <neighborhoods>
+
+    <bairro id="cabo_branco" tag="luxo" cor="#a855f7">
+      <nome>Cabo Branco</nome>
+      <perfil>Elite e Exclusividade</perfil>
+      <argumento>
+        Região mais valorizada da cidade, com alta liquidez e escassez de terrenos.
+      </argumento>
+      <indicadores>
+        <valorizacao>alta</valorizacao>
+        <liquidez>alta</liquidez>
+      </indicadores>
+    </bairro>
+
+    <bairro id="manaira" tag="rentavel" cor="#22c55e">
+      <nome>Manaíra</nome>
+      <perfil>Conveniência e Rentabilidade</perfil>
+      <argumento>
+        Ideal para aluguel e mobilidade urbana, com forte demanda.
+      </argumento>
+      <indicadores>
+        <valorizacao>media-alta</valorizacao>
+        <liquidez>alta</liquidez>
+      </indicadores>
+    </bairro>
+
+    <bairro id="bessa_jardim_oceania" tag="familia" cor="#3b82f6">
+      <nome>Bessa / Jardim Oceania</nome>
+      <perfil>Qualidade de Vida Familiar</perfil>
+      <argumento>
+        Região com parques, praia e infraestrutura ideal para famílias.
+      </argumento>
+      <indicadores>
+        <valorizacao>media</valorizacao>
+        <liquidez>media</liquidez>
+      </indicadores>
+    </bairro>
+
+    <bairro id="altiplano" tag="luxo_vertical" cor="#f59e0b">
+      <nome>Altiplano</nome>
+      <perfil>Luxo Vertical</perfil>
+      <argumento>
+        Empreendimentos de alto padrão com vistas elevadas do mar.
+      </argumento>
+      <indicadores>
+        <valorizacao>alta</valorizacao>
+        <liquidez>media-alta</liquidez>
+      </indicadores>
+    </bairro>
+
+  </neighborhoods>
+
+
+  <!-- ========================= -->
+  <!-- 🧠 COMPORTAMENTO DA IA -->
+  <!-- ========================= -->
+  <ai_behavior>
+
+    <diretrizes>
+
+      <diretriz tipo="investimento">
+        Priorizar imóveis com potencial de valorização, lançamentos e escassez geográfica.
+      </diretriz>
+
+      <diretriz tipo="moradia">
+        Priorizar qualidade de vida, proximidade com a praia e infraestrutura urbana.
+      </diretriz>
+
+      <diretriz tipo="validacao_bairro">
+        Sempre conectar o bairro citado com argumentos reais de mercado.
+      </diretriz>
+
+    </diretrizes>
+
+    <estrategia_conversao>
+      Sempre conduzir o lead para uma ação concreta: visita, proposta ou conversa com corretor.
+    </estrategia_conversao>
+
+  </ai_behavior>
+
+
+  <!-- ========================= -->
+  <!-- 🎯 ENRIQUECIMENTO DE UI -->
+  <!-- ========================= -->
+  <ui_enrichment>
+
+    <badges>
+
+      <badge id="alto_valor" cor="#16a34a">
+        Lead de alto potencial financeiro
+      </badge>
+
+      <badge id="urgente" cor="#dc2626">
+        Lead quente com alta intenção
+      </badge>
+
+      <badge id="investidor" cor="#7c3aed">
+        Perfil investidor
+      </badge>
+
+    </badges>
+
+    <kanban_stages>
+
+      <stage id="novo" cor="#64748b" />
+      <stage id="qualificado" cor="#3b82f6" />
+      <stage id="visita" cor="#f59e0b" />
+      <stage id="contrato" cor="#22c55e" />
+
+    </kanban_stages>
+
+  </ui_enrichment>
+
+
+  <!-- ========================= -->
+  <!-- 🔗 INTEGRAÇÕES -->
+  <!-- ========================= -->
+  <integrations>
+
+    <whatsapp>
+      <uso>
+        Envio de resumo do lead para corretor com score, interesse e janela de visita.
+      </uso>
+    </whatsapp>
+
+    <crm>
+      <uso>
+        Gerenciamento de leads, contratos e pipeline de vendas.
+      </uso>
+    </crm>
+
+  </integrations>
+
+</yzi_knowledge>

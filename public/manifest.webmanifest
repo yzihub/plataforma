@@ -1,0 +1,29 @@
+{
+  "name": "Jurema Brokers",
+  "short_name": "Jurema",
+  "description": "Plataforma operacional Jurema Brokers",
+  "start_url": "/cockpit",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/images/jurema/favicon-official.svg?v=2",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/jurema/favicon-black-192.ico",
+      "sizes": "192x192",
+      "type": "image/x-icon",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/jurema/favicon-black-512.ico",
+      "sizes": "512x512",
+      "type": "image/x-icon",
+      "purpose": "any"
+    }
+  ]
+}

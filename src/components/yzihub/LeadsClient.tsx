@@ -4,8 +4,8 @@ import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import LeadDrawer from "@/components/yzihub/LeadDrawer";
 import LeadsDataTable from "@/components/yzihub/LeadsDataTable";
-import LeadsKanban from "@/components/yzihub/LeadsKanban";
-import LeadsKpiStrip from "@/components/yzihub/LeadsKpiStrip";
+import { OperationalFunnelKanbanBoard } from "@/components/yzihub/OperationalFunnelKanban";
+import type { OperationalKanbanBoard } from "@/lib/crm/operational-funnel";
 import type { Lead, PipelineStage } from "@/lib/crm/types";
 import { PlusIcon, GridIcon, ListIcon } from "@/icons";
 
@@ -38,9 +38,11 @@ function NovoLeadButton({ onClick }: { onClick: () => void }) {
 export default function LeadsClient({
   initialLeads,
   stages,
+  operationalKanban,
 }: {
   initialLeads: Lead[];
   stages: PipelineStage[];
+  operationalKanban?: OperationalKanbanBoard | null;
 }) {
   const searchParams = useSearchParams();
 
@@ -114,16 +116,6 @@ export default function LeadsClient({
     setLeads((prev) => prev.filter((l) => l.id !== leadId));
     closeDrawer();
   }
-
-  const handleMoveLead = (leadId: string, newStageId: string) => {
-    setLeads((prev) =>
-      prev.map((l) =>
-        l.id === leadId
-          ? { ...l, stage_id: newStageId, last_action_at: new Date().toISOString() }
-          : l
-      )
-    );
-  };
 
   function handleInlineEdit(leadId: string, patch: Partial<Lead>) {
     setLeads((prev) =>
@@ -210,13 +202,6 @@ export default function LeadsClient({
         {/* Table view (default) */}
         {view === "table" && (
           <>
-            {/* KPI strip — above table, clickable to filter by status */}
-            <LeadsKpiStrip
-              leads={leads}
-              activeStatus={filterStatus}
-              onStatusClick={setFilterStatus}
-            />
-
             <LeadsDataTable
               leads={tableLeads}
               onSelect={openLead}
@@ -237,13 +222,13 @@ export default function LeadsClient({
         {/* Kanban view — accessible only via ?view=kanban */}
         {view === "kanban" && (
           <>
-            <LeadsKanban
-              leads={kanbanLeads}
-              stages={stages}
-              onMoveLead={handleMoveLead}
-              onLeadSelect={openLead}
-              selectedLeadId={selectedLead?.id ?? null}
-            />
+            {operationalKanban ? (
+              <OperationalFunnelKanbanBoard board={operationalKanban} query={search} />
+            ) : (
+              <div className="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500 dark:border-slate-800 dark:bg-white/[0.03] dark:text-slate-400">
+                Funil operacional indisponivel.
+              </div>
+            )}
           </>
         )}
       </div>

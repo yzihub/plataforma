@@ -40,8 +40,10 @@ export interface Lead {
   value: number // R$ em reais
   notes: string | null
   assigned_to: string | null
+  corretor_id: string | null
   last_action_at: string | null // ISO timestamp
   created_at: string
+  metadata?: Record<string, unknown>
   // Campos específicos imobiliário (Jurema) — opcionais para compatibilidade com outros tenants
   janela_visita?: string | null        // ex: "Sábado manhã"
   regiao_interesse?: string | null     // ex: "Barra da Tijuca"
@@ -66,4 +68,5 @@ export interface KanbanData {
   tenant: Tenant
   stages: PipelineStage[]
   leads: Lead[]
+  operationalKanban?: import("./operational-funnel").OperationalKanbanBoard
 }

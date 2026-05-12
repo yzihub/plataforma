@@ -24,6 +24,7 @@ import ImovelSearchSelect from "@/components/yzihub/ImovelSearchSelect";
 // ─── Types internos do Drawer ─────────────────────────────────────────────────
 
 type Tab = "dados" | "conversas" | "atividades" | "tarefas" | "ia" | "arquivos";
+type LeadPersonTab = "pessoais" | "endereco" | "financeiro" | "juridico";
 
 type Mensagem = {
   id: string;
@@ -123,14 +124,18 @@ const ACTIVITY_ICON: Record<Atividade["tipo"], ActivityIconComponent> = {
 };
 
 // ─── Tabs config ──────────────────────────────────────────────────────────────
+// Tabs mock (Conversas, Atividades, Tarefas, IA, Arquivos) ocultadas até serem
+// implementadas com dados reais. Componentes preservados abaixo para reativação.
 
 const TABS: { key: Tab; label: string }[] = [
-  { key: "dados",      label: "Dados"      },
-  { key: "conversas",  label: "Conversas"  },
-  { key: "atividades", label: "Atividades" },
-  { key: "tarefas",    label: "Tarefas"    },
-  { key: "ia",         label: "IA"         },
-  { key: "arquivos",   label: "Arquivos"   },
+  { key: "dados", label: "Dados" },
+];
+
+const LEAD_PERSON_TABS: { key: LeadPersonTab; label: string }[] = [
+  { key: "pessoais", label: "Dados pessoais" },
+  { key: "endereco", label: "Endereço" },
+  { key: "financeiro", label: "Financeiro" },
+  { key: "juridico", label: "Jurídico" },
 ];
 
 // ─── Bairros disponíveis (Jurema Brokers — João Pessoa) ──────────────────────
@@ -155,7 +160,26 @@ type FormState = {
   name: string;
   phone: string;
   email: string;
-  assigned_to: string;
+  cpf: string;
+  rg: string;
+  nacionalidade: string;
+  estado_civil: string;
+  profissao: string;
+  data_nascimento: string;
+  cep: string;
+  logradouro: string;
+  numero: string;
+  complemento: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+  pix: string;
+  banco: string;
+  agencia: string;
+  conta: string;
+  dados_bancarios: string;
+  observacoes_juridicas: string;
+  corretor_id: string;
   interesse_principal: string;
   finalidade: string;
   objetivo: string;
@@ -172,22 +196,55 @@ type FormState = {
   notes: string;
 };
 
+function metaStr(lead: Lead | null, key: string): string {
+  const value = lead?.metadata?.[key];
+  return value == null ? "" : String(value);
+}
+
+function metaQualStr(lead: Lead | null, key: string, qualKey?: string): string {
+  const direct = lead?.metadata?.[key];
+  if (direct != null) return String(direct);
+
+  const qualificacao = lead?.metadata?.qualificacao as Record<string, unknown> | null | undefined;
+  const fallback = qualificacao?.[qualKey ?? key];
+  return fallback == null ? "" : String(fallback);
+}
+
 function initForm(lead: Lead | null): FormState {
   return {
     name:                lead?.name ?? "",
     phone:               lead?.phone ?? "",
     email:               lead?.email ?? "",
-    assigned_to:         lead?.assigned_to ?? "",
-    interesse_principal: lead?.interesse_principal ?? "",
-    finalidade:          lead?.finalidade ?? "",
-    objetivo:            lead?.objetivo ?? "",
-    faixa_valor:         lead?.faixa_valor ?? "",
-    regiao_interesse:    lead?.regiao_interesse ?? "",
-    bairro_interesse:    lead?.bairro_interesse ?? "",
-    imovel_ref:          lead?.imovel_ref ?? "",
-    data_agendamento:    lead?.data_agendamento ?? "",
-    status_agendamento:  lead?.status_agendamento ?? "",
-    janela_visita:       lead?.janela_visita ?? "",
+    cpf:                 metaStr(lead, "cpf"),
+    rg:                  metaStr(lead, "rg"),
+    nacionalidade:       metaStr(lead, "nacionalidade"),
+    estado_civil:        metaStr(lead, "estado_civil"),
+    profissao:           metaStr(lead, "profissao"),
+    data_nascimento:     metaStr(lead, "data_nascimento"),
+    cep:                 metaStr(lead, "cep"),
+    logradouro:          metaStr(lead, "logradouro"),
+    numero:              metaStr(lead, "numero"),
+    complemento:         metaStr(lead, "complemento"),
+    bairro:              metaStr(lead, "bairro"),
+    cidade:              metaStr(lead, "cidade"),
+    estado:              metaStr(lead, "estado"),
+    pix:                 metaStr(lead, "pix"),
+    banco:               metaStr(lead, "banco"),
+    agencia:             metaStr(lead, "agencia"),
+    conta:               metaStr(lead, "conta"),
+    dados_bancarios:     metaStr(lead, "dados_bancarios"),
+    observacoes_juridicas: metaStr(lead, "observacoes_juridicas"),
+    corretor_id:         lead?.corretor_id ?? "",
+    interesse_principal: lead?.interesse_principal ?? metaQualStr(lead, "interesse_principal"),
+    finalidade:          lead?.finalidade ?? metaStr(lead, "finalidade"),
+    objetivo:            lead?.objetivo ?? metaQualStr(lead, "objetivo"),
+    faixa_valor:         lead?.faixa_valor ?? metaQualStr(lead, "faixa_valor"),
+    regiao_interesse:    lead?.regiao_interesse ?? metaStr(lead, "regiao_interesse"),
+    bairro_interesse:    lead?.bairro_interesse ?? metaQualStr(lead, "bairro_interesse", "bairro"),
+    imovel_ref:          lead?.imovel_ref ?? metaStr(lead, "imovel_ref"),
+    data_agendamento:    lead?.data_agendamento ?? metaStr(lead, "data_agendamento"),
+    status_agendamento:  lead?.status_agendamento ?? metaStr(lead, "status_agendamento"),
+    janela_visita:       lead?.janela_visita ?? metaStr(lead, "janela_visita"),
     source:              lead?.source ?? "",
     score:               String(lead?.score ?? 0),
     status:              lead?.status ?? "new",
@@ -328,34 +385,59 @@ function CorretorCard({
   onLeadSaved?: (lead: Lead) => void;
 }) {
   const [editing, setEditing] = useState(false);
-  const [selectedId, setSelectedId] = useState(lead.assigned_to ?? "");
+  const [selectedId, setSelectedId] = useState(lead.corretor_id ?? "");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
-    setSelectedId(lead.assigned_to ?? "");
+    setSelectedId(lead.corretor_id ?? "");
     setEditing(false);
-  }, [lead.assigned_to, lead.id]);
+  }, [lead.corretor_id, lead.id]);
 
-  const corretor = corretores.find((c) => c.id === lead.assigned_to);
+  const corretor = corretores.find((c) => c.id === lead.corretor_id);
   const hasCorretor = !!corretor;
 
   async function handleAssign() {
     if (!onLeadSaved) return;
     setEditing(false);
-    try {
-      const res = await fetch(`/api/leads/${lead.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assigned_to: selectedId || null }),
-      });
-      if (res.ok) {
-        const saved = await res.json() as Lead;
-        onLeadSaved(saved);
-        return;
+
+    if (selectedId) {
+      setSending(true);
+      try {
+        const res = await fetch(`/api/leads/${lead.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ corretor_id: selectedId }),
+        });
+        if (res.ok) {
+          const saved = await res.json() as Lead;
+          onLeadSaved(saved);
+          // Atribuição persistida. O disparo do n8n é feito explicitamente
+          // pelo botão "Enviar lead quente para corretor" (TabDados).
+          return;
+        }
+      } catch {
+        // fallthrough to optimistic update
+      } finally {
+        setSending(false);
       }
-    } catch {
-      // fallthrough to optimistic update
+      onLeadSaved({ ...lead, corretor_id: selectedId });
+    } else {
+      try {
+        const res = await fetch(`/api/leads/${lead.id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ corretor_id: null }),
+        });
+        if (res.ok) {
+          const saved = await res.json() as Lead;
+          onLeadSaved(saved);
+          return;
+        }
+      } catch {
+        // fallthrough to optimistic update
+      }
+      onLeadSaved({ ...lead, corretor_id: null });
     }
-    onLeadSaved({ ...lead, assigned_to: selectedId || null });
   }
 
   return (
@@ -405,9 +487,10 @@ function CorretorCard({
           <button
             type="button"
             onClick={handleAssign}
-            className="rounded-lg bg-brand-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-600 transition-colors"
+            disabled={sending}
+            className="rounded-lg bg-brand-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-600 disabled:opacity-60 transition-colors whitespace-nowrap"
           >
-            OK
+            {sending ? "..." : selectedId ? "Enviar" : "Remover"}
           </button>
         </div>
       )}
@@ -434,6 +517,7 @@ function TabDados({
   const [saveMsg, setSaveMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [personTab, setPersonTab] = useState<LeadPersonTab>("pessoais");
 
   // Reset form when lead changes
   useEffect(() => {
@@ -489,6 +573,7 @@ function TabDados({
       }
 
       const saved = await res.json() as Lead;
+      if (lead) setForm(initForm(saved));
       setSaveMsg({ ok: true, text: lead ? "Alterações salvas." : "Lead criado com sucesso." });
       onLeadSaved?.(saved);
     } finally {
@@ -498,14 +583,33 @@ function TabDados({
 
   async function enviarParaCorretor() {
     if (!lead) return;
+    const corretorId = form.corretor_id.trim();
+    if (!corretorId) {
+      setSaveMsg({ ok: false, text: "Selecione um corretor antes de enviar." });
+      return;
+    }
     setSending(true);
     setSent(false);
+    setSaveMsg(null);
     try {
-      await fetch("/api/actions/execute", {
+      const res = await fetch(`/api/leads/${lead.id}/send-to-broker`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "send_to_broker", lead_id: lead.id, tenant_id: lead.tenant_id }),
+        body: JSON.stringify({ corretor_id: corretorId }),
       });
+      if (!res.ok) {
+        let errorText = "Erro ao enviar lead ao corretor.";
+        try {
+          const errBody = await res.json() as { error?: string };
+          if (errBody?.error) errorText = errBody.error;
+        } catch {
+          // ignore parse failure
+        }
+        setSaveMsg({ ok: false, text: errorText });
+        return;
+      }
+      const saved = await res.json() as Lead;
+      onLeadSaved?.(saved);
       setSent(true);
     } finally {
       setSending(false);
@@ -615,6 +719,137 @@ function TabDados({
         </div>
       )}
 
+      {/* ── Cadastro reutilizavel da pessoa ── */}
+      <div className={SECTION_CLS}>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400">Cadastro da pessoa</h4>
+          <span className="text-[11px] text-gray-400">Base para contratos, financeiro e automacoes</span>
+        </div>
+
+        <div className="mb-4 grid grid-cols-2 gap-2 rounded-lg bg-gray-50 p-1 dark:bg-gray-900 sm:grid-cols-4">
+          {LEAD_PERSON_TABS.map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setPersonTab(tab.key)}
+              className={[
+                "rounded-md px-3 py-2 text-xs font-medium transition-colors",
+                personTab === tab.key
+                  ? "bg-white text-brand-600 shadow-sm dark:bg-gray-800 dark:text-brand-400"
+                  : "text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white",
+              ].join(" ")}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {personTab === "pessoais" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL_CLS}>CPF</label>
+              <input type="text" value={form.cpf} onChange={(e) => set("cpf", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>RG</label>
+              <input type="text" value={form.rg} onChange={(e) => set("rg", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Nacionalidade</label>
+              <input type="text" value={form.nacionalidade} onChange={(e) => set("nacionalidade", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Estado civil</label>
+              <input type="text" value={form.estado_civil} onChange={(e) => set("estado_civil", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Profissao</label>
+              <input type="text" value={form.profissao} onChange={(e) => set("profissao", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Data de nascimento</label>
+              <input type="date" value={form.data_nascimento} onChange={(e) => set("data_nascimento", e.target.value)} className={INPUT_CLS} />
+            </div>
+          </div>
+        )}
+
+        {personTab === "endereco" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL_CLS}>CEP</label>
+              <input type="text" value={form.cep} onChange={(e) => set("cep", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Cidade</label>
+              <input type="text" value={form.cidade} onChange={(e) => set("cidade", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div className="col-span-2">
+              <label className={LABEL_CLS}>Logradouro</label>
+              <input type="text" value={form.logradouro} onChange={(e) => set("logradouro", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Numero</label>
+              <input type="text" value={form.numero} onChange={(e) => set("numero", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Complemento</label>
+              <input type="text" value={form.complemento} onChange={(e) => set("complemento", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Bairro</label>
+              <input type="text" value={form.bairro} onChange={(e) => set("bairro", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Estado</label>
+              <input type="text" value={form.estado} onChange={(e) => set("estado", e.target.value)} className={INPUT_CLS} />
+            </div>
+          </div>
+        )}
+
+        {personTab === "financeiro" && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={LABEL_CLS}>PIX</label>
+              <input type="text" value={form.pix} onChange={(e) => set("pix", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Banco</label>
+              <input type="text" value={form.banco} onChange={(e) => set("banco", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Agencia</label>
+              <input type="text" value={form.agencia} onChange={(e) => set("agencia", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div>
+              <label className={LABEL_CLS}>Conta</label>
+              <input type="text" value={form.conta} onChange={(e) => set("conta", e.target.value)} className={INPUT_CLS} />
+            </div>
+            <div className="col-span-2">
+              <label className={LABEL_CLS}>Dados bancarios</label>
+              <textarea
+                value={form.dados_bancarios}
+                onChange={(e) => set("dados_bancarios", e.target.value)}
+                rows={3}
+                className="w-full resize-none rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-500"
+              />
+            </div>
+          </div>
+        )}
+
+        {personTab === "juridico" && (
+          <div>
+            <label className={LABEL_CLS}>Observacoes juridicas</label>
+            <textarea
+              value={form.observacoes_juridicas}
+              onChange={(e) => set("observacoes_juridicas", e.target.value)}
+              rows={4}
+              placeholder="Informacoes auxiliares para contratos, qualificacao ou atendimento juridico."
+              className="w-full resize-none rounded-lg border border-gray-200 bg-transparent px-4 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-gray-500"
+            />
+          </div>
+        )}
+      </div>
+
       {/* ── Contato ── */}
       <div className={SECTION_CLS}>
         <h4 className="mb-4 text-xs font-semibold uppercase tracking-wider text-gray-400">Contato</h4>
@@ -634,8 +869,8 @@ function TabDados({
           <div>
             <label className={LABEL_CLS}>Corretor responsável</label>
             <select
-              value={form.assigned_to}
-              onChange={(e) => set("assigned_to", e.target.value)}
+              value={form.corretor_id}
+              onChange={(e) => set("corretor_id", e.target.value)}
               className={SELECT_CLS}
             >
               <option value="">— Sem corretor —</option>
@@ -1036,21 +1271,24 @@ export default function LeadDrawer({
   corretores = [],
 }: LeadDrawerProps) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("dados");
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [selectedImovel, setSelectedImovel] = useState<N8nImovel | null>(null);
 
   function handleNovoContrato() {
-    if (!lead) return;
+    if (!mounted || !lead) return;
     const params = new URLSearchParams();
     params.set("lead_id", lead.id);
     const propertyId = selectedImovel?.id ?? lead.imovel_ref ?? null;
     if (propertyId) params.set("property_id", propertyId);
-    if (lead.assigned_to) params.set("broker_id", lead.assigned_to);
+    if (lead.corretor_id) params.set("broker_id", lead.corretor_id);
     router.push(`/cockpit/contratos/novo?${params.toString()}`);
     onClose();
   }
+
+  useEffect(() => setMounted(true), []);
 
   // Reset tab when drawer opens
   useEffect(() => {
@@ -1207,13 +1445,9 @@ export default function LeadDrawer({
             <TabDados lead={null} onLeadSaved={onLeadSaved} corretores={corretores} onImovelSelect={(imovel) => setSelectedImovel(imovel)} />
           )}
 
-          {/* No modo Edição, mostra a aba ativa */}
-          {lead && activeTab === "dados"      && <TabDados lead={lead} onLeadSaved={onLeadSaved} corretores={corretores} onImovelSelect={(imovel) => setSelectedImovel(imovel)} />}
-          {lead && activeTab === "conversas"  && <TabConversas lead={lead} />}
-          {lead && activeTab === "atividades" && <TabAtividades />}
-          {lead && activeTab === "tarefas"    && <TabTarefas />}
-          {lead && activeTab === "ia"         && <TabIA lead={lead} />}
-          {lead && activeTab === "arquivos"   && <TabArquivos />}
+          {/* No modo Edição, mostra a aba ativa.
+              Tabs mock (Conversas/Atividades/Tarefas/IA/Arquivos) desativadas. */}
+          {lead && activeTab === "dados" && <TabDados lead={lead} onLeadSaved={onLeadSaved} corretores={corretores} onImovelSelect={(imovel) => setSelectedImovel(imovel)} />}
         </div>
       </div>
 

@@ -1,0 +1,237 @@
+{
+  "name": "Jurema | Enviar Contrato v2",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "enviar-contrato",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "7d9a8e2c-2a38-4c6f-91c1-2e9f0f9c1b01",
+      "name": "Webhook Enviar Contrato",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        320,
+        320
+      ],
+      "webhookId": "236eec66-ddc5-4414-a652-acacf7a4b508"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body ?? $json;\nconst tenant_id = body.tenant_id ?? null;\nconst contract_id = body.contract_id ?? null;\nconst lead_id = body.lead_id ?? null;\nconst canais = body.canais ?? { whatsapp: true, email: true };\n\nif (!tenant_id || !contract_id || !lead_id) {\n  throw new Error('tenant_id, contract_id e lead_id sao obrigatorios');\n}\n\nconst supabaseUrl = $vars.SUPABASE_URL ?? $vars.NEXT_PUBLIC_SUPABASE_URL;\nconst serviceRole = $vars.SUPABASE_SERVICE_ROLE_KEY;\n\nif (!supabaseUrl) {\n  throw new Error('SUPABASE_URL nao configurada');\n}\n\nif (!serviceRole) {\n  throw new Error('SUPABASE_SERVICE_ROLE_KEY nao configurada');\n}\n\nconst headers = {\n  apikey: serviceRole,\n  Authorization: `Bearer ${serviceRole}`,\n  'Content-Type': 'application/json'\n};\n\nconst money = new Intl.NumberFormat('pt-BR', {\n  style: 'currency',\n  currency: 'BRL'\n});\n\nfunction toNumber(value) {\n  const n = Number(String(value ?? '').replace(/[^0-9,.-]/g, '').replace(/\\./g, '').replace(',', '.'));\n  return Number.isFinite(n) ? n : null;\n}\n\nfunction toBRL(value) {\n  const n = toNumber(value);\n  return n === null ? '' : money.format(n);\n}\n\nfunction extensoSimples(value) {\n  const n = toNumber(value);\n  if (n === null) return '';\n  const milhoes = Math.floor(n / 1000000);\n  const restoMilhares = Math.floor((n % 1000000) / 1000);\n  const partes = [];\n  if (milhoes > 0) partes.push(`${milhoes} ${milhoes === 1 ? 'milhão' : 'milhões'}`);\n  if (restoMilhares > 0) partes.push(`${restoMilhares} mil`);\n  if (partes.length === 0) return toBRL(n);\n  return partes.join(' e ');\n}\n\nasync function fetchJson(url) {\n  const response = await fetch(url, { headers });\n  const data = await response.json().catch(() => null);\n  return { ok: response.ok, status: response.status, data };\n}\n\nconst contractQuery = `${supabaseUrl}/rest/v1/contracts?id=eq.${contract_id}&tenant_id=eq.${tenant_id}&select=id,tenant_id,lead_id,lead_name,project_id,imovel_id,broker_id,project_name,corretor_name,title,type,status,value,commission_percentage,commission_amount,signed_at,created_at,updated_at`;\nconst leadQuery = `${supabaseUrl}/rest/v1/leads?id=eq.${lead_id}&tenant_id=eq.${tenant_id}&select=id,tenant_id,name,email,phone,source,status,score,metadata,created_at,updated_at`;\n\nconst contractRes = await fetchJson(contractQuery);\nconst contracts = Array.isArray(contractRes.data) ? contractRes.data : [];\nconst contract = contracts[0] ?? null;\n\nif (!contract) {\n  throw new Error('Contrato nao encontrado');\n}\n\nconst leadRes = await fetchJson(leadQuery);\nconst leads = Array.isArray(leadRes.data) ? leadRes.data : [];\nconst lead = leads[0] ?? null;\n\nif (!lead) {\n  throw new Error('Lead nao encontrado');\n}\n\nconst imovelId = contract.imovel_id ?? contract.project_id ?? null;\nconst imovelRes = imovelId\n  ? await fetchJson(`${supabaseUrl}/rest/v1/imoveis?id=eq.${imovelId}&tenant_id=eq.${tenant_id}&select=id,id_imovel,titulo_comercial,bairro,valor,metadata,created_at,updated_at`)\n  : { data: [] };\nconst imoveis = Array.isArray(imovelRes.data) ? imovelRes.data : [];\nconst imovel = imoveis[0] ?? null;\n\nconst brokerId = contract.broker_id ?? null;\nconst brokerRes = brokerId\n  ? await fetchJson(`${supabaseUrl}/rest/v1/corretores?id=eq.${brokerId}&tenant_id=eq.${tenant_id}&select=id,name,phone,email,created_at,updated_at`)\n  : { data: [] };\nconst brokers = Array.isArray(brokerRes.data) ? brokerRes.data : [];\nconst broker = brokers[0] ?? null;\n\nconst valorBase = contract.value ?? imovel?.valor ?? 0;\nconst valorFormatado = toBRL(valorBase);\nconst comissaoValor = contract.commission_amount ?? (contract.commission_percentage != null ? Number(valorBase) * Number(contract.commission_percentage) / 100 : 0);\nconst comissaoFormatada = toBRL(comissaoValor);\nconst valorExtenso = extensoSimples(valorBase);\nconst comprador = lead.name ?? contract.lead_name ?? '';\nconst imovelNome = imovel?.titulo_comercial ?? contract.project_name ?? '';\nconst corretorNome = broker?.name ?? contract.corretor_name ?? '';\nconst contractTitle = contract.title ?? `Contrato - ${comprador || 'Lead'}`;\nconst pdfLink = `https://docs.google.com/document/d/${contract.id}/export?format=pdf`;\nconst docLink = `https://docs.google.com/document/d/${contract.id}/edit?usp=sharing`;\nconst whatsappMessage = `Segue o contrato em PDF para conferência: ${pdfLink}\\n\\nBaixe o arquivo, assine digitalmente pelo GOV.br e envie o PDF assinado de volta por aqui.`;\nconst emailSubject = contractTitle;\nconst emailMessage = `Segue o contrato em PDF para conferência: ${pdfLink}\\n\\nBaixe o arquivo, assine digitalmente pelo GOV.br e envie o PDF assinado de volta por aqui.`;\n\nreturn [{\n  json: {\n    tenant_id,\n    contract_id,\n    lead_id,\n    canais,\n    contract,\n    lead,\n    imovel,\n    broker,\n    contract_title: contractTitle,\n    pdf_link: pdfLink,\n    document_link: docLink,\n    comprador,\n    imovel_nome: imovelNome,\n    corretor_nome: corretorNome,\n    valor: valorFormatado,\n    comissao: comissaoFormatada,\n    valor_extenso: valorExtenso,\n    id_imovel: imovel?.id_imovel ?? imovel?.id ?? imovelId ?? '',\n    whatsapp_to: lead.phone ?? '',\n    email_to: lead.email ?? '',\n    whatsapp_message: whatsappMessage,\n    email_subject: emailSubject,\n    email_message: emailMessage,\n    should_whatsapp: Boolean(canais.whatsapp && lead.phone),\n    should_email: Boolean(canais.email && lead.email),\n    template_doc_id: $vars.CONTRACT_TEMPLATE_DOC_ID ?? '',\n    output_folder_id: $vars.CONTRACT_OUTPUT_FOLDER_ID ?? ''\n  }\n}];"
+      },
+      "id": "4a5b8af8-8c2a-4cb9-94de-1c3c8d3a4c01",
+      "name": "Carregar Dados",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.template_doc_id }}",
+          "mode": "id"
+        },
+        "name": "={{ $json.contract_title }}",
+        "parents": {
+          "__rl": true,
+          "value": "={{ $json.output_folder_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "0b6b1e6c-7b4b-4d5a-9b8e-4ce5c23d5301",
+      "name": "Copiar Template",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        944,
+        320
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "name": "Google Drive Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "=jurema",
+        "remoteJid": "={{ $('Carregar Dados').item.json.whatsapp_to }}",
+        "messageText": "={{ $('Carregar Dados').item.json.whatsapp_message }}",
+        "options_message": {}
+      },
+      "id": "a1df6fd7-72ff-496a-8a76-00f4a42643fa",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        320
+      ],
+      "credentials": {
+        "evolutionApi": {
+          "name": "Evolution YZIHUB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Carregar Dados').item.json.email_to }}",
+        "subject": "={{ $('Carregar Dados').item.json.email_subject }}",
+        "emailType": "text",
+        "message": "={{ $('Carregar Dados').item.json.email_message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d889eb42-8b34-4718-b961-38c8e7839ea6",
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1584,
+        320
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "name": "Gmail Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $vars.SUPABASE_URL + '/rest/v1/contracts?id=eq.' + $('Carregar Dados').item.json.contract_id + '&tenant_id=eq.' + $('Carregar Dados').item.json.tenant_id }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $vars.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $vars.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ status: 'sent', sent_at: new Date().toISOString(), updated_at: new Date().toISOString(), file_url: $('Carregar Dados').item.json.pdf_link }) }}",
+        "options": {}
+      },
+      "id": "c1b2f1ee-a7a1-4b0b-8f8c-9f83079d1d01",
+      "name": "Atualizar Contrato",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "responseBody": "={\"ok\":true,\"contract_id\":$json.contract_id,\"lead_id\":$json.lead_id,\"pdf_sent\":true,\"whatsapp\":$json.should_whatsapp,\"email\":$json.should_email,\"document_link\":$json.document_link}",
+        "options": {}
+      },
+      "id": "b1b9080e-7b7f-4d16-8ce4-7d8f0d4e5301",
+      "name": "Responder",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        2224,
+        320
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Enviar Contrato": {
+      "main": [
+        [
+          {
+            "node": "Carregar Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Carregar Dados": {
+      "main": [
+        [
+          {
+            "node": "Copiar Template",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copiar Template": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Enviar Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Email": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Contrato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Contrato": {
+      "main": [
+        [
+          {
+            "node": "Responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

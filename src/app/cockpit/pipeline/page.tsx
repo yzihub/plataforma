@@ -60,11 +60,11 @@ async function fetchPipelineData(): Promise<{
         .order("created_at", { ascending: false }),
 
       supabase
-        .from("brokers")
-        .select("id, full_name")
+        .from("corretores")
+        .select("id, name")
         .eq("tenant_id", tenantId)
         .eq("is_active", true)
-        .order("full_name", { ascending: true }),
+        .order("name", { ascending: true }),
     ]);
 
     if (stagesRes.error || leadsRes.error || !stagesRes.data || !leadsRes.data) {
@@ -73,7 +73,7 @@ async function fetchPipelineData(): Promise<{
 
     const brokers: Broker[] = brokersRes.error || !brokersRes.data
       ? []
-      : brokersRes.data.map((b: { id: string; full_name: string }) => ({ id: b.id, name: b.full_name }));
+      : brokersRes.data.map((b: { id: string; name: string }) => ({ id: b.id, name: b.name }));
 
     return {
       tenantName: tenantRes.data?.name ?? fallback.tenantName,

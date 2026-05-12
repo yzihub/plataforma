@@ -5,23 +5,31 @@
 
 interface ContratoEditorPreviewProps {
   body: string;
+  templateName?: string;
+  templateFileId?: string;
 }
 
-export default function ContratoEditorPreview({ body }: ContratoEditorPreviewProps) {
+function isOfficialTemplateFileId(value: string | null | undefined) {
+  return typeof value === "string" && /^[A-Za-z0-9_-]{20,}$/.test(value) && !value.startsWith("ID_");
+}
+
+export default function ContratoEditorPreview({ body, templateName, templateFileId }: ContratoEditorPreviewProps) {
+  const hasOfficialTemplate = isOfficialTemplateFileId(templateFileId);
+
   return (
-    <div className="flex flex-col h-full border-l border-gray-200 dark:border-gray-800 overflow-hidden">
+    <div className="flex flex-col">
       {/* Header do preview */}
-      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-900">
+      <div className="border-b border-gray-200 bg-white px-5 py-3 dark:border-gray-800 dark:bg-gray-900">
         <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
           Preview
         </span>
       </div>
 
       {/* Área de fundo — simula mesa */}
-      <div className="flex-1 overflow-y-auto bg-gray-300 dark:bg-gray-700 py-5 px-3 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-500">
+      <div className="bg-gray-300 px-3 py-5 dark:bg-gray-700">
         {/*
           zoom: 0.42 escala o A4 (794px) para ~334px — cabe no painel de 360px.
-          Diferente de transform:scale, zoom afeta o layout, eliminando double-scrollbar.
+          Diferente de transform:scale, zoom afeta o layout da folha.
         */}
         <div style={{ zoom: 0.42, margin: "0 auto", width: "fit-content" }}>
           <div
@@ -40,9 +48,9 @@ export default function ContratoEditorPreview({ body }: ContratoEditorPreviewPro
             <div style={{ marginBottom: "12px" }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/images/jurema/logo-black.svg"
+                src="/images/jurema/logo-black-official.svg"
                 alt="Jurema Brokers"
-                style={{ height: "48px", width: "auto" }}
+                style={{ height: "56px", width: "auto" }}
               />
             </div>
 
@@ -69,10 +77,27 @@ export default function ContratoEditorPreview({ body }: ContratoEditorPreviewPro
                   </p>
                 ))}
               </div>
+            ) : hasOfficialTemplate ? (
+              <div style={{ flex: 1 }}>
+                <div style={{ marginTop: "64px", textAlign: "center" }}>
+                  <p style={{ color: "#111827", fontSize: "24px", fontWeight: 700, marginBottom: "12px" }}>
+                    {templateName || "Modelo oficial selecionado"}
+                  </p>
+                  <p style={{ color: "#4b5563", fontSize: "13px", lineHeight: "1.6", margin: "0 auto", maxWidth: "460px" }}>
+                    Prévia visual. O documento final será gerado pelo Google Docs.
+                  </p>
+                </div>
+
+                <div style={{ marginTop: "64px", borderTop: "1px solid #e5e7eb", paddingTop: "18px" }}>
+                  <p style={{ color: "#6b7280", fontSize: "11px", lineHeight: "1.6" }}>
+                    Este painel não carrega o DOCX real nem reproduz sua formatação. Ele mostra apenas o modelo oficial selecionado e os campos que serão preenchidos pelo fluxo de geração.
+                  </p>
+                </div>
+              </div>
             ) : (
               <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <p style={{ color: "#9ca3af", fontStyle: "italic", fontSize: "13px" }}>
-                  Selecione um template para ver o preview
+                  Selecione um template oficial
                 </p>
               </div>
             )}

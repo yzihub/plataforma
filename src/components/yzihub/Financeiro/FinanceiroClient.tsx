@@ -1,19 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useTenantContext } from "@/context/TenantContext";
-import { createClient } from "@/lib/supabase/client";
 import type { N8nContract } from "@/types/n8n-payloads";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface Comissao {
+type FinanceEntry = {
   id: string;
-  contract_id: string;
-  percentual: number;
-  valor: number;
-  status: string;
-}
+  tenant_id: string;
+  comissao_id: string | null;
+  contract_id: string | null;
+  tipo: "entrada" | "saida" | string;
+  categoria: string;
+  descricao: string;
+  valor: number | null;
+  data_evento: string;
+  status: "previsto" | "confirmado" | "cancelado" | string;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+  updated_at: string;
+  contract?: (N8nContract & {
+    commission_percentage?: number | null;
+    commission_amount?: number | null;
+  }) | null;
+  broker_name?: string | null;
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -27,30 +40,37 @@ function fmtBRLShort(v: number): string {
   return fmtBRL(v);
 }
 
+async function readApiError(res: Response, fallback: string): Promise<string> {
+  const data = await res.json().catch(() => null) as { error?: string; detail?: string } | null;
+  return data?.error ?? data?.detail ?? fallback;
+}
+
 // ─── Status display maps ──────────────────────────────────────────────────────
 
 const STATUS_LABELS: Record<string, string> = {
-  draft:     "Rascunho",
-  sent:      "Enviado",
-  signed:    "Assinado",
-  cancelled: "Cancelado",
-  rascunho:  "Rascunho",
-  pendente:  "Pendente",
-  assinado:  "Assinado",
-  cancelado: "Cancelado",
-  expirado:  "Expirado",
+  previsto:   "Previsto",
+  confirmado: "Confirmado",
+  cancelado:  "Cancelado",
+  draft:      "Rascunho",
+  sent:       "Enviado",
+  signed:     "Assinado",
+  rascunho:   "Rascunho",
+  pendente:   "Pendente",
+  assinado:   "Assinado",
+  expirado:   "Expirado",
 };
 
 const STATUS_STYLES: Record<string, string> = {
-  draft:     "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
-  sent:      "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  signed:    "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  cancelled: "bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400",
-  rascunho:  "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
-  pendente:  "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
-  assinado:  "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  cancelado: "bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400",
-  expirado:  "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500",
+  previsto:   "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  confirmado: "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  cancelado:  "bg-red-50 dark:bg-red-500/10 text-red-500 dark:text-red-400",
+  draft:      "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
+  sent:       "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  signed:     "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  rascunho:   "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
+  pendente:   "bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  assinado:   "bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  expirado:   "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-500",
 };
 
 // ─── KPI Card ─────────────────────────────────────────────────────────────────
@@ -104,11 +124,13 @@ function Skeleton() {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function FinanceiroClient() {
+  const router = useRouter();
   const { tenant, loading: tenantLoading } = useTenantContext();
-  const [contracts, setContracts] = useState<N8nContract[]>([]);
-  const [comissoes, setComissoes] = useState<Comissao[]>([]);
+  const [entries, setEntries] = useState<FinanceEntry[]>([]);
   const [isLoading, setIsLoading]  = useState(false);
   const [error, setError]          = useState<string | null>(null);
+  const [openActionId, setOpenActionId] = useState<string | null>(null);
+  const [busyActionId, setBusyActionId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!tenant?.id) return;
@@ -117,15 +139,7 @@ export default function FinanceiroClient() {
       setIsLoading(true);
       setError(null);
       try {
-        const supabase = createClient();
-
-        const [contractsRes, comissoesRes] = await Promise.all([
-          fetch("/api/contracts"),
-          supabase
-            .from("comissoes")
-            .select("id, contract_id, percentual, valor, status")
-            .eq("tenant_id", tenant!.id),
-        ]);
+        const contractsRes = await fetch("/api/financeiro");
 
         if (!contractsRes.ok) {
           const d = await contractsRes.json().catch(() => ({}));
@@ -133,12 +147,8 @@ export default function FinanceiroClient() {
         }
 
         const json = await contractsRes.json();
-        const arr: N8nContract[] = Array.isArray(json?.data) ? json.data : [];
-        setContracts(arr);
-
-        if (comissoesRes.data) {
-          setComissoes(comissoesRes.data as Comissao[]);
-        }
+        const arr: FinanceEntry[] = Array.isArray(json?.data) ? json.data : [];
+        setEntries(arr);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erro desconhecido");
       } finally {
@@ -151,21 +161,74 @@ export default function FinanceiroClient() {
 
   // ── KPI calculations ─────────────────────────────────────────────────────────
 
-  const isSigned = (c: N8nContract) =>
-    c.status === "signed" || c.status === "assinado";
+  const isSigned = (c: FinanceEntry) =>
+    c.contract?.status === "signed" || c.contract?.status === "assinado" || Boolean(c.contract?.signed_at);
 
-  const totalVendas   = contracts.filter(isSigned).reduce((s, c) => s + c.value, 0);
-  const totalComissao = comissoes
-    .filter((c) => c.status === "approved" || c.status === "paid")
-    .reduce((s, c) => s + c.valor, 0);
-  const cntSigned     = contracts.filter(isSigned).length;
-  const ticketMedio   = cntSigned > 0 ? totalVendas / cntSigned : 0;
-  const totalVGV      = contracts
-    .filter((c) => c.status !== "cancelled" && c.status !== "cancelado")
-    .reduce((s, c) => s + c.value, 0);
+  const entryValue = (c: FinanceEntry) => Number(c.valor) || 0;
+  const signedContracts = entries.filter(isSigned);
+  const totalVendas   = entries.filter((e) => e.tipo === "entrada").reduce((s, e) => s + entryValue(e), 0);
+  const totalComissao = entries.filter((e) => e.tipo === "saida" && e.categoria === "comissao").reduce((s, e) => s + entryValue(e), 0);
+  const cntSigned     = new Set(entries.filter(isSigned).map((e) => e.contract_id).filter(Boolean)).size;
+  const ticketBase    = entries.filter((e) => e.tipo === "entrada");
+  const ticketMedio   = ticketBase.length > 0
+    ? ticketBase.reduce((s, c) => s + entryValue(c), 0) / ticketBase.length
+    : 0;
 
-  function comissaoOf(contractId: string): Comissao | null {
-    return comissoes.find((c) => c.contract_id === contractId) ?? null;
+  function openContract(contractId: string) {
+    router.push(`/cockpit/contratos/novo?contract_id=${contractId}`);
+  }
+
+  async function sendContract(entry: FinanceEntry) {
+    if (!entry.contract_id) return;
+    setBusyActionId(entry.contract_id);
+    setError(null);
+    setOpenActionId(null);
+
+    try {
+      const res = await fetch(`/api/contracts/${entry.contract_id}/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ canais: { whatsapp: true, email: true } }),
+      });
+
+      if (!res.ok) {
+        throw new Error(await readApiError(res, "Erro ao enviar contrato"));
+      }
+
+      await res.json().catch(() => null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao enviar contrato");
+    } finally {
+      setBusyActionId(null);
+    }
+  }
+
+  async function deleteContract(entry: FinanceEntry) {
+    if (!entry.contract_id) return;
+    const isFinalized = entry.contract?.status === "sent" || entry.contract?.status === "signed" || entry.contract?.status === "assinado";
+    const message = isFinalized
+      ? "Este contrato ja foi enviado/assinado. Excluir apenas remove o contrato, sem apagar lead, imovel ou corretor. Deseja continuar?"
+      : "Excluir este contrato? Lead, imovel e corretor vinculados nao serao apagados.";
+
+    if (!window.confirm(message)) return;
+
+    setBusyActionId(entry.contract_id);
+    setError(null);
+    setOpenActionId(null);
+
+    try {
+      const res = await fetch(`/api/contracts/${entry.contract_id}`, { method: "DELETE" });
+
+      if (!res.ok) {
+        throw new Error(await readApiError(res, "Erro ao excluir contrato"));
+      }
+
+      setEntries((prev) => prev.filter((c) => c.contract_id !== entry.contract_id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao excluir contrato");
+    } finally {
+      setBusyActionId(null);
+    }
   }
 
   if (tenantLoading) return <Skeleton />;
@@ -177,7 +240,7 @@ export default function FinanceiroClient() {
       <div>
         <h1 className="text-xl font-bold text-gray-800 dark:text-white/90">Financeiro</h1>
         <p className="text-sm text-gray-400 mt-0.5">
-          {tenant?.name} · Resumo financeiro baseado em contratos
+        {tenant?.name} · Resumo financeiro baseado em contratos assinados
         </p>
       </div>
 
@@ -196,8 +259,8 @@ export default function FinanceiroClient() {
         />
         <KpiCard
           label="Total de Comissao"
-          value={comissoes.length === 0 ? "—" : fmtBRLShort(totalComissao)}
-          sub={comissoes.length === 0 ? "Sem comissoes registradas" : fmtBRL(totalComissao)}
+          value={fmtBRLShort(totalComissao)}
+          sub={fmtBRL(totalComissao)}
           accentClass="bg-violet-500"
           icon={
             <svg className="size-5 text-violet-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -208,7 +271,7 @@ export default function FinanceiroClient() {
         <KpiCard
           label="Contratos Assinados"
           value={String(cntSigned)}
-          sub={`de ${contracts.length} no total`}
+          sub={`de ${entries.length} no total`}
           accentClass="bg-blue-500"
           icon={
             <svg className="size-5 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -219,8 +282,8 @@ export default function FinanceiroClient() {
         />
         <KpiCard
           label="Ticket Medio"
-          value={cntSigned > 0 ? fmtBRLShort(ticketMedio) : "—"}
-          sub={cntSigned > 0 ? "por contrato assinado" : "Sem contratos assinados"}
+          value={fmtBRLShort(ticketMedio)}
+          sub={ticketBase.length > 0 ? "por contrato" : "Sem contratos"}
           accentClass="bg-amber-500"
           icon={
             <svg className="size-5 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -252,7 +315,7 @@ export default function FinanceiroClient() {
             <p className="text-xs text-gray-400 mt-0.5">Itens financeiros por contrato</p>
           </div>
           <span className="text-xs text-gray-400">
-            {contracts.length} item{contracts.length !== 1 ? "s" : ""}
+            {entries.length} item{entries.length !== 1 ? "s" : ""}
           </span>
         </div>
 
@@ -262,62 +325,105 @@ export default function FinanceiroClient() {
               <div key={i} className="h-12 rounded-xl bg-gray-100 dark:bg-gray-800 animate-pulse" />
             ))}
           </div>
-        ) : contracts.length === 0 ? (
+        ) : entries.length === 0 ? (
           <div className="p-10 text-center">
-            <p className="text-sm text-gray-400">Nenhum contrato encontrado.</p>
+            <p className="text-sm text-gray-400">Nenhum contrato financeiro encontrado.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-100 dark:border-gray-800">
-                  {["Cliente", "Imovel / Projeto", "Valor", "Comissao %", "Comissao R$", "Status"].map((h, i) => (
-                    <th
-                      key={h}
-                      className={`text-xs font-medium text-gray-400 uppercase tracking-wide px-4 py-3 ${
-                        i === 0 ? "text-left pl-5" : i < 2 ? "text-left" : i < 5 ? "text-right" : "text-center"
+                {["Cliente", "Imovel / Projeto", "Valor", "Tipo", "Status", "Acoes"].map((h, i) => (
+                  <th
+                    key={h}
+                    className={`text-xs font-medium text-gray-400 uppercase tracking-wide px-4 py-3 ${
+                        i === 0 ? "text-left pl-5" : i < 2 ? "text-left" : i === 2 ? "text-right" : i === 3 ? "text-center" : i === 4 ? "text-center" : "text-right"
                       }`}
-                    >
-                      {h}
-                    </th>
-                  ))}
+                  >
+                    {h}
+                  </th>
+                ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                {contracts.map((c) => {
-                  const com = comissaoOf(c.id);
-                  const styleCls = STATUS_STYLES[c.status] ?? STATUS_STYLES["draft"];
+                {entries.map((c) => {
+                  const styleCls = STATUS_STYLES[c.status] ?? STATUS_STYLES["previsto"];
                   const labelTxt = STATUS_LABELS[c.status] ?? c.status;
                   return (
                     <tr key={c.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors">
                       <td className="pl-5 pr-4 py-3.5">
                         <p className="font-medium text-gray-800 dark:text-white/90 truncate max-w-[160px]">
-                          {c.lead_name}
+                          {c.contract?.lead_name ?? "—"}
                         </p>
-                        {c.corretor_name && (
-                          <p className="text-xs text-gray-400 truncate">{c.corretor_name}</p>
+                        {(c.contract?.corretor_name || c.broker_name) && (
+                          <p className="text-xs text-gray-400 truncate">{c.contract?.corretor_name ?? c.broker_name}</p>
                         )}
                       </td>
                       <td className="px-4 py-3.5">
                         <p className="text-gray-600 dark:text-gray-400 truncate max-w-[180px]">
-                          {c.project_name ?? c.title ?? "—"}
+                          {c.contract?.project_name ?? c.contract?.title ?? c.descricao ?? "—"}
                         </p>
                       </td>
                       <td className="px-4 py-3.5 text-right">
                         <span className="font-semibold text-gray-800 dark:text-white/90 whitespace-nowrap">
-                          {fmtBRL(c.value)}
+                          {fmtBRL(entryValue(c))}
                         </span>
                       </td>
-                      <td className="px-4 py-3.5 text-right text-gray-500 dark:text-gray-400">
-                        {com ? `${com.percentual}%` : "—"}
-                      </td>
-                      <td className="px-4 py-3.5 text-right text-gray-500 dark:text-gray-400">
-                        {com ? fmtBRL(com.valor) : "—"}
+                      <td className="px-4 py-3.5 text-center text-gray-500 dark:text-gray-400">
+                        {c.tipo}
                       </td>
                       <td className="px-4 py-3.5 text-center">
                         <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${styleCls}`}>
                           {labelTxt}
                         </span>
+                      </td>
+                      <td className="relative px-4 py-3.5 text-right">
+                        <button
+                          type="button"
+                          onClick={() => setOpenActionId((current) => current === c.id ? null : c.id)}
+                          disabled={busyActionId === (c.contract_id ?? c.id)}
+                          className="dropdown-toggle inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 disabled:cursor-not-allowed disabled:opacity-50 dark:text-gray-400 dark:hover:bg-white/[0.04] dark:hover:text-gray-200"
+                          aria-label="Acoes do contrato"
+                          aria-expanded={openActionId === c.id}
+                        >
+                          ...
+                        </button>
+
+                        {openActionId === c.id && (
+                          <div className="absolute right-4 top-11 z-50 w-44 overflow-hidden rounded-xl border border-gray-200 bg-white text-left shadow-theme-lg dark:border-gray-800 dark:bg-gray-900">
+                            <button
+                              type="button"
+                            onClick={() => openContract(c.contract_id ?? c.id)}
+                              className="block w-full px-4 py-2 text-left text-xs text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/[0.04]"
+                            >
+                              Visualizar/Abrir
+                            </button>
+                            <button
+                              type="button"
+                            onClick={() => openContract(c.contract_id ?? c.id)}
+                              className="block w-full px-4 py-2 text-left text-xs text-gray-700 transition-colors hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-white/[0.04]"
+                            >
+                              Editar
+                            </button>
+                            <button
+                              type="button"
+                            onClick={() => sendContract(c)}
+                            disabled={busyActionId === c.contract_id}
+                              className="block w-full px-4 py-2 text-left text-xs text-gray-700 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 dark:text-gray-300 dark:hover:bg-white/[0.04]"
+                            >
+                              Enviar contrato
+                            </button>
+                            <button
+                              type="button"
+                            onClick={() => deleteContract(c)}
+                            disabled={busyActionId === c.contract_id}
+                              className="block w-full px-4 py-2 text-left text-xs text-red-500 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 dark:hover:bg-red-500/10"
+                            >
+                              Excluir
+                            </button>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
@@ -328,13 +434,13 @@ export default function FinanceiroClient() {
         )}
 
         {/* Summary footer */}
-        {contracts.length > 0 && !isLoading && (
+        {entries.length > 0 && !isLoading && (
           <div className="border-t border-gray-100 dark:border-gray-800 px-5 py-3 flex items-center justify-between bg-gray-50 dark:bg-white/[0.02]">
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              VGV ativo ({contracts.filter((c) => c.status !== "cancelled" && c.status !== "cancelado").length} contratos)
+              Total em contratos financeiros ({entries.length} movimentos)
             </span>
             <span className="text-sm font-bold text-gray-800 dark:text-white/90">
-              {fmtBRL(totalVGV)}
+              {fmtBRL(totalVendas)}
             </span>
           </div>
         )}

@@ -81,8 +81,6 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         data: { user },
       } = await supabase.auth.getUser();
 
-      console.log("[DIAG] REMOVE AFTER VALIDATION — getUser result:", user?.id ?? "no user"); // [DIAG] REMOVE AFTER VALIDATION
-
       if (!user) {
         setTenant(null);
         setIsGlobalAdmin(false);
@@ -111,8 +109,6 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         .eq("id", user.id)
         .single();
 
-      console.log("[DIAG] REMOVE AFTER VALIDATION — profiles query result:", profileErr?.message ?? `tenant_id=${profile?.tenant_id}`); // [DIAG] REMOVE AFTER VALIDATION
-
       if (profileErr || !profile) {
         console.error("[TenantContext] profiles error:", {
           message: profileErr?.message,
@@ -137,8 +133,6 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      console.log("[DIAG] REMOVE AFTER VALIDATION — tenant resolved:", { id: tenantData.id, name: tenantData.name, plan: tenantData.plan }); // [DIAG] REMOVE AFTER VALIDATION
-
       // ─── ACTIVE MODULES (PROJECTS) ───────────────────────────
 
       const { data: projects, error: projectsErr } = await supabase
@@ -161,8 +155,6 @@ export function TenantProvider({ children }: { children: React.ReactNode }) {
         projects && projects.length > 0
           ? projects.map((p) => p.type as ActiveModule)
           : ["crm" as ActiveModule]; // fallback seguro
-
-      console.log("[DIAG] REMOVE AFTER VALIDATION — activeModules:", activeModules); // [DIAG] REMOVE AFTER VALIDATION
 
       setTenant({
         id: tenantData.id,

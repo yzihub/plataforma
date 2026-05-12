@@ -48,7 +48,9 @@ export interface N8nProperty {
 export interface N8nImovel {
   id: string;
   tenant_id: string;
+  id_imovel: string | null;
   titulo_comercial: string;
+  titulo_seo: string | null;
   bairro: string | null;
   valor: number;
   quartos: number;
@@ -63,6 +65,7 @@ export interface N8nImovel {
   link_do_imovel: string | null;
   status_publicacao: string;
   status_operacional: string | null;
+  metadata: Record<string, unknown> | null;
   created_at: string;
   updated_at: string;
 }
@@ -75,12 +78,15 @@ export interface N8nContract {
   /** @deprecated use imovel_id */
   project_id: string | null;
   imovel_id: string | null;
+  broker_id: string | null;
   project_name: string | null;
   corretor_name: string | null;
   title: string | null;
   type: string;
   status: string;
   value: number;
+  commission_percentage?: number | null;
+  commission_amount?: number | null;
   signed_at: string | null;
   expires_at: string | null;
   created_at: string;
@@ -147,7 +153,9 @@ export function toN8nImovel(row: any): N8nImovel {
   return {
     id: row.id,
     tenant_id: row.tenant_id,
+    id_imovel: row.id_imovel ?? null,
     titulo_comercial: row.titulo_comercial ?? "",
+    titulo_seo: row.titulo_seo ?? null,
     bairro: row.bairro ?? null,
     valor: row.valor ?? 0,
     quartos: row.quartos ?? 0,
@@ -169,6 +177,7 @@ export function toN8nImovel(row: any): N8nImovel {
     link_do_imovel: row.link_do_imovel ?? null,
     status_publicacao: row.status_publicacao ?? "",
     status_operacional: row.status_operacional ?? null,
+    metadata: row.metadata ?? null,
     created_at: row.created_at,
     updated_at: row.updated_at,
   };
@@ -183,12 +192,15 @@ export function toN8nContract(row: any): N8nContract {
     lead_name: row.lead_name,
     project_id: row.project_id ?? null,
     imovel_id: row.imovel_id ?? null,
+    broker_id: row.broker_id ?? null,
     project_name: row.project_name ?? null,
     corretor_name: row.corretor_name ?? null,
     title: row.title ?? null,
     type: row.type,
     status: row.status,
     value: row.value ?? 0,
+    commission_percentage: row.commission_percentage ?? null,
+    commission_amount: row.commission_amount ?? null,
     signed_at: row.signed_at ?? null,
     expires_at: row.expires_at ?? null,
     created_at: row.created_at,

@@ -1,0 +1,1692 @@
+{
+  "updatedAt": "2026-05-10T18:04:46.551Z",
+  "createdAt": "2026-02-24T02:29:21.291Z",
+  "id": "bzK9KbNa5zEYcurj",
+  "name": "Onboarding | 2.1 Gerando Contrato",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "enviarcontrato",
+        "options": {}
+      },
+      "id": "9d587240-159c-4069-a309-83adf97409ef",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        560
+      ],
+      "webhookId": "236eec66-ddc5-4414-a652-acacf7a4b508"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body ?? $json;\nconst tenant_id = body.tenant_id ?? null;\nconst contract_id = body.contract_id ?? body.contractId ?? body.id ?? null;\nconst lead_id = body.lead_id ?? body.leadId ?? null;\nconst canais = body.canais ?? { whatsapp: true, email: true };\nconst template_file_id =\n  body.template_file_id ??\n  body.templateFileId ??\n  body.template_doc_id ??\n  body.templateDocId ??\n  body.template_id ??\n  null;\n\nif (!tenant_id || !contract_id || !lead_id) {\n  throw new Error('tenant_id, contract_id e lead_id sao obrigatorios');\n}\n\nreturn [{\n  json: {\n    tenant_id,\n    contract_id,\n    lead_id,\n    canais: {\n      whatsapp: canais.whatsapp !== false,\n      email: canais.email !== false,\n    },\n    template_file_id,\n    conteudo: body.conteudo ?? body.renderedBody ?? body.content ?? null,\n    output_folder_id: body.output_folder_id ?? body.outputFolderId ?? $vars.CONTRACT_OUTPUT_FOLDER_ID ?? '',\n  },\n}];"
+      },
+      "id": "61ee766b-66e3-465b-b1cc-7b9c14642df4",
+      "name": "Normalizar Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        500,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "useCustomSchema": true,
+        "operation": "get",
+        "tableId": "contracts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.contract_id }}"
+            },
+            {
+              "keyName": "tenant_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.tenant_id }}"
+            }
+          ]
+        }
+      },
+      "id": "8f5e2c42-a2f9-474f-af50-fa63de0e25ff",
+      "name": "Buscar Contrato Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        760,
+        560
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "iXeca2EfcALMOD8H",
+          "name": "Supabase JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "useCustomSchema": true,
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalizar Payload').item.json.lead_id }}"
+            },
+            {
+              "keyName": "tenant_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalizar Payload').item.json.tenant_id }}"
+            }
+          ]
+        }
+      },
+      "id": "d91ed9cd-fab9-42cf-afe5-271d83a44d5e",
+      "name": "Buscar Lead Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1020,
+        560
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "iXeca2EfcALMOD8H",
+          "name": "Supabase JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "useCustomSchema": true,
+        "operation": "get",
+        "tableId": "imoveis",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Buscar Contrato Supabase').item.json.imovel_id || $('Buscar Contrato Supabase').item.json.project_id }}"
+            },
+            {
+              "keyName": "tenant_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalizar Payload').item.json.tenant_id }}"
+            }
+          ]
+        }
+      },
+      "id": "cc0e5d41-fc13-49d8-84f0-613e987e5fc7",
+      "name": "Buscar Imovel Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        560
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "iXeca2EfcALMOD8H",
+          "name": "Supabase JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "useCustomSchema": true,
+        "operation": "get",
+        "tableId": "corretores",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Buscar Contrato Supabase').item.json.broker_id }}"
+            },
+            {
+              "keyName": "tenant_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Normalizar Payload').item.json.tenant_id }}"
+            }
+          ]
+        }
+      },
+      "id": "a424c7a2-a0f9-42ce-a8f7-a1cf0f91d3af",
+      "name": "Buscar Corretor Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        560
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "iXeca2EfcALMOD8H",
+          "name": "Supabase JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $('Normalizar Payload').first().json;\nconst contract = $('Buscar Contrato Supabase').first().json;\nconst lead = $('Buscar Lead Supabase').first().json;\nconst imovel = $('Buscar Imovel Supabase').first().json ?? {};\nconst broker = $('Buscar Corretor Supabase').first().json ?? {};\n\nif (!contract?.id) throw new Error('Contrato nao encontrado');\nif (!lead?.id) throw new Error('Lead nao encontrado');\n\nconst money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });\nfunction toNumber(value) {\n  const n = Number(String(value ?? '').replace(/[^0-9,.-]/g, '').replace(/\\./g, '').replace(',', '.'));\n  return Number.isFinite(n) ? n : 0;\n}\nfunction toBRL(value) {\n  return money.format(toNumber(value));\n}\nfunction valueOf(...values) {\n  return values.find((v) => v !== undefined && v !== null && String(v).trim() !== '') ?? '';\n}\nfunction text(...values) {\n  const v = valueOf(...values);\n  return v === '' ? '' : String(v).trim();\n}\nfunction looksLikeDriveFileId(value) {\n  return typeof value === 'string' && /^[A-Za-z0-9_-]{20,}$/.test(value.trim());\n}\n\nconst metadata = imovel.metadata && typeof imovel.metadata === 'object' ? imovel.metadata : {};\nconst valorBase = toNumber(valueOf(contract.value, imovel.valor, lead.value, 0));\nconst commissionPercentage = toNumber(valueOf(contract.commission_percentage, 5));\nconst commissionAmount = toNumber(valueOf(contract.commission_amount, valorBase * commissionPercentage / 100));\nconst comprador = text(lead.name, contract.lead_name);\nconst imovelDescricaoJuridica = text(\n  metadata.descricao_juridica,\n  imovel.descricao_juridica,\n  imovel.descricao,\n  imovel.descricao_imovel,\n  imovel.titulo_comercial,\n  contract.project_name,\n);\nconst imovelNome = text(imovel.titulo_comercial, contract.project_name);\nconst corretorNome = text(broker.name, contract.corretor_name);\nconst title = text(contract.title, `Contrato - ${comprador || contract.id}`);\nconst copiedName = `${title} - ${new Date().toISOString().slice(0, 10)}`;\nconst frontTemplateFileId = valueOf(payload.template_file_id, contract.template_file_id);\nconst templateFileId = looksLikeDriveFileId(frontTemplateFileId)\n  ? frontTemplateFileId\n  : valueOf($vars.CONTRACT_TEMPLATE_DOC_ID);\n\nif (!templateFileId) {\n  throw new Error('template_file_id nao informado e CONTRACT_TEMPLATE_DOC_ID nao configurado');\n}\n\nconst placeholders = {\n  comprador,\n  lead_nome: comprador,\n  comprador_qualificacao: comprador,\n  vendedor_qualificacao: text(contract.vendedor_qualificacao),\n  email: text(lead.email),\n  telefone: text(lead.phone),\n  imovel: imovelDescricaoJuridica,\n  imovel_nome: imovelNome,\n  imovel_endereco: text(metadata.endereco_completo),\n  imovel_descricao_juridica: imovelDescricaoJuridica,\n  imovel_matricula: text(metadata.matricula),\n  imovel_cartorio: text(metadata.cartorio),\n  imovel_area_privativa: text(metadata.area_privativa),\n  imovel_area_construida: text(metadata.area_construida),\n  imovel_area_terreno: text(metadata.area_terreno),\n  imovel_medidas_confrontacoes: text(metadata.medidas_confrontacoes),\n  imovel_inscricao_municipal: text(metadata.inscricao_municipal),\n  imovel_observacoes_contratuais: text(metadata.observacoes_contratuais),\n  id_imovel: text(imovel.id_imovel, imovel.referencia_unica, imovel.id, contract.imovel_id, contract.project_id),\n  bairro: text(imovel.bairro),\n  corretor: corretorNome,\n  corretor_nome: corretorNome,\n  valor: toBRL(valorBase),\n  valor_total: toBRL(valorBase),\n  comissao: toBRL(commissionAmount),\n  data: new Date().toLocaleDateString('pt-BR'),\n  data_contrato: new Date().toLocaleDateString('pt-BR'),\n  valor_extenso: '',\n  valor_total_extenso: '',\n  forma_pagamento: text(contract.forma_pagamento, payload.forma_pagamento),\n};\n\nreturn [{\n  json: {\n    tenant_id: payload.tenant_id,\n    contract_id: payload.contract_id,\n    lead_id: payload.lead_id,\n    canais: payload.canais,\n    should_email: Boolean(payload.canais.email && lead.email),\n    should_whatsapp: Boolean(payload.canais.whatsapp && lead.phone),\n    template_file_id: templateFileId,\n    output_folder_id: payload.output_folder_id,\n    contract,\n    lead,\n    imovel,\n    broker,\n    placeholders,\n    copied_name: copiedName,\n    pdf_file_name: `${title}.pdf`,\n    email_to: lead.email ?? '',\n    whatsapp_to: lead.phone ?? '',\n    email_subject: title,\n    email_message: `Segue em anexo o contrato em PDF para conferencia.\\n\\nApos revisar, voce pode assinar digitalmente pelo GOV.br e nos devolver o PDF assinado por aqui.\\n\\nAtenciosamente,\\nJurema Brokers`,\n    whatsapp_message: `Segue o contrato em PDF para conferencia. Baixe o arquivo, assine digitalmente pelo GOV.br e envie o PDF assinado de volta por aqui.`,\n  },\n}];"
+      },
+      "id": "95ac38ec-a3d5-4d1f-9347-0ae279bfcb9f",
+      "name": "Preparar Documento",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1800,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.template_file_id }}",
+          "mode": "id"
+        },
+        "name": "={{ $json.copied_name }}",
+        "options": {}
+      },
+      "id": "f0132fc2-1a97-4d29-88c1-35630f65d28c",
+      "name": "Copiar Template Oficial",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2060,
+        560
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LME3tpAzMGMzIJUd",
+          "name": "Google Drive Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "=https://docs.google.com/document/d/{{ $('Copiar Template Oficial').item.json.id }}/edit",
+        "simple": false,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "replaceAll",
+              "text": "{{comprador}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.comprador || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{lead_nome}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.lead_nome || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{comprador_qualificacao}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.comprador_qualificacao || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{vendedor_qualificacao}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.vendedor_qualificacao || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{email}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.email || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{telefone}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.telefone || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_nome}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_nome || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_endereco}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_endereco || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_descricao_juridica}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_descricao_juridica || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_matricula}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_matricula || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_cartorio}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_cartorio || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_area_privativa}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_area_privativa || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_area_construida}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_area_construida || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_area_terreno}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_area_terreno || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_medidas_confrontacoes}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_medidas_confrontacoes || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_inscricao_municipal}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_inscricao_municipal || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{imovel_observacoes_contratuais}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_observacoes_contratuais || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{id_imovel}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.id_imovel || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{bairro}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.bairro || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{corretor}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.corretor || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{corretor_nome}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.corretor_nome || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{valor}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{valor_total}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor_total || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{comissao}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.comissao || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{data}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.data || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{data_contrato}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.data_contrato || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{valor_extenso}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor_extenso || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{valor_total_extenso}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor_total_extenso || '' }}",
+              "matchCase": true
+            },
+            {
+              "action": "replaceAll",
+              "text": "{{forma_pagamento}}",
+              "replaceText": "={{ $('Preparar Documento').item.json.placeholders.forma_pagamento || '' }}",
+              "matchCase": true
+            }
+          ]
+        }
+      },
+      "id": "b66d8e09-4521-419f-86d0-1ecb9e227a1f",
+      "name": "Atualizar Documento",
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        2320,
+        560
+      ],
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "bsKqvPSRI5gp3KHd",
+          "name": "Google Docs Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Copiar Template Oficial').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "id": "4044e11e-5d05-4508-a255-77cf336e88dd",
+      "name": "Exportar PDF Real",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2580,
+        560
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LME3tpAzMGMzIJUd",
+          "name": "Google Drive Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-email-001",
+              "leftValue": "={{ $('Preparar Documento').item.json.should_email }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d8b1cd86-0999-47b9-9b1b-0b17ffcc4149",
+      "name": "IF Canal Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2840,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Preparar Documento').item.json.email_to }}",
+        "subject": "={{ $('Preparar Documento').item.json.email_subject }}",
+        "emailType": "text",
+        "message": "={{ $('Preparar Documento').item.json.email_message }}",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          },
+          "senderName": "Jurema Brokers"
+        }
+      },
+      "id": "a9955f43-40b6-4ad4-9fb7-4728126ffdf2",
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3100,
+        420
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "zFt7P11mr94HENmI",
+          "name": "Gmail Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-wpp-001",
+              "leftValue": "={{ $('Preparar Documento').item.json.should_whatsapp }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d87f90da-1573-4a8f-b72c-c78541bac4a6",
+      "name": "IF Canal WhatsApp",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2840,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "id": "67e304f9-e1a1-4781-bd87-e7f3a81c29d2",
+      "name": "PDF para Base64",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        3100,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-document",
+        "instanceName": "Jurema Brokers",
+        "remoteJid": "={{ $('Preparar Documento').item.json.whatsapp_to }}",
+        "media": "={{ $json.data }}",
+        "caption": "={{ $('Preparar Documento').item.json.whatsapp_message }}",
+        "fileName": "={{ $('Preparar Documento').item.json.pdf_file_name }}",
+        "options_message": {}
+      },
+      "id": "a7bd6361-f2b0-458c-946c-60efce4e664e",
+      "name": "Enviar PDF WhatsApp",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        3360,
+        700
+      ],
+      "credentials": {
+        "evolutionApi": {
+          "id": "sX2Z4jQVEwbEivqP",
+          "name": "Evolution YZIHUB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "useCustomSchema": true,
+        "operation": "update",
+        "tableId": "contracts",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Documento').item.json.contract_id }}"
+            },
+            {
+              "keyName": "tenant_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Preparar Documento').item.json.tenant_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "sent"
+            },
+            {
+              "fieldId": "sent_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "e5a03e2e-3c34-4cf8-94a9-844fc2a2de6c",
+      "name": "Atualizar Status Contrato",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3620,
+        560
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "iXeca2EfcALMOD8H",
+          "name": "Supabase JUREMA"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Payload": {
+      "main": [
+        [
+          {
+            "node": "Buscar Contrato Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Contrato Supabase": {
+      "main": [
+        [
+          {
+            "node": "Buscar Lead Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Lead Supabase": {
+      "main": [
+        [
+          {
+            "node": "Buscar Imovel Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Imovel Supabase": {
+      "main": [
+        [
+          {
+            "node": "Buscar Corretor Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Corretor Supabase": {
+      "main": [
+        [
+          {
+            "node": "Preparar Documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Documento": {
+      "main": [
+        [
+          {
+            "node": "Copiar Template Oficial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copiar Template Oficial": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Documento": {
+      "main": [
+        [
+          {
+            "node": "Exportar PDF Real",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Exportar PDF Real": {
+      "main": [
+        [
+          {
+            "node": "IF Canal Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF Canal WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Canal Email": {
+      "main": [
+        [
+          {
+            "node": "Enviar Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Enviar Email": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Status Contrato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Canal WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "PDF para Base64",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "PDF para Base64": {
+      "main": [
+        [
+          {
+            "node": "Enviar PDF WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar PDF WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Status Contrato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedMode": "fixed"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "api.yzihub.com",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "accept-encoding": "gzip, deflate, br, zstd",
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+            "cookie": "rl_page_init_referrer=RudderEncrypt%3AU2FsdGVkX19cVnHfLwK5k9j0iKrYyE%2F4QXyuEk54VYM%3D; rl_page_init_referring_domain=RudderEncrypt%3AU2FsdGVkX19jWuFIvFDm%2FLev8JaBlEAPiHOrILLHv4g%3D; rl_anonymous_id=RudderEncrypt%3AU2FsdGVkX1%2BO9zr%2FvqJMCrVQ8OdQ3kd9UdC%2Frxodos9ZXBx1RxywfdZo%2F%2BiJW%2BQD7KQNAIjJyq48szxb1p1%2B4w%3D%3D; rl_user_id=RudderEncrypt%3AU2FsdGVkX1%2B7NbUOYKjvPGdKn%2FM7vbh9sym3wkIChaLImAt%2FbjrQ7CZwUkYH9fxRIO8zQwRkAdWDaanLHQ0DmcFJ%2FeLfnsgLvqiDSep135M0eEUbp%2Bzo5EqufZZWBgnVzAnaS%2F3zRmr44cU4nyckEhwW06UwJcHDA3JcDhLZUxY%3D; rl_trait=RudderEncrypt%3AU2FsdGVkX1%2FHjcW4TesSs6HXu7jlb220fKa6khMSEYGpXPFYjGssPXU1ddW1MS3sNVGmv0Ly5Y9Z0Qr5F1jXO4Ka32L9hKzBBfoxVk0TlUHBJTc3qwPdM1PhhotG8qpd850P3GpE9EBgG9s0e4CVklW3t4PYF9U0lkR59hN0Zv4%3D; ph_phc_4URIAm1uYfJO7j8kWSe0J8lc8IqnstRLS7Jx8NcakHo_posthog=%7B%22%24device_id%22%3A%22019c2a56-66d6-7104-b72e-4e123b164972%22%2C%22distinct_id%22%3A%228bd2bb6b9a6a92c283af80074f257998ad4a0dd70a16e43b7a9e260295cf0e19%236da334f5-ee8d-4ce3-83dc-e466c16251ce%22%2C%22%24sesid%22%3A%5B1771973829083%2C%22019c9197-cdf7-7c0e-8d78-b19e6d511910%22%2C1771969170934%5D%2C%22%24epp%22%3Atrue%2C%22%24initial_person_info%22%3A%7B%22r%22%3A%22%24direct%22%2C%22u%22%3A%22https%3A%2F%2Fapp.yzihub.com%2Fsignin%3Fredirect%3D%25252F%22%7D%7D; rl_session=RudderEncrypt%3AU2FsdGVkX1%2B8kjRmq0aqeGdxMVuXVcJFvDM997uc%2FTM2cWN0vJ29M5R4kjpWw7WVB5aQ1xVDdVZCXZlghabJxw2bTNsxIpkSWsZnIQbxvD0%2BBBcqqVLlC9xIlbrx3whXedRgjA6Ibg3SG%2FRBNN9TSA%3D%3D",
+            "priority": "u=0, i",
+            "sec-ch-ua": "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "sec-fetch-dest": "document",
+            "sec-fetch-mode": "navigate",
+            "sec-fetch-site": "cross-site",
+            "sec-fetch-user": "?1",
+            "upgrade-insecure-requests": "1",
+            "x-forwarded-for": "187.64.29.192",
+            "x-forwarded-host": "api.yzihub.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "cc7f0cfd3f86",
+            "x-real-ip": "187.64.29.192"
+          },
+          "params": {},
+          "query": {
+            "record_id": "recW1vwggWEeGqt88"
+          },
+          "body": {},
+          "webhookUrl": "https://api.yzihub.com/webhook/enviar-contrato",
+          "executionMode": "production"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "5a5e7958-5809-4343-806b-6bb045dc2db6",
+  "activeVersionId": "5a5e7958-5809-4343-806b-6bb045dc2db6",
+  "versionCounter": 998,
+  "triggerCount": 1,
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-05-10T18:04:46.553Z",
+    "createdAt": "2026-05-10T18:04:46.553Z",
+    "versionId": "5a5e7958-5809-4343-806b-6bb045dc2db6",
+    "workflowId": "bzK9KbNa5zEYcurj",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "enviarcontrato",
+          "options": {}
+        },
+        "id": "9d587240-159c-4069-a309-83adf97409ef",
+        "name": "Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          240,
+          560
+        ],
+        "webhookId": "236eec66-ddc5-4414-a652-acacf7a4b508"
+      },
+      {
+        "parameters": {
+          "jsCode": "const body = $json.body ?? $json;\nconst tenant_id = body.tenant_id ?? null;\nconst contract_id = body.contract_id ?? body.contractId ?? body.id ?? null;\nconst lead_id = body.lead_id ?? body.leadId ?? null;\nconst canais = body.canais ?? { whatsapp: true, email: true };\nconst template_file_id =\n  body.template_file_id ??\n  body.templateFileId ??\n  body.template_doc_id ??\n  body.templateDocId ??\n  body.template_id ??\n  null;\n\nif (!tenant_id || !contract_id || !lead_id) {\n  throw new Error('tenant_id, contract_id e lead_id sao obrigatorios');\n}\n\nreturn [{\n  json: {\n    tenant_id,\n    contract_id,\n    lead_id,\n    canais: {\n      whatsapp: canais.whatsapp !== false,\n      email: canais.email !== false,\n    },\n    template_file_id,\n    conteudo: body.conteudo ?? body.renderedBody ?? body.content ?? null,\n    output_folder_id: body.output_folder_id ?? body.outputFolderId ?? $vars.CONTRACT_OUTPUT_FOLDER_ID ?? '',\n  },\n}];"
+        },
+        "id": "61ee766b-66e3-465b-b1cc-7b9c14642df4",
+        "name": "Normalizar Payload",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          500,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "useCustomSchema": true,
+          "operation": "get",
+          "tableId": "contracts",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $json.contract_id }}"
+              },
+              {
+                "keyName": "tenant_id",
+                "condition": "eq",
+                "keyValue": "={{ $json.tenant_id }}"
+              }
+            ]
+          }
+        },
+        "id": "8f5e2c42-a2f9-474f-af50-fa63de0e25ff",
+        "name": "Buscar Contrato Supabase",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          760,
+          560
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "iXeca2EfcALMOD8H",
+            "name": "Supabase JUREMA"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "useCustomSchema": true,
+          "operation": "get",
+          "tableId": "leads",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $('Normalizar Payload').item.json.lead_id }}"
+              },
+              {
+                "keyName": "tenant_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Normalizar Payload').item.json.tenant_id }}"
+              }
+            ]
+          }
+        },
+        "id": "d91ed9cd-fab9-42cf-afe5-271d83a44d5e",
+        "name": "Buscar Lead Supabase",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1020,
+          560
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "iXeca2EfcALMOD8H",
+            "name": "Supabase JUREMA"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "useCustomSchema": true,
+          "operation": "get",
+          "tableId": "imoveis",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $('Buscar Contrato Supabase').item.json.imovel_id || $('Buscar Contrato Supabase').item.json.project_id }}"
+              },
+              {
+                "keyName": "tenant_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Normalizar Payload').item.json.tenant_id }}"
+              }
+            ]
+          }
+        },
+        "id": "cc0e5d41-fc13-49d8-84f0-613e987e5fc7",
+        "name": "Buscar Imovel Supabase",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1280,
+          560
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "iXeca2EfcALMOD8H",
+            "name": "Supabase JUREMA"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "useCustomSchema": true,
+          "operation": "get",
+          "tableId": "corretores",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $('Buscar Contrato Supabase').item.json.broker_id }}"
+              },
+              {
+                "keyName": "tenant_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Normalizar Payload').item.json.tenant_id }}"
+              }
+            ]
+          }
+        },
+        "id": "a424c7a2-a0f9-42ce-a8f7-a1cf0f91d3af",
+        "name": "Buscar Corretor Supabase",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          1540,
+          560
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "iXeca2EfcALMOD8H",
+            "name": "Supabase JUREMA"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const payload = $('Normalizar Payload').first().json;\nconst contract = $('Buscar Contrato Supabase').first().json;\nconst lead = $('Buscar Lead Supabase').first().json;\nconst imovel = $('Buscar Imovel Supabase').first().json ?? {};\nconst broker = $('Buscar Corretor Supabase').first().json ?? {};\n\nif (!contract?.id) throw new Error('Contrato nao encontrado');\nif (!lead?.id) throw new Error('Lead nao encontrado');\n\nconst money = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });\nfunction toNumber(value) {\n  const n = Number(String(value ?? '').replace(/[^0-9,.-]/g, '').replace(/\\./g, '').replace(',', '.'));\n  return Number.isFinite(n) ? n : 0;\n}\nfunction toBRL(value) {\n  return money.format(toNumber(value));\n}\nfunction valueOf(...values) {\n  return values.find((v) => v !== undefined && v !== null && String(v).trim() !== '') ?? '';\n}\nfunction text(...values) {\n  const v = valueOf(...values);\n  return v === '' ? '' : String(v).trim();\n}\nfunction looksLikeDriveFileId(value) {\n  return typeof value === 'string' && /^[A-Za-z0-9_-]{20,}$/.test(value.trim());\n}\n\nconst metadata = imovel.metadata && typeof imovel.metadata === 'object' ? imovel.metadata : {};\nconst valorBase = toNumber(valueOf(contract.value, imovel.valor, lead.value, 0));\nconst commissionPercentage = toNumber(valueOf(contract.commission_percentage, 5));\nconst commissionAmount = toNumber(valueOf(contract.commission_amount, valorBase * commissionPercentage / 100));\nconst comprador = text(lead.name, contract.lead_name);\nconst imovelDescricaoJuridica = text(\n  metadata.descricao_juridica,\n  imovel.descricao_juridica,\n  imovel.descricao,\n  imovel.descricao_imovel,\n  imovel.titulo_comercial,\n  contract.project_name,\n);\nconst imovelNome = text(imovel.titulo_comercial, contract.project_name);\nconst corretorNome = text(broker.name, contract.corretor_name);\nconst title = text(contract.title, `Contrato - ${comprador || contract.id}`);\nconst copiedName = `${title} - ${new Date().toISOString().slice(0, 10)}`;\nconst frontTemplateFileId = valueOf(payload.template_file_id, contract.template_file_id);\nconst templateFileId = looksLikeDriveFileId(frontTemplateFileId)\n  ? frontTemplateFileId\n  : valueOf($vars.CONTRACT_TEMPLATE_DOC_ID);\n\nif (!templateFileId) {\n  throw new Error('template_file_id nao informado e CONTRACT_TEMPLATE_DOC_ID nao configurado');\n}\n\nconst placeholders = {\n  comprador,\n  lead_nome: comprador,\n  comprador_qualificacao: comprador,\n  vendedor_qualificacao: text(contract.vendedor_qualificacao),\n  email: text(lead.email),\n  telefone: text(lead.phone),\n  imovel: imovelDescricaoJuridica,\n  imovel_nome: imovelNome,\n  imovel_endereco: text(metadata.endereco_completo),\n  imovel_descricao_juridica: imovelDescricaoJuridica,\n  imovel_matricula: text(metadata.matricula),\n  imovel_cartorio: text(metadata.cartorio),\n  imovel_area_privativa: text(metadata.area_privativa),\n  imovel_area_construida: text(metadata.area_construida),\n  imovel_area_terreno: text(metadata.area_terreno),\n  imovel_medidas_confrontacoes: text(metadata.medidas_confrontacoes),\n  imovel_inscricao_municipal: text(metadata.inscricao_municipal),\n  imovel_observacoes_contratuais: text(metadata.observacoes_contratuais),\n  id_imovel: text(imovel.id_imovel, imovel.referencia_unica, imovel.id, contract.imovel_id, contract.project_id),\n  bairro: text(imovel.bairro),\n  corretor: corretorNome,\n  corretor_nome: corretorNome,\n  valor: toBRL(valorBase),\n  valor_total: toBRL(valorBase),\n  comissao: toBRL(commissionAmount),\n  data: new Date().toLocaleDateString('pt-BR'),\n  data_contrato: new Date().toLocaleDateString('pt-BR'),\n  valor_extenso: '',\n  valor_total_extenso: '',\n  forma_pagamento: text(contract.forma_pagamento, payload.forma_pagamento),\n};\n\nreturn [{\n  json: {\n    tenant_id: payload.tenant_id,\n    contract_id: payload.contract_id,\n    lead_id: payload.lead_id,\n    canais: payload.canais,\n    should_email: Boolean(payload.canais.email && lead.email),\n    should_whatsapp: Boolean(payload.canais.whatsapp && lead.phone),\n    template_file_id: templateFileId,\n    output_folder_id: payload.output_folder_id,\n    contract,\n    lead,\n    imovel,\n    broker,\n    placeholders,\n    copied_name: copiedName,\n    pdf_file_name: `${title}.pdf`,\n    email_to: lead.email ?? '',\n    whatsapp_to: lead.phone ?? '',\n    email_subject: title,\n    email_message: `Segue em anexo o contrato em PDF para conferencia.\\n\\nApos revisar, voce pode assinar digitalmente pelo GOV.br e nos devolver o PDF assinado por aqui.\\n\\nAtenciosamente,\\nJurema Brokers`,\n    whatsapp_message: `Segue o contrato em PDF para conferencia. Baixe o arquivo, assine digitalmente pelo GOV.br e envie o PDF assinado de volta por aqui.`,\n  },\n}];"
+        },
+        "id": "95ac38ec-a3d5-4d1f-9347-0ae279bfcb9f",
+        "name": "Preparar Documento",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1800,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "copy",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.template_file_id }}",
+            "mode": "id"
+          },
+          "name": "={{ $json.copied_name }}",
+          "options": {}
+        },
+        "id": "f0132fc2-1a97-4d29-88c1-35630f65d28c",
+        "name": "Copiar Template Oficial",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          2060,
+          560
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "LME3tpAzMGMzIJUd",
+            "name": "Google Drive Jurema"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentURL": "=https://docs.google.com/document/d/{{ $('Copiar Template Oficial').item.json.id }}/edit",
+          "simple": false,
+          "actionsUi": {
+            "actionFields": [
+              {
+                "action": "replaceAll",
+                "text": "{{comprador}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.comprador || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{lead_nome}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.lead_nome || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{comprador_qualificacao}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.comprador_qualificacao || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{vendedor_qualificacao}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.vendedor_qualificacao || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{email}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.email || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{telefone}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.telefone || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_nome}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_nome || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_endereco}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_endereco || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_descricao_juridica}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_descricao_juridica || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_matricula}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_matricula || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_cartorio}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_cartorio || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_area_privativa}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_area_privativa || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_area_construida}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_area_construida || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_area_terreno}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_area_terreno || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_medidas_confrontacoes}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_medidas_confrontacoes || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_inscricao_municipal}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_inscricao_municipal || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{imovel_observacoes_contratuais}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.imovel_observacoes_contratuais || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{id_imovel}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.id_imovel || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{bairro}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.bairro || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{corretor}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.corretor || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{corretor_nome}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.corretor_nome || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{valor}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{valor_total}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor_total || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{comissao}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.comissao || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{data}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.data || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{data_contrato}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.data_contrato || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{valor_extenso}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor_extenso || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{valor_total_extenso}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.valor_total_extenso || '' }}",
+                "matchCase": true
+              },
+              {
+                "action": "replaceAll",
+                "text": "{{forma_pagamento}}",
+                "replaceText": "={{ $('Preparar Documento').item.json.placeholders.forma_pagamento || '' }}",
+                "matchCase": true
+              }
+            ]
+          }
+        },
+        "id": "b66d8e09-4521-419f-86d0-1ecb9e227a1f",
+        "name": "Atualizar Documento",
+        "type": "n8n-nodes-base.googleDocs",
+        "typeVersion": 2,
+        "position": [
+          2320,
+          560
+        ],
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "bsKqvPSRI5gp3KHd",
+            "name": "Google Docs Jurema"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Copiar Template Oficial').item.json.id }}",
+            "mode": "id"
+          },
+          "options": {
+            "googleFileConversion": {
+              "conversion": {
+                "docsToFormat": "application/pdf"
+              }
+            }
+          }
+        },
+        "id": "4044e11e-5d05-4508-a255-77cf336e88dd",
+        "name": "Exportar PDF Real",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          2580,
+          560
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "LME3tpAzMGMzIJUd",
+            "name": "Google Drive Jurema"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "id": "cond-email-001",
+                "leftValue": "={{ $('Preparar Documento').item.json.should_email }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "d8b1cd86-0999-47b9-9b1b-0b17ffcc4149",
+        "name": "IF Canal Email",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2840,
+          420
+        ]
+      },
+      {
+        "parameters": {
+          "sendTo": "={{ $('Preparar Documento').item.json.email_to }}",
+          "subject": "={{ $('Preparar Documento').item.json.email_subject }}",
+          "emailType": "text",
+          "message": "={{ $('Preparar Documento').item.json.email_message }}",
+          "options": {
+            "appendAttribution": false,
+            "attachmentsUi": {
+              "attachmentsBinary": [
+                {}
+              ]
+            },
+            "senderName": "Jurema Brokers"
+          }
+        },
+        "id": "a9955f43-40b6-4ad4-9fb7-4728126ffdf2",
+        "name": "Enviar Email",
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.1,
+        "position": [
+          3100,
+          420
+        ],
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "zFt7P11mr94HENmI",
+            "name": "Gmail Jurema"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose"
+            },
+            "conditions": [
+              {
+                "id": "cond-wpp-001",
+                "leftValue": "={{ $('Preparar Documento').item.json.should_whatsapp }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "d87f90da-1573-4a8f-b72c-c78541bac4a6",
+        "name": "IF Canal WhatsApp",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          2840,
+          700
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "binaryToPropery",
+          "options": {}
+        },
+        "id": "67e304f9-e1a1-4781-bd87-e7f3a81c29d2",
+        "name": "PDF para Base64",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          3100,
+          700
+        ]
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "operation": "send-document",
+          "instanceName": "Jurema Brokers",
+          "remoteJid": "={{ $('Preparar Documento').item.json.whatsapp_to }}",
+          "media": "={{ $json.data }}",
+          "caption": "={{ $('Preparar Documento').item.json.whatsapp_message }}",
+          "fileName": "={{ $('Preparar Documento').item.json.pdf_file_name }}",
+          "options_message": {}
+        },
+        "id": "a7bd6361-f2b0-458c-946c-60efce4e664e",
+        "name": "Enviar PDF WhatsApp",
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          3360,
+          700
+        ],
+        "credentials": {
+          "evolutionApi": {
+            "id": "sX2Z4jQVEwbEivqP",
+            "name": "Evolution YZIHUB"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "useCustomSchema": true,
+          "operation": "update",
+          "tableId": "contracts",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "id",
+                "condition": "eq",
+                "keyValue": "={{ $('Preparar Documento').item.json.contract_id }}"
+              },
+              {
+                "keyName": "tenant_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Preparar Documento').item.json.tenant_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "sent"
+              },
+              {
+                "fieldId": "sent_at",
+                "fieldValue": "={{ $now.toISO() }}"
+              },
+              {
+                "fieldId": "updated_at",
+                "fieldValue": "={{ $now.toISO() }}"
+              }
+            ]
+          }
+        },
+        "id": "e5a03e2e-3c34-4cf8-94a9-844fc2a2de6c",
+        "name": "Atualizar Status Contrato",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          3620,
+          560
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "iXeca2EfcALMOD8H",
+            "name": "Supabase JUREMA"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Normalizar Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Normalizar Payload": {
+        "main": [
+          [
+            {
+              "node": "Buscar Contrato Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar Contrato Supabase": {
+        "main": [
+          [
+            {
+              "node": "Buscar Lead Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar Lead Supabase": {
+        "main": [
+          [
+            {
+              "node": "Buscar Imovel Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar Imovel Supabase": {
+        "main": [
+          [
+            {
+              "node": "Buscar Corretor Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar Corretor Supabase": {
+        "main": [
+          [
+            {
+              "node": "Preparar Documento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Preparar Documento": {
+        "main": [
+          [
+            {
+              "node": "Copiar Template Oficial",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Copiar Template Oficial": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Documento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Atualizar Documento": {
+        "main": [
+          [
+            {
+              "node": "Exportar PDF Real",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Exportar PDF Real": {
+        "main": [
+          [
+            {
+              "node": "IF Canal Email",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "IF Canal WhatsApp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF Canal Email": {
+        "main": [
+          [
+            {
+              "node": "Enviar Email",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Enviar Email": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Status Contrato",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "IF Canal WhatsApp": {
+        "main": [
+          [
+            {
+              "node": "PDF para Base64",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "PDF para Base64": {
+        "main": [
+          [
+            {
+              "node": "Enviar PDF WhatsApp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar PDF WhatsApp": {
+        "main": [
+          [
+            {
+              "node": "Atualizar Status Contrato",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "YZI HUB",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  }
+}

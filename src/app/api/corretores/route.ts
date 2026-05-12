@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 
 // ─── /api/corretores ──────────────────────────────────────────────────────────
 // GET    — lista corretores do tenant
@@ -12,11 +11,25 @@ import { createClient } from "@/lib/supabase/server";
 
 const BROKER_SELECT =
   "id, tenant_id, name, phone, email, role, tipo, cpf, is_active, address, city, state, zip_code, bank, bank_agency, bank_account, bank_account_type, pix_key, pix_key_type, pix_beneficiary, notes, created_at, updated_at";
+const DEAL_SELECT = "id, lead_id, assigned_broker_id";
+
+const DEV_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
 
 // ─── Shared: resolve tenant_id ────────────────────────────────────────────────
 
 async function resolveTenantId(): Promise<{ tenantId: string } | NextResponse> {
+  // DEV_BYPASS: skip auth in development — consistent with proxy.ts and TenantContext
+  const isDevBypass =
+    process.env.NEXT_PUBLIC_DEV_BYPASS === "true" &&
+    process.env.NODE_ENV !== "production";
+
+  if (isDevBypass) {
+    return { tenantId: DEV_TENANT_ID };
+  }
+
+  const { createClient } = await import("@/lib/supabase/server");
   const supabase = await createClient();
+  const admin = createAdminClient();
 
   const {
     data: { user },
@@ -27,7 +40,7 @@ async function resolveTenantId(): Promise<{ tenantId: string } | NextResponse> {
     return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile, error: profileError } = await admin
     .from("profiles")
     .select("tenant_id")
     .eq("id", user.id)
@@ -50,18 +63,65 @@ export async function GET() {
 
     const admin = createAdminClient();
 
-    const { data: brokers, error: brokersError } = await admin
-      .from("corretores")
-      .select(BROKER_SELECT)
-      .eq("tenant_id", tenantId)
-      .order("created_at", { ascending: false });
+    const [brokersResult, dealsResult] = await Promise.all([
+      admin
+        .from("corretores")
+        .select(BROKER_SELECT)
+        .eq("tenant_id", tenantId)
+        .order("created_at", { ascending: false })
+        .limit(200),
+      admin
+        .from("jurema_deals")
+        .select(DEAL_SELECT)
+        .eq("tenant_id", tenantId),
+    ]);
 
-    if (brokersError) {
-      console.error("[GET /api/corretores] query error:", brokersError);
+    if (brokersResult.error) {
+      console.error("[GET /api/corretores] brokers query error:", brokersResult.error);
       return NextResponse.json({ error: "Erro ao buscar corretores" }, { status: 500 });
     }
 
-    return NextResponse.json({ data: brokers ?? [] }, { status: 200 });
+    if (dealsResult.error) {
+      console.error("[GET /api/corretores] deals query error:", dealsResult.error);
+      return NextResponse.json({ error: "Erro ao buscar corretores" }, { status: 500 });
+    }
+
+    const leadReceivedSets = new Map<string, Set<string>>();
+    const dealCounts = new Map<string, number>();
+
+    for (const deal of dealsResult.data ?? []) {
+      const brokerId = deal.assigned_broker_id;
+      if (!brokerId) continue;
+
+      dealCounts.set(brokerId, (dealCounts.get(brokerId) ?? 0) + 1);
+
+      if (deal.lead_id) {
+        const existing = leadReceivedSets.get(brokerId) ?? new Set<string>();
+        existing.add(deal.lead_id);
+        leadReceivedSets.set(brokerId, existing);
+      }
+    }
+
+    const leadReceivedCounts = Object.fromEntries(
+      Array.from(leadReceivedSets.entries()).map(([brokerId, leads]) => [brokerId, leads.size])
+    );
+    const assignedDealCounts = Object.fromEntries(dealCounts.entries());
+
+    return NextResponse.json(
+      {
+        data: brokersResult.data ?? [],
+        stats: {
+          leadReceivedCounts,
+          assignedDealCounts,
+        },
+      },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "private, max-age=10, stale-while-revalidate=30",
+        },
+      }
+    );
   } catch (err) {
     console.error("[GET /api/corretores] unexpected error:", err);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });

@@ -29,6 +29,7 @@ export interface Property {
   description: string | null;
   images: unknown[] | null;
   features: Record<string, unknown> | null;
+  metadata: Record<string, unknown> | null;
   score: number | null;
   priority: "low" | "normal" | "high" | "urgent" | null;
   kanban_stage: string | null;

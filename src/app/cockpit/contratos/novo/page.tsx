@@ -10,6 +10,7 @@ function NovoContratoPageInner() {
   const params = useSearchParams();
   return (
     <ContratoEditor
+      contractId={params.get("contract_id")}
       leadId={params.get("lead_id")}
       propertyId={params.get("property_id")}
       brokerId={params.get("broker_id")}

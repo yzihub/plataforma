@@ -1,0 +1,11 @@
+# Build & dependencies
+.next/
+node_modules/
+dist/
+out/
+
+# External docs
+D:/dev/YZI-OS-Docs/
+
+# Data files
+*.csv

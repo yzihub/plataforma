@@ -13,14 +13,28 @@ interface TemplateOption {
 
 interface PropertyData {
   id: string;
+  id_imovel?: string | null;
+  referencia_unica?: string | null;
   titulo_comercial: string;
   bairro: string | null;
   valor: number;
+  descricao_imovel?: string | null;
+  descricao?: string | null;
+  descricao_contrato?: string | null;
+  descricao_juridica?: string | null;
+  descricao_registral?: string | null;
+  endereco?: string | null;
+  area?: number | string | null;
+  metragem?: number | string | null;
+  matricula?: string | null;
+  cartorio?: string | null;
+  medidas?: string | null;
+  metadata?: Record<string, string | number | null | undefined> | null;
 }
 
 interface BrokerData {
   id: string;
-  full_name: string;
+  name: string;
   email: string | null;
   phone: string | null;
 }
@@ -45,11 +59,11 @@ export interface ContratoEditorSidebarProps {
 
 type TemplateSource = "interno" | "upload";
 
-const labelCls = "block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1";
+const labelCls = "block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1";
 const readonlyCls =
-  "w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400 cursor-not-allowed select-none";
+  "w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 dark:border-[#2A3856] dark:bg-[#17233A] dark:text-slate-400 cursor-not-allowed select-none";
 const inputCls =
-  "w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500/20 transition-colors";
+  "w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 dark:border-[#2A3856] dark:bg-[#17233A] dark:text-slate-100 focus:outline-none focus:border-brand-500 focus:bg-white focus:ring-1 focus:ring-brand-500/20 dark:focus:bg-[#1A2740] transition-colors";
 
 function formatBRL(value: number): string {
   return new Intl.NumberFormat("pt-BR", {
@@ -161,7 +175,7 @@ function SearchSelect<T extends { id: string }>({
           <button
             type="button"
             onClick={handleClear}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200"
             title="Limpar selecao"
           >
             <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -171,18 +185,18 @@ function SearchSelect<T extends { id: string }>({
         )}
       </div>
       {open && filtered.length > 0 && (
-        <ul className="absolute z-10 mt-1 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg max-h-64 overflow-y-auto [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 [&::-webkit-scrollbar-thumb]:rounded-full">
+        <ul className="absolute z-10 mt-1 w-full rounded-xl border border-slate-200 bg-white shadow-lg dark:border-[#2A3856] dark:bg-[#111C2F]">
           {filtered.slice(0, 8).map((item) => {
             const sublabel = getSublabel ? getSublabel(item) : null;
             return (
               <li
                 key={item.id}
                 onMouseDown={() => handleSelectItem(item)}
-                className="px-3 py-2 cursor-pointer hover:bg-brand-50 dark:hover:bg-brand-500/10 transition-colors"
+                className="px-3 py-2 cursor-pointer hover:bg-brand-50 dark:hover:bg-[#17233A] transition-colors"
               >
-                <span className="text-sm text-gray-700 dark:text-gray-200">{getLabel(item)}</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">{getLabel(item)}</span>
                 {sublabel && (
-                  <span className="block text-xs text-gray-400 mt-0.5">{sublabel}</span>
+                  <span className="block text-xs text-slate-400 mt-0.5">{sublabel}</span>
                 )}
               </li>
             );
@@ -197,6 +211,7 @@ function SearchSelect<T extends { id: string }>({
 function extractLeads(data: unknown): Lead[] {
   if (Array.isArray(data)) return data as Lead[];
   const d = data as Record<string, unknown>;
+  if (Array.isArray(d?.data)) return d.data as Lead[];
   if (Array.isArray(d?.leads)) return d.leads as Lead[];
   return [];
 }
@@ -204,6 +219,7 @@ function extractLeads(data: unknown): Lead[] {
 function extractImoveis(data: unknown): PropertyData[] {
   if (Array.isArray(data)) return data as PropertyData[];
   const d = data as Record<string, unknown>;
+  if (Array.isArray(d?.data)) return d.data as PropertyData[];
   if (Array.isArray(d?.imoveis)) return d.imoveis as PropertyData[];
   return [];
 }
@@ -211,7 +227,9 @@ function extractImoveis(data: unknown): PropertyData[] {
 function extractBrokers(data: unknown): BrokerData[] {
   if (Array.isArray(data)) return data as BrokerData[];
   const d = data as Record<string, unknown>;
+  if (Array.isArray(d?.data)) return d.data as BrokerData[];
   if (Array.isArray(d?.brokers)) return d.brokers as BrokerData[];
+  if (Array.isArray(d?.corretores)) return d.corretores as BrokerData[];
   return [];
 }
 
@@ -254,25 +272,25 @@ export default function ContratoEditorSidebar({
   }
 
   return (
-    <div className="flex flex-col h-full border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 overflow-hidden">
+    <div className="flex flex-col bg-white dark:bg-[#0F172A]">
       {/* Header */}
-      <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-800 shrink-0">
-        <span className="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+      <div className="border-b border-slate-200 px-5 py-3 dark:border-[#263653]">
+        <span className="text-xs font-medium text-slate-400 dark:text-slate-500 uppercase tracking-widest">
           Configuracoes
         </span>
       </div>
 
-      {/* Conteúdo scrollável */}
-      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full dark:[&::-webkit-scrollbar-thumb]:bg-gray-600">
+      {/* Conteúdo */}
+      <div className="space-y-6 px-5 py-6">
 
         {/* Bloco: Origem do Template */}
         <div>
-          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
+          <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wide">
             Origem do Template
           </p>
 
           {/* Tabs */}
-          <div className="flex rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden mb-4">
+          <div className="flex rounded-xl border border-slate-200 dark:border-[#2A3856] mb-4">
             {(["interno", "upload"] as TemplateSource[]).map((tab) => (
               <button
                 key={tab}
@@ -282,10 +300,10 @@ export default function ContratoEditorSidebar({
                   "flex-1 py-1.5 text-xs font-medium transition-colors",
                   source === tab
                     ? "bg-brand-500 text-white"
-                    : "text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800",
+                    : "text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-[#17233A]",
                 ].join(" ")}
               >
-                {tab === "interno" ? "Template Interno" : "Upload .docx"}
+                {tab === "interno" ? "Modelo Oficial" : "Upload .docx"}
               </button>
             ))}
           </div>
@@ -308,12 +326,8 @@ export default function ContratoEditorSidebar({
                   </option>
                 ))}
               </select>
-              <p className="mt-2 text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
-                O template sera carregado com{" "}
-                <code className="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">
-                  {"{{vars}}"}
-                </code>{" "}
-                visiveis para edicao.
+              <p className="mt-2 text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
+                Este modelo será preenchido no Google Docs e exportado em PDF no momento do envio.
               </p>
             </div>
           )}
@@ -333,20 +347,20 @@ export default function ContratoEditorSidebar({
                   "flex flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-6 cursor-pointer transition-colors",
                   dragOver
                     ? "border-brand-500 bg-brand-50 dark:bg-brand-500/10"
-                    : "border-gray-300 dark:border-gray-700 hover:border-brand-400 hover:bg-gray-50 dark:hover:bg-gray-800/50",
+                    : "border-slate-300 dark:border-[#2A3856] hover:border-brand-400 hover:bg-slate-50 dark:hover:bg-[#17233A]",
                 ].join(" ")}
               >
                 {uploadLoading ? (
-                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-brand-500" />
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-brand-500 dark:border-[#33415F]" />
                 ) : (
                   <>
-                    <svg className="mb-2 h-8 w-8 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                    <svg className="mb-2 h-8 w-8 text-slate-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
                     </svg>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
                       Arraste ou clique para selecionar
                     </p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                       .doc ou .docx
                     </p>
                   </>
@@ -365,9 +379,9 @@ export default function ContratoEditorSidebar({
                 }}
               />
 
-              <p className="mt-2 text-xs text-gray-400 dark:text-gray-500 leading-relaxed">
+              <p className="mt-2 text-xs text-slate-400 dark:text-slate-500 leading-relaxed">
                 O texto do arquivo sera extraido como template. Voce pode adicionar{" "}
-                <code className="font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">
+                <code className="font-mono bg-slate-100 dark:bg-[#17233A] px-1 rounded">
                   {"{{vars}}"}
                 </code>{" "}
                 no editor apos o upload.
@@ -377,11 +391,11 @@ export default function ContratoEditorSidebar({
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-200 dark:border-gray-800" />
+        <div className="border-t border-slate-200 dark:border-[#263653]" />
 
         {/* Bloco: Canais de Envio */}
         <div>
-          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
+          <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wide">
             Canais de Envio <span className="text-red-400">*</span>
           </p>
           <div className="space-y-2">
@@ -390,18 +404,18 @@ export default function ContratoEditorSidebar({
                 type="checkbox"
                 checked={canalEmail}
                 onChange={(e) => onChangeCanalEmail(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-brand-500 focus:ring-brand-500/20 bg-white dark:bg-gray-800"
+                className="h-4 w-4 rounded border-slate-300 bg-white text-brand-500 focus:ring-brand-500/20 dark:border-[#2A3856] dark:bg-[#17233A]"
               />
-              <span className="text-sm text-gray-700 dark:text-gray-200">E-mail</span>
+              <span className="text-sm text-slate-700 dark:text-slate-200">E-mail</span>
             </label>
             <label className="flex items-center gap-2.5 cursor-pointer select-none">
               <input
                 type="checkbox"
                 checked={canalWhatsapp}
                 onChange={(e) => onChangeCanalWhatsapp(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-brand-500 focus:ring-brand-500/20 bg-white dark:bg-gray-800"
+                className="h-4 w-4 rounded border-slate-300 bg-white text-brand-500 focus:ring-brand-500/20 dark:border-[#2A3856] dark:bg-[#17233A]"
               />
-              <span className="text-sm text-gray-700 dark:text-gray-200">WhatsApp</span>
+              <span className="text-sm text-slate-700 dark:text-slate-200">WhatsApp</span>
             </label>
             {!canalEmail && !canalWhatsapp && (
               <p className="text-xs text-red-500 dark:text-red-400 mt-1">
@@ -412,11 +426,11 @@ export default function ContratoEditorSidebar({
         </div>
 
         {/* Divider */}
-        <div className="border-t border-gray-200 dark:border-gray-800" />
+        <div className="border-t border-slate-200 dark:border-[#263653]" />
 
         {/* Bloco: Dados pré-preenchidos */}
         <div>
-          <p className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-3 uppercase tracking-wide">
+          <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mb-3 uppercase tracking-wide">
             Dados pre-preenchidos
           </p>
           <div className="space-y-3">
@@ -460,7 +474,7 @@ export default function ContratoEditorSidebar({
                   <div className={readonlyCls}>
                     {property.titulo_comercial}
                     {property.bairro ? (
-                      <span className="block text-xs text-gray-400 mt-0.5">{property.bairro}</span>
+                      <span className="block text-xs text-slate-400 mt-0.5">{property.bairro}</span>
                     ) : null}
                   </div>
                 ) : (
@@ -474,8 +488,8 @@ export default function ContratoEditorSidebar({
               <SearchSelect<BrokerData>
                 label="Corretor Responsavel"
                 value={broker}
-                fetchUrl="/api/brokers"
-                getLabel={(b) => b.full_name}
+                fetchUrl="/api/corretores"
+                getLabel={(b) => b.name}
                 getSublabel={(b) => b.email}
                 extractItems={extractBrokers}
                 onSelect={onSelectBroker}
@@ -484,7 +498,7 @@ export default function ContratoEditorSidebar({
               <div>
                 <label className={labelCls}>Corretor Responsavel</label>
                 {broker ? (
-                  <div className={readonlyCls}>{broker.full_name}</div>
+                  <div className={readonlyCls}>{broker.name}</div>
                 ) : (
                   <div className={readonlyCls}><span className="text-red-400">Corretor nao vinculado</span></div>
                 )}

@@ -46,3 +46,25 @@ export type EvolutionTestSendInput = {
   phone: string;
   message?: string;
 };
+
+export type EvolutionWebhookStatusValue =
+  | "configurado"           // url retornada bate com a esperada
+  | "divergente"            // Evolution retornou url diferente da esperada
+  | "ausente"               // Evolution nao tem webhook configurado
+  | "erro"                  // falha de comunicacao
+  | "pendente_configuracao"; // env vars nao configuradas
+
+export type EvolutionWebhookResponse = {
+  ok: true;
+  configured: boolean;
+  status: EvolutionWebhookStatusValue;
+  /** URL atualmente configurada na Evolution (null se ausente/erro) */
+  webhook_url: string | null;
+  /** URL esperada (constante) — facilita comparacao no client */
+  expected_url: string;
+  /** lista de eventos atualmente assinados, ou null */
+  events?: string[] | null;
+  /** webhook ativo? (campo `enabled` da Evolution) */
+  enabled?: boolean;
+  message?: string;
+};

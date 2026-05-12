@@ -9,7 +9,6 @@ import ContractsTable, {
   ContractsTableSkeleton,
   ContractsEmptyState,
 } from "./ContractsTable";
-import ContractDrawer from "./ContractDrawer";
 
 // ─── useContracts hook ────────────────────────────────────────────────────────
 
@@ -49,7 +48,8 @@ function useContracts(tenantId: string | null) {
         body: JSON.stringify(body),
       });
       if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error ?? "Erro"); }
-      const created: Contract = await res.json();
+      const json = await res.json();
+      const created: Contract | null = Array.isArray(json?.data) ? json.data[0] ?? null : json;
       await fetchContracts();
       return created;
     } catch { return null; }
@@ -321,6 +321,10 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
 
 const STATUS_OPTIONS: { value: ContractStatus | "all"; label: string }[] = [
   { value: "all",       label: "Todos os status" },
+  { value: "rascunho",  label: "Rascunho"        },
+  { value: "enviado",   label: "Enviado"          },
+  { value: "assinado",  label: "Assinado"         },
+  { value: "cancelado", label: "Cancelado"        },
   { value: "draft",     label: "Rascunho"        },
   { value: "sent",      label: "Enviado"          },
   { value: "signed",    label: "Assinado"         },
@@ -343,15 +347,22 @@ export default function ContractsClient() {
   const { contracts, isLoading, error, refetch, updateContractLocal } =
     useContracts(tenant?.id ?? null);
 
+  const [mounted, setMounted]             = useState(false);
   const [search, setSearch]             = useState("");
   const [statusFilter, setStatusFilter] = useState<ContractStatus | "all">("all");
   const [typeFilter, setTypeFilter]     = useState<ContractType | "all">("all");
-  const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [page, setPage]                 = useState(1);
 
-  function handleContractUpdated(updated: Contract) {
-    updateContractLocal(updated);
-    setSelectedContract(updated);
+  useEffect(() => setMounted(true), []);
+
+  function handleNewContract() {
+    if (!mounted) return;
+    router.push("/cockpit/contratos/novo");
+  }
+
+  function handleOpenContract(contract: Contract) {
+    if (!mounted) return;
+    router.push(`/cockpit/contratos/novo?contract_id=${contract.id}`);
   }
 
   async function handleCancelContract(id: string) {
@@ -364,6 +375,18 @@ export default function ContractsClient() {
       if (!res.ok) return;
       const updated: Contract = await res.json();
       updateContractLocal(updated);
+    } catch { /* silent */ }
+  }
+
+  async function handleDeleteContract(id: string) {
+    if (!window.confirm("Excluir este contrato? Esta ação não exclui lead, imóvel ou corretor vinculados.")) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/contracts/${id}`, { method: "DELETE" });
+      if (!res.ok) return;
+      await refetch();
     } catch { /* silent */ }
   }
 
@@ -389,20 +412,24 @@ export default function ContractsClient() {
 
   // ── Derived metrics ─────────────────────────────────────────────────────────
   const vgvTotal     = contracts.reduce((s, c) => s + c.value, 0);
-  const vgvSigned    = contracts.filter((c) => c.status === "signed").reduce((s, c) => s + c.value, 0);
-  const vgvPipeline  = contracts.filter((c) => c.status === "sent" || c.status === "draft").reduce((s, c) => s + c.value, 0);
-  const cntSigned    = contracts.filter((c) => c.status === "signed").length;
-  const cntSent      = contracts.filter((c) => c.status === "sent").length;
-  const cntDraft     = contracts.filter((c) => c.status === "draft").length;
-  const cntCancelled = contracts.filter((c) => c.status === "cancelled").length;
-  const cntActive    = contracts.filter((c) => c.status !== "cancelled").length;
+  const isDraftStatus = (status: ContractStatus) => status === "draft" || status === "rascunho";
+  const isSentStatus = (status: ContractStatus) => status === "sent" || status === "enviado";
+  const isSignedStatus = (status: ContractStatus) => status === "signed" || status === "assinado";
+  const isCancelledStatus = (status: ContractStatus) => status === "cancelled" || status === "cancelado";
+  const vgvSigned    = contracts.filter((c) => isSignedStatus(c.status)).reduce((s, c) => s + c.value, 0);
+  const vgvPipeline  = contracts.filter((c) => isSentStatus(c.status) || isDraftStatus(c.status)).reduce((s, c) => s + c.value, 0);
+  const cntSigned    = contracts.filter((c) => isSignedStatus(c.status)).length;
+  const cntSent      = contracts.filter((c) => isSentStatus(c.status)).length;
+  const cntDraft     = contracts.filter((c) => isDraftStatus(c.status)).length;
+  const cntCancelled = contracts.filter((c) => isCancelledStatus(c.status)).length;
+  const cntActive    = contracts.filter((c) => !isCancelledStatus(c.status)).length;
   const convRate     = cntActive > 0 ? Math.round((cntSigned / cntActive) * 100) : 0;
 
   const pipelineStages: PipelineStage[] = [
     {
       label: "Rascunho",
       count: cntDraft,
-      value: contracts.filter((c) => c.status === "draft").reduce((s, c) => s + c.value, 0),
+      value: contracts.filter((c) => isDraftStatus(c.status)).reduce((s, c) => s + c.value, 0),
       total: contracts.length,
       barColor: "bg-gray-400",
       textColor: "text-gray-600 dark:text-gray-300",
@@ -411,7 +438,7 @@ export default function ContractsClient() {
     {
       label: "Enviado",
       count: cntSent,
-      value: contracts.filter((c) => c.status === "sent").reduce((s, c) => s + c.value, 0),
+      value: contracts.filter((c) => isSentStatus(c.status)).reduce((s, c) => s + c.value, 0),
       total: contracts.length,
       barColor: "bg-amber-500",
       textColor: "text-amber-700 dark:text-amber-300",
@@ -449,7 +476,7 @@ export default function ContractsClient() {
           </p>
         </div>
         <button
-          onClick={() => router.push("/cockpit/contratos/novo")}
+          onClick={handleNewContract}
           className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-600 active:scale-95 transition-all shadow-sm"
         >
           <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
@@ -608,19 +635,14 @@ export default function ContractsClient() {
         <>
           <ContractsTable
             contracts={paginated}
-            onRowClick={setSelectedContract}
+            onRowClick={handleOpenContract}
             onCancelContract={handleCancelContract}
+            onDeleteContract={handleDeleteContract}
           />
           <Pagination page={page} total={totalPages} onChange={setPage} />
         </>
       )}
 
-      {/* ── Drawer ── */}
-      <ContractDrawer
-        contract={selectedContract}
-        onClose={() => setSelectedContract(null)}
-        onContractUpdated={handleContractUpdated}
-      />
     </div>
   );
 }

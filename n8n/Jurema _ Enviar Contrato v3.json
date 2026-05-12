@@ -1,0 +1,433 @@
+{
+  "name": "Jurema | Enviar Contrato v3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "enviar-contrato",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "7d9a8e2c-2a38-4c6f-91c1-2e9f0f9c1b01",
+      "name": "Webhook Enviar Contrato",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        320
+      ],
+      "webhookId": "236eec66-ddc5-4414-a652-acacf7a4b508"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body ?? $json;\nconst tenant_id = body.tenant_id ?? null;\nconst contract_id = body.contract_id ?? null;\nconst lead_id = body.lead_id ?? null;\nconst canais = body.canais ?? { whatsapp: true, email: true };\nconst conteudo = typeof body.conteudo === 'string' ? body.conteudo.trim() : '';\n\nconst missing = [];\nif (!tenant_id) missing.push('tenant_id');\nif (!contract_id) missing.push('contract_id');\nif (!lead_id) missing.push('lead_id');\nif (!conteudo) missing.push('conteudo');\n\nif (missing.length > 0) {\n  throw new Error(`Payload invalido. Campos obrigatorios ausentes ou vazios: ${missing.join(', ')}`);\n}\n\nconst supabaseUrl = $vars.SUPABASE_URL ?? $vars.NEXT_PUBLIC_SUPABASE_URL;\nconst serviceRole = $vars.SUPABASE_SERVICE_ROLE_KEY;\n\nif (!supabaseUrl) throw new Error('SUPABASE_URL nao configurada');\nif (!serviceRole) throw new Error('SUPABASE_SERVICE_ROLE_KEY nao configurada');\n\nreturn [{\n  json: {\n    tenant_id,\n    contract_id,\n    lead_id,\n    canais,\n    conteudo,\n    supabase_url: supabaseUrl.replace(/\\/$/, ''),\n    service_role: serviceRole,\n    output_folder_id: $vars.CONTRACT_OUTPUT_FOLDER_ID ?? 'root'\n  }\n}];"
+      },
+      "id": "08ef8501-4b26-4232-ae39-617aeb9217a1",
+      "name": "Validar Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.supabase_url + '/rest/v1/leads?id=eq.' + $json.lead_id + '&tenant_id=eq.' + $json.tenant_id + '&select=id,tenant_id,name,email,phone' }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.service_role }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.service_role }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fc9ccbb8-1da0-4e91-8f05-d919fcfbf102",
+      "name": "Buscar Lead",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const base = $('Validar Payload').item.json;\nconst leadRows = Array.isArray($json) ? $json : ($json.data ?? []);\nconst lead = Array.isArray(leadRows) ? (leadRows[0] ?? {}) : ($json ?? {});\n\nconst leadName = String(lead.name ?? '').trim();\nconst safeName = (leadName || base.contract_id).replace(/[\\\\/:*?\"<>|]+/g, '-').replace(/\\s+/g, ' ').trim();\nconst fileName = `Contrato - ${safeName}.pdf`;\nconst docName = fileName.replace(/\\.pdf$/i, '');\nconst pdfInstructions = 'Baixe o PDF, assine digitalmente pelo GOV.br e envie o PDF assinado de volta por aqui.';\nconst emailSubject = `Contrato para assinatura - ${leadName || base.contract_id}`;\n\nreturn [{\n  json: {\n    ...base,\n    lead,\n    lead_name: leadName,\n    whatsapp_to: lead.phone ?? '',\n    email_to: lead.email ?? '',\n    file_name: fileName,\n    google_doc_name: docName,\n    whatsapp_message: `${pdfInstructions}\\n\\nLink do PDF: {{PDF_LINK}}`,\n    email_subject: emailSubject,\n    email_message: `${pdfInstructions}\\n\\nLink do PDF: {{PDF_LINK}}`,\n    should_whatsapp: Boolean(base.canais?.whatsapp && lead.phone),\n    should_email: Boolean(base.canais?.email && lead.email)\n  }\n}];"
+      },
+      "id": "53481ee1-bb08-44e6-8d43-1f0fb6e2f8c3",
+      "name": "Montar Dados de Envio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\nreturn [{\n  json: {\n    ...data,\n    google_drive_content: data.conteudo\n  }\n}];"
+      },
+      "id": "5ca72ee6-d2f0-476f-8b0d-57a66ac21b05",
+      "name": "Preparar Conteudo do Contrato",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "createFromText",
+        "name": "={{ $json.google_doc_name }}",
+        "content": "={{ $json.google_drive_content }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.output_folder_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "convertToGoogleDocument": true
+        }
+      },
+      "id": "a1dbd912-6051-46ff-9c66-b50870ce7a34",
+      "name": "Criar Documento no Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1640,
+        320
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "name": "Google Drive Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $('Preparar Conteudo do Contrato').item.json;\nconst created = $json;\nconst docId = created.id ?? created.fileId ?? created.webViewLink?.match(/\\/d\\/([^/]+)/)?.[1];\nif (!docId) throw new Error('Google Drive nao retornou o ID do documento criado');\nconst documentLink = `https://docs.google.com/document/d/${docId}/edit?usp=sharing`;\nconst pdfLink = `https://docs.google.com/document/d/${docId}/export?format=pdf`;\nreturn [{\n  json: {\n    ...data,\n    google_document_id: docId,\n    document_link: documentLink,\n    pdf_link: pdfLink,\n    whatsapp_message: data.whatsapp_message.replace('{{PDF_LINK}}', pdfLink),\n    email_message: data.email_message.replace('{{PDF_LINK}}', pdfLink)\n  }\n}];"
+      },
+      "id": "0e975f51-4993-4b65-a6cf-3fc705dbe9ac",
+      "name": "Gerar Link Real do PDF",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.should_whatsapp }}",
+              "value2": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e414fe78-1325-43e4-b180-94c8ed302615",
+      "name": "IF canais.whatsapp",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "=jurema",
+        "remoteJid": "={{ $json.whatsapp_to }}",
+        "messageText": "={{ $json.whatsapp_message }}",
+        "options_message": {}
+      },
+      "id": "a1df6fd7-72ff-496a-8a76-00f4a42643fa",
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        220
+      ],
+      "credentials": {
+        "evolutionApi": {
+          "name": "Evolution YZIHUB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.should_email }}",
+              "value2": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e2d2220-744f-42de-9c7c-8ea225a887b4",
+      "name": "IF canais.email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2760,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email_to }}",
+        "subject": "={{ $json.email_subject }}",
+        "emailType": "text",
+        "message": "={{ $json.email_message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d889eb42-8b34-4718-b961-38c8e7839ea6",
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        3040,
+        220
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "name": "Gmail Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $json.supabase_url + '/rest/v1/contracts?id=eq.' + $json.contract_id + '&tenant_id=eq.' + $json.tenant_id }}",
+        "authentication": "none",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.service_role }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Bearer ' + $json.service_role }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "body": "={{ JSON.stringify({ status: 'sent', sent_at: new Date().toISOString(), updated_at: new Date().toISOString() }) }}",
+        "options": {}
+      },
+      "id": "c1b2f1ee-a7a1-4b0b-8f8c-9f83079d1d01",
+      "name": "Atualizar Contrato",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3320,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "responseBody": "={{ { ok: true, contract_id: $('Gerar Link Real do PDF').item.json.contract_id, lead_id: $('Gerar Link Real do PDF').item.json.lead_id, sent: true } }}",
+        "options": {}
+      },
+      "id": "b1b9080e-7b7f-4d16-8ce4-7d8f0d4e5301",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        3600,
+        320
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Enviar Contrato": {
+      "main": [
+        [
+          {
+            "node": "Validar Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validar Payload": {
+      "main": [
+        [
+          {
+            "node": "Buscar Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Lead": {
+      "main": [
+        [
+          {
+            "node": "Montar Dados de Envio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Dados de Envio": {
+      "main": [
+        [
+          {
+            "node": "Preparar Conteudo do Contrato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Conteudo do Contrato": {
+      "main": [
+        [
+          {
+            "node": "Criar Documento no Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Criar Documento no Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Gerar Link Real do PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gerar Link Real do PDF": {
+      "main": [
+        [
+          {
+            "node": "IF canais.whatsapp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF canais.whatsapp": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IF canais.email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar WhatsApp": {
+      "main": [
+        [
+          {
+            "node": "IF canais.email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF canais.email": {
+      "main": [
+        [
+          {
+            "node": "Enviar Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Atualizar Contrato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar Email": {
+      "main": [
+        [
+          {
+            "node": "Atualizar Contrato",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Contrato": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CloseIcon } from "@/icons";
 import type { Lead } from "@/lib/crm/types";
@@ -41,6 +42,9 @@ export default function GerarContratoDrawer({
   propertyTitle,
 }: GerarContratoDrawerProps) {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   // Verificar requisitos mínimos
   const imovelDisplay = propertyTitle ?? lead?.imovel_ref ?? null;
@@ -52,7 +56,7 @@ export default function GerarContratoDrawer({
   if (!brokerId) missingItems.push("corretor");
 
   function handleOpenEditor() {
-    if (!canOpen) return;
+    if (!mounted || !canOpen) return;
     const params = new URLSearchParams();
     if (lead?.id) params.set("lead_id", lead.id);
     if (propertyId) params.set("property_id", propertyId);

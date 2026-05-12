@@ -1,98 +1,103 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { ApexOptions } from "apexcharts";
 import Badge from "@/components/ui/badge/Badge";
-import {
-  ArrowUpIcon,
-  ArrowDownIcon,
-  GroupIcon,
-  DollarLineIcon,
-  PieChartIcon,
-  CheckCircleIcon,
-} from "@/icons";
+// DIAGNOSTIC TEST — direct imports (bypass barrel)
+import ArrowUpIcon from "@/icons/arrow-up.svg";
+import GroupIcon from "@/icons/group.svg";
+import BoltIcon from "@/icons/bolt.svg";
+import ChatIcon from "@/icons/chat.svg";
+import BoxIcon from "@/icons/box.svg";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
-// ─── Mock data (substituir por queries Supabase) ─────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
 
-const stats = [
-  {
-    label: "Total de Leads",
-    value: "248",
-    change: "+12,5%",
-    up: true,
-    icon: <GroupIcon className="text-gray-800 size-7 dark:text-white/90" />,
-  },
-  {
-    label: "Leads Convertidos",
-    value: "61",
-    change: "+8,2%",
-    up: true,
-    icon: <CheckCircleIcon className="text-gray-800 size-7 dark:text-white/90" />,
-  },
-  {
-    label: "Valor no Pipeline",
-    value: "R$ 184.500",
-    change: "+21,3%",
-    up: true,
-    icon: <DollarLineIcon className="text-gray-800 size-7 dark:text-white/90" />,
-  },
-  {
-    label: "Taxa de Conversão",
-    value: "24,6%",
-    change: "-1,8%",
-    up: false,
-    icon: <PieChartIcon className="text-gray-800 size-7 dark:text-white/90" />,
-  },
-];
+type DashboardStats = {
+  total_leads: number;
+  leads_quentes: number;
+  conversas_abertas: number;
+  imoveis_disponiveis: number;
+  mensagens_recentes: number;
+  corretores_ativos: number;
+  leads_por_dia: Array<{ date: string; count: number }>;
+  leads_por_origem: Array<{ source: string; count: number }>;
+  status_pipeline: Array<{ status: string; count: number }>;
+};
 
-const last30Days = Array.from({ length: 30 }, (_, i) => {
-  const d = new Date();
-  d.setDate(d.getDate() - (29 - i));
-  return `${d.getDate()}/${d.getMonth() + 1}`;
-});
+// ─── Chart helpers ────────────────────────────────────────────────────────────
 
-const leadsPerDayData = [
-  2, 4, 3, 5, 6, 4, 7, 8, 5, 9, 7, 10, 8, 11, 9, 12, 10, 8, 13, 11, 14, 12,
-  10, 15, 13, 16, 12, 14, 17, 15,
-];
-
-const origemData = [62, 48, 38, 100];
-const origemCategorias = ["Instagram", "Site", "Indicação", "WhatsApp"];
-
-const statusData = [40, 55, 70, 45, 38];
-const statusLabels = ["Novo", "Contato", "Qualificado", "Proposta", "Fechado"];
 const statusColors = ["#465FFF", "#F79009", "#17B26A", "#9B8AFB", "#F04438"];
+
+function formatDateLabel(date: string) {
+  const [, month, day] = date.split("-");
+  return `${Number(day)}/${Number(month)}`;
+}
+
+function EmptyChartState() {
+  return (
+    <div className="flex h-[280px] items-center justify-center rounded-xl border border-dashed border-gray-200 text-sm text-gray-400 dark:border-gray-800 dark:text-gray-600">
+      Sem dados no período
+    </div>
+  );
+}
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 
-function StatCard({ label, value, change, up, icon }: (typeof stats)[0]) {
+function StatCard({
+  label,
+  value,
+  sub,
+  icon,
+  loading,
+}: {
+  label: string;
+  value: number | string;
+  sub?: string;
+  icon: React.ReactNode;
+  loading: boolean;
+}) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-white/[0.03] md:p-8">
       <div className="flex items-center justify-center w-14 h-14 bg-gray-100 rounded-2xl dark:bg-gray-800">
         {icon}
       </div>
       <div className="mt-5">
-        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</span>
-        <h4 className="mt-2 text-3xl font-bold text-gray-800 dark:text-white/90">{value}</h4>
-        <div className="flex items-center gap-2 mt-3">
-          <Badge color={up ? "success" : "error"}>
-            {up ? <ArrowUpIcon /> : <ArrowDownIcon />}
-            {change}
-          </Badge>
-          <span className="text-xs text-gray-400 dark:text-gray-500">
-            Em comparação com o mês passado
-          </span>
-        </div>
+        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          {label}
+        </span>
+        <h4 className="mt-2 text-3xl font-bold text-gray-800 dark:text-white/90">
+          {loading ? (
+            <span className="inline-block w-16 h-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          ) : (
+            value
+          )}
+        </h4>
+        {sub && (
+          <div className="flex items-center gap-2 mt-3">
+            <Badge color="success">
+              <ArrowUpIcon />
+              {sub}
+            </Badge>
+            <span className="text-xs text-gray-400 dark:text-gray-500">
+              últimas 24h
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// ─── Line Chart — Leads por dia ───────────────────────────────────────────────
+// ─── Charts ───────────────────────────────────────────────────────────────────
 
-function LeadsPorDiaChart() {
+function LeadsPorDiaChart({ data }: { data: DashboardStats["leads_por_dia"] }) {
+  const categories = data.map((item) => formatDateLabel(item.date));
+  const seriesData = data.map((item) => item.count);
+  const hasData = seriesData.some((count) => count > 0);
+
   const options: ApexOptions = {
     chart: {
       fontFamily: "Outfit, sans-serif",
@@ -110,7 +115,7 @@ function LeadsPorDiaChart() {
     dataLabels: { enabled: false },
     markers: { size: 0, hover: { size: 5 } },
     xaxis: {
-      categories: last30Days,
+      categories,
       axisBorder: { show: false },
       axisTicks: { show: false },
       labels: {
@@ -135,20 +140,26 @@ function LeadsPorDiaChart() {
         <p className="text-sm text-gray-500 dark:text-gray-400">Últimos 30 dias</p>
       </div>
       <div className="max-w-full overflow-x-auto">
-        <ReactApexChart
-          options={options}
-          series={[{ name: "Leads", data: leadsPerDayData }]}
-          type="area"
-          height={280}
-        />
+        {hasData ? (
+          <ReactApexChart
+            options={options}
+            series={[{ name: "Leads", data: seriesData }]}
+            type="area"
+            height={280}
+          />
+        ) : (
+          <EmptyChartState />
+        )}
       </div>
     </div>
   );
 }
 
-// ─── Bar Chart — Leads por origem ────────────────────────────────────────────
+function LeadsPorOrigemChart({ data }: { data: DashboardStats["leads_por_origem"] }) {
+  const categories = data.map((item) => item.source);
+  const seriesData = data.map((item) => item.count);
+  const hasData = seriesData.some((count) => count > 0);
 
-function LeadsPorOrigemChart() {
   const options: ApexOptions = {
     chart: {
       fontFamily: "Outfit, sans-serif",
@@ -168,7 +179,7 @@ function LeadsPorOrigemChart() {
     },
     dataLabels: { enabled: false },
     xaxis: {
-      categories: origemCategorias,
+      categories,
       axisBorder: { show: false },
       axisTicks: { show: false },
       labels: { style: { fontSize: "13px", colors: "#9CA3AF" } },
@@ -190,19 +201,25 @@ function LeadsPorOrigemChart() {
           Distribuição por canal de entrada
         </p>
       </div>
-      <ReactApexChart
-        options={options}
-        series={[{ name: "Leads", data: origemData }]}
-        type="bar"
-        height={280}
-      />
+      {hasData ? (
+        <ReactApexChart
+          options={options}
+          series={[{ name: "Leads", data: seriesData }]}
+          type="bar"
+          height={280}
+        />
+      ) : (
+        <EmptyChartState />
+      )}
     </div>
   );
 }
 
-// ─── Donut Chart — Status do pipeline ────────────────────────────────────────
+function StatusDistribuicaoChart({ data }: { data: DashboardStats["status_pipeline"] }) {
+  const labels = data.map((item) => item.status);
+  const seriesData = data.map((item) => item.count);
+  const hasData = seriesData.some((count) => count > 0);
 
-function StatusDistribuicaoChart() {
   const options: ApexOptions = {
     chart: {
       fontFamily: "Outfit, sans-serif",
@@ -210,7 +227,7 @@ function StatusDistribuicaoChart() {
       background: "transparent",
     },
     colors: statusColors,
-    labels: statusLabels,
+    labels,
     legend: {
       position: "bottom",
       fontFamily: "Outfit, sans-serif",
@@ -232,7 +249,7 @@ function StatusDistribuicaoChart() {
               label: "Total",
               fontSize: "14px",
               color: "#9CA3AF",
-              formatter: () => `${statusData.reduce((a, b) => a + b, 0)}`,
+              formatter: () => `${seriesData.reduce((a, b) => a + b, 0)}`,
             },
           },
         },
@@ -252,12 +269,16 @@ function StatusDistribuicaoChart() {
           Distribuição atual por etapa
         </p>
       </div>
-      <ReactApexChart
-        options={options}
-        series={statusData}
-        type="donut"
-        height={300}
-      />
+      {hasData ? (
+        <ReactApexChart
+          options={options}
+          series={seriesData}
+          type="donut"
+          height={300}
+        />
+      ) : (
+        <EmptyChartState />
+      )}
     </div>
   );
 }
@@ -265,30 +286,63 @@ function StatusDistribuicaoChart() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function CockpitDashboardPage() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/dashboard/stats")
+      .then((r) => r.json())
+      .then((data: DashboardStats) => setStats(data))
+      .catch((err) => console.error("[Dashboard] stats error:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const cards = [
+    {
+      label: "Total de Leads",
+      value: stats?.total_leads ?? 0,
+      icon: <GroupIcon className="text-gray-800 size-7 dark:text-white/90" />,
+    },
+    {
+      label: "Leads Quentes",
+      value: stats?.leads_quentes ?? 0,
+      icon: <BoltIcon className="text-gray-800 size-7 dark:text-white/90" />,
+    },
+    {
+      label: "Conversas Abertas",
+      value: stats?.conversas_abertas ?? 0,
+      sub: stats ? `${stats.mensagens_recentes} msgs` : undefined,
+      icon: <ChatIcon className="text-gray-800 size-7 dark:text-white/90" />,
+    },
+    {
+      label: "Imóveis Disponíveis",
+      value: stats?.imoveis_disponiveis ?? 0,
+      icon: <BoxIcon className="text-gray-800 size-7 dark:text-white/90" />,
+    },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white/90">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white/90">
+          Dashboard
+        </h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Visão geral do seu negócio • últimos 30 dias
+          Visão geral do seu negócio • tempo real
         </p>
       </div>
 
-      {/* Stat Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 md:gap-6">
-        {stats.map((s) => (
-          <StatCard key={s.label} {...s} />
+        {cards.map((c) => (
+          <StatCard key={c.label} loading={loading} {...c} />
         ))}
       </div>
 
-      {/* Line Chart — largura total */}
-      <LeadsPorDiaChart />
+      <LeadsPorDiaChart data={stats?.leads_por_dia ?? []} />
 
-      {/* Bar + Donut — lado a lado */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 md:gap-6">
-        <LeadsPorOrigemChart />
-        <StatusDistribuicaoChart />
+        <LeadsPorOrigemChart data={stats?.leads_por_origem ?? []} />
+        <StatusDistribuicaoChart data={stats?.status_pipeline ?? []} />
       </div>
     </div>
   );

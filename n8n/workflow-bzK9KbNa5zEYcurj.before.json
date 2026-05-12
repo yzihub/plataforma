@@ -1,0 +1,1735 @@
+﻿{
+    "updatedAt":  "2026-05-10T17:46:22.916Z",
+    "createdAt":  "2026-02-24T02:29:21.291Z",
+    "id":  "bzK9KbNa5zEYcurj",
+    "name":  "Onboarding | 2.1 Gerando Contrato",
+    "description":  null,
+    "active":  true,
+    "isArchived":  false,
+    "nodes":  [
+                  {
+                      "parameters":  {
+                                         "sendTo":  "={{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].email }}",
+                                         "subject":  "={{ $(\u0027Formata Texto para o Email\u0027).item.json.output.subject }}",
+                                         "emailType":  "text",
+                                         "message":  "={{ $(\u0027Formata Texto para o Email\u0027).item.json.output.body }}",
+                                         "options":  {
+                                                         "appendAttribution":  false,
+                                                         "attachmentsUi":  {
+                                                                               "attachmentsBinary":  [
+                                                                                                         {
+
+                                                                                                         }
+                                                                                                     ]
+                                                                           },
+                                                         "senderName":  "Jurema Brokers"
+                                                     }
+                                     },
+                      "id":  "a9955f43-40b6-4ad4-9fb7-4728126ffdf2",
+                      "name":  "Gmail",
+                      "type":  "n8n-nodes-base.gmail",
+                      "position":  [
+                                       3296,
+                                       1136
+                                   ],
+                      "typeVersion":  2.1,
+                      "webhookId":  "da334754-85ef-45d4-935c-3c88d3766209",
+                      "credentials":  {
+                                          "gmailOAuth2":  {
+                                                              "id":  "zFt7P11mr94HENmI",
+                                                              "name":  "Gmail Jurema"
+                                                          }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Formulário\nCaptura Dados\n",
+                                         "height":  280,
+                                         "width":  209.5385093719796,
+                                         "color":  2
+                                     },
+                      "id":  "781ce8b4-ca17-4757-ac1e-ca5734cdab77",
+                      "name":  "Sticky Note",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "position":  [
+                                       832,
+                                       1536
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Contrato\nFormulando o Contrato",
+                                         "height":  522.1355157049098,
+                                         "width":  1492,
+                                         "color":  5
+                                     },
+                      "id":  "361a01de-ed04-4be3-ad10-5f949afda02f",
+                      "name":  "Sticky Note1",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "position":  [
+                                       752,
+                                       1440
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Email\nFormata e Envia o Contrato",
+                                         "height":  685,
+                                         "width":  1012,
+                                         "color":  4
+                                     },
+                      "id":  "a7f75675-6f63-47db-af68-c55b3ebe8786",
+                      "name":  "Sticky Note3",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "position":  [
+                                       2544,
+                                       1040
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Fluxo de entrada de cliente\n",
+                                         "height":  1535,
+                                         "width":  3236,
+                                         "color":  7
+                                     },
+                      "id":  "cfc55192-4349-4583-ac01-a46c4bf8cd4b",
+                      "name":  "Sticky Note4",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "position":  [
+                                       672,
+                                       976
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Dados\nFormando os dados\n",
+                                         "height":  280,
+                                         "width":  209.5385093719796,
+                                         "color":  3
+                                     },
+                      "id":  "2cd2d916-6a04-4b57-9892-d0c7eb88007d",
+                      "name":  "Sticky Note5",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "position":  [
+                                       1056,
+                                       1536
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "170bc3a2-7bf2-42a7-9955-e7cbbe3bea93",
+                      "name":  "Auto-fixing Output Parser1",
+                      "type":  "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+                      "position":  [
+                                       2704,
+                                       1360
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "jsonSchemaExample":  "{\n\t\"subject\": \"adicione aqui o titulo\",\n\t\"body\": \"adicione aqui o texto do email\"\n}"
+                                     },
+                      "id":  "f9a4d7e3-e6d6-478d-8a46-1132aaf86262",
+                      "name":  "Structured Output Parser1",
+                      "type":  "@n8n/n8n-nodes-langchain.outputParserStructured",
+                      "position":  [
+                                       2848,
+                                       1568
+                                   ],
+                      "typeVersion":  1.2
+                  },
+                  {
+                      "parameters":  {
+                                         "model":  "gpt-4o-mini",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "f8d9d153-5ee3-42b5-adaa-cc2b84ee6306",
+                      "name":  "OpenAI Chat Model",
+                      "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                      "position":  [
+                                       2576,
+                                       1360
+                                   ],
+                      "typeVersion":  1,
+                      "credentials":  {
+                                          "openAiApi":  {
+                                                            "id":  "Hx1Yq9G7OqS7LeeK",
+                                                            "name":  "OpenAi YZI"
+                                                        }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "method":  "POST",
+                                         "url":  "https://api.html2pdf.app/v1/generate",
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "Content-Type",
+                                                                                         "value":  "application/json"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "sendBody":  true,
+                                         "specifyBody":  "json",
+                                         "jsonBody":  "={{ JSON.stringify({\"html\": $(\u0027Buscar Contrato Supabase\u0027).first().json[0]?.notes || \u0027\u003cp\u003eContrato\u003c/p\u003e\u0027}) }}",
+                                         "options":  {
+                                                         "response":  {
+                                                                          "response":  {
+                                                                                           "responseFormat":  "file"
+                                                                                       }
+                                                                      }
+                                                     }
+                                     },
+                      "id":  "cd584b5e-7adc-44e8-8144-03cd5cf1e99d",
+                      "name":  "Converte em Pdf",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "position":  [
+                                       3072,
+                                       1136
+                                   ],
+                      "typeVersion":  4.2
+                  },
+                  {
+                      "parameters":  {
+                                         "promptType":  "define",
+                                         "text":  "=Objetivo: {{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].title }}\n\nServiços que serão Prestados: {{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].type }}",
+                                         "hasOutputParser":  true,
+                                         "options":  {
+                                                         "systemMessage":  "=# Persona\nVocê é um copywriter preparado para enviar emails, bem formatos e bem escritos, para fechamento de propostas comerciais de prestação de serviço.\n\n# Objetivo\nGerar um email informando que está enviando o contratando conforme combinado a respeito da prestação de servico dentro do assunto recebido.\n\n# Instruções\nQuando receber os dados siga o processo:\n\n\u003cthinking\u003e\n1. Analise o objetivo e os servicos que serão prestados e crie um email informando que está enviando o contrato conforme combinado para aprovação.\n2. No inicio do email fale que se trata do servico para a empresa {{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].name }}.\n3. Após falar sobre o contrato avise que só estamos aguardando o OK para enviar para assinatura digital e dar inicio ao trabalho.\n4. No rodapé finalize fechando que estamos muito felizes com a parceria\n\u003c/thinking\u003e\n\n#Exemplo de email: \nPrezada Flávia Couto,\n\nSegue em anexo o contrato de prestação de serviços de marketing digital para sua empresa, conforme conversamos. Ele detalha todos os pontos acordados, incluindo a gestão de redes sociais, tráfego pago e criação de conteúdo.\n\nApós a assinatura, basta me dar um OK para lhe enviar o contrato original para assinatura digital. Estamos ansiosos para começar e colocar em prática as estratégias que irão impulsionar seus resultados!\n\nAtenciosamente,\nFlux Automate\n\n\n# Regras Importantes\n1. Não fuja muito dos exemplos que passei\n2. Não invente nenhum dado ou nenhum serviço \n3. Seja específico nos textos conforme deixei nos exemplos\n4. Escreva o email resumido, não precisa colocar item por item, apenas um texto corrido sobre o que será o serviço\n\nRegra:\n\nNo final gere o subject e o body para enviar o email."
+                                                     }
+                                     },
+                      "id":  "dd24e2e6-b1b7-4655-8afb-259d209d4b03",
+                      "name":  "Formata Texto para o Email",
+                      "type":  "@n8n/n8n-nodes-langchain.agent",
+                      "position":  [
+                                       2608,
+                                       1136
+                                   ],
+                      "typeVersion":  1.6
+                  },
+                  {
+                      "parameters":  {
+                                         "model":  "gpt-4o",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "653cb64f-ab72-4bda-82e3-dc84f7f413c5",
+                      "name":  "OpenAI Chat Model5",
+                      "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                      "position":  [
+                                       2720,
+                                       1568
+                                   ],
+                      "typeVersion":  1,
+                      "credentials":  {
+                                          "openAiApi":  {
+                                                            "id":  "Hx1Yq9G7OqS7LeeK",
+                                                            "name":  "OpenAi YZI"
+                                                        }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "httpMethod":  "POST",
+                                         "path":  "enviarcontrato",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "9d587240-159c-4069-a309-83adf97409ef",
+                      "name":  "Webhook",
+                      "type":  "n8n-nodes-base.webhook",
+                      "position":  [
+                                       880,
+                                       1664
+                                   ],
+                      "webhookId":  "5edf1d64-2de4-45ee-90a9-782ca0c65fe7",
+                      "typeVersion":  2
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "={{ $vars.SUPABASE_URL + \u0027/rest/v1/leads\u0027 }}",
+                                         "sendQuery":  true,
+                                         "queryParameters":  {
+                                                                 "parameters":  [
+                                                                                    {
+                                                                                        "name":  "select",
+                                                                                        "value":  "id,name,phone,email,status,metadata"
+                                                                                    },
+                                                                                    {
+                                                                                        "name":  "id",
+                                                                                        "value":  "={{ \u0027eq.\u0027 + $(\u0027Webhook\u0027).item.json.body.lead_id }}"
+                                                                                    }
+                                                                                ]
+                                                             },
+                                         "sendHeaders":  true,
+                                         "headerParameters":  {
+                                                                  "parameters":  [
+                                                                                     {
+                                                                                         "name":  "apikey",
+                                                                                         "value":  "={{ $vars.SUPABASE_ANON_KEY }}"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "Authorization",
+                                                                                         "value":  "={{ \u0027Bearer \u0027 + $vars.SUPABASE_ANON_KEY }}"
+                                                                                     },
+                                                                                     {
+                                                                                         "name":  "Content-Type",
+                                                                                         "value":  "application/json"
+                                                                                     }
+                                                                                 ]
+                                                              },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "d91ed9cd-fab9-42cf-afe5-271d83a44d5e",
+                      "name":  "Buscar Lead Supabase",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  4.2,
+                      "position":  [
+                                       1328,
+                                       1664
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## Whatsapp\nEnvia o contrato para o cliente",
+                                         "height":  668,
+                                         "width":  1014,
+                                         "color":  6
+                                     },
+                      "id":  "5b4a09b2-404f-4155-ab1e-ead9ede53a3f",
+                      "name":  "Sticky Note2",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "position":  [
+                                       2544,
+                                       1776
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "0a91742e-3c01-4306-9811-f664342a4d8f",
+                      "name":  "Auto-fixing Output Parser2",
+                      "type":  "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+                      "position":  [
+                                       2848,
+                                       2080
+                                   ],
+                      "typeVersion":  1
+                  },
+                  {
+                      "parameters":  {
+                                         "jsonSchemaExample":  "{\n\t\"subject\": \"adicione aqui o titulo\",\n\t\"body\": \"adicione aqui o texto do email\"\n}"
+                                     },
+                      "id":  "a23bc46b-78fe-4ec4-9bed-50256ec01836",
+                      "name":  "Structured Output Parser2",
+                      "type":  "@n8n/n8n-nodes-langchain.outputParserStructured",
+                      "position":  [
+                                       2992,
+                                       2288
+                                   ],
+                      "typeVersion":  1.2
+                  },
+                  {
+                      "parameters":  {
+                                         "model":  "gpt-4o-mini",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "9486fc99-f103-4e5b-8031-d2836704093c",
+                      "name":  "OpenAI Chat Model1",
+                      "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                      "position":  [
+                                       2720,
+                                       2080
+                                   ],
+                      "typeVersion":  1,
+                      "credentials":  {
+                                          "openAiApi":  {
+                                                            "id":  "Hx1Yq9G7OqS7LeeK",
+                                                            "name":  "OpenAi YZI"
+                                                        }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "promptType":  "define",
+                                         "text":  "=Objetivo:{{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].title }}\n\nServiços que serão Prestados: {{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].type }}",
+                                         "hasOutputParser":  true,
+                                         "options":  {
+                                                         "systemMessage":  "=# Persona\nVocê é um copywriter preparado para enviar emails, bem formatos e bem escritos, para fechamento de propostas comerciais de prestação de serviço.\n\n# Objetivo\nGerar um email informando que está enviando o contratando conforme combinado a respeito da prestação de servico dentro do assunto recebido.\n\n# Instruções\nQuando receber os dados siga o processo:\n\n\u003cthinking\u003e\n1. Analise o objetivo e os servicos que serão prestados e crie um email informando que está enviando o contrato conforme combinado para aprovação.\n2. No inicio do email fale que se trata do servico para a empresa {{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].name }}.\n3. Após falar sobre o contrato avise que só estamos aguardando o OK para enviar para assinatura digital e dar inicio ao trabalho.\n4. No rodapé finalize fechando que estamos muito felizes com a parceria\n\u003c/thinking\u003e\n\n#Exemplo de email: \nPrezada Flávia Couto,\n\nSegue em anexo o contrato de prestação de serviços de marketing digital para sua empresa, conforme conversamos. Ele detalha todos os pontos acordados, incluindo a gestão de redes sociais, tráfego pago e criação de conteúdo.\n\nApós a assinatura, basta me dar um OK para lhe enviar o contrato original para assinatura digital. Estamos ansiosos para começar e colocar em prática as estratégias que irão impulsionar seus resultados!\n\nAtenciosamente,\nFlux Automate\n\n\n# Regras Importantes\n1. Não fuja muito dos exemplos que passei\n2. Não invente nenhum dado ou nenhum serviço \n3. Seja específico nos textos conforme deixei nos exemplos\n4. Escreva o email resumido, não precisa colocar item por item, apenas um texto corrido sobre o que será o serviço\n\nRegra:\n\nNo final gere o subject e o body para enviar o email."
+                                                     }
+                                     },
+                      "id":  "48cfe01a-736f-4ac2-88d4-1cae65dbb90f",
+                      "name":  "Formata Texto para Whatsapp",
+                      "type":  "@n8n/n8n-nodes-langchain.agent",
+                      "position":  [
+                                       2752,
+                                       1856
+                                   ],
+                      "typeVersion":  1.6
+                  },
+                  {
+                      "parameters":  {
+                                         "model":  "gpt-4o",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "d5d10e77-87de-49a3-b6a6-5ded3cf9ca21",
+                      "name":  "OpenAI Chat Model4",
+                      "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                      "position":  [
+                                       2864,
+                                       2288
+                                   ],
+                      "typeVersion":  1,
+                      "credentials":  {
+                                          "openAiApi":  {
+                                                            "id":  "Hx1Yq9G7OqS7LeeK",
+                                                            "name":  "OpenAi YZI"
+                                                        }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "resource":  "messages-api",
+                                         "operation":  "send-document",
+                                         "instanceName":  "Jurema Brokers",
+                                         "remoteJid":  "={{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].phone }}",
+                                         "media":  "={{ $(\u0027Extract from File\u0027).item.json.data }}",
+                                         "caption":  "={{ $json.output.body }}",
+                                         "fileName":  "={{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].title || $(\u0027Webhook\u0027).item.json.body.contract_id }}.pdf ",
+                                         "options_message":  {
+
+                                                             }
+                                     },
+                      "type":  "n8n-nodes-evolution-api.evolutionApi",
+                      "typeVersion":  1,
+                      "position":  [
+                                       3216,
+                                       1856
+                                   ],
+                      "id":  "a7bd6361-f2b0-458c-946c-60efce4e664e",
+                      "name":  "Enviar documento",
+                      "credentials":  {
+                                          "evolutionApi":  {
+                                                               "id":  "sX2Z4jQVEwbEivqP",
+                                                               "name":  "Evolution YZIHUB"
+                                                           }
+                                      }
+                  },
+                  {
+                      "parameters":  {
+                                         "operation":  "binaryToPropery",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "type":  "n8n-nodes-base.extractFromFile",
+                      "typeVersion":  1.1,
+                      "position":  [
+                                       1776,
+                                       1664
+                                   ],
+                      "id":  "67e304f9-e1a1-4781-bd87-e7f3a81c29d2",
+                      "name":  "Extract from File"
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "={{ $vars.SUPABASE_URL + \u0027/rest/v1/contracts\u0027 }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "8f5e2c42-a2f9-474f-af50-fa63de0e25ff",
+                      "name":  "Buscar Contrato Supabase",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1104,
+                                       1664
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "https://api.html2pdf.app/v1/generate",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "7a219f66-db80-4ef7-8e9d-86dbc49b786b",
+                      "name":  "Gerar PDF WhatsApp",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  1,
+                      "position":  [
+                                       1552,
+                                       1664
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "url":  "={{ $vars.SUPABASE_URL + \u0027/rest/v1/contracts\u0027 }}",
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "e5a03e2e-3c34-4cf8-94a9-844fc2a2de6c",
+                      "name":  "Atualizar Status Contrato",
+                      "type":  "n8n-nodes-base.httpRequest",
+                      "typeVersion":  1,
+                      "position":  [
+                                       3584,
+                                       1728
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "loose"
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "cond-email-001",
+                                                                                   "leftValue":  "={{ $(\u0027Webhook\u0027).item.json.body.canais?.email }}",
+                                                                                   "rightValue":  true,
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "equals"
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "d8b1cd86-0999-47b9-9b1b-0b17ffcc4149",
+                      "name":  "IF Canal Email",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2080,
+                                       1520
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "conditions":  {
+                                                            "options":  {
+                                                                            "caseSensitive":  true,
+                                                                            "leftValue":  "",
+                                                                            "typeValidation":  "loose"
+                                                                        },
+                                                            "conditions":  [
+                                                                               {
+                                                                                   "id":  "cond-wpp-001",
+                                                                                   "leftValue":  "={{ $(\u0027Webhook\u0027).item.json.body.canais?.whatsapp }}",
+                                                                                   "rightValue":  true,
+                                                                                   "operator":  {
+                                                                                                    "type":  "boolean",
+                                                                                                    "operation":  "equals"
+                                                                                                }
+                                                                               }
+                                                                           ],
+                                                            "combinator":  "and"
+                                                        },
+                                         "options":  {
+
+                                                     }
+                                     },
+                      "id":  "d87f90da-1573-4a8f-b72c-c78541bac4a6",
+                      "name":  "IF Canal WhatsApp",
+                      "type":  "n8n-nodes-base.if",
+                      "typeVersion":  2,
+                      "position":  [
+                                       2080,
+                                       1808
+                                   ]
+                  },
+                  {
+                      "parameters":  {
+                                         "content":  "## ATUALIZA STATUS DO CONTRATO\n",
+                                         "height":  312,
+                                         "width":  370,
+                                         "color":  3
+                                     },
+                      "id":  "e4cf5374-c23d-43ad-bf37-fd8beaf1e5f9",
+                      "name":  "Sticky Note6",
+                      "type":  "n8n-nodes-base.stickyNote",
+                      "position":  [
+                                       3456,
+                                       1632
+                                   ],
+                      "typeVersion":  1
+                  }
+              ],
+    "connections":  {
+                        "Converte em Pdf":  {
+                                                "main":  [
+                                                             [
+                                                                 {
+                                                                     "node":  "Gmail",
+                                                                     "type":  "main",
+                                                                     "index":  0
+                                                                 }
+                                                             ]
+                                                         ]
+                                            },
+                        "OpenAI Chat Model":  {
+                                                  "ai_languageModel":  [
+                                                                           [
+                                                                               {
+                                                                                   "node":  "Formata Texto para o Email",
+                                                                                   "type":  "ai_languageModel",
+                                                                                   "index":  0
+                                                                               }
+                                                                           ]
+                                                                       ]
+                                              },
+                        "OpenAI Chat Model5":  {
+                                                   "ai_languageModel":  [
+                                                                            [
+                                                                                {
+                                                                                    "node":  "Auto-fixing Output Parser1",
+                                                                                    "type":  "ai_languageModel",
+                                                                                    "index":  0
+                                                                                }
+                                                                            ]
+                                                                        ]
+                                               },
+                        "Structured Output Parser1":  {
+                                                          "ai_outputParser":  [
+                                                                                  [
+                                                                                      {
+                                                                                          "node":  "Auto-fixing Output Parser1",
+                                                                                          "type":  "ai_outputParser",
+                                                                                          "index":  0
+                                                                                      }
+                                                                                  ]
+                                                                              ]
+                                                      },
+                        "Auto-fixing Output Parser1":  {
+                                                           "ai_outputParser":  [
+                                                                                   [
+                                                                                       {
+                                                                                           "node":  "Formata Texto para o Email",
+                                                                                           "type":  "ai_outputParser",
+                                                                                           "index":  0
+                                                                                       }
+                                                                                   ]
+                                                                               ]
+                                                       },
+                        "Formata Texto para o Email":  {
+                                                           "main":  [
+                                                                        [
+                                                                            {
+                                                                                "node":  "Converte em Pdf",
+                                                                                "type":  "main",
+                                                                                "index":  0
+                                                                            }
+                                                                        ]
+                                                                    ]
+                                                       },
+                        "Auto-fixing Output Parser2":  {
+                                                           "ai_outputParser":  [
+                                                                                   [
+                                                                                       {
+                                                                                           "node":  "Formata Texto para Whatsapp",
+                                                                                           "type":  "ai_outputParser",
+                                                                                           "index":  0
+                                                                                       }
+                                                                                   ]
+                                                                               ]
+                                                       },
+                        "Structured Output Parser2":  {
+                                                          "ai_outputParser":  [
+                                                                                  [
+                                                                                      {
+                                                                                          "node":  "Auto-fixing Output Parser2",
+                                                                                          "type":  "ai_outputParser",
+                                                                                          "index":  0
+                                                                                      }
+                                                                                  ]
+                                                                              ]
+                                                      },
+                        "OpenAI Chat Model1":  {
+                                                   "ai_languageModel":  [
+                                                                            [
+                                                                                {
+                                                                                    "node":  "Formata Texto para Whatsapp",
+                                                                                    "type":  "ai_languageModel",
+                                                                                    "index":  0
+                                                                                }
+                                                                            ]
+                                                                        ]
+                                               },
+                        "Formata Texto para Whatsapp":  {
+                                                            "main":  [
+                                                                         [
+                                                                             {
+                                                                                 "node":  "Enviar documento",
+                                                                                 "type":  "main",
+                                                                                 "index":  0
+                                                                             }
+                                                                         ]
+                                                                     ]
+                                                        },
+                        "OpenAI Chat Model4":  {
+                                                   "ai_languageModel":  [
+                                                                            [
+                                                                                {
+                                                                                    "node":  "Auto-fixing Output Parser2",
+                                                                                    "type":  "ai_languageModel",
+                                                                                    "index":  0
+                                                                                }
+                                                                            ]
+                                                                        ]
+                                               },
+                        "Webhook":  {
+                                        "main":  [
+                                                     [
+                                                         {
+                                                             "node":  "Buscar Contrato Supabase",
+                                                             "type":  "main",
+                                                             "index":  0
+                                                         }
+                                                     ]
+                                                 ]
+                                    },
+                        "Buscar Contrato Supabase":  {
+                                                         "main":  [
+                                                                      [
+                                                                          {
+                                                                              "node":  "Buscar Lead Supabase",
+                                                                              "type":  "main",
+                                                                              "index":  0
+                                                                          }
+                                                                      ]
+                                                                  ]
+                                                     },
+                        "Buscar Lead Supabase":  {
+                                                     "main":  [
+                                                                  [
+                                                                      {
+                                                                          "node":  "Gerar PDF WhatsApp",
+                                                                          "type":  "main",
+                                                                          "index":  0
+                                                                      }
+                                                                  ]
+                                                              ]
+                                                 },
+                        "Gerar PDF WhatsApp":  {
+                                                   "main":  [
+                                                                [
+                                                                    {
+                                                                        "node":  "Extract from File",
+                                                                        "type":  "main",
+                                                                        "index":  0
+                                                                    }
+                                                                ]
+                                                            ]
+                                               },
+                        "Gmail":  {
+                                      "main":  [
+                                                   [
+                                                       {
+                                                           "node":  "Atualizar Status Contrato",
+                                                           "type":  "main",
+                                                           "index":  0
+                                                       }
+                                                   ]
+                                               ]
+                                  },
+                        "Extract from File":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "IF Canal Email",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   },
+                                                                   {
+                                                                       "node":  "IF Canal WhatsApp",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "IF Canal Email":  {
+                                               "main":  [
+                                                            [
+                                                                {
+                                                                    "node":  "Formata Texto para o Email",
+                                                                    "type":  "main",
+                                                                    "index":  0
+                                                                }
+                                                            ]
+                                                        ]
+                                           },
+                        "IF Canal WhatsApp":  {
+                                                  "main":  [
+                                                               [
+                                                                   {
+                                                                       "node":  "Formata Texto para Whatsapp",
+                                                                       "type":  "main",
+                                                                       "index":  0
+                                                                   }
+                                                               ]
+                                                           ]
+                                              },
+                        "Enviar documento":  {
+                                                 "main":  [
+                                                              [
+                                                                  {
+                                                                      "node":  "Atualizar Status Contrato",
+                                                                      "type":  "main",
+                                                                      "index":  0
+                                                                  }
+                                                              ]
+                                                          ]
+                                             }
+                    },
+    "settings":  {
+                     "executionOrder":  "v1",
+                     "binaryMode":  "separate",
+                     "availableInMCP":  false,
+                     "callerPolicy":  "workflowsFromSameOwner",
+                     "timeSavedMode":  "fixed"
+                 },
+    "staticData":  null,
+    "meta":  {
+                 "templateCredsSetupCompleted":  true
+             },
+    "pinData":  {
+                    "Webhook":  [
+                                    {
+                                        "json":  {
+                                                     "headers":  {
+                                                                     "host":  "api.yzihub.com",
+                                                                     "user-agent":  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
+                                                                     "accept":  "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                                                                     "accept-encoding":  "gzip, deflate, br, zstd",
+                                                                     "accept-language":  "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+                                                                     "cookie":  "rl_page_init_referrer=RudderEncrypt%3AU2FsdGVkX19cVnHfLwK5k9j0iKrYyE%2F4QXyuEk54VYM%3D; rl_page_init_referring_domain=RudderEncrypt%3AU2FsdGVkX19jWuFIvFDm%2FLev8JaBlEAPiHOrILLHv4g%3D; rl_anonymous_id=RudderEncrypt%3AU2FsdGVkX1%2BO9zr%2FvqJMCrVQ8OdQ3kd9UdC%2Frxodos9ZXBx1RxywfdZo%2F%2BiJW%2BQD7KQNAIjJyq48szxb1p1%2B4w%3D%3D; rl_user_id=RudderEncrypt%3AU2FsdGVkX1%2B7NbUOYKjvPGdKn%2FM7vbh9sym3wkIChaLImAt%2FbjrQ7CZwUkYH9fxRIO8zQwRkAdWDaanLHQ0DmcFJ%2FeLfnsgLvqiDSep135M0eEUbp%2Bzo5EqufZZWBgnVzAnaS%2F3zRmr44cU4nyckEhwW06UwJcHDA3JcDhLZUxY%3D; rl_trait=RudderEncrypt%3AU2FsdGVkX1%2FHjcW4TesSs6HXu7jlb220fKa6khMSEYGpXPFYjGssPXU1ddW1MS3sNVGmv0Ly5Y9Z0Qr5F1jXO4Ka32L9hKzBBfoxVk0TlUHBJTc3qwPdM1PhhotG8qpd850P3GpE9EBgG9s0e4CVklW3t4PYF9U0lkR59hN0Zv4%3D; ph_phc_4URIAm1uYfJO7j8kWSe0J8lc8IqnstRLS7Jx8NcakHo_posthog=%7B%22%24device_id%22%3A%22019c2a56-66d6-7104-b72e-4e123b164972%22%2C%22distinct_id%22%3A%228bd2bb6b9a6a92c283af80074f257998ad4a0dd70a16e43b7a9e260295cf0e19%236da334f5-ee8d-4ce3-83dc-e466c16251ce%22%2C%22%24sesid%22%3A%5B1771973829083%2C%22019c9197-cdf7-7c0e-8d78-b19e6d511910%22%2C1771969170934%5D%2C%22%24epp%22%3Atrue%2C%22%24initial_person_info%22%3A%7B%22r%22%3A%22%24direct%22%2C%22u%22%3A%22https%3A%2F%2Fapp.yzihub.com%2Fsignin%3Fredirect%3D%25252F%22%7D%7D; rl_session=RudderEncrypt%3AU2FsdGVkX1%2B8kjRmq0aqeGdxMVuXVcJFvDM997uc%2FTM2cWN0vJ29M5R4kjpWw7WVB5aQ1xVDdVZCXZlghabJxw2bTNsxIpkSWsZnIQbxvD0%2BBBcqqVLlC9xIlbrx3whXedRgjA6Ibg3SG%2FRBNN9TSA%3D%3D",
+                                                                     "priority":  "u=0, i",
+                                                                     "sec-ch-ua":  "\"Not:A-Brand\";v=\"99\", \"Google Chrome\";v=\"145\", \"Chromium\";v=\"145\"",
+                                                                     "sec-ch-ua-mobile":  "?0",
+                                                                     "sec-ch-ua-platform":  "\"Windows\"",
+                                                                     "sec-fetch-dest":  "document",
+                                                                     "sec-fetch-mode":  "navigate",
+                                                                     "sec-fetch-site":  "cross-site",
+                                                                     "sec-fetch-user":  "?1",
+                                                                     "upgrade-insecure-requests":  "1",
+                                                                     "x-forwarded-for":  "187.64.29.192",
+                                                                     "x-forwarded-host":  "api.yzihub.com",
+                                                                     "x-forwarded-port":  "443",
+                                                                     "x-forwarded-proto":  "https",
+                                                                     "x-forwarded-server":  "cc7f0cfd3f86",
+                                                                     "x-real-ip":  "187.64.29.192"
+                                                                 },
+                                                     "params":  {
+
+                                                                },
+                                                     "query":  {
+                                                                   "record_id":  "recW1vwggWEeGqt88"
+                                                               },
+                                                     "body":  {
+
+                                                              },
+                                                     "webhookUrl":  "https://api.yzihub.com/webhook/enviar-contrato",
+                                                     "executionMode":  "production"
+                                                 },
+                                        "pairedItem":  {
+                                                           "item":  0
+                                                       }
+                                    }
+                                ]
+                },
+    "versionId":  "6ff65a6a-dadb-48d3-8549-2d49a3d7fb23",
+    "activeVersionId":  "6ff65a6a-dadb-48d3-8549-2d49a3d7fb23",
+    "versionCounter":  993,
+    "triggerCount":  1,
+    "shared":  [
+                   {
+                       "updatedAt":  "2026-02-24T02:29:21.291Z",
+                       "createdAt":  "2026-02-24T02:29:21.291Z",
+                       "role":  "workflow:owner",
+                       "workflowId":  "bzK9KbNa5zEYcurj",
+                       "projectId":  "YciKigkBmmSXkYot",
+                       "project":  {
+                                       "updatedAt":  "2026-02-20T18:51:55.007Z",
+                                       "createdAt":  "2026-02-20T18:50:59.444Z",
+                                       "id":  "YciKigkBmmSXkYot",
+                                       "name":  "YZI HUB \u003cyzihub.ia@gmail.com\u003e",
+                                       "type":  "personal",
+                                       "icon":  null,
+                                       "description":  null,
+                                       "creatorId":  "6da334f5-ee8d-4ce3-83dc-e466c16251ce"
+                                   }
+                   }
+               ],
+    "tags":  [
+
+             ],
+    "activeVersion":  {
+                          "updatedAt":  "2026-05-10T17:46:24.621Z",
+                          "createdAt":  "2026-05-10T17:46:22.917Z",
+                          "versionId":  "6ff65a6a-dadb-48d3-8549-2d49a3d7fb23",
+                          "workflowId":  "bzK9KbNa5zEYcurj",
+                          "nodes":  [
+                                        {
+                                            "parameters":  {
+                                                               "sendTo":  "={{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].email }}",
+                                                               "subject":  "={{ $(\u0027Formata Texto para o Email\u0027).item.json.output.subject }}",
+                                                               "emailType":  "text",
+                                                               "message":  "={{ $(\u0027Formata Texto para o Email\u0027).item.json.output.body }}",
+                                                               "options":  {
+                                                                               "appendAttribution":  false,
+                                                                               "attachmentsUi":  {
+                                                                                                     "attachmentsBinary":  [
+                                                                                                                               {
+
+                                                                                                                               }
+                                                                                                                           ]
+                                                                                                 },
+                                                                               "senderName":  "Jurema Brokers"
+                                                                           }
+                                                           },
+                                            "id":  "a9955f43-40b6-4ad4-9fb7-4728126ffdf2",
+                                            "name":  "Gmail",
+                                            "type":  "n8n-nodes-base.gmail",
+                                            "position":  [
+                                                             3296,
+                                                             1136
+                                                         ],
+                                            "typeVersion":  2.1,
+                                            "webhookId":  "da334754-85ef-45d4-935c-3c88d3766209",
+                                            "credentials":  {
+                                                                "gmailOAuth2":  {
+                                                                                    "id":  "zFt7P11mr94HENmI",
+                                                                                    "name":  "Gmail Jurema"
+                                                                                }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "content":  "## Formulário\nCaptura Dados\n",
+                                                               "height":  280,
+                                                               "width":  209.5385093719796,
+                                                               "color":  2
+                                                           },
+                                            "id":  "781ce8b4-ca17-4757-ac1e-ca5734cdab77",
+                                            "name":  "Sticky Note",
+                                            "type":  "n8n-nodes-base.stickyNote",
+                                            "position":  [
+                                                             832,
+                                                             1536
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "content":  "## Contrato\nFormulando o Contrato",
+                                                               "height":  522.1355157049098,
+                                                               "width":  1492,
+                                                               "color":  5
+                                                           },
+                                            "id":  "361a01de-ed04-4be3-ad10-5f949afda02f",
+                                            "name":  "Sticky Note1",
+                                            "type":  "n8n-nodes-base.stickyNote",
+                                            "position":  [
+                                                             752,
+                                                             1440
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "content":  "## Email\nFormata e Envia o Contrato",
+                                                               "height":  685,
+                                                               "width":  1012,
+                                                               "color":  4
+                                                           },
+                                            "id":  "a7f75675-6f63-47db-af68-c55b3ebe8786",
+                                            "name":  "Sticky Note3",
+                                            "type":  "n8n-nodes-base.stickyNote",
+                                            "position":  [
+                                                             2544,
+                                                             1040
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "content":  "## Fluxo de entrada de cliente\n",
+                                                               "height":  1535,
+                                                               "width":  3236,
+                                                               "color":  7
+                                                           },
+                                            "id":  "cfc55192-4349-4583-ac01-a46c4bf8cd4b",
+                                            "name":  "Sticky Note4",
+                                            "type":  "n8n-nodes-base.stickyNote",
+                                            "position":  [
+                                                             672,
+                                                             976
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "content":  "## Dados\nFormando os dados\n",
+                                                               "height":  280,
+                                                               "width":  209.5385093719796,
+                                                               "color":  3
+                                                           },
+                                            "id":  "2cd2d916-6a04-4b57-9892-d0c7eb88007d",
+                                            "name":  "Sticky Note5",
+                                            "type":  "n8n-nodes-base.stickyNote",
+                                            "position":  [
+                                                             1056,
+                                                             1536
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "170bc3a2-7bf2-42a7-9955-e7cbbe3bea93",
+                                            "name":  "Auto-fixing Output Parser1",
+                                            "type":  "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+                                            "position":  [
+                                                             2704,
+                                                             1360
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "jsonSchemaExample":  "{\n\t\"subject\": \"adicione aqui o titulo\",\n\t\"body\": \"adicione aqui o texto do email\"\n}"
+                                                           },
+                                            "id":  "f9a4d7e3-e6d6-478d-8a46-1132aaf86262",
+                                            "name":  "Structured Output Parser1",
+                                            "type":  "@n8n/n8n-nodes-langchain.outputParserStructured",
+                                            "position":  [
+                                                             2848,
+                                                             1568
+                                                         ],
+                                            "typeVersion":  1.2
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "model":  "gpt-4o-mini",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "f8d9d153-5ee3-42b5-adaa-cc2b84ee6306",
+                                            "name":  "OpenAI Chat Model",
+                                            "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                                            "position":  [
+                                                             2576,
+                                                             1360
+                                                         ],
+                                            "typeVersion":  1,
+                                            "credentials":  {
+                                                                "openAiApi":  {
+                                                                                  "id":  "Hx1Yq9G7OqS7LeeK",
+                                                                                  "name":  "OpenAi YZI"
+                                                                              }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "method":  "POST",
+                                                               "url":  "https://api.html2pdf.app/v1/generate",
+                                                               "sendHeaders":  true,
+                                                               "headerParameters":  {
+                                                                                        "parameters":  [
+                                                                                                           {
+                                                                                                               "name":  "Content-Type",
+                                                                                                               "value":  "application/json"
+                                                                                                           }
+                                                                                                       ]
+                                                                                    },
+                                                               "sendBody":  true,
+                                                               "specifyBody":  "json",
+                                                               "jsonBody":  "={{ JSON.stringify({\"html\": $(\u0027Buscar Contrato Supabase\u0027).first().json[0]?.notes || \u0027\u003cp\u003eContrato\u003c/p\u003e\u0027}) }}",
+                                                               "options":  {
+                                                                               "response":  {
+                                                                                                "response":  {
+                                                                                                                 "responseFormat":  "file"
+                                                                                                             }
+                                                                                            }
+                                                                           }
+                                                           },
+                                            "id":  "cd584b5e-7adc-44e8-8144-03cd5cf1e99d",
+                                            "name":  "Converte em Pdf",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "position":  [
+                                                             3072,
+                                                             1136
+                                                         ],
+                                            "typeVersion":  4.2
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "promptType":  "define",
+                                                               "text":  "=Objetivo: {{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].title }}\n\nServiços que serão Prestados: {{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].type }}",
+                                                               "hasOutputParser":  true,
+                                                               "options":  {
+                                                                               "systemMessage":  "=# Persona\nVocê é um copywriter preparado para enviar emails, bem formatos e bem escritos, para fechamento de propostas comerciais de prestação de serviço.\n\n# Objetivo\nGerar um email informando que está enviando o contratando conforme combinado a respeito da prestação de servico dentro do assunto recebido.\n\n# Instruções\nQuando receber os dados siga o processo:\n\n\u003cthinking\u003e\n1. Analise o objetivo e os servicos que serão prestados e crie um email informando que está enviando o contrato conforme combinado para aprovação.\n2. No inicio do email fale que se trata do servico para a empresa {{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].name }}.\n3. Após falar sobre o contrato avise que só estamos aguardando o OK para enviar para assinatura digital e dar inicio ao trabalho.\n4. No rodapé finalize fechando que estamos muito felizes com a parceria\n\u003c/thinking\u003e\n\n#Exemplo de email: \nPrezada Flávia Couto,\n\nSegue em anexo o contrato de prestação de serviços de marketing digital para sua empresa, conforme conversamos. Ele detalha todos os pontos acordados, incluindo a gestão de redes sociais, tráfego pago e criação de conteúdo.\n\nApós a assinatura, basta me dar um OK para lhe enviar o contrato original para assinatura digital. Estamos ansiosos para começar e colocar em prática as estratégias que irão impulsionar seus resultados!\n\nAtenciosamente,\nFlux Automate\n\n\n# Regras Importantes\n1. Não fuja muito dos exemplos que passei\n2. Não invente nenhum dado ou nenhum serviço \n3. Seja específico nos textos conforme deixei nos exemplos\n4. Escreva o email resumido, não precisa colocar item por item, apenas um texto corrido sobre o que será o serviço\n\nRegra:\n\nNo final gere o subject e o body para enviar o email."
+                                                                           }
+                                                           },
+                                            "id":  "dd24e2e6-b1b7-4655-8afb-259d209d4b03",
+                                            "name":  "Formata Texto para o Email",
+                                            "type":  "@n8n/n8n-nodes-langchain.agent",
+                                            "position":  [
+                                                             2608,
+                                                             1136
+                                                         ],
+                                            "typeVersion":  1.6
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "model":  "gpt-4o",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "653cb64f-ab72-4bda-82e3-dc84f7f413c5",
+                                            "name":  "OpenAI Chat Model5",
+                                            "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                                            "position":  [
+                                                             2720,
+                                                             1568
+                                                         ],
+                                            "typeVersion":  1,
+                                            "credentials":  {
+                                                                "openAiApi":  {
+                                                                                  "id":  "Hx1Yq9G7OqS7LeeK",
+                                                                                  "name":  "OpenAi YZI"
+                                                                              }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "httpMethod":  "POST",
+                                                               "path":  "enviarcontrato",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "9d587240-159c-4069-a309-83adf97409ef",
+                                            "name":  "Webhook",
+                                            "type":  "n8n-nodes-base.webhook",
+                                            "position":  [
+                                                             880,
+                                                             1664
+                                                         ],
+                                            "webhookId":  "5edf1d64-2de4-45ee-90a9-782ca0c65fe7",
+                                            "typeVersion":  2
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "url":  "={{ $vars.SUPABASE_URL + \u0027/rest/v1/leads\u0027 }}",
+                                                               "sendQuery":  true,
+                                                               "queryParameters":  {
+                                                                                       "parameters":  [
+                                                                                                          {
+                                                                                                              "name":  "select",
+                                                                                                              "value":  "id,name,phone,email,status,metadata"
+                                                                                                          },
+                                                                                                          {
+                                                                                                              "name":  "id",
+                                                                                                              "value":  "={{ \u0027eq.\u0027 + $(\u0027Webhook\u0027).item.json.body.lead_id }}"
+                                                                                                          }
+                                                                                                      ]
+                                                                                   },
+                                                               "sendHeaders":  true,
+                                                               "headerParameters":  {
+                                                                                        "parameters":  [
+                                                                                                           {
+                                                                                                               "name":  "apikey",
+                                                                                                               "value":  "={{ $vars.SUPABASE_ANON_KEY }}"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "Authorization",
+                                                                                                               "value":  "={{ \u0027Bearer \u0027 + $vars.SUPABASE_ANON_KEY }}"
+                                                                                                           },
+                                                                                                           {
+                                                                                                               "name":  "Content-Type",
+                                                                                                               "value":  "application/json"
+                                                                                                           }
+                                                                                                       ]
+                                                                                    },
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "d91ed9cd-fab9-42cf-afe5-271d83a44d5e",
+                                            "name":  "Buscar Lead Supabase",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  4.2,
+                                            "position":  [
+                                                             1328,
+                                                             1664
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "content":  "## Whatsapp\nEnvia o contrato para o cliente",
+                                                               "height":  668,
+                                                               "width":  1014,
+                                                               "color":  6
+                                                           },
+                                            "id":  "5b4a09b2-404f-4155-ab1e-ead9ede53a3f",
+                                            "name":  "Sticky Note2",
+                                            "type":  "n8n-nodes-base.stickyNote",
+                                            "position":  [
+                                                             2544,
+                                                             1776
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "0a91742e-3c01-4306-9811-f664342a4d8f",
+                                            "name":  "Auto-fixing Output Parser2",
+                                            "type":  "@n8n/n8n-nodes-langchain.outputParserAutofixing",
+                                            "position":  [
+                                                             2848,
+                                                             2080
+                                                         ],
+                                            "typeVersion":  1
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "jsonSchemaExample":  "{\n\t\"subject\": \"adicione aqui o titulo\",\n\t\"body\": \"adicione aqui o texto do email\"\n}"
+                                                           },
+                                            "id":  "a23bc46b-78fe-4ec4-9bed-50256ec01836",
+                                            "name":  "Structured Output Parser2",
+                                            "type":  "@n8n/n8n-nodes-langchain.outputParserStructured",
+                                            "position":  [
+                                                             2992,
+                                                             2288
+                                                         ],
+                                            "typeVersion":  1.2
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "model":  "gpt-4o-mini",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "9486fc99-f103-4e5b-8031-d2836704093c",
+                                            "name":  "OpenAI Chat Model1",
+                                            "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                                            "position":  [
+                                                             2720,
+                                                             2080
+                                                         ],
+                                            "typeVersion":  1,
+                                            "credentials":  {
+                                                                "openAiApi":  {
+                                                                                  "id":  "Hx1Yq9G7OqS7LeeK",
+                                                                                  "name":  "OpenAi YZI"
+                                                                              }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "promptType":  "define",
+                                                               "text":  "=Objetivo:{{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].title }}\n\nServiços que serão Prestados: {{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].type }}",
+                                                               "hasOutputParser":  true,
+                                                               "options":  {
+                                                                               "systemMessage":  "=# Persona\nVocê é um copywriter preparado para enviar emails, bem formatos e bem escritos, para fechamento de propostas comerciais de prestação de serviço.\n\n# Objetivo\nGerar um email informando que está enviando o contratando conforme combinado a respeito da prestação de servico dentro do assunto recebido.\n\n# Instruções\nQuando receber os dados siga o processo:\n\n\u003cthinking\u003e\n1. Analise o objetivo e os servicos que serão prestados e crie um email informando que está enviando o contrato conforme combinado para aprovação.\n2. No inicio do email fale que se trata do servico para a empresa {{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].name }}.\n3. Após falar sobre o contrato avise que só estamos aguardando o OK para enviar para assinatura digital e dar inicio ao trabalho.\n4. No rodapé finalize fechando que estamos muito felizes com a parceria\n\u003c/thinking\u003e\n\n#Exemplo de email: \nPrezada Flávia Couto,\n\nSegue em anexo o contrato de prestação de serviços de marketing digital para sua empresa, conforme conversamos. Ele detalha todos os pontos acordados, incluindo a gestão de redes sociais, tráfego pago e criação de conteúdo.\n\nApós a assinatura, basta me dar um OK para lhe enviar o contrato original para assinatura digital. Estamos ansiosos para começar e colocar em prática as estratégias que irão impulsionar seus resultados!\n\nAtenciosamente,\nFlux Automate\n\n\n# Regras Importantes\n1. Não fuja muito dos exemplos que passei\n2. Não invente nenhum dado ou nenhum serviço \n3. Seja específico nos textos conforme deixei nos exemplos\n4. Escreva o email resumido, não precisa colocar item por item, apenas um texto corrido sobre o que será o serviço\n\nRegra:\n\nNo final gere o subject e o body para enviar o email."
+                                                                           }
+                                                           },
+                                            "id":  "48cfe01a-736f-4ac2-88d4-1cae65dbb90f",
+                                            "name":  "Formata Texto para Whatsapp",
+                                            "type":  "@n8n/n8n-nodes-langchain.agent",
+                                            "position":  [
+                                                             2752,
+                                                             1856
+                                                         ],
+                                            "typeVersion":  1.6
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "model":  "gpt-4o",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "d5d10e77-87de-49a3-b6a6-5ded3cf9ca21",
+                                            "name":  "OpenAI Chat Model4",
+                                            "type":  "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+                                            "position":  [
+                                                             2864,
+                                                             2288
+                                                         ],
+                                            "typeVersion":  1,
+                                            "credentials":  {
+                                                                "openAiApi":  {
+                                                                                  "id":  "Hx1Yq9G7OqS7LeeK",
+                                                                                  "name":  "OpenAi YZI"
+                                                                              }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "resource":  "messages-api",
+                                                               "operation":  "send-document",
+                                                               "instanceName":  "Jurema Brokers",
+                                                               "remoteJid":  "={{ $(\u0027Buscar Lead Supabase\u0027).first().json[0].phone }}",
+                                                               "media":  "={{ $(\u0027Extract from File\u0027).item.json.data }}",
+                                                               "caption":  "={{ $json.output.body }}",
+                                                               "fileName":  "={{ $(\u0027Buscar Contrato Supabase\u0027).first().json[0].title || $(\u0027Webhook\u0027).item.json.body.contract_id }}.pdf ",
+                                                               "options_message":  {
+
+                                                                                   }
+                                                           },
+                                            "type":  "n8n-nodes-evolution-api.evolutionApi",
+                                            "typeVersion":  1,
+                                            "position":  [
+                                                             3216,
+                                                             1856
+                                                         ],
+                                            "id":  "a7bd6361-f2b0-458c-946c-60efce4e664e",
+                                            "name":  "Enviar documento",
+                                            "credentials":  {
+                                                                "evolutionApi":  {
+                                                                                     "id":  "sX2Z4jQVEwbEivqP",
+                                                                                     "name":  "Evolution YZIHUB"
+                                                                                 }
+                                                            }
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "operation":  "binaryToPropery",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "type":  "n8n-nodes-base.extractFromFile",
+                                            "typeVersion":  1.1,
+                                            "position":  [
+                                                             1776,
+                                                             1664
+                                                         ],
+                                            "id":  "67e304f9-e1a1-4781-bd87-e7f3a81c29d2",
+                                            "name":  "Extract from File"
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "url":  "={{ $vars.SUPABASE_URL + \u0027/rest/v1/contracts\u0027 }}",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "8f5e2c42-a2f9-474f-af50-fa63de0e25ff",
+                                            "name":  "Buscar Contrato Supabase",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  1,
+                                            "position":  [
+                                                             1104,
+                                                             1664
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "url":  "https://api.html2pdf.app/v1/generate",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "7a219f66-db80-4ef7-8e9d-86dbc49b786b",
+                                            "name":  "Gerar PDF WhatsApp",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  1,
+                                            "position":  [
+                                                             1552,
+                                                             1664
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "url":  "={{ $vars.SUPABASE_URL + \u0027/rest/v1/contracts\u0027 }}",
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "e5a03e2e-3c34-4cf8-94a9-844fc2a2de6c",
+                                            "name":  "Atualizar Status Contrato",
+                                            "type":  "n8n-nodes-base.httpRequest",
+                                            "typeVersion":  1,
+                                            "position":  [
+                                                             3584,
+                                                             1728
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "conditions":  {
+                                                                                  "options":  {
+                                                                                                  "caseSensitive":  true,
+                                                                                                  "leftValue":  "",
+                                                                                                  "typeValidation":  "loose"
+                                                                                              },
+                                                                                  "conditions":  [
+                                                                                                     {
+                                                                                                         "id":  "cond-email-001",
+                                                                                                         "leftValue":  "={{ $(\u0027Webhook\u0027).item.json.body.canais?.email }}",
+                                                                                                         "rightValue":  true,
+                                                                                                         "operator":  {
+                                                                                                                          "type":  "boolean",
+                                                                                                                          "operation":  "equals"
+                                                                                                                      }
+                                                                                                     }
+                                                                                                 ],
+                                                                                  "combinator":  "and"
+                                                                              },
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "d8b1cd86-0999-47b9-9b1b-0b17ffcc4149",
+                                            "name":  "IF Canal Email",
+                                            "type":  "n8n-nodes-base.if",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             2080,
+                                                             1520
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "conditions":  {
+                                                                                  "options":  {
+                                                                                                  "caseSensitive":  true,
+                                                                                                  "leftValue":  "",
+                                                                                                  "typeValidation":  "loose"
+                                                                                              },
+                                                                                  "conditions":  [
+                                                                                                     {
+                                                                                                         "id":  "cond-wpp-001",
+                                                                                                         "leftValue":  "={{ $(\u0027Webhook\u0027).item.json.body.canais?.whatsapp }}",
+                                                                                                         "rightValue":  true,
+                                                                                                         "operator":  {
+                                                                                                                          "type":  "boolean",
+                                                                                                                          "operation":  "equals"
+                                                                                                                      }
+                                                                                                     }
+                                                                                                 ],
+                                                                                  "combinator":  "and"
+                                                                              },
+                                                               "options":  {
+
+                                                                           }
+                                                           },
+                                            "id":  "d87f90da-1573-4a8f-b72c-c78541bac4a6",
+                                            "name":  "IF Canal WhatsApp",
+                                            "type":  "n8n-nodes-base.if",
+                                            "typeVersion":  2,
+                                            "position":  [
+                                                             2080,
+                                                             1808
+                                                         ]
+                                        },
+                                        {
+                                            "parameters":  {
+                                                               "content":  "## ATUALIZA STATUS DO CONTRATO\n",
+                                                               "height":  312,
+                                                               "width":  370,
+                                                               "color":  3
+                                                           },
+                                            "id":  "e4cf5374-c23d-43ad-bf37-fd8beaf1e5f9",
+                                            "name":  "Sticky Note6",
+                                            "type":  "n8n-nodes-base.stickyNote",
+                                            "position":  [
+                                                             3456,
+                                                             1632
+                                                         ],
+                                            "typeVersion":  1
+                                        }
+                                    ],
+                          "connections":  {
+                                              "Converte em Pdf":  {
+                                                                      "main":  [
+                                                                                   [
+                                                                                       {
+                                                                                           "node":  "Gmail",
+                                                                                           "type":  "main",
+                                                                                           "index":  0
+                                                                                       }
+                                                                                   ]
+                                                                               ]
+                                                                  },
+                                              "OpenAI Chat Model":  {
+                                                                        "ai_languageModel":  [
+                                                                                                 [
+                                                                                                     {
+                                                                                                         "node":  "Formata Texto para o Email",
+                                                                                                         "type":  "ai_languageModel",
+                                                                                                         "index":  0
+                                                                                                     }
+                                                                                                 ]
+                                                                                             ]
+                                                                    },
+                                              "OpenAI Chat Model5":  {
+                                                                         "ai_languageModel":  [
+                                                                                                  [
+                                                                                                      {
+                                                                                                          "node":  "Auto-fixing Output Parser1",
+                                                                                                          "type":  "ai_languageModel",
+                                                                                                          "index":  0
+                                                                                                      }
+                                                                                                  ]
+                                                                                              ]
+                                                                     },
+                                              "Structured Output Parser1":  {
+                                                                                "ai_outputParser":  [
+                                                                                                        [
+                                                                                                            {
+                                                                                                                "node":  "Auto-fixing Output Parser1",
+                                                                                                                "type":  "ai_outputParser",
+                                                                                                                "index":  0
+                                                                                                            }
+                                                                                                        ]
+                                                                                                    ]
+                                                                            },
+                                              "Auto-fixing Output Parser1":  {
+                                                                                 "ai_outputParser":  [
+                                                                                                         [
+                                                                                                             {
+                                                                                                                 "node":  "Formata Texto para o Email",
+                                                                                                                 "type":  "ai_outputParser",
+                                                                                                                 "index":  0
+                                                                                                             }
+                                                                                                         ]
+                                                                                                     ]
+                                                                             },
+                                              "Formata Texto para o Email":  {
+                                                                                 "main":  [
+                                                                                              [
+                                                                                                  {
+                                                                                                      "node":  "Converte em Pdf",
+                                                                                                      "type":  "main",
+                                                                                                      "index":  0
+                                                                                                  }
+                                                                                              ]
+                                                                                          ]
+                                                                             },
+                                              "Auto-fixing Output Parser2":  {
+                                                                                 "ai_outputParser":  [
+                                                                                                         [
+                                                                                                             {
+                                                                                                                 "node":  "Formata Texto para Whatsapp",
+                                                                                                                 "type":  "ai_outputParser",
+                                                                                                                 "index":  0
+                                                                                                             }
+                                                                                                         ]
+                                                                                                     ]
+                                                                             },
+                                              "Structured Output Parser2":  {
+                                                                                "ai_outputParser":  [
+                                                                                                        [
+                                                                                                            {
+                                                                                                                "node":  "Auto-fixing Output Parser2",
+                                                                                                                "type":  "ai_outputParser",
+                                                                                                                "index":  0
+                                                                                                            }
+                                                                                                        ]
+                                                                                                    ]
+                                                                            },
+                                              "OpenAI Chat Model1":  {
+                                                                         "ai_languageModel":  [
+                                                                                                  [
+                                                                                                      {
+                                                                                                          "node":  "Formata Texto para Whatsapp",
+                                                                                                          "type":  "ai_languageModel",
+                                                                                                          "index":  0
+                                                                                                      }
+                                                                                                  ]
+                                                                                              ]
+                                                                     },
+                                              "Formata Texto para Whatsapp":  {
+                                                                                  "main":  [
+                                                                                               [
+                                                                                                   {
+                                                                                                       "node":  "Enviar documento",
+                                                                                                       "type":  "main",
+                                                                                                       "index":  0
+                                                                                                   }
+                                                                                               ]
+                                                                                           ]
+                                                                              },
+                                              "OpenAI Chat Model4":  {
+                                                                         "ai_languageModel":  [
+                                                                                                  [
+                                                                                                      {
+                                                                                                          "node":  "Auto-fixing Output Parser2",
+                                                                                                          "type":  "ai_languageModel",
+                                                                                                          "index":  0
+                                                                                                      }
+                                                                                                  ]
+                                                                                              ]
+                                                                     },
+                                              "Webhook":  {
+                                                              "main":  [
+                                                                           [
+                                                                               {
+                                                                                   "node":  "Buscar Contrato Supabase",
+                                                                                   "type":  "main",
+                                                                                   "index":  0
+                                                                               }
+                                                                           ]
+                                                                       ]
+                                                          },
+                                              "Buscar Contrato Supabase":  {
+                                                                               "main":  [
+                                                                                            [
+                                                                                                {
+                                                                                                    "node":  "Buscar Lead Supabase",
+                                                                                                    "type":  "main",
+                                                                                                    "index":  0
+                                                                                                }
+                                                                                            ]
+                                                                                        ]
+                                                                           },
+                                              "Buscar Lead Supabase":  {
+                                                                           "main":  [
+                                                                                        [
+                                                                                            {
+                                                                                                "node":  "Gerar PDF WhatsApp",
+                                                                                                "type":  "main",
+                                                                                                "index":  0
+                                                                                            }
+                                                                                        ]
+                                                                                    ]
+                                                                       },
+                                              "Gerar PDF WhatsApp":  {
+                                                                         "main":  [
+                                                                                      [
+                                                                                          {
+                                                                                              "node":  "Extract from File",
+                                                                                              "type":  "main",
+                                                                                              "index":  0
+                                                                                          }
+                                                                                      ]
+                                                                                  ]
+                                                                     },
+                                              "Gmail":  {
+                                                            "main":  [
+                                                                         [
+                                                                             {
+                                                                                 "node":  "Atualizar Status Contrato",
+                                                                                 "type":  "main",
+                                                                                 "index":  0
+                                                                             }
+                                                                         ]
+                                                                     ]
+                                                        },
+                                              "Extract from File":  {
+                                                                        "main":  [
+                                                                                     [
+                                                                                         {
+                                                                                             "node":  "IF Canal Email",
+                                                                                             "type":  "main",
+                                                                                             "index":  0
+                                                                                         },
+                                                                                         {
+                                                                                             "node":  "IF Canal WhatsApp",
+                                                                                             "type":  "main",
+                                                                                             "index":  0
+                                                                                         }
+                                                                                     ]
+                                                                                 ]
+                                                                    },
+                                              "IF Canal Email":  {
+                                                                     "main":  [
+                                                                                  [
+                                                                                      {
+                                                                                          "node":  "Formata Texto para o Email",
+                                                                                          "type":  "main",
+                                                                                          "index":  0
+                                                                                      }
+                                                                                  ]
+                                                                              ]
+                                                                 },
+                                              "IF Canal WhatsApp":  {
+                                                                        "main":  [
+                                                                                     [
+                                                                                         {
+                                                                                             "node":  "Formata Texto para Whatsapp",
+                                                                                             "type":  "main",
+                                                                                             "index":  0
+                                                                                         }
+                                                                                     ]
+                                                                                 ]
+                                                                    },
+                                              "Enviar documento":  {
+                                                                       "main":  [
+                                                                                    [
+                                                                                        {
+                                                                                            "node":  "Atualizar Status Contrato",
+                                                                                            "type":  "main",
+                                                                                            "index":  0
+                                                                                        }
+                                                                                    ]
+                                                                                ]
+                                                                   }
+                                          },
+                          "authors":  "YZI HUB",
+                          "name":  "Version 6ff65a6a",
+                          "description":  "",
+                          "autosaved":  true,
+                          "workflowPublishHistory":  [
+                                                         {
+                                                             "createdAt":  "2026-05-10T17:46:24.619Z",
+                                                             "id":  1273,
+                                                             "workflowId":  "bzK9KbNa5zEYcurj",
+                                                             "versionId":  "6ff65a6a-dadb-48d3-8549-2d49a3d7fb23",
+                                                             "event":  "activated",
+                                                             "userId":  "6da334f5-ee8d-4ce3-83dc-e466c16251ce"
+                                                         }
+                                                     ]
+                      }
+}

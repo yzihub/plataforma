@@ -1,0 +1,63 @@
+<conhecimento_nina>
+    <secao id="objecao_preco">
+        <gatilho>Caro, investimento alto, valor puxado, desconto</gatilho>
+        <script>
+            Entendo super! É um investimento no seu bem-estar mesmo. 🌿
+            
+            O que acontece é que a Pam evita aqueles erros que a gente comete tentando resolver sozinha e que acabam custando muito mais caro depois. 
+            
+            Parcelado em 10x fica menos que um jantar fora por mês, sabe? 🤎 Vale cada centavo pelo resultado e pela paz de espírito de ter tudo planejado.
+        </script>
+    </secao>
+    
+    <secao id="objecao_terceiros">
+        <gatilho>Falar com marido, esposa, sócio, parceiro</gatilho>
+        <script>
+            Claro, conversa sim! Projetar a casa é um sonho da família toda. ✨
+            
+            Se tiver qualquer dúvida técnica que eles queiram saber, pode me mandar aqui. E ó, deixar o cadastro pronto não gera cobrança agora, só garante o seu lugar na fila com esse valor atual. 
+            
+            Qualquer hora que confirmarem, é só me dar um oi! 🤎
+        </script>
+    </secao>
+
+    <secao id="conversao_pagamento">
+        <script>
+            Falta só um passinho pro seu café com a Pam acontecer! ☕
+            
+            Aqui está seu link seguro: [URL]
+            
+            (Lembrando que no cartão você consegue parcelar em até 10x, tá? ✨) 
+            
+            Assim que confirmar, a gente já escolhe nossa data!
+        </script>
+    </secao>
+
+    <secao id="celebracao_pago">
+        <script>
+            UHUUUL! 🎉 Pagamento confirmado! Agora vem a melhor parte: escolher nossa data. 
+            
+            A Pam atende sempre às Terças e Quintas. Qual desses dias fica melhor pra você? 🤎
+        </script>
+    </secao>
+
+    <secao id="upgrade_projeto">
+        <gatilho>Adicionar ambiente, incluir mais um cômodo, mudar de 2 para 3 ambientes, prazo limite upgrade</gatilho>
+        <script>
+            Que máximo que você decidiu incluir a [Novo Ambiente]! 🌿 Vai ficar incrível o conjunto todo.
+            
+            Só um toque: pra Pam conseguir apresentar as ideias desse novo espaço hoje mesmo no nosso café, a gente precisa confirmar e compensar o pagamento agora, tá? 🤎 
+            
+            Como ela vai preparar todos os materiais pra te mostrar, esse é o limite pra ela conseguir incluir os detalhes técnicos desse ambiente extra e você não perder o desconto do pacote. Conseguimos agilizar por aí? ✨
+            
+            Aqui está o link: [URL]
+        </script>
+    </secao>
+
+    <diretrizes_esteticas>
+        <regra>Proibido usar "linkPreview". O link deve ir puro para evitar cards de erro.</regra>
+        <regra>Máximo de 2 emojis por bloco: 🌿 ✨ 🤎 ☕ 🏡 🎉</regra>
+        <regra>Nunca usar travessão (—) ou asterisco duplo (**).</regra>
+        <regra>Sempre usar contrações naturais (pra, tô, tá) para manter o tom de boutique.</regra>
+    </diretrizes_esteticas>
+</conhecimento_nina>

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { buildN8nEnvelope, toN8nImovel } from "@/types/n8n-payloads";
 
 const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
@@ -9,7 +9,7 @@ const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
 
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     // DEV_BYPASS: skip auth in development — consistent with proxy.ts and TenantContext
     const isDevBypass =
@@ -21,7 +21,10 @@ export async function GET() {
     if (isDevBypass) {
       tenantId = DEV_JUREMA_TENANT_ID;
     } else {
-      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      // Admin client bypasses RLS; resolve tenant from session cookie via anon client
+      const { createClient } = await import("@/lib/supabase/server");
+      const anonClient = await createClient();
+      const { data: { user }, error: authError } = await anonClient.auth.getUser();
       if (authError || !user) {
         return NextResponse.json({ error: "Nao autenticado" }, { status: 401 });
       }
@@ -41,11 +44,12 @@ export async function GET() {
 
     const { data: properties, error: propertiesError } = await supabase
       .from("imoveis")
-      .select("id, tenant_id, titulo_comercial, bairro, valor, quartos, suites, vagas, metragem, descricao_imovel, foto_principal, imagem_card, tipo_de_imovel, finalidade, link_do_imovel, status_publicacao, status_operacional, created_at, updated_at")
+      .select("id, tenant_id, id_imovel, external_id, titulo_comercial, tipo_de_imovel, finalidade, bairro, quartos, suites, vagas, metragem, valor, descricao_imovel, foto_principal, imagem_card, link_do_imovel, link_sanitizado, status_publicacao, status_operacional, referencia_unica, metadata, updated_at")
       .eq("tenant_id", tenantId)
       .eq("status_publicacao", "Publicado")
       .eq("status_operacional", "disponivel")
-      .order("updated_at", { ascending: false });
+      .order("updated_at", { ascending: false })
+      .limit(200);
 
     if (propertiesError) {
       console.error("[GET /api/imoveis] query error:", propertiesError);
@@ -53,7 +57,12 @@ export async function GET() {
     }
 
     const payload = buildN8nEnvelope("imoveis", tenantId, (properties ?? []).map(toN8nImovel));
-    return NextResponse.json(payload, { status: 200 });
+    return NextResponse.json(payload, {
+      status: 200,
+      headers: {
+        "Cache-Control": "private, max-age=10, stale-while-revalidate=30",
+      },
+    });
   } catch (err) {
     console.error("[GET /api/imoveis] unexpected error:", err);
     return NextResponse.json({ error: "Erro interno do servidor" }, { status: 500 });
