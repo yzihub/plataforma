@@ -3,12 +3,14 @@ import { createClient } from "@/lib/supabase/client";
 import React, { useState } from "react";
 
 const getRedirectUrl = () => {
-  // Em dev, sempre usar window.location.origin para respeitar a porta (3001)
-  // Em prod, NEXT_PUBLIC_APP_URL é confiável
-  if (typeof window !== "undefined") {
-    return `${window.location.origin}/auth/callback`;
-  }
-  return `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`;
+  // NEXT_PUBLIC_APP_URL tem prioridade — garante domínio oficial em produção
+  // mesmo se o usuário acessar via preview/alt-domain. Em dev, configurar a
+  // env como http://localhost:<porta> no .env.local. Fallback para origin
+  // se a env não estiver definida (SSR-safe).
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    (typeof window !== "undefined" ? window.location.origin : "");
+  return `${appUrl}/auth/callback`;
 };
 
 export default function SignInForm() {

@@ -52,25 +52,32 @@ function fail(label: string, detail?: string) {
 async function validateEnv() {
   console.log("\n-- ENV VARS --");
 
+  const VALID_APP_URLS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002",
+    "https://app.juremabksimoveis.com.br",
+  ];
+
   // NEXT_PUBLIC_SITE_URL
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-  if (siteUrl === "http://localhost:3002") {
+  if (siteUrl && VALID_APP_URLS.includes(siteUrl)) {
     ok("ENV: NEXT_PUBLIC_SITE_URL", siteUrl);
   } else {
     fail(
       "ENV: NEXT_PUBLIC_SITE_URL",
-      `Expected http://localhost:3002, got: ${siteUrl ?? "(not set)"}`
+      `Expected one of ${VALID_APP_URLS.join(", ")} — got: ${siteUrl ?? "(not set)"}`
     );
   }
 
   // NEXT_PUBLIC_APP_URL
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-  if (appUrl === "http://localhost:3002") {
+  if (appUrl && VALID_APP_URLS.includes(appUrl)) {
     ok("ENV: NEXT_PUBLIC_APP_URL", appUrl);
   } else {
     fail(
       "ENV: NEXT_PUBLIC_APP_URL",
-      `Expected http://localhost:3002, got: ${appUrl ?? "(not set)"}`
+      `Expected one of ${VALID_APP_URLS.join(", ")} — got: ${appUrl ?? "(not set)"}`
     );
   }
 
@@ -300,7 +307,8 @@ async function validateMissingProfile(
 async function validateRouteProtection() {
   console.log("\n-- ROUTE PROTECTION --");
 
-  const targetUrl = "http://localhost:3002/cockpit";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3002";
+  const targetUrl = `${baseUrl}/cockpit`;
 
   try {
     const res = await fetch(targetUrl, {
@@ -348,7 +356,7 @@ async function validateRouteProtection() {
     if (msg.includes("ECONNREFUSED") || msg.includes("fetch failed") || msg.includes("connect")) {
       ok(
         "Route protection: /cockpit",
-        "SKIPPED — dev server not running on localhost:3002 (run npm run dev to test)"
+        `SKIPPED — dev server not running on ${baseUrl} (run npm run dev to test)`
       );
     } else {
       fail("Route protection: /cockpit", msg);
