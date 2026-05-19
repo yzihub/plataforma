@@ -78,6 +78,17 @@ export interface SessionDetail {
   recent_transitions: SessionTransition[];
 }
 
+export interface LoopEvent {
+  runtime_trace_id: string;
+  conversation_id: string;
+  runtime_state: string | null;
+  objective_state: string | null;
+  repetition_count: number;
+  latency_ms: number | null;
+  severity: CognitiveSeverity;
+  created_at: string;
+}
+
 export type ReplayDirection = "início" | "avanço" | "estável" | "regressão" | "loop";
 
 export interface ReplayFrame {
