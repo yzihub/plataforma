@@ -89,6 +89,18 @@ export interface LoopEvent {
   created_at: string;
 }
 
+export interface RetrievalEvent {
+  runtime_trace_id: string;
+  conversation_id: string;
+  retrieval_policy: string | null;
+  retrieval_allowed: boolean | null;
+  runtime_state: string | null;
+  objective_state: string | null;
+  latency_ms: number | null;
+  severity: CognitiveSeverity;
+  created_at: string;
+}
+
 export type ReplayDirection = "início" | "avanço" | "estável" | "regressão" | "loop";
 
 export interface ReplayFrame {
