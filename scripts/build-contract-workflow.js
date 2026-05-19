@@ -1,7 +1,7 @@
 const fs = require("fs");
 
-const sourcePath = "n8n/workflow-bzK9KbNa5zEYcurj.before.json";
-const outputPath = "n8n/workflow-bzK9KbNa5zEYcurj.refactored.json";
+const sourcePath = "n8n/archive/legacy/workflow-bzK9KbNa5zEYcurj.before.json";
+const outputPath = "n8n/archive/legacy/workflow-bzK9KbNa5zEYcurj.refactored.json";
 
 const current = JSON.parse(fs.readFileSync(sourcePath, "utf8").replace(/^\uFEFF/, ""));
 

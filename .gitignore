@@ -1,31 +1,90 @@
-# Claude Code
+# =========================
+# Dependencies
+# =========================
+node_modules/
+
+# =========================
+# Next.js
+# =========================
+.next/
+out/
+
+# =========================
+# Build / Cache
+# =========================
+*.tsbuildinfo
+dist/
+build/
+coverage/
+
+# =========================
+# Environment / Secrets
+# =========================
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+
+# =========================
+# Vercel
+# =========================
+.vercel/
+
+# =========================
+# Claude / MCP
+# =========================
 .claude/
 .claude/worktrees/
+.mcp.json
 
-# logs
-*.log
-
-# local runtime
+# =========================
+# Supabase local runtime
+# =========================
 supabase/.temp/
 
-# oauth / credentials
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# Credentials / OAuth
+# =========================
 google_oauth_token.json
 credentials/
 
-# patches temporários
+# =========================
+# Temporary / Patch files
+# =========================
 *.patch
-node_modules
+tmp/
+temp/
 
-.claude/
-.vercel/
-.next/
-supabase/.temp/
-*.log
-*.patch
-.mcp.json
+# =========================
+# n8n snapshots / exports
+# =========================
+n8n/archive/snapshots/workflows-list.json
 
+# =========================
+# Planning / Scratch
+# =========================
+.planning/
+.planning/quick/**/*.json
+
+# =========================
+# Local workflow scratch
+# =========================
 workflow-template.json
 buscar_lancamentos.json
 
-.planning/quick/**/*.json
-n8n/workflows-list.json
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

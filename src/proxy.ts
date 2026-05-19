@@ -4,9 +4,15 @@ import { requireEnv } from '@/lib/env-validation'
 
 const PUBLIC_ROUTES = ['/signin', '/signup', '/reset-password', '/auth/callback', '/unauthorized', '/error-404']
 const CONTROL_ROUTE = '/control'
+const RUNTIME_ROUTES = ['/api/runtime']
 
 export async function proxy(request: NextRequest) {
   const baseResponse = NextResponse.next({ request })
+  const { pathname } = request.nextUrl
+
+  if (RUNTIME_ROUTES.some((route) => pathname.startsWith(route))) {
+    return baseResponse
+  }
 
   // DEV_BYPASS: skip ALL Supabase calls in development — avoids network round-trip on every request.
   // TenantContext handles the fallback tenant client-side.
@@ -51,7 +57,6 @@ export async function proxy(request: NextRequest) {
     return supabaseResponse
   }
 
-  const { pathname } = request.nextUrl
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r))
   const isControlRoute = pathname.startsWith(CONTROL_ROUTE)
 
