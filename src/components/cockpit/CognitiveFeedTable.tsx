@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CognitiveFeedRow } from "@/lib/cockpit/types";
 import CognitiveSeverityBadge from "./CognitiveSeverityBadge";
 import StateTransitionBadge from "./StateTransitionBadge";
@@ -34,15 +34,25 @@ const HEADERS = [
 export default function CognitiveFeedTable() {
   const [rows, setRows] = useState<CognitiveFeedRow[] | null>(null);
   const [error, setError] = useState(false);
+  const hasRows = useRef(false);
 
   useEffect(() => {
-    fetch("/api/observabilidade/feed")
-      .then((r) => {
-        if (!r.ok) throw new Error(`status ${r.status}`);
-        return r.json();
-      })
-      .then((d: { rows: CognitiveFeedRow[] }) => setRows(d.rows))
-      .catch(() => setError(true));
+    const load = () =>
+      fetch("/api/observabilidade/feed")
+        .then((r) => {
+          if (!r.ok) throw new Error(`status ${r.status}`);
+          return r.json();
+        })
+        .then((d: { rows: CognitiveFeedRow[] }) => {
+          hasRows.current = true;
+          setRows(d.rows);
+        })
+        .catch(() => {
+          if (!hasRows.current) setError(true);
+        });
+    load();
+    const id = setInterval(load, 60_000);
+    return () => clearInterval(id);
   }, []);
 
   if (error) {

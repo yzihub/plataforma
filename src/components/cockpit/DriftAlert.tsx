@@ -28,10 +28,14 @@ export default function DriftAlert() {
   const [data, setData] = useState<CognitiveHealthData | null>(null);
 
   useEffect(() => {
-    fetch("/api/observabilidade/health")
-      .then((r) => r.json())
-      .then((d: CognitiveHealthData) => setData(d))
-      .catch(() => {});
+    const load = () =>
+      fetch("/api/observabilidade/health")
+        .then((r) => r.json())
+        .then((d: CognitiveHealthData) => setData(d))
+        .catch(() => {});
+    load();
+    const id = setInterval(load, 60_000);
+    return () => clearInterval(id);
   }, []);
 
   if (!data) return null;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CognitiveHealthData } from "@/lib/cockpit/types";
 import SkeletonHealthStrip from "./SkeletonHealthStrip";
 
@@ -67,15 +67,25 @@ const STRIP: KpiConfig[] = [
 export default function CognitiveHealthStrip() {
   const [data, setData] = useState<CognitiveHealthData | null>(null);
   const [error, setError] = useState(false);
+  const hasData = useRef(false);
 
   useEffect(() => {
-    fetch("/api/observabilidade/health")
-      .then((r) => {
-        if (!r.ok) throw new Error(`status ${r.status}`);
-        return r.json();
-      })
-      .then((d: CognitiveHealthData) => setData(d))
-      .catch(() => setError(true));
+    const load = () =>
+      fetch("/api/observabilidade/health")
+        .then((r) => {
+          if (!r.ok) throw new Error(`status ${r.status}`);
+          return r.json();
+        })
+        .then((d: CognitiveHealthData) => {
+          hasData.current = true;
+          setData(d);
+        })
+        .catch(() => {
+          if (!hasData.current) setError(true);
+        });
+    load();
+    const id = setInterval(load, 60_000);
+    return () => clearInterval(id);
   }, []);
 
   if (error) {
