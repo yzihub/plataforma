@@ -101,6 +101,22 @@ export interface RetrievalEvent {
   created_at: string;
 }
 
+export type HandoffState = "aguardando" | "ativo" | "órfão" | "sem_handoff" | "encerrado";
+
+export interface HandoffEvent {
+  runtime_trace_id: string;
+  conversation_id: string;
+  deal_id: string;
+  runtime_state: string | null;
+  deal_stage: string | null;
+  handoff_state: HandoffState;
+  broker_status: string | null;
+  assigned_broker_id: string | null;
+  severity: CognitiveSeverity;
+  latency_ms: number | null;
+  last_trace_at: string;
+}
+
 export type ReplayDirection = "início" | "avanço" | "estável" | "regressão" | "loop";
 
 export interface ReplayFrame {
