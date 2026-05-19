@@ -131,6 +131,10 @@ async function main() {
   if (!runtimeUrl || !/^https:\/\//i.test(runtimeUrl) || /localhost|127\.0\.0\.1|app\.yzihub\.com/i.test(runtimeUrl)) {
     throw new Error('YZI_RUNTIME_API_URL invalido/ausente. Configure uma URL HTTPS publica do Runtime Gateway antes de publicar.');
   }
+  const parsedRuntimeUrl = new URL(runtimeUrl);
+  if (parsedRuntimeUrl.pathname !== '/' && parsedRuntimeUrl.pathname !== '') {
+    throw new Error('YZI_RUNTIME_API_URL deve ser apenas a origin/base URL, ex: https://plataforma-bb2h.vercel.app. Nao inclua /api/runtime/ju/state.');
+  }
   if (!runtimeKey) {
     throw new Error('YZI_RUNTIME_INTERNAL_KEY ausente. Configure a chave interna do Runtime Gateway antes de publicar.');
   }

@@ -42,6 +42,10 @@ function newCorrelationId() {
   return `ju_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
 }
 
+function newRuntimeTraceId() {
+  return `trace_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+}
+
 export function getCorrelationId(headers: Headers, body?: Pick<RuntimeStateRequest, "correlation_id"> | null) {
   return (
     clean(headers.get("x-correlation-id")) ||
@@ -283,6 +287,19 @@ async function logGatewayRequest(
   }
 }
 
+async function writeRuntimeTrace(
+  supabase: ReturnType<typeof createAdminClient> | null,
+  row: Record<string, unknown>,
+): Promise<void> {
+  if (!supabase) return;
+  try {
+    const { error } = await supabase.from("ju_runtime_traces").insert(row);
+    if (error) console.error("[ju runtime trace]", error.message);
+  } catch (err) {
+    console.error("[ju runtime trace write failed]", err instanceof Error ? err.message : err);
+  }
+}
+
 export function validateRuntimeGatewayBody(body: RuntimeStateRequest) {
   const errors: string[] = [];
   const tenantId = clean(body.tenant_id ?? body.lead?.tenant_id ?? body.deal?.tenant_id ?? body.conversation?.tenant_id);
@@ -303,6 +320,7 @@ export async function executeJuRuntimeState(
   trace: RuntimeGatewayTrace,
 ) {
   const startedAt = Date.now();
+  const runtimeTraceId = newRuntimeTraceId();
   const conversationId = body.conversation_id ?? body.conversation?.id ?? null;
   const shouldLoadFromDb = Boolean(body.conversation_id && !body.conversation);
   const shouldUseDb = body.persist === true || shouldLoadFromDb || trace.source === "runtime_gateway";
@@ -352,9 +370,11 @@ export async function executeJuRuntimeState(
       await persistDecision(supabase, input, previous, decision, runtimeContext);
     }
 
+    const completedAt = Date.now();
     const response = {
       ok: true,
       correlation_id: trace.correlation_id,
+      runtime_trace_id: runtimeTraceId,
       persisted: body.persist === true,
       decision,
       context: runtimeContext,
@@ -363,7 +383,7 @@ export async function executeJuRuntimeState(
         source: trace.source,
         channel: trace.channel ?? body.channel ?? body.entry_profile ?? null,
         origin: trace.origin ?? body.origin ?? null,
-        latency_ms: Date.now() - startedAt,
+        latency_ms: completedAt - startedAt,
       },
     };
 
@@ -394,20 +414,101 @@ export async function executeJuRuntimeState(
       },
     });
 
+    await writeRuntimeTrace(supabase, {
+      runtime_trace_id: runtimeTraceId,
+      correlation_id: trace.correlation_id,
+      tenant_id: decision.tenant_id,
+      lead_id: decision.lead_id,
+      deal_id: decision.deal_id,
+      conversation_id: decision.conversation_id,
+      started_at: new Date(startedAt).toISOString(),
+      completed_at: new Date(completedAt).toISOString(),
+      latency_ms: completedAt - startedAt,
+      runtime_state: decision.runtime_state,
+      previous_runtime_state: previous?.runtime_state ?? null,
+      objective_state: decision.objective_state,
+      previous_objective_state: previous?.objective_state ?? null,
+      next_action: decision.next_action,
+      transition_reason: decision.transition_reason,
+      valid_transition: decision.valid_transition,
+      valid_objective_transition: decision.valid_objective_transition,
+      retrieval_policy: decision.retrieval_policy,
+      retrieval_allowed: decision.retrieval_policy !== "disabled",
+      retrieval_snapshot: runtimeContext.hierarchy.tier_5_retrieval,
+      tool_snapshot: runtimeContext.tool_rules,
+      is_replay: false,
+      loop_risk: decision.loop_risk,
+      loop_detected: decision.loop_risk === "high",
+      fallback_triggered: input.media_state === "failed",
+      fallback_reason: input.media_state === "failed" ? "media_failed" : null,
+      state_snapshot: {
+        runtime_state: decision.runtime_state,
+        objective_state: decision.objective_state,
+        next_action: decision.next_action,
+        conversation_mode: decision.conversation_mode,
+        escalation_state: decision.escalation_state,
+        handoff_state: decision.handoff_state,
+        objective_priority: decision.objective_priority,
+        expected_output: decision.expected_output,
+        resolved_fields: decision.resolved_fields,
+        missing_fields: decision.missing_fields,
+        blocked_questions: decision.blocked_questions,
+        loop_risk: decision.loop_risk,
+        valid_transition: decision.valid_transition,
+        valid_objective_transition: decision.valid_objective_transition,
+        transition_reason: decision.transition_reason,
+        token_budget: decision.token_budget,
+      },
+      context_snapshot: {
+        tier_1: runtimeContext.hierarchy.tier_1_critical_state,
+        tier_2: runtimeContext.hierarchy.tier_2_operational_memory,
+        tier_3: runtimeContext.hierarchy.tier_3_semantic_memory,
+        tier_5: runtimeContext.hierarchy.tier_5_retrieval,
+        token_metrics: runtimeContext.token_metrics,
+      },
+      status: "ok",
+      persisted: body.persist === true,
+      channel: trace.channel ?? body.channel ?? body.entry_profile ?? null,
+      origin: trace.origin ?? body.origin ?? null,
+      source: trace.source,
+    });
+
     return response;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Erro interno";
+    const errorTenantId = body.tenant_id ?? body.lead?.tenant_id ?? body.deal?.tenant_id ?? body.conversation?.tenant_id ?? null;
+    const errorConversationId = body.conversation?.id ?? body.conversation_id ?? null;
+
     await logGatewayRequest(supabase, trace, {
-      tenant_id: body.tenant_id ?? body.lead?.tenant_id ?? body.deal?.tenant_id ?? body.conversation?.tenant_id ?? null,
+      tenant_id: errorTenantId,
       lead_id: body.lead?.id ?? body.conversation?.lead_id ?? body.deal?.lead_id ?? null,
       deal_id: body.deal?.id ?? body.conversation?.deal_id ?? null,
-      conversation_id: body.conversation?.id ?? body.conversation_id ?? null,
+      conversation_id: errorConversationId,
       status: "error",
       status_code: 500,
       error_message: message,
       started_at: startedAt,
       persisted: false,
     });
+
+    await writeRuntimeTrace(supabase, {
+      runtime_trace_id: runtimeTraceId,
+      correlation_id: trace.correlation_id,
+      tenant_id: errorTenantId,
+      lead_id: body.lead?.id ?? body.conversation?.lead_id ?? body.deal?.lead_id ?? null,
+      deal_id: body.deal?.id ?? body.conversation?.deal_id ?? null,
+      conversation_id: errorConversationId,
+      started_at: new Date(startedAt).toISOString(),
+      completed_at: new Date().toISOString(),
+      latency_ms: Date.now() - startedAt,
+      status: "error",
+      error_message: message,
+      persisted: false,
+      channel: trace.channel ?? body.channel ?? body.entry_profile ?? null,
+      origin: trace.origin ?? body.origin ?? null,
+      source: trace.source,
+    });
+
     throw error;
   }
 }
