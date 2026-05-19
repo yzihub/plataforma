@@ -154,13 +154,17 @@ export default function LoopsFeedTable() {
                       <LatencyBadge ms={e.latency_ms} />
                     </td>
                     <td className="whitespace-nowrap px-4 py-2.5">
-                      <Link
-                        href={`/cockpit/observabilidade/sessoes/${e.conversation_id}/replay`}
-                        className="font-mono text-xs text-blue-600 hover:underline dark:text-blue-400"
-                        title={e.conversation_id}
-                      >
-                        {e.conversation_id.slice(0, 8)}…
-                      </Link>
+                      {e.conversation_id ? (
+                        <Link
+                          href={`/cockpit/observabilidade/sessoes/${e.conversation_id}/replay`}
+                          className="font-mono text-xs text-blue-600 hover:underline dark:text-blue-400"
+                          title={e.conversation_id}
+                        >
+                          {e.conversation_id.slice(0, 8)}…
+                        </Link>
+                      ) : (
+                        <span className="text-xs text-gray-400 dark:text-gray-500">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-2.5 text-right">
                       <span

@@ -45,6 +45,7 @@ const PLAN_RANK: Record<TenantPlan, number> = { starter: 0, growth: 1, enterpris
 type NavChild = {
   name: string;
   path: string;
+  exactMatch?: boolean;
 };
 
 type NavItem = {
@@ -126,10 +127,22 @@ const SECTIONS: NavSection[] = [
   {
     label: "Admin",
     items: [
-      { name: "YZI CONTROL",     icon: <BoxIcon />,          path: "/control",                    adminOnly: true },
-      { name: "YZI FACTORY",     icon: <PlugInIcon />,       path: "/factory",                    adminOnly: true },
-      { name: "Action Logs",     icon: <DocsIcon />,         path: "/control/logs",               adminOnly: true },
-      { name: "Observabilidade", icon: <BoltIcon />,         path: "/cockpit/observabilidade",    adminOnly: true },
+      { name: "YZI CONTROL",     icon: <BoxIcon />,          path: "/control",        adminOnly: true },
+      { name: "YZI FACTORY",     icon: <PlugInIcon />,       path: "/factory",        adminOnly: true },
+      { name: "Action Logs",     icon: <DocsIcon />,         path: "/control/logs",   adminOnly: true },
+      {
+        name: "Observabilidade",
+        icon: <BoltIcon />,
+        submenuKey: "observabilidade",
+        adminOnly: true,
+        children: [
+          { name: "Saúde Cognitiva", path: "/cockpit/observabilidade",           exactMatch: true },
+          { name: "Sessões",         path: "/cockpit/observabilidade/sessoes" },
+          { name: "Loops",           path: "/cockpit/observabilidade/loops" },
+          { name: "Retrieval",       path: "/cockpit/observabilidade/retrieval" },
+          { name: "Handoffs",        path: "/cockpit/observabilidade/handoffs" },
+        ],
+      },
       { name: "Teste Ju",        icon: <BoltIcon />,         path: "/cockpit/jurema-teste" },
     ],
   },
@@ -314,7 +327,9 @@ const AppSidebar: React.FC = () => {
                               <ul className="mt-0.5 flex flex-col gap-0.5">
                                 {item.children.map((child) => {
                                   const basePath = child.path.split("?")[0];
-                                  const childActive = pathname === basePath || (basePath !== "/cockpit" && pathname.startsWith(basePath));
+                                  const childActive = child.exactMatch
+                                    ? pathname === basePath
+                                    : pathname === basePath || (basePath !== "/cockpit" && pathname.startsWith(basePath));
                                   return (
                                     <li key={child.path}>
                                       <Link
