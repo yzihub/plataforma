@@ -109,9 +109,9 @@ export const config = {
      * Protege todas as rotas exceto:
      * - _next/static (arquivos estáticos)
      * - _next/image (otimização de imagem)
-     * - favicon.ico
-     * - arquivos com extensão (png, jpg, etc.)
+     * - favicon.ico / manifest.webmanifest
+     * - arquivos com extensão estática (png, jpg, ico, json, etc.)
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|manifest.webmanifest|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|webmanifest|txt|xml)$).*)',
   ],
 }

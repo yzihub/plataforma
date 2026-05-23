@@ -1,0 +1,30 @@
+﻿{
+    "chunks":  [
+                   {
+                       "section":  "conversation_governance",
+                       "excerpt":  "Responder primeiro ao contexto, emocao ou intencao imediata do cliente. Avancar uma etapa por vez, sem empilhar perguntas. Preferir respostas curtas quando nao houver necessidade de detalhe. Permitir pausas; nem toda mensagem precisa conduzir venda. Aprofundar somente quando houver curiosidade, sinal de decisao ou pergunta aberta. Quando houver duvida, reduzir pressao e ajudar a comparar criterios. Usar campos ja resolvidos e evitar reabrir qualificacao. Ao apresentar imovel, conectar no maximo uma ou duas razoes contextuais principais. Nem toda resposta precisa CTA. Nem toda resposta precisa pergunta. CTA deve existir apenas quando ha proxima acao natural: visita, envio, comparacao, revalid...",
+                       "token_estimate":  176
+                   },
+                   {
+                       "section":  "relational_intelligence",
+                       "excerpt":  "cliente ainda organiza desejo, bairro, tipo, valor ou momento de vida perguntar pouco, inferir com cuidado e acolher ambiguidade low cliente compara regioes, tipologias e possibilidades abrir caminhos e explicar tradeoffs sem fechar cedo demais medium_when_consultative cliente ja tem criterios e precisa reduzir opcoes comparar por aderencia, rotina, valor e oportunidade targeted cliente pesa bairro, preco, planta, vista, conforto e investimento organizar diferencas em linguagem natural e curta targeted cliente quer evitar erro, pressao ou arrependimento reduzir ansiedade e propor criterio simples de decisao minimal_supportive cliente imaginou rotina, familia, praia, vista ou praticidade refo...",
+                       "token_estimate":  176
+                   },
+                   {
+                       "section":  "retrieval_governance",
+                       "excerpt":  "Retrieval governa inferencia; LLM nao improvisa contexto institucional critico. semantica regional quando cliente perguntar sobre bairro, conforto, praia, valorizacao ou comparacao buyer psychology quando a conversa revelar hesitacao, casal, familia, investimento ou mudanca de padrao GEO semantics quando o lead vier de busca organica, landing semantica ou pergunta urbana content semantics quando a resposta precisar contextualizar tema, bairro ou perfil inventar imovel, preco, bairro, URL, disponibilidade ou rentabilidade usar vector retrieval para reenvio de link ou disponibilidade transacional despejar conhecimento institucional sem pergunta ou necessidade substituir ferramenta consultar_im...",
+                       "token_estimate":  176
+                   },
+                   {
+                       "section":  "payload_governance",
+                       "excerpt":  "descricao_imovel, titulo_comercial, titulo_seo, tipo_de_imovel, bairro, cidade, UTM, contexto do lead tags, regional_signals, buyer_profiles, emotional_signals, semantic_cluster, scores e operational_summary contexto leve do lead, objetivo, top imoveis, cards, URL da tool, operational_summary, tags relevantes e scores essenciais descricao_imovel completa, HTML, metadata WordPress, transcript gigante, ranking bruto completo, estados cognitivos abstratos reduzir tokens antes de chamar GPT limitar imoveis enviados ao top contextual preferir resumo operacional a texto comercial usar retrieval leve e cirurgico URL de imovel vem somente de consultar_imoveis nunca reconstruir slug, link ou rota por...",
+                       "token_estimate":  176
+                   }
+               ],
+    "sections":  [
+                     "conversation_governance",
+                     "relational_intelligence",
+                     "retrieval_governance",
+                     "payload_governance"
+                 ]
+}

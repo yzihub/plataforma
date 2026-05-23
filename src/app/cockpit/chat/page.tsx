@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useTenant } from "@/hooks/useTenant";
+import { createClient as createSupabaseClient } from "@/lib/supabase/client";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -20,16 +22,25 @@ type ConversationRaw = {
 
 type Conversation = Omit<ConversationRaw, "leads"> & {
   leads?: LeadRow | null;
+  unread_count?: number;
 };
 
 type Message = {
   id: string;
   conversation_id: string;
+  tenant_id?: string;
   content: string;
   direction: "inbound" | "outbound" | string;
   sender_type: "lead" | "agent" | "human" | string;
   created_at: string;
 };
+
+type RealtimeStatus =
+  | "connecting"
+  | "connected"
+  | "disconnected"
+  | "error"
+  | "timeout";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -85,10 +96,19 @@ function formatTime(iso: string): string {
 const SCROLLBAR_THIN =
   "[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600";
 
+const REALTIME_STATUS_LABEL: Record<RealtimeStatus, string> = {
+  connecting: "Conectando",
+  connected: "Ao vivo",
+  disconnected: "Reconectando",
+  error: "Reconectando",
+  timeout: "Reconectando",
+};
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ChatPage() {
-  const { loading: tenantLoading } = useTenant();
+  const { tenant, loading: tenantLoading } = useTenant();
+  const supabase = useMemo(() => createSupabaseClient(), []);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -98,94 +118,523 @@ export default function ChatPage() {
   const [togglingPause, setTogglingPause] = useState(false);
   const [errorList, setErrorList] = useState<string | null>(null);
   const [errorMsgs, setErrorMsgs] = useState<string | null>(null);
+  const [realtimeStatus, setRealtimeStatus] =
+    useState<RealtimeStatus>("connecting");
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const selectedIdRef = useRef<string | null>(null);
+  const messagesRequestRef = useRef(0);
+  const realtimeRetryRef = useRef<number | null>(null);
 
-  // ── Load conversations list via API route (bypasses RLS) ─────────────────
+  const sortConversations = useCallback((items: Conversation[]) => {
+    return [...items].sort((a, b) => {
+      const aTime = new Date(a.last_message_at ?? a.created_at).getTime();
+      const bTime = new Date(b.last_message_at ?? b.created_at).getTime();
+      return bTime - aTime;
+    });
+  }, []);
 
-  useEffect(() => {
-    if (tenantLoading) return;
+  const mergeMessages = useCallback((current: Message[], incoming: Message[]) => {
+    const byId = new Map<string, Message>();
 
-    const load = async () => {
-      setLoadingList(true);
+    for (const message of current) {
+      byId.set(message.id, message);
+    }
+
+    for (const message of incoming) {
+      if (!message.id.startsWith("conversation-preview:")) {
+        for (const [id, existing] of byId) {
+          if (
+            id.startsWith("conversation-preview:") &&
+            existing.conversation_id === message.conversation_id &&
+            existing.created_at === message.created_at &&
+            existing.content === message.content
+          ) {
+            byId.delete(id);
+          }
+        }
+      }
+
+      byId.set(message.id, { ...byId.get(message.id), ...message });
+    }
+
+    return [...byId.values()].sort(
+      (a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+  }, []);
+
+  const mergeConversation = useCallback(
+    (current: Conversation[], incoming: Partial<Conversation> & { id: string }) => {
+      let found = false;
+      const next = current.map((conversation) => {
+        if (conversation.id !== incoming.id) return conversation;
+        found = true;
+        const currentTime = new Date(
+          conversation.last_message_at ?? conversation.created_at
+        ).getTime();
+        const incomingTime = new Date(
+          incoming.last_message_at ?? conversation.last_message_at ?? conversation.created_at
+        ).getTime();
+        const keepCurrentLastMessage =
+          Number.isFinite(currentTime) &&
+          Number.isFinite(incomingTime) &&
+          incomingTime < currentTime;
+
+        return {
+          ...conversation,
+          ...incoming,
+          last_message: keepCurrentLastMessage
+            ? conversation.last_message
+            : incoming.last_message ?? conversation.last_message,
+          last_message_at: keepCurrentLastMessage
+            ? conversation.last_message_at
+            : incoming.last_message_at ?? conversation.last_message_at,
+          leads: incoming.leads === undefined ? conversation.leads : incoming.leads,
+        };
+      });
+
+      if (!found) {
+        next.push(incoming as Conversation);
+      }
+
+      return sortConversations(next);
+    },
+    [sortConversations]
+  );
+
+  const loadConversations = useCallback(
+    async ({ silent = false }: { silent?: boolean } = {}) => {
+      if (!silent) setLoadingList(true);
       setErrorList(null);
 
       try {
-        const res = await fetch("/api/conversations");
+        const res = await fetch("/api/conversations", { cache: "no-store" });
         const json = await res.json();
 
         if (!res.ok) {
           const msg = json?.error ?? `HTTP ${res.status}`;
           console.error("[ChatInbox] conversations error:", msg, "| tenantId:", json?.tenantId);
           setErrorList(msg);
-          setLoadingList(false);
           return;
         }
 
-        const convs: Conversation[] = json.data ?? [];
+        const convs: Conversation[] = sortConversations(json.data ?? []);
         console.log("[ChatInbox] conversations loaded:", convs.length, "| tenantId:", json.tenantId);
-        setConversations(convs);
+        setConversations((prev) => {
+          let next = [...prev];
+
+          for (const conversation of convs) {
+            next = mergeConversation(next, {
+              ...conversation,
+              unread_count:
+                conversation.id === selectedIdRef.current
+                  ? 0
+                  : prev.find((item) => item.id === conversation.id)
+                      ?.unread_count ??
+                    conversation.unread_count ??
+                    0,
+            });
+          }
+
+          return sortConversations(next);
+        });
       } catch (err) {
         const msg = err instanceof Error ? err.message : "Erro ao carregar";
         console.error("[ChatInbox] fetch error:", msg);
         setErrorList(msg);
       } finally {
-        setLoadingList(false);
+        if (!silent) setLoadingList(false);
       }
-    };
+    },
+    [mergeConversation, sortConversations]
+  );
 
-    load();
-  }, [tenantLoading]); // eslint-disable-line react-hooks/exhaustive-deps
+  // ── Load conversations list via API route (bypasses RLS) ─────────────────
 
-  // ── Load messages via API route (bypasses RLS) ───────────────────────────
-
-  useEffect(() => {
-    if (!selectedId) {
-      setMessages([]);
-      return;
-    }
-
-    const load = async () => {
-      setLoadingMsgs(true);
-      setErrorMsgs(null);
+  const loadMessages = useCallback(
+    async (
+      conversationId: string,
+      {
+        requestId,
+        signal,
+        silent = false,
+      }: {
+        requestId?: number;
+        signal?: AbortSignal;
+        silent?: boolean;
+      } = {}
+    ) => {
+      if (!silent) {
+        setLoadingMsgs(true);
+        setErrorMsgs(null);
+      }
 
       try {
-        const res = await fetch(`/api/conversations/${selectedId}/messages`);
+        const res = await fetch(`/api/conversations/${conversationId}/messages`, {
+          cache: "no-store",
+          signal,
+        });
         const json = await res.json();
+
+        if (
+          signal?.aborted ||
+          selectedIdRef.current !== conversationId ||
+          (requestId !== undefined && messagesRequestRef.current !== requestId)
+        ) {
+          return;
+        }
 
         if (!res.ok) {
           const msg = json?.error ?? `HTTP ${res.status}`;
           console.error("[ChatInbox] messages error:", msg);
           setErrorMsgs(msg);
-          setMessages([]);
+          if (!silent) setMessages([]);
           return;
         }
 
-        setMessages((json.data ?? []) as Message[]);
+        const hydratedMessages = ((json.data ?? []) as Message[]).filter(
+          (message) => message.conversation_id === conversationId
+        );
+        setMessages((prev) => mergeMessages(prev, hydratedMessages));
       } catch (err) {
+        if (signal?.aborted) return;
         const msg = err instanceof Error ? err.message : "Erro ao carregar";
         console.error("[ChatInbox] fetch messages error:", msg);
         setErrorMsgs(msg);
-        setMessages([]);
+        if (!silent) setMessages([]);
       } finally {
-        setLoadingMsgs(false);
+        if (
+          !signal?.aborted &&
+          selectedIdRef.current === conversationId &&
+          (requestId === undefined || messagesRequestRef.current === requestId)
+        ) {
+          setLoadingMsgs(false);
+        }
+      }
+    },
+    [mergeMessages]
+  );
+
+  const rehydrateRealtimeState = useCallback(async () => {
+    await loadConversations({ silent: true });
+
+    const activeConversationId = selectedIdRef.current;
+    if (!activeConversationId) return;
+
+    const requestId = messagesRequestRef.current + 1;
+    messagesRequestRef.current = requestId;
+    await loadMessages(activeConversationId, { requestId, silent: true });
+  }, [loadConversations, loadMessages]);
+
+  useEffect(() => {
+    if (tenantLoading) return;
+    void loadConversations();
+  }, [loadConversations, tenantLoading]);
+
+  // ── Load messages via API route (bypasses RLS) ───────────────────────────
+
+  useEffect(() => {
+    selectedIdRef.current = selectedId;
+  }, [selectedId]);
+
+  useEffect(() => {
+    if (!selectedId) {
+      setMessages([]);
+      setLoadingMsgs(false);
+      setErrorMsgs(null);
+      return;
+    }
+
+    const requestId = messagesRequestRef.current + 1;
+    messagesRequestRef.current = requestId;
+    const controller = new AbortController();
+
+    setMessages([]);
+    setLoadingMsgs(true);
+    setErrorMsgs(null);
+
+    void loadMessages(selectedId, {
+      requestId,
+      signal: controller.signal,
+    });
+
+    return () => {
+      controller.abort();
+    };
+  }, [loadMessages, selectedId]);
+
+  useEffect(() => {
+    if (!tenant?.id || tenantLoading) return;
+
+    const tenantId = tenant.id;
+    let disposed = false;
+    let channel: RealtimeChannel | null = null;
+    let generation = 0;
+    let retryAttempt = 0;
+
+    const clearReconnect = () => {
+      if (realtimeRetryRef.current) {
+        window.clearTimeout(realtimeRetryRef.current);
+        realtimeRetryRef.current = null;
       }
     };
 
-    load();
-  }, [selectedId]);
+    const removeActiveChannel = () => {
+      const active = channel;
+      channel = null;
+      if (active) {
+        void supabase.removeChannel(active).catch((err) => {
+          console.error("[ChatRealtime] remove channel error:", err);
+        });
+      }
+    };
+
+    const scheduleReconnect = (reason: string) => {
+      if (disposed) return;
+
+      clearReconnect();
+
+      if (typeof navigator !== "undefined" && navigator.onLine === false) {
+        setRealtimeStatus("disconnected");
+        return;
+      }
+
+      const delay = Math.min(1000 * 2 ** retryAttempt, 10000);
+      retryAttempt += 1;
+      console.warn(`[ChatRealtime] ${reason}; reconnecting in ${delay}ms`);
+
+      realtimeRetryRef.current = window.setTimeout(() => {
+        realtimeRetryRef.current = null;
+        if (disposed) return;
+        setupChannel();
+      }, delay);
+    };
+
+    const handleConversationChange = (next: Conversation | null) => {
+      if (!next?.id) return;
+
+      setConversations((prev) => {
+        return mergeConversation(prev, next);
+      });
+
+      if (
+        next.id === selectedIdRef.current &&
+        next.last_message &&
+        next.last_message_at
+      ) {
+        const previewContent = next.last_message;
+        const previewCreatedAt = next.last_message_at;
+
+        setMessages((prev) => {
+          const latestThreadTime = prev
+            .filter((message) => message.conversation_id === next.id)
+            .reduce(
+              (latest, message) =>
+                Math.max(latest, new Date(message.created_at).getTime()),
+              0
+            );
+          const nextTime = new Date(previewCreatedAt).getTime();
+
+          if (!Number.isFinite(nextTime) || nextTime <= latestThreadTime) {
+            return prev;
+          }
+
+          return mergeMessages(prev, [
+            {
+              id: `conversation-preview:${next.id}:${previewCreatedAt}`,
+              conversation_id: next.id,
+              tenant_id: next.tenant_id,
+              content: previewContent,
+              direction: "inbound",
+              sender_type: "lead",
+              created_at: previewCreatedAt,
+            },
+          ]);
+        });
+      }
+    };
+
+    const handleMessageInsert = (next: Message) => {
+      if (!next?.id || !next.conversation_id) return;
+
+      if (next.conversation_id === selectedIdRef.current) {
+        setMessages((prev) => mergeMessages(prev, [next]));
+      }
+
+      setConversations((prev) => {
+        const known = prev.some(
+          (conversation) => conversation.id === next.conversation_id
+        );
+
+        const isSelected = next.conversation_id === selectedIdRef.current;
+        const shouldIncrementUnread =
+          !isSelected &&
+          (next.direction === "inbound" || next.sender_type === "lead");
+
+        if (!known) {
+          return mergeConversation(prev, {
+            id: next.conversation_id,
+            tenant_id: next.tenant_id ?? tenantId,
+            lead_id: null,
+            ai_paused: false,
+            created_at: next.created_at,
+            last_message: next.content,
+            last_message_at: next.created_at,
+            unread_count: isSelected ? 0 : shouldIncrementUnread ? 1 : 0,
+          } as Conversation);
+        }
+
+        const current = prev.find(
+          (conversation) => conversation.id === next.conversation_id
+        );
+
+        return mergeConversation(prev, {
+          id: next.conversation_id,
+          last_message: next.content,
+          last_message_at: next.created_at,
+          unread_count: isSelected
+            ? 0
+            : (current?.unread_count ?? 0) + (shouldIncrementUnread ? 1 : 0),
+        });
+      });
+    };
+
+    function setupChannel() {
+      if (disposed) return;
+
+      clearReconnect();
+      removeActiveChannel();
+      generation += 1;
+      const channelGeneration = generation;
+
+      setRealtimeStatus(
+        typeof navigator !== "undefined" && navigator.onLine === false
+          ? "disconnected"
+          : "connecting"
+      );
+
+      channel = supabase
+        .channel(`cockpit-chat:${tenantId}:${channelGeneration}`)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "conversations",
+            filter: `tenant_id=eq.${tenantId}`,
+          },
+          (payload) => {
+            if (disposed || channelGeneration !== generation) return;
+            handleConversationChange(payload.new as Conversation | null);
+          }
+        )
+        .on(
+          "postgres_changes",
+          {
+            event: "INSERT",
+            schema: "public",
+            table: "conversation_messages",
+            filter: `tenant_id=eq.${tenantId}`,
+          },
+          (payload) => {
+            if (disposed || channelGeneration !== generation) return;
+            handleMessageInsert(payload.new as Message);
+          }
+        )
+        .subscribe((status, err) => {
+          if (disposed || channelGeneration !== generation) return;
+
+          if (status === "SUBSCRIBED") {
+            retryAttempt = 0;
+            setRealtimeStatus("connected");
+            void rehydrateRealtimeState();
+            return;
+          }
+
+          if (status === "CHANNEL_ERROR") {
+            setRealtimeStatus("error");
+            console.error("[ChatRealtime] CHANNEL_ERROR:", err);
+            scheduleReconnect("CHANNEL_ERROR");
+            return;
+          }
+
+          if (status === "TIMED_OUT") {
+            setRealtimeStatus("timeout");
+            scheduleReconnect("TIMED_OUT");
+            return;
+          }
+
+          if (status === "CLOSED") {
+            setRealtimeStatus("disconnected");
+            scheduleReconnect("CLOSED");
+          }
+        });
+    }
+
+    const handleOnline = () => {
+      retryAttempt = 0;
+      setupChannel();
+      void rehydrateRealtimeState();
+    };
+
+    const handleOffline = () => {
+      clearReconnect();
+      setRealtimeStatus("disconnected");
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    setupChannel();
+
+    return () => {
+      disposed = true;
+      clearReconnect();
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+      removeActiveChannel();
+    };
+  }, [
+    loadConversations,
+    mergeConversation,
+    mergeMessages,
+    rehydrateRealtimeState,
+    supabase,
+    tenant?.id,
+    tenantLoading,
+  ]);
 
   // ── Auto-scroll to bottom when messages change ────────────────────────────
 
   useEffect(() => {
+    const container = messagesContainerRef.current;
+    if (!container) return;
+
+    const shouldAutoScroll =
+      container.scrollHeight -
+        container.scrollTop -
+        container.clientHeight <
+      120;
+
+    if (!shouldAutoScroll) return;
+
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, selectedId]);
 
   // ── Computed selected conversation ────────────────────────────────────────
 
   const selectedConv = useMemo(
     () => conversations.find((c) => c.id === selectedId) ?? null,
     [conversations, selectedId]
+  );
+
+  const selectedMessages = useMemo(
+    () =>
+      selectedId
+        ? messages.filter((message) => message.conversation_id === selectedId)
+        : [],
+    [messages, selectedId]
   );
 
   // ── Toggle ai_paused ─────────────────────────────────────────────────────
@@ -204,10 +653,14 @@ export default function ChatPage() {
       });
 
       if (res.ok) {
+        const json = await res.json().catch(() => null);
+        const updated = json?.data as Conversation | undefined;
         setConversations((prev) =>
-          prev.map((c) =>
-            c.id === selectedConv.id ? { ...c, ai_paused: next } : c
-          )
+          updated
+            ? mergeConversation(prev, updated)
+            : prev.map((c) =>
+                c.id === selectedConv.id ? { ...c, ai_paused: next } : c
+              )
         );
       } else {
         const json = await res.json().catch(() => ({}));
@@ -218,7 +671,27 @@ export default function ChatPage() {
     } finally {
       setTogglingPause(false);
     }
-  }, [selectedConv]);
+  }, [mergeConversation, selectedConv]);
+
+  const selectConversation = useCallback(
+    (conversationId: string) => {
+      if (conversationId !== selectedIdRef.current) {
+        selectedIdRef.current = conversationId;
+        setMessages([]);
+        setErrorMsgs(null);
+        setLoadingMsgs(true);
+      }
+      setConversations((prev) =>
+        prev.map((conversation) =>
+          conversation.id === conversationId
+            ? { ...conversation, unread_count: 0 }
+            : conversation
+        )
+      );
+      setSelectedId(conversationId);
+    },
+    []
+  );
 
   // ── Render ────────────────────────────────────────────────────────────────
 
@@ -229,6 +702,18 @@ export default function ChatPage() {
         <h1 className="text-xl font-bold text-gray-800 dark:text-white/90">
           Inbox / Chat da Ju
         </h1>
+        <div className="mt-1 inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-2 py-0.5 text-[11px] text-gray-500 dark:border-gray-800 dark:text-gray-400">
+          <span
+            className={`h-1.5 w-1.5 rounded-full ${
+              realtimeStatus === "connected"
+                ? "bg-emerald-500"
+                : realtimeStatus === "connecting"
+                  ? "bg-amber-500"
+                  : "bg-red-500"
+            }`}
+          />
+          {REALTIME_STATUS_LABEL[realtimeStatus]}
+        </div>
         <p className="text-xs text-gray-400 dark:text-gray-500">
           Conversas conduzidas pela Ju via WhatsApp ·{" "}
           {loadingList ? "…" : `${conversations.length} conversa(s)`}
@@ -275,7 +760,7 @@ export default function ChatPage() {
                 <button
                   key={conv.id}
                   type="button"
-                  onClick={() => setSelectedId(conv.id)}
+                  onClick={() => selectConversation(conv.id)}
                   className={`w-full text-left px-4 py-3 border-b border-gray-50 dark:border-gray-800/60 transition-colors flex gap-3 items-start ${
                     selectedId === conv.id
                       ? "bg-brand-500/5"
@@ -316,6 +801,12 @@ export default function ChatPage() {
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         {conv.last_message ?? "—"}
                       </p>
+
+                      {conv.unread_count ? (
+                        <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                          {conv.unread_count > 9 ? "9+" : conv.unread_count}
+                        </span>
+                      ) : null}
 
                       {/* ai_paused badge */}
                       <span
@@ -424,6 +915,8 @@ export default function ChatPage() {
 
               {/* Messages area */}
               <div
+                key={selectedConv.id}
+                ref={messagesContainerRef}
                 className={`flex-1 overflow-y-auto px-5 py-4 space-y-3 min-h-0 ${SCROLLBAR_THIN}`}
               >
                 {loadingMsgs ? (
@@ -441,14 +934,14 @@ export default function ChatPage() {
                       </p>
                     </div>
                   </div>
-                ) : messages.length === 0 ? (
+                ) : selectedMessages.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full gap-2 text-center select-none">
                     <p className="text-xs text-gray-400 dark:text-gray-500">
                       Nenhuma mensagem nesta conversa.
                     </p>
                   </div>
                 ) : (
-                  messages.map((m) => {
+                  selectedMessages.map((m) => {
                     const isInbound =
                       m.direction === "inbound" || m.sender_type === "lead";
                     return (

@@ -1,0 +1,14 @@
+﻿{
+    "lead_context":  "casal, filho pequeno, orcamento alto, decisao em ate 60 dias, interesse Manaira/Tambau",
+    "expected":  {
+                     "bairro":  "Manaira",
+                     "maturity":  "alta",
+                     "conversation_stage":  "refinamento",
+                     "emotional_context":  "familia com decisao ativa e criterio premium",
+                     "intent":  "alto_padrao"
+                 },
+    "utm_source":  "instagram",
+    "user_message":  "Estamos olhando algo melhor em Manaira ou Tambau, com estrutura para nosso filho pequeno. Queremos decidir em ate uns 60 dias.",
+    "utm_campaign":  "manaira_high_standard",
+    "scenario_id":  "01_hot_lead"
+}

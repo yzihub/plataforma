@@ -1,0 +1,14 @@
+﻿{
+    "lead_context":  "racional, foco valorizacao, retorno financeiro, emocional baixo",
+    "expected":  {
+                     "bairro":  "Cabo Branco",
+                     "maturity":  "media_alta",
+                     "conversation_stage":  "comparacao",
+                     "emotional_context":  "criterio financeiro e decisao racional",
+                     "intent":  "investir"
+                 },
+    "utm_source":  "meta_ads",
+    "user_message":  "Tenho interesse em algo em Cabo Branco pensando em valorizacao e possibilidade de retorno. Quero entender se faz sentido financeiramente.",
+    "utm_campaign":  "investimento_cabo_branco",
+    "scenario_id":  "03_investor"
+}

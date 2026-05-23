@@ -408,15 +408,6 @@ function premiumDescription(i, tipo) {
   return \`Opcao selecionada pela Jurema Brokers para avaliarmos juntos.\${refText}\`;
 }
 
-function whatsappText(card) {
-  const line2 = card.description.replace(/\\s*Opcao selecionada.*$/i, "").trim();
-  return [
-    \`Separei esta opcao pra voce: \${card.title}.\`,
-    line2 || "Faz sentido olhar com calma pelos detalhes.",
-    card.url,
-  ].filter(Boolean).join("\\n");
-}
-
 const tenantId = clean(input.tenant_id);
 const codigoRef = clean(input.codigo_ref);
 const bairroBusca = norm(input.bairro);
@@ -494,8 +485,7 @@ const cards = filtrados.slice(0, 6).map(i => {
 
   return {
     ...card,
-    caption: whatsappText(card),
-    whatsapp_text: whatsappText(card),
+    presentation_policy: "visual_card_primary_no_text_dump_v1",
   };
 });
 
@@ -523,6 +513,13 @@ return [
 ];`;
 
 fs.writeFileSync(cardsOut, JSON.stringify(cards, null, 2));
+require('./patch-ju-lightweight-hotpath');
+require('./patch-ju-tool-revalidation-policy');
+require('./patch-ju-presentation-governance');
+require('./patch-ju-conversational-style-governance');
+require('./patch-ju-operational-state-persistence');
+require('./patch-jurema-property-operational-ranking');
+require('./patch-evolution-audio-converter-normalization');
 
 console.log(`Wrote ${path.relative(root, mainOut)}`);
 console.log(`Wrote ${path.relative(root, cardsOut)}`);

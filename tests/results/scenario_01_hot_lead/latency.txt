@@ -1,0 +1,3 @@
+﻿curl_ms=4267
+gpt_latency_ms=3025
+request_latency_ms=3041

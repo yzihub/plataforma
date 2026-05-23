@@ -1,0 +1,13 @@
+﻿{
+    "input_tokens":  1231,
+    "output_tokens":  67,
+    "total_tokens":  1298,
+    "latency_ms":  2396,
+    "retrieval_chunks":  4,
+    "payload_size":  4328,
+    "geo_accuracy":  "high",
+    "pacing_quality":  "high",
+    "semantic_alignment":  "high",
+    "drift_detected":  false,
+    "request_latency_ms":  2403
+}

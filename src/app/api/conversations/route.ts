@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 const DEV_JUREMA_TENANT_ID = "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361";
 
+export const dynamic = "force-dynamic";
+
 // ─── GET /api/conversations ───────────────────────────────────────────────────
 // Retorna conversations do tenant ativo, com dados do lead mergeados em memória.
 // Usa createAdminClient (bypass RLS) — mesmo padrão de /api/imoveis.
@@ -88,7 +90,10 @@ export async function GET() {
       leads: conv.lead_id ? (leadsMap[conv.lead_id] ?? null) : null,
     }));
 
-    return NextResponse.json({ data, tenantId });
+    return NextResponse.json(
+      { data, tenantId },
+      { headers: { "Cache-Control": "no-store" } }
+    );
   } catch (err) {
     console.error("[GET /api/conversations] erro interno:", err);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });

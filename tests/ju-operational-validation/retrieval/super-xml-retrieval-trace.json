@@ -1,0 +1,257 @@
+[
+  {
+    "scenario": "Lead quente",
+    "utm_source": "instagram",
+    "utm_campaign": "manaira_high_standard",
+    "sections": [
+      "conversation_governance",
+      "relational_intelligence",
+      "buyer_psychology",
+      "urban_semantics",
+      "matching_intelligence",
+      "payload_governance"
+    ],
+    "chunks": [
+      {
+        "section": "conversation_governance",
+        "reason": "pacing, restraint, CTA moderation and anti-SDR behavior",
+        "excerpt": "Responder primeiro ao contexto, emocao ou intencao imediata do cliente. Avancar uma etapa por vez, sem empilhar perguntas. Preferir respostas curtas quando nao houver necessidade de detalhe. Permitir pausas; nem toda mensagem precisa conduzir venda. Aprofundar somente quando houver curiosidade, sinal de decisao ou pergunta aberta. Quando houver duvida, reduzir pressao e ajudar a comparar criterios. Usar campos ja resolvidos e evitar reabrir qualificacao. Ao apresentar imovel, conectar no maximo uma ou duas razoes contextuais principais. Nem toda resposta precisa CTA. Nem toda resposta precisa pergunta. CTA deve e...",
+        "token_estimate": 156
+      },
+      {
+        "section": "relational_intelligence",
+        "reason": "conversation stage and emotional maturity for Lead quente",
+        "excerpt": "cliente ainda organiza desejo, bairro, tipo, valor ou momento de vida perguntar pouco, inferir com cuidado e acolher ambiguidade low cliente compara regioes, tipologias e possibilidades abrir caminhos e explicar tradeoffs sem fechar cedo demais medium_when_consultative cliente ja tem criterios e precisa reduzir opcoes comparar por aderencia, rotina, valor e oportunidade targeted cliente pesa bairro, preco, planta, vista, conforto e investimento organizar diferencas em linguagem natural e curta targeted cliente quer evitar erro, pressao ou arrependimento reduzir ansiedade e propor criterio simples de decisao minim...",
+        "token_estimate": 156
+      },
+      {
+        "section": "buyer_psychology",
+        "reason": "buyer profile mapping: familia_alto_padrao",
+        "excerpt": "morar com estabilidade, espaco, seguranca e rotina confortavel 3 quartos, 4 quartos, suites, DCE, area kids, brinquedoteca, escola, piscina, condominio fechado, sala ampla seguranca, acolhimento, conforto, privacidade, convivencia comprar com liquidez, rentabilidade e seguranca patrimonial flat, studio, temporada, diaria, mobiliado, porteira fechada, praia, valorizacao, retorno acima da media seguranca_financeira, oportunidade, baixa_friccao, renda_passiva morar ou usar imovel conectado ao mar e a uma rotina mais leve beira-mar, vista mar, poucos metros da praia, brisa, orla, pe-na-areia, Cabo Branco, Tambau, Bes...",
+        "token_estimate": 156
+      },
+      {
+        "section": "urban_semantics",
+        "reason": "bairro interpretation for Manaira",
+        "excerpt": "bairro de desejo consolidado, vida urbana costeira, turismo, servicos e alta liquidez coracao de Tambau, poucos metros do mar, shopping, restaurantes, servicos, valorizacao investidor, lifestyle_praia, casal_jovem, aposentadoria, comprador_de_fora bairro valorizado, urbano, com infraestrutura forte e apelo de vista mar em produtos especificos area valorizada, servicos, vista definitiva, praticidade, conforto familia, investidor, casal_jovem, alto_padrao litoral residencial em crescimento, mistura moradia, investimento, praia e casas familiares beira-mar, praia do Bessa, casa, flat, studios, temporada, localizacao...",
+        "token_estimate": 156
+      },
+      {
+        "section": "matching_intelligence",
+        "reason": "contextual recommendation and ranking dimensions",
+        "excerpt": "filtros objetivos: bairro, tipo, quartos, valor, codigo_ref sinais regionais: nascente_sul, posicao_sul, DCE, vista_mar, pe_na_areia, projetados buyer profile: familia, investidor, lifestyle_praia, alto_padrao, casal_jovem, home_office, aposentadoria momento relacional: descoberta, refinamento, comparacao, hesitacao, quase_decisao contexto de aquisicao: UTM, campanha, GEO, promessa criativa family_score beach_score luxury_score investment_score comfort_score convenience_score urban_score remote_work_score regional_value_score matching deve explicar aderencia por criterio, nao por lista fria campanha pode informar...",
+        "token_estimate": 156
+      },
+      {
+        "section": "payload_governance",
+        "reason": "parser-first compression, blocked raw description and URL integrity",
+        "excerpt": "descricao_imovel, titulo_comercial, titulo_seo, tipo_de_imovel, bairro, cidade, UTM, contexto do lead tags, regional_signals, buyer_profiles, emotional_signals, semantic_cluster, scores e operational_summary contexto leve do lead, objetivo, top imoveis, cards, URL da tool, operational_summary, tags relevantes e scores essenciais descricao_imovel completa, HTML, metadata WordPress, transcript gigante, ranking bruto completo, estados cognitivos abstratos reduzir tokens antes de chamar GPT limitar imoveis enviados ao top contextual preferir resumo operacional a texto comercial usar retrieval leve e cirurgico URL de...",
+        "token_estimate": 156
+      }
+    ]
+  },
+  {
+    "scenario": "Lead frio",
+    "utm_source": "google",
+    "utm_campaign": "apartamento_joao_pessoa",
+    "sections": [
+      "conversation_governance",
+      "relational_intelligence",
+      "retrieval_governance",
+      "payload_governance"
+    ],
+    "chunks": [
+      {
+        "section": "conversation_governance",
+        "reason": "pacing, restraint, CTA moderation and anti-SDR behavior",
+        "excerpt": "Responder primeiro ao contexto, emocao ou intencao imediata do cliente. Avancar uma etapa por vez, sem empilhar perguntas. Preferir respostas curtas quando nao houver necessidade de detalhe. Permitir pausas; nem toda mensagem precisa conduzir venda. Aprofundar somente quando houver curiosidade, sinal de decisao ou pergunta aberta. Quando houver duvida, reduzir pressao e ajudar a comparar criterios. Usar campos ja resolvidos e evitar reabrir qualificacao. Ao apresentar imovel, conectar no maximo uma ou duas razoes contextuais principais. Nem toda resposta precisa CTA. Nem toda resposta precisa pergunta. CTA deve e...",
+        "token_estimate": 156
+      },
+      {
+        "section": "relational_intelligence",
+        "reason": "conversation stage and emotional maturity for Lead frio",
+        "excerpt": "cliente ainda organiza desejo, bairro, tipo, valor ou momento de vida perguntar pouco, inferir com cuidado e acolher ambiguidade low cliente compara regioes, tipologias e possibilidades abrir caminhos e explicar tradeoffs sem fechar cedo demais medium_when_consultative cliente ja tem criterios e precisa reduzir opcoes comparar por aderencia, rotina, valor e oportunidade targeted cliente pesa bairro, preco, planta, vista, conforto e investimento organizar diferencas em linguagem natural e curta targeted cliente quer evitar erro, pressao ou arrependimento reduzir ansiedade e propor criterio simples de decisao minim...",
+        "token_estimate": 156
+      },
+      {
+        "section": "retrieval_governance",
+        "reason": "retrieval minimization, allowed emergence and blocked drift",
+        "excerpt": "Retrieval governa inferencia; LLM nao improvisa contexto institucional critico. semantica regional quando cliente perguntar sobre bairro, conforto, praia, valorizacao ou comparacao buyer psychology quando a conversa revelar hesitacao, casal, familia, investimento ou mudanca de padrao GEO semantics quando o lead vier de busca organica, landing semantica ou pergunta urbana content semantics quando a resposta precisar contextualizar tema, bairro ou perfil inventar imovel, preco, bairro, URL, disponibilidade ou rentabilidade usar vector retrieval para reenvio de link ou disponibilidade transacional despejar conhecime...",
+        "token_estimate": 156
+      },
+      {
+        "section": "payload_governance",
+        "reason": "parser-first compression, blocked raw description and URL integrity",
+        "excerpt": "descricao_imovel, titulo_comercial, titulo_seo, tipo_de_imovel, bairro, cidade, UTM, contexto do lead tags, regional_signals, buyer_profiles, emotional_signals, semantic_cluster, scores e operational_summary contexto leve do lead, objetivo, top imoveis, cards, URL da tool, operational_summary, tags relevantes e scores essenciais descricao_imovel completa, HTML, metadata WordPress, transcript gigante, ranking bruto completo, estados cognitivos abstratos reduzir tokens antes de chamar GPT limitar imoveis enviados ao top contextual preferir resumo operacional a texto comercial usar retrieval leve e cirurgico URL de...",
+        "token_estimate": 156
+      }
+    ]
+  },
+  {
+    "scenario": "Investidor",
+    "utm_source": "meta_ads",
+    "utm_campaign": "investimento_cabo_branco",
+    "sections": [
+      "acquisition_semantics",
+      "buyer_psychology",
+      "urban_semantics",
+      "geo_semantics",
+      "retrieval_governance",
+      "matching_intelligence",
+      "payload_governance"
+    ],
+    "chunks": [
+      {
+        "section": "acquisition_semantics",
+        "reason": "UTM source/campaign interpretation: meta_ads/investimento_cabo_branco",
+        "excerpt": "propaga cluster de bairro e expectativa urbana propaga tipologia e possivel perfil comprador propaga faixa de decisao e maturidade economica propaga desejo dominante: praia, familia, investimento, alto_padrao, praticidade propaga contexto de entrada e promessa criativa sem virar script desejo de qualidade de vida, mar, vista, beira-mar ou veraneio familia, bairro, condominio, portaria, rotina e estabilidade pronto para morar, porteira fechada, servicos proximos e baixo atrito alto padrao, vista definitiva, Altiplano, exclusividade e acabamento investimento, flat, studio, temporada, liquidez e rentabilidade lifest...",
+        "token_estimate": 156
+      },
+      {
+        "section": "buyer_psychology",
+        "reason": "buyer profile mapping: investidor",
+        "excerpt": "morar com estabilidade, espaco, seguranca e rotina confortavel 3 quartos, 4 quartos, suites, DCE, area kids, brinquedoteca, escola, piscina, condominio fechado, sala ampla seguranca, acolhimento, conforto, privacidade, convivencia comprar com liquidez, rentabilidade e seguranca patrimonial flat, studio, temporada, diaria, mobiliado, porteira fechada, praia, valorizacao, retorno acima da media seguranca_financeira, oportunidade, baixa_friccao, renda_passiva morar ou usar imovel conectado ao mar e a uma rotina mais leve beira-mar, vista mar, poucos metros da praia, brisa, orla, pe-na-areia, Cabo Branco, Tambau, Bes...",
+        "token_estimate": 156
+      },
+      {
+        "section": "urban_semantics",
+        "reason": "bairro interpretation for Cabo Branco",
+        "excerpt": "bairro de desejo consolidado, vida urbana costeira, turismo, servicos e alta liquidez coracao de Tambau, poucos metros do mar, shopping, restaurantes, servicos, valorizacao investidor, lifestyle_praia, casal_jovem, aposentadoria, comprador_de_fora bairro valorizado, urbano, com infraestrutura forte e apelo de vista mar em produtos especificos area valorizada, servicos, vista definitiva, praticidade, conforto familia, investidor, casal_jovem, alto_padrao litoral residencial em crescimento, mistura moradia, investimento, praia e casas familiares beira-mar, praia do Bessa, casa, flat, studios, temporada, localizacao...",
+        "token_estimate": 156
+      },
+      {
+        "section": "geo_semantics",
+        "reason": "GEO cluster and contextual local accuracy",
+        "excerpt": "Tambau, Manaira, Cabo Branco, Bessa, Jardim Oceania praia com servicos, liquidez, walkability e rotina urbana morar_perto_do_mar Intermares, Areia Dourada, Cabedelo praia residencial, veraneio, condominio e expansao de valor praia_residencial_e_veraneio Altiplano, Manaira premium, Cabo Branco premium status, vista, acabamento, exclusividade e condominio-clube alto_padrao_litoral Aeroclube, Bairro dos Estados, areas de facil acesso mobilidade, conveniencia, primeira moradia e investimento funcional vida_urbana_pratica",
+        "token_estimate": 131
+      },
+      {
+        "section": "retrieval_governance",
+        "reason": "retrieval minimization, allowed emergence and blocked drift",
+        "excerpt": "Retrieval governa inferencia; LLM nao improvisa contexto institucional critico. semantica regional quando cliente perguntar sobre bairro, conforto, praia, valorizacao ou comparacao buyer psychology quando a conversa revelar hesitacao, casal, familia, investimento ou mudanca de padrao GEO semantics quando o lead vier de busca organica, landing semantica ou pergunta urbana content semantics quando a resposta precisar contextualizar tema, bairro ou perfil inventar imovel, preco, bairro, URL, disponibilidade ou rentabilidade usar vector retrieval para reenvio de link ou disponibilidade transacional despejar conhecime...",
+        "token_estimate": 156
+      },
+      {
+        "section": "matching_intelligence",
+        "reason": "contextual recommendation and ranking dimensions",
+        "excerpt": "filtros objetivos: bairro, tipo, quartos, valor, codigo_ref sinais regionais: nascente_sul, posicao_sul, DCE, vista_mar, pe_na_areia, projetados buyer profile: familia, investidor, lifestyle_praia, alto_padrao, casal_jovem, home_office, aposentadoria momento relacional: descoberta, refinamento, comparacao, hesitacao, quase_decisao contexto de aquisicao: UTM, campanha, GEO, promessa criativa family_score beach_score luxury_score investment_score comfort_score convenience_score urban_score remote_work_score regional_value_score matching deve explicar aderencia por criterio, nao por lista fria campanha pode informar...",
+        "token_estimate": 156
+      },
+      {
+        "section": "payload_governance",
+        "reason": "parser-first compression, blocked raw description and URL integrity",
+        "excerpt": "descricao_imovel, titulo_comercial, titulo_seo, tipo_de_imovel, bairro, cidade, UTM, contexto do lead tags, regional_signals, buyer_profiles, emotional_signals, semantic_cluster, scores e operational_summary contexto leve do lead, objetivo, top imoveis, cards, URL da tool, operational_summary, tags relevantes e scores essenciais descricao_imovel completa, HTML, metadata WordPress, transcript gigante, ranking bruto completo, estados cognitivos abstratos reduzir tokens antes de chamar GPT limitar imoveis enviados ao top contextual preferir resumo operacional a texto comercial usar retrieval leve e cirurgico URL de...",
+        "token_estimate": 156
+      }
+    ]
+  },
+  {
+    "scenario": "Familia",
+    "utm_source": "referral",
+    "utm_campaign": "familia_bessa",
+    "sections": [
+      "acquisition_semantics",
+      "conversation_governance",
+      "relational_intelligence",
+      "buyer_psychology",
+      "urban_semantics",
+      "matching_intelligence"
+    ],
+    "chunks": [
+      {
+        "section": "acquisition_semantics",
+        "reason": "UTM source/campaign interpretation: referral/familia_bessa",
+        "excerpt": "propaga cluster de bairro e expectativa urbana propaga tipologia e possivel perfil comprador propaga faixa de decisao e maturidade economica propaga desejo dominante: praia, familia, investimento, alto_padrao, praticidade propaga contexto de entrada e promessa criativa sem virar script desejo de qualidade de vida, mar, vista, beira-mar ou veraneio familia, bairro, condominio, portaria, rotina e estabilidade pronto para morar, porteira fechada, servicos proximos e baixo atrito alto padrao, vista definitiva, Altiplano, exclusividade e acabamento investimento, flat, studio, temporada, liquidez e rentabilidade lifest...",
+        "token_estimate": 156
+      },
+      {
+        "section": "conversation_governance",
+        "reason": "pacing, restraint, CTA moderation and anti-SDR behavior",
+        "excerpt": "Responder primeiro ao contexto, emocao ou intencao imediata do cliente. Avancar uma etapa por vez, sem empilhar perguntas. Preferir respostas curtas quando nao houver necessidade de detalhe. Permitir pausas; nem toda mensagem precisa conduzir venda. Aprofundar somente quando houver curiosidade, sinal de decisao ou pergunta aberta. Quando houver duvida, reduzir pressao e ajudar a comparar criterios. Usar campos ja resolvidos e evitar reabrir qualificacao. Ao apresentar imovel, conectar no maximo uma ou duas razoes contextuais principais. Nem toda resposta precisa CTA. Nem toda resposta precisa pergunta. CTA deve e...",
+        "token_estimate": 156
+      },
+      {
+        "section": "relational_intelligence",
+        "reason": "conversation stage and emotional maturity for Familia",
+        "excerpt": "cliente ainda organiza desejo, bairro, tipo, valor ou momento de vida perguntar pouco, inferir com cuidado e acolher ambiguidade low cliente compara regioes, tipologias e possibilidades abrir caminhos e explicar tradeoffs sem fechar cedo demais medium_when_consultative cliente ja tem criterios e precisa reduzir opcoes comparar por aderencia, rotina, valor e oportunidade targeted cliente pesa bairro, preco, planta, vista, conforto e investimento organizar diferencas em linguagem natural e curta targeted cliente quer evitar erro, pressao ou arrependimento reduzir ansiedade e propor criterio simples de decisao minim...",
+        "token_estimate": 156
+      },
+      {
+        "section": "buyer_psychology",
+        "reason": "buyer profile mapping: familia",
+        "excerpt": "morar com estabilidade, espaco, seguranca e rotina confortavel 3 quartos, 4 quartos, suites, DCE, area kids, brinquedoteca, escola, piscina, condominio fechado, sala ampla seguranca, acolhimento, conforto, privacidade, convivencia comprar com liquidez, rentabilidade e seguranca patrimonial flat, studio, temporada, diaria, mobiliado, porteira fechada, praia, valorizacao, retorno acima da media seguranca_financeira, oportunidade, baixa_friccao, renda_passiva morar ou usar imovel conectado ao mar e a uma rotina mais leve beira-mar, vista mar, poucos metros da praia, brisa, orla, pe-na-areia, Cabo Branco, Tambau, Bes...",
+        "token_estimate": 156
+      },
+      {
+        "section": "urban_semantics",
+        "reason": "bairro interpretation for Bessa",
+        "excerpt": "bairro de desejo consolidado, vida urbana costeira, turismo, servicos e alta liquidez coracao de Tambau, poucos metros do mar, shopping, restaurantes, servicos, valorizacao investidor, lifestyle_praia, casal_jovem, aposentadoria, comprador_de_fora bairro valorizado, urbano, com infraestrutura forte e apelo de vista mar em produtos especificos area valorizada, servicos, vista definitiva, praticidade, conforto familia, investidor, casal_jovem, alto_padrao litoral residencial em crescimento, mistura moradia, investimento, praia e casas familiares beira-mar, praia do Bessa, casa, flat, studios, temporada, localizacao...",
+        "token_estimate": 156
+      },
+      {
+        "section": "matching_intelligence",
+        "reason": "contextual recommendation and ranking dimensions",
+        "excerpt": "filtros objetivos: bairro, tipo, quartos, valor, codigo_ref sinais regionais: nascente_sul, posicao_sul, DCE, vista_mar, pe_na_areia, projetados buyer profile: familia, investidor, lifestyle_praia, alto_padrao, casal_jovem, home_office, aposentadoria momento relacional: descoberta, refinamento, comparacao, hesitacao, quase_decisao contexto de aquisicao: UTM, campanha, GEO, promessa criativa family_score beach_score luxury_score investment_score comfort_score convenience_score urban_score remote_work_score regional_value_score matching deve explicar aderencia por criterio, nao por lista fria campanha pode informar...",
+        "token_estimate": 156
+      }
+    ]
+  },
+  {
+    "scenario": "Alto padrao emocional",
+    "utm_source": "instagram",
+    "utm_campaign": "altissimo_padrao_ponta_de_campina",
+    "sections": [
+      "conversation_governance",
+      "relational_intelligence",
+      "buyer_psychology",
+      "regional_semantics",
+      "geo_semantics",
+      "matching_intelligence",
+      "payload_governance"
+    ],
+    "chunks": [
+      {
+        "section": "conversation_governance",
+        "reason": "pacing, restraint, CTA moderation and anti-SDR behavior",
+        "excerpt": "Responder primeiro ao contexto, emocao ou intencao imediata do cliente. Avancar uma etapa por vez, sem empilhar perguntas. Preferir respostas curtas quando nao houver necessidade de detalhe. Permitir pausas; nem toda mensagem precisa conduzir venda. Aprofundar somente quando houver curiosidade, sinal de decisao ou pergunta aberta. Quando houver duvida, reduzir pressao e ajudar a comparar criterios. Usar campos ja resolvidos e evitar reabrir qualificacao. Ao apresentar imovel, conectar no maximo uma ou duas razoes contextuais principais. Nem toda resposta precisa CTA. Nem toda resposta precisa pergunta. CTA deve e...",
+        "token_estimate": 156
+      },
+      {
+        "section": "relational_intelligence",
+        "reason": "conversation stage and emotional maturity for Alto padrao emocional",
+        "excerpt": "cliente ainda organiza desejo, bairro, tipo, valor ou momento de vida perguntar pouco, inferir com cuidado e acolher ambiguidade low cliente compara regioes, tipologias e possibilidades abrir caminhos e explicar tradeoffs sem fechar cedo demais medium_when_consultative cliente ja tem criterios e precisa reduzir opcoes comparar por aderencia, rotina, valor e oportunidade targeted cliente pesa bairro, preco, planta, vista, conforto e investimento organizar diferencas em linguagem natural e curta targeted cliente quer evitar erro, pressao ou arrependimento reduzir ansiedade e propor criterio simples de decisao minim...",
+        "token_estimate": 156
+      },
+      {
+        "section": "buyer_psychology",
+        "reason": "buyer profile mapping: alto_padrao",
+        "excerpt": "morar com estabilidade, espaco, seguranca e rotina confortavel 3 quartos, 4 quartos, suites, DCE, area kids, brinquedoteca, escola, piscina, condominio fechado, sala ampla seguranca, acolhimento, conforto, privacidade, convivencia comprar com liquidez, rentabilidade e seguranca patrimonial flat, studio, temporada, diaria, mobiliado, porteira fechada, praia, valorizacao, retorno acima da media seguranca_financeira, oportunidade, baixa_friccao, renda_passiva morar ou usar imovel conectado ao mar e a uma rotina mais leve beira-mar, vista mar, poucos metros da praia, brisa, orla, pe-na-areia, Cabo Branco, Tambau, Bes...",
+        "token_estimate": 156
+      },
+      {
+        "section": "regional_semantics",
+        "reason": "regional value signals and Joao Pessoa-specific interpretation",
+        "excerpt": "nascente sul, sul/nascente, posicao nascente sul ventilacao constante, iluminacao natural suave, ambientes mais frescos e bem-estar diario muito relevante em Joao Pessoa por conforto termico comfort_high regional_value_high posicao sul, sul ambiente mais ameno, ventilado e agradavel ao longo do dia diferencial tecnico local comfort_medium DCE, dependencia completa, quarto de dependencia com banheiro apoio domestico, quarto reversivel, home office, deposito ou espaco multiuso sinal de planta ampla, tradicional e funcional family_medium versatility_high varanda gourmet, espaco gourmet, area gourmet, churrasqueira c...",
+        "token_estimate": 156
+      },
+      {
+        "section": "geo_semantics",
+        "reason": "GEO cluster and contextual local accuracy",
+        "excerpt": "Tambau, Manaira, Cabo Branco, Bessa, Jardim Oceania praia com servicos, liquidez, walkability e rotina urbana morar_perto_do_mar Intermares, Areia Dourada, Cabedelo praia residencial, veraneio, condominio e expansao de valor praia_residencial_e_veraneio Altiplano, Manaira premium, Cabo Branco premium status, vista, acabamento, exclusividade e condominio-clube alto_padrao_litoral Aeroclube, Bairro dos Estados, areas de facil acesso mobilidade, conveniencia, primeira moradia e investimento funcional vida_urbana_pratica",
+        "token_estimate": 131
+      },
+      {
+        "section": "matching_intelligence",
+        "reason": "contextual recommendation and ranking dimensions",
+        "excerpt": "filtros objetivos: bairro, tipo, quartos, valor, codigo_ref sinais regionais: nascente_sul, posicao_sul, DCE, vista_mar, pe_na_areia, projetados buyer profile: familia, investidor, lifestyle_praia, alto_padrao, casal_jovem, home_office, aposentadoria momento relacional: descoberta, refinamento, comparacao, hesitacao, quase_decisao contexto de aquisicao: UTM, campanha, GEO, promessa criativa family_score beach_score luxury_score investment_score comfort_score convenience_score urban_score remote_work_score regional_value_score matching deve explicar aderencia por criterio, nao por lista fria campanha pode informar...",
+        "token_estimate": 156
+      },
+      {
+        "section": "payload_governance",
+        "reason": "parser-first compression, blocked raw description and URL integrity",
+        "excerpt": "descricao_imovel, titulo_comercial, titulo_seo, tipo_de_imovel, bairro, cidade, UTM, contexto do lead tags, regional_signals, buyer_profiles, emotional_signals, semantic_cluster, scores e operational_summary contexto leve do lead, objetivo, top imoveis, cards, URL da tool, operational_summary, tags relevantes e scores essenciais descricao_imovel completa, HTML, metadata WordPress, transcript gigante, ranking bruto completo, estados cognitivos abstratos reduzir tokens antes de chamar GPT limitar imoveis enviados ao top contextual preferir resumo operacional a texto comercial usar retrieval leve e cirurgico URL de...",
+        "token_estimate": 156
+      }
+    ]
+  }
+]

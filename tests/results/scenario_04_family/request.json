@@ -1,0 +1,14 @@
+﻿{
+    "lead_context":  "familia crescendo, preocupacao com escola, rotina, seguranca e qualidade de vida",
+    "expected":  {
+                     "bairro":  "Bessa",
+                     "maturity":  "media",
+                     "conversation_stage":  "exploracao",
+                     "emotional_context":  "familia buscando rotina segura e qualidade de vida",
+                     "intent":  "morar"
+                 },
+    "utm_source":  "referral",
+    "user_message":  "Nossa familia esta crescendo e estamos pensando no Bessa, talvez Jardim Oceania ou Intermares. Escola, rotina e seguranca pesam bastante para a gente.",
+    "utm_campaign":  "familia_bessa",
+    "scenario_id":  "04_family"
+}

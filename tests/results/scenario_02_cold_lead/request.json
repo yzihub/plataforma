@@ -1,0 +1,14 @@
+﻿{
+    "lead_context":  "curioso, orcamento incompatível, sem timing, baixa maturidade",
+    "expected":  {
+                     "bairro":  "Joao Pessoa",
+                     "maturity":  "baixa",
+                     "conversation_stage":  "descoberta",
+                     "emotional_context":  "curiosidade inicial sem decisao ativa",
+                     "intent":  "explorar"
+                 },
+    "utm_source":  "google",
+    "user_message":  "Estou so pesquisando apartamento em Joao Pessoa ainda. Nao sei bairro nem prazo, queria entender se com um valor mais baixo aparece algo bom.",
+    "utm_campaign":  "apartamento_joao_pessoa",
+    "scenario_id":  "02_cold_lead"
+}

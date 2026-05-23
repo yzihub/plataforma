@@ -121,13 +121,36 @@ function inferSignals(input: JuRuntimeInput) {
   const lead = input.lead ?? {};
   const meta = { ...(lead.metadata ?? {}), ...(deal.metadata ?? {}), ...(conversation.metadata ?? {}) };
   const propertyRef = clean(meta.imovel_ref) || clean(meta.property_ref) || clean(meta.codigo_ref);
+  const asksPropertyRevalidation = hasAny(current, [
+    "manda de novo",
+    "manda novamente",
+    "me manda novamente",
+    "reenvia",
+    "reenviar",
+    "reenvia pra mim",
+    "link deu erro",
+    "link falhou",
+    "link nao abre",
+    "link nao abriu",
+    "link quebrado",
+    "qual era aquele imovel",
+    "qual era aquele imóvel",
+    "aquele imovel",
+    "aquele imóvel",
+    "aquele apartamento",
+    "aquela casa",
+    "abre mais aquele apartamento",
+    "detalhes do imovel anterior",
+    "detalhes do imóvel anterior",
+  ]);
 
   return {
     current,
     isPaused: conversation.ai_paused === true || norm(conversation.status) === "paused",
     asksHuman: hasAny(current, ["humano", "corretor", "atendente", "ligacao", "ligar", "telefone de alguem", "falar com alguem"]),
     asksVisit: hasAny(current, ["visita", "visitar", "agenda", "agendar", "conhecer o imovel", "ver o imovel"]),
-    asksProperties: hasAny(current, ["opcoes", "imoveis", "apartamento", "casa", "tem algum", "disponivel", "codigo", "ref", "jp"]),
+    asksPropertyRevalidation,
+    asksProperties: asksPropertyRevalidation || hasAny(current, ["opcoes", "imoveis", "apartamento", "casa", "tem algum", "disponivel", "codigo", "ref", "jp"]),
     asksMarketContext: hasAny(current, [
       "perfil desse bairro",
       "perfil do bairro",
@@ -158,7 +181,7 @@ function inferRuntimeState(input: JuRuntimeInput, resolved: string[]): JuRuntime
   if (signals.hasNegotiationSignal) return "negociacao";
   if (dealStage.includes("follow")) return "followup_visita";
   if (signals.hasVisitScheduled) return "visita_agendada";
-  if (signals.propertyRef || signals.asksProperties || (resolved.includes("bairro") && (resolved.includes("tipo_imovel") || resolved.includes("budget")))) {
+  if (signals.asksPropertyRevalidation || signals.propertyRef || signals.asksProperties || (resolved.includes("bairro") && (resolved.includes("tipo_imovel") || resolved.includes("budget")))) {
     return "buscando_imoveis";
   }
   if (!input.lead?.id || leadStatus === "new" || leadStatus === "novo") return "lead_novo";
@@ -270,7 +293,7 @@ function expectedOutputFor(objectiveState: JuObjectiveState) {
     qualificar_intencao: "uma pergunta curta para descobrir intencao principal",
     qualificar_budget: "uma pergunta curta sobre faixa de valor ou financiamento",
     qualificar_bairro: "uma pergunta curta sobre bairro/regiao, sem repetir campo resolvido",
-    apresentar_imoveis: "contextualizar busca e usar consultar_imoveis quando disponivel",
+    apresentar_imoveis: "usar consultar_imoveis como fonte obrigatoria de imoveis e URLs",
     agendar_visita: "conduzir para agendamento ou corretor responsavel",
     confirmar_visita: "confirmar dados essenciais da visita",
     followup_visita: "retomar visita com proxima acao clara",
@@ -377,6 +400,7 @@ export function buildJuRuntimeDecision(
       media_state: input.media_state ?? "none",
       entry_profile: input.entry_profile ?? "unknown",
       field_values: fields.values,
+      asks_property_revalidation: signals.asksPropertyRevalidation,
       previous_runtime_state: previousState?.runtime_state ?? null,
       previous_next_action: previousState?.next_action ?? null,
       previous_objective_state: previousState?.objective_state ?? null,
@@ -395,6 +419,7 @@ export function buildJuRuntimeDecision(
         speak_only_for_objective: true,
         backend_decides_flow: true,
         database_is_truth: true,
+        consultar_imoveis_is_url_truth: true,
       },
     },
   };

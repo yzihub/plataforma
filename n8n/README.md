@@ -7,11 +7,10 @@ only files under `n8n/production`.
 
 - `production/workflow-jurema-main.final-hardened.json`
   - Official Ju WhatsApp entrypoint.
-  - Runtime-aware via `POST /api/runtime/ju/state`.
-  - Sends `x-runtime-key` and `x-correlation-id`.
-  - Carries `runtime_state`, `objective_state`, `next_action`,
-    `allowed_tools`, `blocked_questions`, and `retrieval_governance`.
-  - Uses fallback-minimal context when Runtime Gateway is unavailable.
+  - Lightweight hot-path: Evolution -> n8n -> Redis/Supabase context -> tools -> GPT-4.1 -> governance -> Evolution.
+  - Does not call Agno.
+  - Does not require Runtime Gateway in the mandatory WhatsApp hot-path.
+  - Preserves tool revalidation, URL integrity, property cards, persistence, and WhatsApp delivery.
 
 - `production/workflow-jurema-consultar-imoveis.final-hardened.json`
   - Official property-search subworkflow/tool.
@@ -52,7 +51,7 @@ Do not publish:
 
 ## Known Legacy Residue
 
-The canonical main workflow is runtime-aware, but it still contains legacy
+The canonical main workflow is lightweight-hot-path, but it still contains legacy
 nodes/strings inherited from the original organic workflow, including Redis,
 PAM/Cafe references, Airtable references, and vector-store wiring.
 

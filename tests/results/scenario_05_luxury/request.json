@@ -1,0 +1,14 @@
+﻿{
+    "lead_context":  "lifestyle-driven, estetica, exclusividade, status implicito",
+    "expected":  {
+                     "bairro":  "Ponta de Campina",
+                     "maturity":  "alta",
+                     "conversation_stage":  "conexao_emocional",
+                     "emotional_context":  "estetica, exclusividade e praia com contencao",
+                     "intent":  "alto_padrao"
+                 },
+    "utm_source":  "instagram",
+    "user_message":  "Vi algumas coisas de altissimo padrao em Ponta de Campina. Procuro algo com mais presenca, bonito de verdade, perto do mar, mas sem cara de produto comum.",
+    "utm_campaign":  "altissimo_padrao_ponta_de_campina",
+    "scenario_id":  "05_luxury"
+}

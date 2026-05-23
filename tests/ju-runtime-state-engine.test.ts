@@ -28,6 +28,51 @@ describe("buildJuRuntimeDecision", () => {
     expect(decision.retrieval_policy).toBe("disabled");
   });
 
+  it.each([
+    "o link deu erro",
+    "manda novamente",
+    "qual era aquele imovel?",
+    "reenvia pra mim",
+    "abre mais aquele apartamento",
+  ])("requires consultar_imoveis revalidation for property resend request: %s", (currentMessage) => {
+    const decision = buildJuRuntimeDecision({
+      tenant_id: "tenant",
+      lead: { id: "lead", tenant_id: "tenant", status: "contacted" },
+      deal: {
+        id: "deal",
+        tenant_id: "tenant",
+        lead_id: "lead",
+        location_preference: "Manaira",
+        property_type: "apartamento",
+        metadata: { codigo_ref: "JP1842" },
+      },
+      conversation: {
+        id: "conversation",
+        tenant_id: "tenant",
+        lead_id: "lead",
+        deal_id: "deal",
+        metadata: { codigo_ref: "JP1842" },
+      },
+      current_message: currentMessage,
+      recent_messages: [
+        {
+          direction: "outbound",
+          sender_type: "agent",
+          content: "Te mandei esse apartamento: https://juremabksimoveis.com.br/imoveis/1842/",
+        },
+      ],
+    });
+
+    expect(decision.runtime_state).toBe("buscando_imoveis");
+    expect(decision.next_action).toBe("apresentar_imoveis");
+    expect(decision.required_tools).toContain("consultar_imoveis");
+    expect(decision.retrieval_policy).toBe("disabled");
+    expect(decision.state_payload.asks_property_revalidation).toBe(true);
+    expect(decision.decision_payload.response_contract).toMatchObject({
+      consultar_imoveis_is_url_truth: true,
+    });
+  });
+
   it("routes human requests to handoff without letting the LLM decide flow", () => {
     const decision = buildJuRuntimeDecision({
       tenant_id: "tenant",

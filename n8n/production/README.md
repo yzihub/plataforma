@@ -9,23 +9,20 @@ publication.
 - `workflow-jurema-consultar-imoveis.final-hardened.json`
 - `workflow-jurema-enviar-contrato.final-hardened.json`
 
-## Required Runtime Environment
+## Lightweight Hot-Path
 
-The Ju main workflow expects these n8n environment variables:
+The Ju main workflow no longer requires Agno or Runtime Gateway in the
+mandatory WhatsApp hot-path.
 
-- `YZI_RUNTIME_API_URL`
-- `YZI_RUNTIME_INTERNAL_KEY`
-
-The Runtime Gateway endpoint is:
+Operational path:
 
 ```text
-POST ${YZI_RUNTIME_API_URL}/api/runtime/ju/state
+Evolution -> n8n -> Redis/Supabase context -> tools -> GPT-4.1 -> response -> persistence -> Evolution
 ```
 
-The workflow sends:
-
-- `x-runtime-key`
-- `x-correlation-id`
+Runtime Gateway remains available outside this workflow for research, shadow
+evaluation, replay, audits, and future advanced flows. It is not a required
+dependency for publishing or executing the production Ju WhatsApp workflow.
 
 ## Production Guardrail
 
