@@ -33,6 +33,7 @@ type Message = {
   direction: "inbound" | "outbound" | string;
   sender_type: "lead" | "agent" | "human" | string;
   created_at: string;
+  optimistic?: boolean;
 };
 
 type RealtimeStatus =
@@ -143,13 +144,23 @@ export default function ChatPage() {
     }
 
     for (const message of incoming) {
-      if (!message.id.startsWith("conversation-preview:")) {
+      if (!message.optimistic) {
+        const incomingTime = new Date(message.created_at).getTime();
+
         for (const [id, existing] of byId) {
-          if (
-            id.startsWith("conversation-preview:") &&
+          const existingTime = new Date(existing.created_at).getTime();
+          const isSameOptimisticMessage =
+            existing.optimistic === true &&
             existing.conversation_id === message.conversation_id &&
-            existing.created_at === message.created_at &&
-            existing.content === message.content
+            existing.content === message.content &&
+            existing.sender_type === message.sender_type &&
+            Number.isFinite(existingTime) &&
+            Number.isFinite(incomingTime) &&
+            Math.abs(existingTime - incomingTime) <= 5000;
+
+          if (
+            id !== message.id &&
+            isSameOptimisticMessage
           ) {
             byId.delete(id);
           }
@@ -159,10 +170,18 @@ export default function ChatPage() {
       byId.set(message.id, { ...byId.get(message.id), ...message });
     }
 
-    return [...byId.values()].sort(
+    const merged = [...byId.values()].sort(
       (a, b) =>
         new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     );
+
+    console.debug("[Thread Sync] merge result:", {
+      previous: current.length,
+      incoming: incoming.length,
+      merged: merged.length,
+    });
+
+    return merged;
   }, []);
 
   const mergeConversation = useCallback(
@@ -290,7 +309,6 @@ export default function ChatPage() {
           const msg = json?.error ?? `HTTP ${res.status}`;
           console.error("[ChatInbox] messages error:", msg);
           setErrorMsgs(msg);
-          if (!silent) setMessages([]);
           return;
         }
 
@@ -303,7 +321,6 @@ export default function ChatPage() {
         const msg = err instanceof Error ? err.message : "Erro ao carregar";
         console.error("[ChatInbox] fetch messages error:", msg);
         setErrorMsgs(msg);
-        if (!silent) setMessages([]);
       } finally {
         if (
           !signal?.aborted &&
@@ -341,7 +358,6 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!selectedId) {
-      setMessages([]);
       setLoadingMsgs(false);
       setErrorMsgs(null);
       return;
@@ -351,7 +367,6 @@ export default function ChatPage() {
     messagesRequestRef.current = requestId;
     const controller = new AbortController();
 
-    setMessages([]);
     setLoadingMsgs(true);
     setErrorMsgs(null);
 
@@ -445,23 +460,30 @@ export default function ChatPage() {
             {
               id: `conversation-preview:${next.id}:${previewCreatedAt}`,
               conversation_id: next.id,
-              tenant_id: next.tenant_id,
-              content: previewContent,
-              direction: "inbound",
-              sender_type: "lead",
-              created_at: previewCreatedAt,
-            },
-          ]);
-        });
+            tenant_id: next.tenant_id,
+            content: previewContent,
+            direction: "inbound",
+            sender_type: "lead",
+            created_at: previewCreatedAt,
+            optimistic: true,
+          },
+        ]);
+      });
       }
     };
 
     const handleMessageInsert = (next: Message) => {
       if (!next?.id || !next.conversation_id) return;
 
-      if (next.conversation_id === selectedIdRef.current) {
-        setMessages((prev) => mergeMessages(prev, [next]));
-      }
+      console.debug("[Thread Sync] incoming realtime:", {
+        selectedId: selectedIdRef.current,
+        messageId: next.id,
+        conversationId: next.conversation_id,
+        createdAt: next.created_at,
+        senderType: next.sender_type,
+      });
+
+      setMessages((prev) => mergeMessages(prev, [next]));
 
       setConversations((prev) => {
         const known = prev.some(
@@ -637,6 +659,14 @@ export default function ChatPage() {
     [messages, selectedId]
   );
 
+  useEffect(() => {
+    console.debug("[Thread Sync]", {
+      selectedId,
+      messagesCount: messages.length,
+      selectedMessagesCount: selectedMessages.length,
+    });
+  }, [messages.length, selectedId, selectedMessages.length]);
+
   // ── Toggle ai_paused ─────────────────────────────────────────────────────
 
   const togglePause = useCallback(async () => {
@@ -677,7 +707,6 @@ export default function ChatPage() {
     (conversationId: string) => {
       if (conversationId !== selectedIdRef.current) {
         selectedIdRef.current = conversationId;
-        setMessages([]);
         setErrorMsgs(null);
         setLoadingMsgs(true);
       }
