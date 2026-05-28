@@ -8,6 +8,7 @@ import type {
   JuRuntimeInput,
   JuRuntimeState,
 } from "./types";
+import { buildBehavioralGovernance } from "./funnel-governance";
 
 const QUALIFICATION_FIELDS = {
   objetivo: "objetivo",
@@ -369,6 +370,7 @@ export function buildJuRuntimeDecision(
   const loopRisk = detectLoopRisk(input, nextAction);
   const validTransition = isValidTransition(previousState?.runtime_state, runtimeState);
   const validObjectiveTransition = isValidObjectiveTransition(previousState?.objective_state, objectiveState);
+  const behavioralGovernance = buildBehavioralGovernance(runtimeState, input.recent_messages ?? []);
 
   return {
     tenant_id: input.tenant_id ?? input.lead?.tenant_id ?? input.deal?.tenant_id ?? input.conversation?.tenant_id ?? null,
@@ -408,6 +410,7 @@ export function buildJuRuntimeDecision(
       media_state: input.media_state ?? "none",
       entry_profile: input.entry_profile ?? "unknown",
       field_values: fields.values,
+      funnel_stage_contract: behavioralGovernance.stage,
       asks_property_revalidation: signals.asksPropertyRevalidation,
       previous_runtime_state: previousState?.runtime_state ?? null,
       previous_next_action: previousState?.next_action ?? null,
@@ -429,6 +432,8 @@ export function buildJuRuntimeDecision(
         database_is_truth: true,
         consultar_imoveis_is_url_truth: true,
       },
+      behavioral_contract: behavioralGovernance,
     },
+    behavioral_governance: behavioralGovernance as unknown as Record<string, unknown>,
   };
 }

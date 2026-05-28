@@ -158,6 +158,7 @@ export type JuRuntimeDecision = {
   };
   state_payload: Record<string, unknown>;
   decision_payload: Record<string, unknown>;
+  behavioral_governance?: Record<string, unknown>;
 };
 
 export type JuRuntimeContext = {

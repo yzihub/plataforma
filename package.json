@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "export:ju-behavioral:transcripts": "tsx scripts/export-behavioral-transcripts.ts",
+    "test:ju-behavioral:simulations": "vitest run tests/behavioral/ju-runtime-behavioral-simulations.test.ts",
     "test:ju-behavioral:live": "node scripts/ju-behavioral-e2e-curl.js",
     "test:ju-behavioral:regression": "node scripts/ju-behavioral-e2e-curl.js --compare-baseline",
     "test:watch": "vitest"

@@ -35,6 +35,12 @@ function formatList(values: string[]) {
   return values.length ? values.join(", ") : "nenhum";
 }
 
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
 function formatTranscript(messages: JuRuntimeMessage[]) {
   if (!messages.length) return "sem transcript util para este turno";
   return messages
@@ -65,6 +71,9 @@ export function buildJuRuntimeContext(
   );
   const forbiddenTools = ALL_TOOLS.filter((tool) => !decision.allowed_tools.includes(tool));
   const retrievalAllowed = decision.retrieval_policy !== "disabled";
+  const behavioralGovernance = asRecord(decision.behavioral_governance);
+  const behavioralContract = asRecord(behavioralGovernance.contract);
+  const questionBudget = asRecord(behavioralGovernance.question_budget);
 
   const hierarchy = {
     tier_1_critical_state: {
@@ -79,6 +88,8 @@ export function buildJuRuntimeContext(
       escalation_state: decision.escalation_state,
       loop_risk: decision.loop_risk,
       valid_transition: decision.valid_transition,
+      behavioral_contract_stage: behavioralGovernance.stage ?? null,
+      behavioral_contract_enforced: behavioralGovernance.enforced ?? false,
     },
     tier_2_operational_memory: {
       tenant_id: decision.tenant_id,
@@ -156,6 +167,24 @@ export function buildJuRuntimeContext(
     `max_chunks: ${decision.token_budget.rag_chunks_max}`,
     `reason: ${retrievalReason(decision)}`,
     "</retrieval_governance>",
+    "",
+    "<behavioral_contract>",
+    `stage: ${clean(behavioralGovernance.stage) || "nao_aplicavel"}`,
+    `enforced: ${behavioralGovernance.enforced === true ? "true" : "false"}`,
+    `objective: ${clean(behavioralContract.objective) || "nao_aplicavel"}`,
+    `question_budget_per_stage: ${clean(behavioralContract.question_budget_per_stage) || clean(questionBudget.max_questions_per_stage) || "1"}`,
+    `max_questions_per_turn: ${clean(questionBudget.max_questions_per_turn) || "1"}`,
+    `max_consecutive_questions: ${clean(questionBudget.max_consecutive_questions) || "1"}`,
+    `remaining_consecutive_questions: ${clean(questionBudget.remaining_consecutive_questions) || "1"}`,
+    `must_explain_consultive_model: ${behavioralContract.must_explain_consultive_model === true ? "true" : "false"}`,
+    `must_request_permission_to_continue: ${behavioralContract.must_request_permission_to_continue === true ? "true" : "false"}`,
+    `must_generate_value_before_more_questions: ${behavioralContract.must_generate_value_before_more_questions === true ? "true" : "false"}`,
+    `must_contextualize_relevant_questions: ${behavioralContract.must_contextualize_relevant_questions === true ? "true" : "false"}`,
+    `institutional_framing: ${clean(behavioralContract.institutional_framing) || "light_consultative"}`,
+    `consultative_pacing: ${clean(behavioralContract.consultative_pacing) || "value_before_depth"}`,
+    `forbidden_behaviors: ${formatList((behavioralContract.forbidden_behaviors as string[] | undefined) ?? [])}`,
+    `forbidden_topics: ${formatList((behavioralContract.forbidden_topics as string[] | undefined) ?? [])}`,
+    "</behavioral_contract>",
     "",
     "<short_transcript>",
     formatTranscript(shortTranscript),

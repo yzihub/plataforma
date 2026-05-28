@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { buildBehavioralGovernance } from "./funnel-governance";
+import { buildInventoryConstraintPolicy, type InventoryConstraintPolicy } from "./inventory-constraints";
 
 export const JU_KERNEL_VERSION = "ju_hardened_hot_path_contract_v1" as const;
 
@@ -20,6 +22,7 @@ export const canonicalNextBestActions = [
   "facilitar_agendamento",
   "manter_radar_contextual",
   "reduzir_inventory",
+  "graceful_consultative_exit",
 ] as const;
 
 export const canonicalTools = [
@@ -111,6 +114,10 @@ export type CanonicalRuntimeMemory = {
   property_intent_signal?: boolean;
   next_best_action?: CanonicalNextBestAction | string | null;
   last_property_presentation_at?: string | null;
+  inventory_constraint_active?: boolean;
+  inventory_constraint_reason?: string | null;
+  no_coherent_match?: boolean;
+  no_match_reason?: string | null;
 };
 
 export type CanonicalKernelInput = {
@@ -149,6 +156,8 @@ export type CanonicalSignals = {
   followup_signal: boolean;
   property_revalidation_required: boolean;
   inventory_fatigue: boolean;
+  inventory_constraint_active: boolean;
+  inventory_constraint_reason: string | null;
   properties_sent_count: number;
 };
 
@@ -164,6 +173,7 @@ export type RuntimeViolationCode =
   | "too_many_questions"
   | "too_many_properties"
   | "inventory_loop"
+  | "inventory_mismatch_push"
   | "excessive_followup_pressure"
   | "invalid_context_contract"
   | "memory_replay_unbounded";
@@ -215,6 +225,8 @@ export type CanonicalKernelDecision = {
     rolling_summary_boundary: "outside_hot_path_until_persisted";
     bounded_replay: true;
   };
+  behavioral_contract: ReturnType<typeof buildBehavioralGovernance>;
+  inventory_constraint: InventoryConstraintPolicy;
 };
 
 export type CanonicalResponseDraft = {
@@ -298,6 +310,12 @@ const nextActionContracts: Record<
     preconditions: ["properties_sent_count >= 6"],
     postconditions: ["stop mass recommendations", "ask one narrowing question or reanchor"],
   },
+  graceful_consultative_exit: {
+    validWhen: ["no coherent match", "inventory incompatible", "budget infeasible", "region unavailable"],
+    forbiddenWhen: ["coherent property match exists", "tool returned aligned cards"],
+    preconditions: ["inventory constraint signal exists"],
+    postconditions: ["be transparent", "do not push bad options", "keep door open without pressure"],
+  },
 };
 
 function clean(value: unknown): string {
@@ -328,6 +346,7 @@ function countOutboundProperties(messages: CanonicalMessage[]) {
 }
 
 export function inferCanonicalSignals(input: CanonicalKernelInput): CanonicalSignals {
+  const inventoryConstraint = buildInventoryConstraintPolicy(input);
   const message = normalize(input.mensagemCliente);
   const deal = input.deal ?? {};
   const lead = input.lead ?? {};
@@ -447,6 +466,8 @@ export function inferCanonicalSignals(input: CanonicalKernelInput): CanonicalSig
     followup_signal: Boolean(input.event_type === "followup_resume" || operational.followup_enabled || spouseDecisionSignal || hasAny(conversationText, ["vou pensar", "depois eu vejo", "vou analisar"])),
     property_revalidation_required: propertyRevalidationRequired,
     inventory_fatigue: Boolean(runtime.inventory_fatigue || propertiesSentCount >= 6),
+    inventory_constraint_active: inventoryConstraint.active,
+    inventory_constraint_reason: inventoryConstraint.reason,
     properties_sent_count: propertiesSentCount,
   };
 }
@@ -463,6 +484,7 @@ function inferRuntimeState(input: CanonicalKernelInput, signals: CanonicalSignal
 }
 
 function inferNextBestAction(state: CanonicalRuntimeState, signals: CanonicalSignals, propertyPresentationDue: boolean): CanonicalNextBestAction {
+  if (signals.inventory_constraint_active) return "graceful_consultative_exit";
   if (propertyPresentationDue) return "apresentar_opcoes_aderentes";
   if (signals.inventory_fatigue) return "reduzir_inventory";
   if (state === "lead_novo") return "descobrir_contexto";
@@ -478,6 +500,7 @@ function allowedToolsFor(action: CanonicalNextBestAction): CanonicalTool[] {
   if (action === "facilitar_agendamento") return ["setar_lead_quente", "consultar_imoveis", "atualizar_qualificacao"];
   if (action === "descobrir_contexto" || action === "aprofundar_criterios") return ["atualizar_qualificacao", "conhecimento_estrategico_luana1"];
   if (action === "reduzir_inventory") return ["consultar_imoveis", "atualizar_qualificacao", "conhecimento_estrategico_luana1"];
+  if (action === "graceful_consultative_exit") return ["atualizar_qualificacao"];
   return ["consultar_imoveis", "atualizar_qualificacao", "conhecimento_estrategico_luana1"];
 }
 
@@ -485,14 +508,16 @@ export function buildCanonicalKernelDecision(
   input: CanonicalKernelInput,
   previousState?: CanonicalRuntimeState | null,
 ): CanonicalKernelDecision {
+  const inventoryConstraint = buildInventoryConstraintPolicy(input);
   const signals = inferCanonicalSignals(input);
-  const propertyPresentationDue = signals.property_revalidation_required || signals.matching_context_complete || (signals.property_intent && signals.useful_context);
+  const propertyPresentationDue = !inventoryConstraint.active && (signals.property_revalidation_required || signals.matching_context_complete || (signals.property_intent && signals.useful_context));
   const runtimeState = inferRuntimeState(input, signals);
   const nextBestAction = inferNextBestAction(runtimeState, signals, propertyPresentationDue);
   const requiredTools: CanonicalTool[] = propertyPresentationDue || nextBestAction === "apresentar_opcoes_aderentes" ? ["consultar_imoveis"] : nextBestAction === "facilitar_agendamento" ? ["setar_lead_quente"] : [];
   const allowedTools = [...new Set([...allowedToolsFor(nextBestAction), ...requiredTools])];
   const forbiddenTools = canonicalTools.filter((tool) => !allowedTools.includes(tool));
   const validTransitions = stateTransitionMap[previousState ?? runtimeState] ?? [];
+  const behavioralContract = buildBehavioralGovernance(runtimeState, input.recent_messages as never);
 
   return {
     version: JU_KERNEL_VERSION,
@@ -545,6 +570,8 @@ export function buildCanonicalKernelDecision(
       rolling_summary_boundary: "outside_hot_path_until_persisted",
       bounded_replay: true,
     },
+    behavioral_contract: behavioralContract,
+    inventory_constraint: inventoryConstraint,
   };
 }
 
@@ -558,6 +585,9 @@ export function assertCanonicalKernelDecision(decision: CanonicalKernelDecision)
   }
   if (decision.signals.inventory_fatigue && decision.governance.max_properties_per_presentation > 3) {
     violations.push({ code: "too_many_properties", message: "Inventory fatigue cannot increase presentation volume." });
+  }
+  if (decision.inventory_constraint.active && decision.property_presentation_due) {
+    violations.push({ code: "inventory_mismatch_push", message: "No-match inventory constraint cannot force property presentation." });
   }
   if (decision.memory_contract.recent_history_max > 10) {
     violations.push({ code: "memory_replay_unbounded", message: "Recent history replay must remain bounded to 10 messages." });
@@ -600,8 +630,63 @@ export function assertCanonicalResponseDraft(
   if ((draft.property_cards_count ?? 0) > decision.governance.max_properties_per_presentation) {
     violations.push({ code: "too_many_properties", message: "Property presentation exceeded the maximum of 3." });
   }
+  if (decision.inventory_constraint.active) {
+    const pushPatterns = [
+      "vou continuar buscando",
+      "temos outras unidades",
+      "posso te mostrar mais opcoes",
+      "posso te mostrar mais opções",
+      "aguarde novas oportunidades",
+      "vou te mandar outras opcoes",
+      "vou te mandar outras opções",
+    ];
+    const honestyPatterns = [
+      "sendo bem transparente",
+      "prefiro ser honesta",
+      "nao tenho um match",
+      "nao tenho nada",
+      "nao tenho algo",
+      "realmente coerente",
+      "desalinhada",
+    ];
+    if (tools.length || (draft.property_cards_count ?? 0) > 0 || hasAny(text, pushPatterns)) {
+      violations.push({ code: "inventory_mismatch_push", message: "No coherent match must not push tools, cards or weak inventory." });
+    }
+    if (!hasAny(text, honestyPatterns)) {
+      violations.push({ code: "inventory_mismatch_push", message: "No coherent match response must be transparent and consultative." });
+    }
+  }
   if (decision.runtime_state === "followup" && hasAny(text, ["urgente", "ultima chance", "preciso que decida agora"])) {
     violations.push({ code: "excessive_followup_pressure", message: "Follow-up must reduce pressure." });
+  }
+  if (decision.behavioral_contract.contract?.stage === "SAUDACAO" && hasAny(text, ["orcamento", "financiamento", "financiar", "entrada"])) {
+    violations.push({ code: "sdr_behavior", message: "Saudacao cannot ask budget or financing questions." });
+  }
+  if (decision.behavioral_contract.contract?.must_contextualize_relevant_questions && questionCount > 0) {
+    const contextualized = hasAny(text, [
+      "te pergunto",
+      "porque",
+      "pra eu nao",
+      "pra eu te",
+      "sem te encher",
+      "nada a ver",
+      "ajuda bastante",
+      "muda bastante",
+      "caminho mais simples",
+      "o que pesa mais",
+      "direto ao ponto",
+      "para entender",
+      "faz sentido",
+      "rotina",
+      "contexto",
+      "perfil",
+      "liquidez",
+      "demanda",
+      "pelo que fizer mais sentido",
+    ]);
+    if (!contextualized) {
+      violations.push({ code: "abstract_qualification_loop", message: "Relevant question must be contextualized by the runtime contract." });
+    }
   }
   return violations;
 }
@@ -631,6 +716,8 @@ export function renderCanonicalContextContract(input: CanonicalKernelInput, deci
     `next_best_action: ${decision.next_best_action}`,
     `inventory_fatigue: ${decision.signals.inventory_fatigue ? "true" : "false"}`,
     `properties_sent_count: ${decision.signals.properties_sent_count}`,
+    `inventory_constraint_active: ${decision.inventory_constraint.active ? "true" : "false"}`,
+    `inventory_constraint_reason: ${decision.inventory_constraint.reason ?? "none"}`,
     "</funnel_runtime>",
     "",
     "<preferencias_cliente>",
@@ -647,10 +734,38 @@ export function renderCanonicalContextContract(input: CanonicalKernelInput, deci
     "SE_FUNNEL_STAGE_FOLLOWUP_REDUZIR_PRESSAO: true",
     "SE_DECISION_STYLE_CASAL_RESPEITAR_TIMING: true",
     "SE_INVENTORY_FATIGUE_TRUE_PARAR_ENVIO_MASSIVO: true",
+    `SE_INVENTORY_CONSTRAINT_TRUE_GRACEFUL_EXIT: ${decision.inventory_constraint.active ? "true" : "false"}`,
     `PROPERTY_PRESENTATION_DUE: ${decision.property_presentation_due ? "true" : "false"}`,
     `BLOCK_APROFUNDAR_CRITERIOS: ${decision.property_presentation_due ? "true" : "false"}`,
     `PRESENTAR_ANTES_DE_PERGUNTAR: ${decision.property_presentation_due ? "true" : "false"}`,
     "</governanca_comportamental>",
+    "",
+    "<behavioral_contract>",
+    `version: ${decision.behavioral_contract.contract?.version ?? "nao_aplicavel"}`,
+    `stage: ${decision.behavioral_contract.stage}`,
+    `enforced: ${decision.behavioral_contract.enforced ? "true" : "false"}`,
+    `objective: ${decision.behavioral_contract.contract?.objective ?? "nao_aplicavel"}`,
+    `question_budget_per_stage: ${decision.behavioral_contract.question_budget.max_questions_per_stage}`,
+    `max_questions_per_turn: ${decision.behavioral_contract.question_budget.max_questions_per_turn}`,
+    `max_consecutive_questions: ${decision.behavioral_contract.question_budget.max_consecutive_questions}`,
+    `remaining_consecutive_questions: ${decision.behavioral_contract.question_budget.remaining_consecutive_questions}`,
+    `must_explain_consultive_model: ${decision.behavioral_contract.contract?.must_explain_consultive_model ? "true" : "false"}`,
+    `must_request_permission_to_continue: ${decision.behavioral_contract.contract?.must_request_permission_to_continue ? "true" : "false"}`,
+    `must_generate_value_before_more_questions: ${decision.behavioral_contract.contract?.must_generate_value_before_more_questions ? "true" : "false"}`,
+    `must_contextualize_relevant_questions: ${decision.behavioral_contract.contract?.must_contextualize_relevant_questions ? "true" : "false"}`,
+    `institutional_framing: ${decision.behavioral_contract.contract?.institutional_framing ?? "light_consultative"}`,
+    `consultative_pacing: ${decision.behavioral_contract.contract?.consultative_pacing ?? "value_before_depth"}`,
+    `forbidden_behaviors: ${decision.behavioral_contract.contract?.forbidden_behaviors.join(", ") ?? "nenhum"}`,
+    `forbidden_topics: ${decision.behavioral_contract.contract?.forbidden_topics.join(", ") ?? "nenhum"}`,
+    "</behavioral_contract>",
+    "",
+    "<inventory_constraint>",
+    `active: ${decision.inventory_constraint.active ? "true" : "false"}`,
+    `reason: ${decision.inventory_constraint.reason ?? "none"}`,
+    `should_gracefully_exit: ${decision.inventory_constraint.should_gracefully_exit ? "true" : "false"}`,
+    `required_framing: ${decision.inventory_constraint.required_framing.join(", ")}`,
+    `forbidden_behaviors: ${decision.inventory_constraint.forbidden_behaviors.join(", ")}`,
+    "</inventory_constraint>",
     "",
     "<historico_curto>",
     recent.map((message) => `${message.direction === "outbound" || message.sender_type === "agent" ? "Ju" : "Cliente"}: ${clean(message.content)}`).join("\n"),
