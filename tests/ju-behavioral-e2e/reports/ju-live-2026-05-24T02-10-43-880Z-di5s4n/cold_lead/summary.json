@@ -1,0 +1,17 @@
+{
+  "scenario_id": "cold_lead",
+  "scenario_name": "Cold Lead",
+  "score": 100,
+  "pass": true,
+  "violations": [],
+  "positives": [
+    {
+      "id": "emotional_alignment",
+      "weight": 6
+    },
+    {
+      "id": "no_pressure",
+      "weight": 4
+    }
+  ]
+}

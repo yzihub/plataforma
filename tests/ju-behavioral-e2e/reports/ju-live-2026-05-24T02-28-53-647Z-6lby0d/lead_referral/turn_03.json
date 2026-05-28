@@ -1,0 +1,48 @@
+{
+  "turn_index": 2,
+  "input": "Pode ser 2 quartos, ate uns 700 mil, se tiver algo bom pra esse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\lead_referral\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/lead_referral/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 704,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Que bom que a Ana te indicou a gente 😊 vamos cuidar direitinho disso pra sua mãe.\nMe conta só um pouquinho melhor dela pra eu acertar nas opcoes: ela prefere ficar mais perto de que região (Bessa, Jardim Oceania, Manaíra…)? E ela já comentou uma faixa de valor aproximada que consegue investir nesse apartamento?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 15,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 6,
+    "tool_calls": 6
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 55,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 704
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "A gente quer decidir em ate uns 60 dias.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "high_intent"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\couple_decision_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/couple_decision_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4156,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz sentido sim pensar em liquidez agora.\nVocê prefere que eu foque mais em potencial de aluguel por temporada ou num perfil mais redondo pra revenda daqui a alguns anos?",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 30,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 15,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 31,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4156
+    }
+  }
+}

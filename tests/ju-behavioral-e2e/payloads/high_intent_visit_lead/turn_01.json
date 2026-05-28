@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "high_intent_visit_lead",
+    "scenario_name": "High Intent Visit Lead",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "direct",
+    "utm_campaign": "visita_alta_intencao"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-high_intent_visit_lead-1",
+      "fromMe": false,
+      "remoteJid": "5583914309359@s.whatsapp.net"
+    },
+    "pushName": "Lead High Intent Visit Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Gostei de um apartamento no Jardim Oceania. Se estiver disponivel, queria visitar ainda essa semana."
+    },
+    "messageTimestamp": 1779580243,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Lead pronto para visitar, com criterio claro e timing curto.",
+      "emotionalContext": "Quer agilidade, mas sem atrito ou perguntas desnecessarias.",
+      "utm_source": "site",
+      "utm_medium": "direct",
+      "utm_campaign": "visita_alta_intencao"
+    }
+  }
+}

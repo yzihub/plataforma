@@ -1,0 +1,48 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma opcao com esse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\short_stay_investor\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/short_stay_investor/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3460,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, então o ponto pra você é mais renda/passivo e menos dor de cabeça no dia a dia.\nPra facilitar aluguel e administração, em João Pessoa hoje costuma funcionar melhor:\n– prédios que já têm operação de locação integrada ou parceria com administradora\n– recepção/portaria 24h, enxoval, limpeza e check-in organizados\n– unidades com padrão mais “hotelzinho” do que “apê residencial”.\nDuas coisas rápidas pra eu te direcionar certinho:\nVocê pensa em usar esse flat às vezes com a família ou é 100% investimento?\nDentro daquele teto de até 500 mil, quanto você toparia colocar especificamente nesse flat?",
+  "persistence": {
+    "lead_id": "713a45b3-a656-4195-892e-914686241571",
+    "conversation_id": "e30a331c-9d32-4d50-b6ae-48a0b26bba1a",
+    "messages": 18,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 36,
+    "tool_calls": 36
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 98,
+      "line_count": 8,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3460
+    }
+  }
+}

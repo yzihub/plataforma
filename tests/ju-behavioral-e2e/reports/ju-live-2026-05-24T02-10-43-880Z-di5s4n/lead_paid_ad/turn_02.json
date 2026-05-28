@@ -1,0 +1,42 @@
+{
+  "turn_index": 1,
+  "input": "Se tiver algo parecido nessa faixa, pode mandar tambem.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\lead_paid_ad\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/lead_paid_ad/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3950,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pode estar sim, viu. No anúncio que você clicou aparecia algum código JP ou valor aproximado? Isso me ajuda a achar exatamente o mesmo apartamento pra te confirmar a disponibilidade e já te dizer os prós e contras pra sua mãe.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 21,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 10,
+    "tool_calls": 10
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 41,
+      "line_count": 1,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3950
+    }
+  }
+}

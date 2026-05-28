@@ -1,0 +1,42 @@
+{
+  "turn_index": 1,
+  "input": "Queria algo mais facil de alugar e administrar.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "operational_investment"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\short_stay_investor\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/short_stay_investor/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 833,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pra short stay em João Pessoa ainda faz bastante sentido, sim, principalmente perto da praia – o público de temporada e corporativo costuma buscar muito essa localização.\nMe conta: essa compra seria 100% pensando em renda de aluguel por temporada (investimento mesmo) ou você pensa em usar às vezes com a família e alugar no restante do tempo?\nE em termos de valor, pra esse flat de short stay, você seguiria mais ou menos na faixa de até 500 mil ou pensaria em um ticket menor pra diversificar?",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 17,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 33,
+    "tool_calls": 33
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 88,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 833
+    }
+  }
+}

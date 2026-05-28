@@ -1,0 +1,42 @@
+{
+  "turn_index": 1,
+  "input": "Gosto de coisa mais clara, varanda boa e que nao fique longe da orla.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "preference_refinement"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\lead_instagram\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/lead_instagram/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3835,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Que bom que você curtiu 😊 aqueles perto da praia costumam mesmo chamar atenção.\nPra eu chegar em algo bem parecido com o que você viu no story, me ajuda com dois detalhes rapidinho?\nVocê lembra se era no Bessa ou Jardim Oceania (ou outro bairro)?\nE você pensa em comprar mais pra agora (próximos 3 meses) ou algo pra um pouco mais pra frente?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 9,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 4,
+    "tool_calls": 4
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "3 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 65,
+      "line_count": 4,
+      "question_count": 3,
+      "url_count": 0,
+      "latency_ms": 3835
+    }
+  }
+}

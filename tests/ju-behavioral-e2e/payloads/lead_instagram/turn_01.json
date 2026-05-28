@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "lead_instagram",
+    "scenario_name": "Lead Instagram",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "instagram",
+    "utm_medium": "social",
+    "utm_campaign": "story_jardim_oceania"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-lead_instagram-1",
+      "fromMe": false,
+      "remoteJid": "5583973889588@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Instagram",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Vi um story de voces de um ap perto da praia. Achei bonito, queria saber se tem algo nesse perfil."
+    },
+    "messageTimestamp": 1779580198,
+    "source": "curl-behavioral-audit:instagram",
+    "contextInfo": {
+      "sourceChannel": "instagram",
+      "persona": "Lead vindo de conteudo visual, responde por impulso a um post ou story.",
+      "emotionalContext": "Quer algo bonito e pratico, mas ainda fala de forma leve.",
+      "utm_source": "instagram",
+      "utm_medium": "social",
+      "utm_campaign": "story_jardim_oceania"
+    }
+  }
+}

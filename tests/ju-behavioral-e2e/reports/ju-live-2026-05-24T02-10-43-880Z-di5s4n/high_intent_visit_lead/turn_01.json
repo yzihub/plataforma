@@ -1,0 +1,52 @@
+{
+  "turn_index": 0,
+  "input": "Gostei de um apartamento no Jardim Oceania. Se estiver disponivel, queria visitar ainda essa semana.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "visit_intent"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\high_intent_visit_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/high_intent_visit_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3397,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Separei um flat bem dentro desse perfil de short stay, perto da praia e com cara de investimento fácil de alugar e administrar, em João Pessoa:\nhttps://juremabksimoveis.com.br/imoveis/flat-para-venda-na-beira-mar-do-bessa/\n\nDá uma olhada com calma nas fotos e na estrutura. Se curtir a linha, te mando mais 1 ou 2 opcoes parecidas pra você comparar.",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 20,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 36,
+    "tool_calls": 36
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "property_url_present",
+        "weight": 4
+      },
+      {
+        "id": "direct_property_presentation",
+        "weight": 8
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      },
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 52,
+      "line_count": 3,
+      "question_count": 0,
+      "url_count": 1,
+      "latency_ms": 3397
+    }
+  }
+}

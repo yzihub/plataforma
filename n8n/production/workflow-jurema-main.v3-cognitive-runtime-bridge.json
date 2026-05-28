@@ -1,0 +1,2870 @@
+{
+  "name": "Ju - n8n Supabase v3.0 cognitive-runtime-bridge",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "TREINAMENTO DA IA - YZI OS",
+        "height": 620,
+        "width": 852,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        9968,
+        1376
+      ],
+      "typeVersion": 1,
+      "id": "44d0cb17-4902-4288-bb4e-a6958932bcdc",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {},
+      "id": "1f843523-618a-43e9-a2be-8c3709933424",
+      "name": "Wait4",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        8672,
+        2160
+      ],
+      "webhookId": "522e69dd-bdbe-40f2-994a-b774917125a6"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "id": "e8cb2e5b-9207-4082-a627-366fc9b4ba9c",
+      "name": "OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        7376,
+        2240
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "openAiApi": {
+          "id": "W7viCvKb9IkuKdvf",
+          "name": "OpenAi JUREMA"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c5ccbc9-69d1-4b13-a7c3-e6945bc8c655",
+              "name": "data",
+              "value": "={{ $items('Webhook1')[0].json.body.data.message.base64 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e89d9a6b-d389-4223-8a72-05a1516e7870",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6928,
+        2336
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "options": {
+          "fileName": "audio.ogg",
+          "mimeType": "audio/ogg"
+        }
+      },
+      "id": "93283538-e148-429f-b6eb-5916fe5e4367",
+      "name": "Convert to audio1",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        7152,
+        2240
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## SUPORTE\n",
+        "height": 208,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        10544,
+        2320
+      ],
+      "id": "33c3af3a-637e-4938-b8ee-d3f3f7a81417",
+      "name": "Sticky Note15"
+    },
+    {
+      "parameters": {
+        "content": "## TOOLS",
+        "height": 240,
+        "width": 848,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        9968,
+        2032
+      ],
+      "id": "b277cf67-71f5-42fc-bb9d-9b46142d02d1",
+      "name": "Sticky Note16"
+    },
+    {
+      "parameters": {
+        "content": "# DIVISÃO DE MENSAGENS INTEIGÊNTES - SAÍDA",
+        "height": 624,
+        "width": 1436,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        10848,
+        1376
+      ],
+      "typeVersion": 1,
+      "id": "374b46a9-64ad-4b62-a198-d9fc64e48b97",
+      "name": "Sticky Note19"
+    },
+    {
+      "parameters": {
+        "content": "# café compam",
+        "height": 1900,
+        "width": 5044,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4864,
+        1376
+      ],
+      "typeVersion": 1,
+      "id": "6efe9402-1b0e-467b-a39d-2517feb30730",
+      "name": "Sticky Note17"
+    },
+    {
+      "parameters": {
+        "content": "# DADOS DE ENTRADA E NOVO LEADS - STATUS INICIAL\n",
+        "height": 480,
+        "width": 1488,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6400,
+        1488
+      ],
+      "id": "f408c144-759c-466f-80c2-f08dfbb27cfa",
+      "name": "Sticky Note20"
+    },
+    {
+      "parameters": {
+        "content": "# Buffer Redis",
+        "height": 528,
+        "width": 1728,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        8096,
+        1984
+      ],
+      "id": "f5321d54-04d2-4c8b-8642-e96e7f588303",
+      "name": "Sticky Note21"
+    },
+    {
+      "parameters": {
+        "content": "# Trascrição do audio - mensagem\n",
+        "height": 528,
+        "width": 1584,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        6496,
+        1984
+      ],
+      "id": "918dca9a-6806-4475-b405-716246e8e9f4",
+      "name": "Sticky Note22"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $items('Normaliza Webhook1')[0].json.sessionId }}",
+        "messageData": "={{ $json.audioText || $json.text || \"\" }}",
+        "tail": true
+      },
+      "id": "be5a1d4a-92ac-4c21-8562-27579a580ef6",
+      "name": "Audio Memory1",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        8224,
+        2256
+      ],
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $items('Normaliza Webhook1')[0].json.sessionId }}",
+        "messageData": "={{ \n      $items('Webhook1')[0].json.body.data.message?.extendedTextMessage?.text \n      ?? $items('Webhook1')[0].json.body.data.message?.conversation\n      ?? $items('OpenAI1')[0].json.text\n      ?? '' \n    }}",
+        "tail": true
+      },
+      "id": "336b115a-7d72-4172-bcb9-1707cdb0fb0d",
+      "name": "Texto curto Memory1",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        8224,
+        2064
+      ],
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# UPLOAD MÍDIAS - SUPABASE BUCKET - UPDATE AIRTABLE - UPDATE SUPABASE\n",
+        "height": 576,
+        "width": 3520,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        5984,
+        2528
+      ],
+      "id": "2336f3da-657b-4c2d-9104-9ba503ddb404",
+      "name": "Sticky Note23"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "XML",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        9568,
+        2256
+      ],
+      "id": "80ebe9a0-98c3-4d5f-aaae-6b43c2a1371f",
+      "name": "Tratamento de erros1",
+      "credentials": {
+        "postgres": {
+          "id": "P75dmqutow4ArTja",
+          "name": "Postgres Jurema"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## DISTRIBUIÇÃO DE MENSAGENS",
+        "height": 480,
+        "width": 384,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        7920,
+        1488
+      ],
+      "id": "d5390b64-bc8b-4b40-886c-2b2c1d314bad",
+      "name": "Sticky Note24"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ju",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        5024,
+        1664
+      ],
+      "id": "7208a1d8-af7f-47e7-bc71-6036eac76127",
+      "name": "Webhook1",
+      "webhookId": "2bc02a23-1b1a-4e33-9425-d8cb480deebe"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3c5ccbc9-69d1-4b13-a7c3-e6945bc8c655",
+              "name": "data",
+              "value": "={{ $items('Webhook1')[0].json.body.data.message.base64 }}",
+              "type": "string"
+            },
+            {
+              "id": "3aecfc10-2aa5-4bef-8c19-7dab73521d18",
+              "name": "mimetype",
+              "value": "={{ $items('Webhook1')[0].json.body.data.message.imageMessage.mimetype }}",
+              "type": "string"
+            },
+            {
+              "id": "228300a1-342f-4ae2-a986-03c605d74f0e",
+              "name": "telefone",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.telefoneCompleto }}",
+              "type": "string"
+            },
+            {
+              "id": "2d8847fa-2467-4864-9d65-4581aef8802e",
+              "name": "Nome do Cliente",
+              "value": "={{ $items('Dados do Lead')[0].json[\"Nome do Cliente\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "f61f6e6f-fabc-40f9-8fd5-6986d392b48d",
+              "name": "sessionId",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.sessionId }}",
+              "type": "string"
+            },
+            {
+              "id": "441ddab0-1c2e-46ad-bad0-dd0042508980",
+              "name": "path",
+              "value": "={{ $items('Dados do Lead')[0].json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "d8c0f10a-1e95-4c94-81b1-b386f567061c",
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_STORAGE_SERVICE_ROLE_KEY || $env.SUPABASE_SERVICE_ROLE_KEY }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6d13f3a0-9a45-46f2-b8ca-121e101b5ada",
+      "name": "Montar Dados da Imagem1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6128,
+        2672
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "binaryPropertyName": "=image",
+        "options": {
+          "fileName": "={{ $json.path }}",
+          "mimeType": "={{ $json.mimetype }}"
+        }
+      },
+      "id": "cead999b-db09-4965-aafd-88ac38a3372f",
+      "name": "Convert to imagens1",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        6352,
+        2672
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3ab824cc-00ef-48f9-9d53-c077e6fb1293",
+              "name": "data.url",
+              "value": "={{ $json.data.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6800,
+        2672
+      ],
+      "id": "88d91f88-3dab-456f-a97d-d9f4ff54d27e",
+      "name": "urls2"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "=midia:{{ $items('Montar Dados da Imagem1')[0].json.path }}",
+        "messageData": "={{ $json.data.url }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        7024,
+        2672
+      ],
+      "id": "ee58dfd2-fd60-4b4f-b7c1-16d256a534c7",
+      "name": "uploads_esperados2",
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=midia:{{ $items('Montar Dados da Imagem1')[0].json.path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        7248,
+        2672
+      ],
+      "id": "1b906686-ac9e-4f30-8ac2-f0cf5461f67e",
+      "name": "redis2",
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        7472,
+        2672
+      ],
+      "id": "1a317903-b77e-4d50-ae3c-e978eee19fc5",
+      "name": "Wait5",
+      "webhookId": "547fabc0-82d5-4134-8ab7-689aea8af0e7"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=midia:{{ $items('Montar Dados da Imagem1')[0].json.path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        7696,
+        2672
+      ],
+      "id": "2d97702e-c6f8-45f8-94a4-14422dd48720",
+      "name": "Redis6",
+      "credentials": {
+        "redis": {
+          "id": "au4tt5JimdRzwHtN",
+          "name": "Redis YZI OS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3ab824cc-00ef-48f9-9d53-c077e6fb1293",
+              "name": "data.url",
+              "value": "=https://picoieyewgquuwylffxe.supabase.co/storage/v1/object/public/{{ $json.Key }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7040,
+        2896
+      ],
+      "id": "b5c55e95-29a9-4679-810f-b0246aede2e5",
+      "name": "urls3"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "=midia:{{ $items('Montar Dados do video1')[0].json.path }}",
+        "messageData": "={{ $json.data.url }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        7264,
+        2896
+      ],
+      "id": "3f50a0bb-06a5-429b-b872-d5ef437ceb6e",
+      "name": "uploads_esperados3",
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=midia:{{ $items('Montar Dados do video1')[0].json.path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        7488,
+        2896
+      ],
+      "id": "2f30f5bb-9a5e-4d76-ac14-a5e34098cb89",
+      "name": "redis3",
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        7712,
+        2896
+      ],
+      "id": "24b9dccc-56f6-4a67-b15d-ede8d77ed81e",
+      "name": "Wait6",
+      "webhookId": "547fabc0-82d5-4134-8ab7-689aea8af0e7"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=midia:{{ $items('Montar Dados do video1')[0].json.path }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        7936,
+        2896
+      ],
+      "id": "ed913fa9-34d5-4c00-8a63-8297c5ce146c",
+      "name": "Redis7",
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "name": "data",
+              "value": "={{ $items('Webhook1')[0].json.body.data.message.base64 }}",
+              "type": "string",
+              "id": "46cc279d-6df2-4436-90d9-dd892286b87a"
+            },
+            {
+              "name": "tipo",
+              "value": "video",
+              "type": "string",
+              "id": "16407353-b9ee-4dfa-8632-d6a820d15d8a"
+            },
+            {
+              "name": "ext",
+              "value": "mp4",
+              "type": "string",
+              "id": "63cfa179-c2c3-45eb-8594-50e1ff8011ef"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.telefoneCompleto }}",
+              "type": "string",
+              "id": "e8b9a911-dc3c-44da-9395-8f901ff36d77"
+            },
+            {
+              "name": "Nome do Cliente",
+              "value": "={{ $items('Dados do Lead')[0].json[\"Nome do Cliente\"] }}",
+              "type": "string",
+              "id": "68528558-86fc-48d3-a196-6fb302452b5a"
+            },
+            {
+              "name": "sessionId",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.sessionId }}",
+              "type": "string",
+              "id": "2960d618-3f9b-4624-82cf-7efc6760a621"
+            },
+            {
+              "name": "path",
+              "value": "={{ $items('Dados do Lead')[0].json.id }}",
+              "type": "string",
+              "id": "bb2989bf-eddd-4d70-99e9-e04bb0871001"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_STORAGE_SERVICE_ROLE_KEY || $env.SUPABASE_SERVICE_ROLE_KEY }}",
+              "type": "string",
+              "id": "4815471c-b9b6-44c5-9445-f9de5c8a7597"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7e2efd32-85b0-4a0c-9b1f-e462d6d46a6a",
+      "name": "Montar Dados do video1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6336,
+        2896
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca307e40-5a19-4360-9fd6-c1880673a351",
+              "name": "redis1",
+              "value": "={{ $items('redis2')[0].json.propertyName }}",
+              "type": "array"
+            },
+            {
+              "id": "c4ca5471-7418-47a3-a5c0-62246aebfa1e",
+              "name": "redis2",
+              "value": "={{ $json.propertyName }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7920,
+        2672
+      ],
+      "id": "b06db63a-ade4-4155-b906-7bb0951f5c19",
+      "name": "memoria_redis2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ca307e40-5a19-4360-9fd6-c1880673a351",
+              "name": "redis1",
+              "value": "={{ $items('redis3')[0].json.propertyName }}",
+              "type": "array"
+            },
+            {
+              "id": "c4ca5471-7418-47a3-a5c0-62246aebfa1e",
+              "name": "redis2",
+              "value": "={{ $json.propertyName }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        8160,
+        2896
+      ],
+      "id": "76057083-4af7-4928-8a89-5fd15eb95e43",
+      "name": "memoria_redis3"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data",
+        "binaryPropertyName": "=video",
+        "options": {
+          "fileName": "={{ $json['Nome do Cliente'] }}.mp4",
+          "mimeType": "video/mp4"
+        }
+      },
+      "id": "9ef9a05f-950d-4c0f-b6b3-8cdb0b1f1d88",
+      "name": "Convert to vídeo1",
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        6592,
+        2896
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.SUPABASE_STORAGE_URL || 'https://picoieyewgquuwylffxe.supabase.co') + '/storage/v1/object/video-bucket/' + $items('Montar Dados do video1')[0].json['Nome do Cliente'] + '.mp4' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $items('Montar Dados do video1')[0].json.apikey }}"
+            },
+            {
+              "name": "apikey",
+              "value": "={{ $items('Montar Dados do video1')[0].json.apikey }}"
+            },
+            {
+              "name": "x-upsert",
+              "value": "true"
+            },
+            {
+              "name": "Content-Type",
+              "value": "video/mp4"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "video",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6816,
+        2896
+      ],
+      "id": "6ab395d1-555f-4f0e-b733-afee85ac68bb",
+      "name": "Upload Video no Supabase1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const arr1 = $json.redis1 || [];\nconst arr2 = $json.redis2 || [];\n\nconst sameValues = arr1.length === arr2.length &&\n  arr1.every(item => arr2.includes(item));\n\nreturn [{ json: { mesmaLista: sameValues } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        8384,
+        2896
+      ],
+      "id": "e718cc7a-ef31-4d42-93cc-1ecaf53cb169",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.imgbb.com/1/upload",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{ $env.IMGBB_API_KEY }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "image",
+              "inputDataFieldName": "image"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        6560,
+        2672
+      ],
+      "id": "c8f8cd58-3160-4977-91a4-e06fc0a84646",
+      "name": "Upload Imagem no imgbb1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $items('Webhook1')[0].json.body.data.messageType }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0c75c07b-b3e1-4909-b283-7bf57d342feb"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $items('Webhook1')[0].json.body.data.messageType }}",
+                    "rightValue": "extendedTextMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "texto_longo"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $items('Webhook1')[0].json.body.data.messageType }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2f554f56-ce36-4a86-8cd6-335848e5caf2"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $items('Normaliza Webhook1')[0].json.messageType }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4b072dea-bf76-4fe7-b64c-042a05c2cf3c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "image"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $items('Webhook1')[0].json.body.data.messageType }}",
+                    "rightValue": "videoMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "video"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $items('Webhook1')[0].json.body.data.messageType }}",
+                    "rightValue": "associatedChildMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7930398a-dd35-4ff2-a4e5-5a834e3e6168"
+                  },
+                  {
+                    "leftValue": "={{ $items('Webhook1')[0].json.body.data.messageType }}",
+                    "rightValue": "videoMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4cce7026-cb87-49c4-8b75-43c93441adda"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "video_aninhado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5bee9481-940e-4910-b835-1d6f060a718e",
+      "name": "Switch7",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        8048,
+        1600
+      ],
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        11616,
+        1648
+      ],
+      "id": "e08770f2-0e57-47b2-a492-f95b6ed282cf",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        12064,
+        1648
+      ],
+      "id": "21e19130-f36d-40fd-b8fd-a6245fd78ff7",
+      "name": "Wait7",
+      "webhookId": "4076f24b-44a7-4397-b22b-ec3e20c99282"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.block }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ia Ativa"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "3ef0e01c-cc14-4663-bb4d-2905b350c3ab",
+                    "leftValue": "={{ $json.block }}",
+                    "rightValue": "true",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Ia Desativada"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8ce555cf-66eb-4443-822f-3d852f8800c4",
+      "name": "Switch Block1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        6144,
+        1680
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $json.message.chat_id }}_block",
+        "value": "true",
+        "keyType": "string",
+        "expire": true,
+        "ttl": 4320000
+      },
+      "id": "62836a16-ae2e-4b72-8eec-2885b3599400",
+      "name": "PARA IA1",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        5888,
+        1616
+      ],
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "block",
+        "key": "={{ $json.message.chat_id }}_block",
+        "options": {}
+      },
+      "id": "6a742140-8d01-4751-9402-16709a7a7155",
+      "name": "Verificar Atendimento1",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        5888,
+        1776
+      ],
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Pausa para Atendimento Humano",
+        "height": 496,
+        "width": 1428,
+        "color": 7
+      },
+      "id": "92a82cc3-807d-4b5a-934e-516ab5e85145",
+      "name": "Sticky Note47",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        4912,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.data.key.fromMe }}",
+                    "rightValue": "outcoming",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    },
+                    "id": "a51408c7-c841-4e4b-8ded-1c43d7674770"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "outcoming"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "d7b42536-638f-4128-b51b-6aa913e9d9bc",
+                    "leftValue": "={{ $json.body.data.key.fromMe }}",
+                    "rightValue": "incoming",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "false",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "incoming"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dab6f629-6dd4-4ef0-908f-174baaae4676",
+      "name": "Switch1",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        5600,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=midia:{{ $items('Montar Dados do video1')[0].json.path }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        9024,
+        2896
+      ],
+      "id": "e4424bae-167d-4cff-b79c-359805c3f9e1",
+      "name": "Redis8",
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=midia:{{ $items('Montar Dados da Imagem1')[0].json.path }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        8576,
+        2672
+      ],
+      "id": "0b0ce0e9-ca6e-463f-a782-5987a58a5790",
+      "name": "Redis9",
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Busca Info no RAG",
+        "height": 80,
+        "width": 250,
+        "color": 5
+      },
+      "id": "c4bcd03f-4edd-4462-9860-68002158d511",
+      "name": "Sticky Note25",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        11040,
+        2320
+      ]
+    },
+    {
+      "parameters": {
+        "content": "",
+        "height": 412,
+        "width": 480,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        10848,
+        2048
+      ],
+      "typeVersion": 1,
+      "id": "ac2cb536-17ad-4eb8-8dbf-fa194d081b4f",
+      "name": "Sticky Note26"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "={{ $items('Normaliza Webhook1')[0].json.sessionId }}",
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "id": "12b7e205-f7bc-4782-9127-0386aca28036",
+      "name": "REDIS",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        8448,
+        2160
+      ],
+      "credentials": {
+        "redis": {
+          "id": "au4tt5JimdRzwHtN",
+          "name": "Redis YZI OS"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "={{ $items('Normaliza Webhook1')[0].json.sessionId }}",
+        "options": {}
+      },
+      "id": "52a0190e-d9eb-4c1c-8a80-11670d3b84a6",
+      "name": "REDIS3",
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        8896,
+        2160
+      ],
+      "credentials": {
+        "redis": {
+          "id": "V3Z0uTZ8JcD3lOd4",
+          "name": "Redis JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d5a342e9-585b-42ea-be44-644adae10199",
+              "leftValue": "={{ (() => { const v = $json.Redis2; return Array.isArray(v) ? v[v.length - 1] : (v ?? ''); })() }}",
+              "rightValue": "={{ (() => { const v = $json.Redis1; return Array.isArray(v) ? v[v.length - 1] : (v ?? ''); })() }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "738f0a9c-ecc6-44d2-b12f-6af4f9d551d5",
+      "name": "IF-COMPARA",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        9344,
+        2160
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f336a1ff-e577-489d-a739-1eb8bd509245",
+              "name": "Redis2",
+              "value": "={{ Array.isArray($json.propertyName) ? $json.propertyName[$json.propertyName.length - 1] : $json.propertyName }}",
+              "type": "string"
+            },
+            {
+              "id": "946d1420-e379-46e3-8fcd-3816340fbabb",
+              "name": "Redis1",
+              "value": "={{ (() => { const p = $items('REDIS')[0].json.propertyName; return Array.isArray(p) ? p[p.length - 1] : p; })() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5f912174-94f4-4385-8e36-15196f6bf112",
+      "name": "UNIFICA REDIS",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        9120,
+        2160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## think\n",
+        "height": 208,
+        "width": 160,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        10336,
+        2320
+      ],
+      "id": "7333918c-7bbc-49aa-b85b-bcfd41646ff0",
+      "name": "Sticky Note27"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst output = [];\n\nfor (const item of items) {\n\nconst body = item.json.body || {};\nconst data = body.data || {};\nconst headers = item.json.headers || {};\nconst query = item.json.query || {};\n\n\n// ===============================\n// IGNORAR MENSAGENS DO BOT\n// ===============================\n\nif (data?.key?.fromMe === true) {\ncontinue;\n}\n\n\n// ===============================\n// TELEFONE / JID\n// ===============================\n\nlet remoteJid = data?.key?.remoteJid || \"\";\nlet remoteJidAlt = data?.key?.remoteJidAlt || \"\";\n\nlet jid = null;\n\nif (remoteJid.includes(\"@s.whatsapp.net\")) {\njid = remoteJid;\n}\nelse if (remoteJidAlt.includes(\"@s.whatsapp.net\")) {\njid = remoteJidAlt;\n}\n\nlet telefoneCompleto = null;\nlet telefoneDDI = null;\nlet telefoneLocal = null;\nlet sessionId = null;\n\nif (jid) {\n\ntelefoneCompleto = jid.split(\"@\")[0];\n\ntelefoneDDI = telefoneCompleto.substring(0,2);\nconst ddd = telefoneCompleto.substring(2,4);\nlet numero = telefoneCompleto.substring(4);\n\n// correção automática Brasil\nif (telefoneDDI === \"55\" && numero.length === 8) {\nnumero = \"9\" + numero;\n}\n\ntelefoneLocal = ddd + numero;\ntelefoneCompleto = telefoneDDI + telefoneLocal;\n\nsessionId = telefoneCompleto;\n\n}\n\n\n// ===============================\n// NOME\n// ===============================\n\nconst nome = data.pushName || \"Cliente\";\n\n\n// ===============================\n// MESSAGE TYPE\n// ===============================\n\nlet messageType = \"unknown\";\nlet mensagem = null;\n\nlet audioUrl = null;\nlet audioSegundos = null;\n\n\n// TEXTO SIMPLES\nif (data.message?.conversation) {\n\nmessageType = \"text\";\nmensagem = data.message.conversation;\n\n}\n\n// TEXTO EXTENDIDO\nelse if (data.message?.extendedTextMessage?.text) {\n\nmessageType = \"text\";\nmensagem = data.message.extendedTextMessage.text;\n\n}\n\n// AUDIO\nelse if (data.message?.audioMessage) {\n\nmessageType = \"audio\";\n\naudioUrl = data.message.audioMessage.url || null;\naudioSegundos = data.message.audioMessage.seconds || null;\n\nmensagem = \"[audio]\";\n\n}\n\n// IMAGEM\nelse if (data.message?.imageMessage) {\n\nmessageType = \"image\";\nmensagem = \"[image]\";\n\n}\n\n// DOCUMENTO\nelse if (data.message?.documentMessage) {\n\nmessageType = \"document\";\nmensagem = \"[document]\";\n\n}\n\n\n// ===============================\n// TIMESTAMP\n// ===============================\n\nconst timestamp = data.messageTimestamp || null;\n\nlet dataMensagem = null;\n\nif (timestamp) {\ndataMensagem = new Date(timestamp * 1000).toISOString();\n}\n\n\n// ===============================\n// DETECTAR ORIGEM DO LEAD\n// ===============================\n\nlet origemLead = \"WhatsApp Site\";\n\nconst utmSource = (query.utm_source || \"\").toLowerCase();\n\nif (utmSource.includes(\"google\")) {\norigemLead = \"Google Ads\";\n}\n\nelse if (\nutmSource.includes(\"facebook\") ||\nutmSource.includes(\"meta\")\n) {\norigemLead = \"Meta Ads\";\n}\n\nelse if (utmSource.includes(\"instagram\")) {\norigemLead = \"Instagram Orgânico\";\n}\n\nelse if (\nutmSource.includes(\"zap\") ||\nutmSource.includes(\"vivareal\") ||\nutmSource.includes(\"olx\")\n) {\norigemLead = \"Portal Imobiliário\";\n}\n\nelse if (utmSource.includes(\"jp\")) {\norigemLead = \"Anúncio JP\";\n}\n\n\n// ===============================\n// OUTPUT FINAL\n// ===============================\n\noutput.push({\n\njson: {\n\neventType: \"WHATSAPP_MESSAGE\",\n\ninstance: body.instance || null,\n\nnome,\n\nremoteJid: jid,\n\ntelefoneCompleto,\ntelefoneDDI,\ntelefoneLocal,\n\nsessionId,\n\nmessageType,\n\nmensagem,\n\naudioUrl,\naudioSegundos,\n\ntimestamp,\ndataMensagem,\n\norigemLead,\n\nsource: data.source || \"whatsapp\"\n\n}\n\n});\n\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5312,
+        1664
+      ],
+      "id": "023cc47c-ee57-40e2-a724-799701d4867d",
+      "name": "Normaliza Webhook1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2fa59847-33d1-4e48-b2d7-35503117156c",
+              "name": "tenant_id",
+              "value": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+              "type": "string"
+            },
+            {
+              "id": "805e0443-5303-4e5b-8640-d77a9ca76ab2",
+              "name": "nome",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.nome }}",
+              "type": "string"
+            },
+            {
+              "id": "65e72562-1b2d-408e-8a1b-46b222e6ccdb",
+              "name": "telefone",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.telefoneCompleto }}",
+              "type": "string"
+            },
+            {
+              "id": "58175147-92f8-44de-b2dd-5e2b29b637c6",
+              "name": "SUPABASE_ANON_KEY",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}",
+              "type": "string"
+            },
+            {
+              "id": "cbea541d-007d-4072-ad2a-f65943b0839a",
+              "name": "SUPABASE_SERVICE_ROLE_KEY",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}",
+              "type": "string"
+            },
+            {
+              "id": "8f401f7a-94f1-43b8-803f-6d7001aa91e0",
+              "name": "URL_SUPABASE",
+              "value": "={{ $env.SUPABASE_URL || 'https://dwmbklfkrtumfaxrbxio.supabase.co' }}",
+              "type": "string"
+            },
+            {
+              "id": "ef35cab3-6713-4e32-9e86-cd65d550ba54",
+              "name": "mensagem",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.mensagem }}",
+              "type": "string"
+            },
+            {
+              "id": "caba4868-a463-454f-8178-219704a53096",
+              "name": "messageType",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.messageType }}",
+              "type": "string"
+            },
+            {
+              "id": "734d763c-c8d7-46d6-b405-142342f66442",
+              "name": "remoteJid",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "bf34b660-8b1b-44a2-804d-e8af204cd124",
+              "name": "instance",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.instance }}",
+              "type": "string"
+            },
+            {
+              "id": "01b88d0b-ae8b-4189-b215-92b5cf6764a0",
+              "name": "external_message_id",
+              "value": "={{ $items('Webhook1')[0].json.body.data.key.id }}",
+              "type": "string"
+            },
+            {
+              "id": "65218751-95b4-44d0-8657-b975318416c3",
+              "name": "source",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.source }}",
+              "type": "string"
+            },
+            {
+              "id": "ff46d786-aad4-449a-a0a0-706c7f493e69",
+              "name": "origemLead",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.origemLead }}",
+              "type": "string"
+            },
+            {
+              "id": "61865a8b-ffb2-4643-a5c3-5733f51b8758",
+              "name": "dataMensagem",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.dataMensagem }}",
+              "type": "string"
+            },
+            {
+              "id": "evolution-api-url-final-hardening",
+              "name": "EVOLUTION_API_URL",
+              "value": "={{ $env.EVOLUTION_API_URL || 'https://evo.yzihub.com' }}",
+              "type": "string"
+            },
+            {
+              "id": "evolution-api-key-final-hardening",
+              "name": "EVOLUTION_API_KEY",
+              "value": "={{ $env.EVOLUTION_API_KEY }}",
+              "type": "string"
+            },
+            {
+              "id": "evolution-instance-final-hardening",
+              "name": "EVOLUTION_INSTANCE",
+              "value": "={{ $items('Normaliza Webhook1')[0].json.instance || $items('Webhook1')[0].json.body.instance || \"Jurema Brokers\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        6672,
+        1696
+      ],
+      "id": "6019ee21-25d1-4ff9-809a-6dea6f919ca5",
+      "name": "dados do banco"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nfunction normalizePhone(input) {\n  if (input === null || input === undefined) return '';\n  return String(input).replace(/\\D/g, '').trim();\n}\n\nfunction text(value) {\n  if (!value) return '';\n  if (Array.isArray(value)) return value.join(', ');\n  return String(value);\n}\n\nasync function n8nHttpRequest(options) {\n  if (this && this.helpers && typeof this.helpers.httpRequest === 'function') {\n    return await this.helpers.httpRequest(options);\n  }\n  if (this && this.helpers && typeof this.helpers.request === 'function') {\n    return await this.helpers.request(options);\n  }\n  throw new Error('Nenhum helper HTTP disponível no Code node.');\n}\n\nasync function supabaseRequest({ baseUrl, apiKey, method, path, qs = {}, body, prefer }) {\n  const cleanBase = String(baseUrl).replace(/\\/+$/, '');\n  const cleanPath = String(path).startsWith('/') ? path : `/${path}`;\n  const headers = {\n    apikey: apiKey,\n    Authorization: `Bearer ${apiKey}`,\n    'Content-Type': 'application/json',\n  };\n  if (prefer) headers.Prefer = prefer;\n\n  const options = {\n    method,\n    url: `${cleanBase}${cleanPath}`,\n    qs,\n    headers,\n    json: true,\n  };\n  if (body !== undefined) options.body = body;\n\n  try {\n    return await n8nHttpRequest.call(this, options);\n  } catch (error) {\n    const responseBody =\n      error?.response?.data ||\n      error?.response?.body ||\n      error?.context ||\n      error?.description ||\n      error?.message ||\n      error;\n\n    throw new Error(\n      `Supabase ${method} ${path} falhou. BODY: ${JSON.stringify(body)} DETALHE: ${JSON.stringify(responseBody)}`\n    );\n  }\n}\n\nfunction isPlainObject(value) {\n  return value && typeof value === 'object' && !Array.isArray(value);\n}\n\nfunction mergeMetadata(base, extra) {\n  return { ...(isPlainObject(base) ? base : {}), ...(isPlainObject(extra) ? extra : {}) };\n}\n\nfunction firstNonEmpty(...values) {\n  for (const value of values) {\n    const text = String(value ?? '').trim();\n    if (text) return text;\n  }\n  return null;\n}\n\nfunction normalizeForInference(value) {\n  return String(value ?? '')\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\nfunction parseOperationalMoney(value) {\n  const raw = String(value ?? '').trim();\n  if (!raw) return null;\n  const compact = raw\n    .replace(/r\\$/gi, '')\n    .replace(/\\s/g, '')\n    .replace(/\\./g, '')\n    .replace(',', '.');\n  const number = Number(compact);\n  if (!Number.isFinite(number)) return null;\n  if (/\\b(milhao|milhoes|mi)\\b/i.test(raw)) return Math.round(number * 1000000);\n  if (/\\b(k|mil)\\b/i.test(raw) && number < 10000) return Math.round(number * 1000);\n  return Math.round(number);\n}\n\nfunction inferOperationalExtraction({ lead, deal, mensagem, origemLead }) {\n  const meta = mergeMetadata(lead?.metadata, deal?.metadata);\n  const text = normalizeForInference([\n    mensagem,\n    meta.primeira_mensagem,\n    meta.bairro_interesse,\n    meta.tipo_imovel,\n    meta.finalidade,\n    meta.objetivo,\n    deal?.location_preference,\n    deal?.property_type,\n    deal?.intent,\n    deal?.purpose,\n    origemLead,\n  ].filter(Boolean).join(' '));\n\n  const neighborhoods = [\n    ['ponta de campina', 'Ponta de Campina'],\n    ['jardim oceania', 'Jardim Oceania'],\n    ['cabo branco', 'Cabo Branco'],\n    ['intermares', 'Intermares'],\n    ['manaira', 'Manaira'],\n    ['tambau', 'Tambau'],\n    ['bessa', 'Bessa'],\n    ['camboinha', 'Camboinha'],\n    ['altiplano', 'Altiplano'],\n    ['aeroclube', 'Aeroclube'],\n  ];\n\n  const location = firstNonEmpty(\n    deal?.location_preference,\n    meta.bairro_interesse,\n    meta.bairro,\n    neighborhoods.find(([needle]) => text.includes(needle))?.[1],\n  );\n\n  const propertyType = firstNonEmpty(\n    deal?.property_type,\n    meta.tipo_imovel,\n    text.includes('cobertura') ? 'cobertura' : null,\n    text.includes('apartamento') || text.includes('apto') ? 'apartamento' : null,\n    text.includes('casa') ? 'casa' : null,\n    text.includes('flat') || text.includes('studio') ? 'flat' : null,\n    text.includes('terreno') ? 'terreno' : null,\n  );\n\n  const intent = firstNonEmpty(\n    deal?.intent,\n    meta.objetivo,\n    text.includes('invest') || text.includes('rentabilidade') || text.includes('valorizacao') ? 'investir' : null,\n    text.includes('alugar') || text.includes('locacao') ? 'alugar' : null,\n    text.includes('comprar') || text.includes('morar') ? 'comprar' : null,\n  );\n\n  const bedroomsMatch = text.match(/\\b([1-6])\\s*(?:quartos?|qts?|dormitorios?|dorms?)\\b/);\n  const budgetMatch =\n    text.match(/(?:ate|maximo|max|teto|orcamento(?: de)?|valor(?: de)?|faixa(?: de)?)\\s*(?:r\\$)?\\s*([0-9]+(?:[.,][0-9]+)?\\s*(?:milhao|milhoes|mi|mil|k)?)/) ||\n    text.match(/(?:r\\$)\\s*([0-9]+(?:[.,][0-9]+)?\\s*(?:milhao|milhoes|mi|mil|k)?)/);\n  const timelineMatch = text.match(/\\b(?:ate\\s*)?([0-9]{1,2})\\s*(dias|meses|mes)\\b/);\n\n  return {\n    intent,\n    bedrooms: firstNonEmpty(deal?.bedrooms, meta.quartos, bedroomsMatch?.[1]),\n    location,\n    timeline: firstNonEmpty(deal?.timeline, meta.timeline, meta.prazo, timelineMatch ? timelineMatch[0] : null),\n    budget_max: deal?.budget_max ?? parseOperationalMoney(meta.faixa_valor ?? meta.valor_max ?? budgetMatch?.[1]),\n    motivation: firstNonEmpty(\n      deal?.motivation,\n      meta.motivation,\n      text.includes('familia') || text.includes('filho') || text.includes('escola') ? 'familia_rotina' : null,\n      text.includes('praia') || text.includes('mar') ? 'lifestyle_praia' : null,\n      text.includes('invest') || text.includes('retorno') ? 'investimento' : null,\n    ),\n    property_type: propertyType,\n    decision_maker: firstNonEmpty(\n      deal?.decision_maker,\n      meta.decision_maker,\n      text.includes('casal') || text.includes('esposa') || text.includes('marido') ? 'casal' : null,\n      text.includes('familia') ? 'familia' : null,\n    ),\n    payment_method: firstNonEmpty(\n      deal?.payment_method,\n      meta.payment_method,\n      meta.pagamento,\n      text.includes('financiamento') ? 'financiamento' : null,\n      text.includes('fgts') ? 'fgts' : null,\n      text.includes('a vista') || text.includes('à vista') ? 'a_vista' : null,\n    ),\n  };\n}\n\nfunction mergeExtractedState(existing, inferred) {\n  const base = isPlainObject(existing) ? existing : {};\n  const merged = { ...base };\n  for (const [key, value] of Object.entries(inferred || {})) {\n    if (value !== null && value !== undefined && String(value).trim() !== '') {\n      merged[key] = value;\n    } else if (!(key in merged)) {\n      merged[key] = null;\n    }\n  }\n  return merged;\n}\n\nfunction buildOperationalDealMetadata({ lead, deal, mensagem, origemLead, now }) {\n  const current = isPlainObject(deal?.metadata) ? deal.metadata : {};\n  const lastExtracted = mergeExtractedState(\n    current.last_extracted,\n    inferOperationalExtraction({ lead, deal, mensagem, origemLead }),\n  );\n  const missingFields = ['intent', 'location', 'budget_max', 'timeline', 'property_type']\n    .filter((key) => !firstNonEmpty(lastExtracted[key]));\n\n  return mergeMetadata(current, {\n    entrypoint: firstNonEmpty(current.entrypoint, 'evolution'),\n    lead_source_context: firstNonEmpty(current.lead_source_context, normalizeForInference(origemLead).includes('whatsapp') ? 'whatsapp' : origemLead, 'whatsapp'),\n    last_extracted: lastExtracted,\n    missing_fields: missingFields,\n    profile_complete: missingFields.length === 0,\n    last_state_sync_at: now,\n  });\n}\n\nfunction buildOperationalDealPatch({ lead, deal, mensagem, origemLead, telefone, nome, now }) {\n  const metadata = buildOperationalDealMetadata({ lead, deal, mensagem, origemLead, now });\n  const extracted = metadata.last_extracted || {};\n  const patch = {\n    client_name: deal?.client_name || lead?.name || nome || null,\n    client_phone: deal?.client_phone || telefone || null,\n    metadata,\n    updated_at: now,\n  };\n\n  if (!deal?.intent && firstNonEmpty(extracted.intent)) patch.intent = extracted.intent;\n  if (!deal?.location_preference && firstNonEmpty(extracted.location)) patch.location_preference = extracted.location;\n  if (!deal?.budget_max && extracted.budget_max) patch.budget_max = extracted.budget_max;\n  if (!deal?.bedrooms && firstNonEmpty(extracted.bedrooms)) patch.bedrooms = String(extracted.bedrooms);\n  if (!deal?.property_type && firstNonEmpty(extracted.property_type)) patch.property_type = extracted.property_type;\n  if (!deal?.timeline && firstNonEmpty(extracted.timeline)) patch.timeline = extracted.timeline;\n  if (!deal?.payment_method && firstNonEmpty(extracted.payment_method)) patch.payment_method = extracted.payment_method;\n  if (!deal?.motivation && firstNonEmpty(extracted.motivation)) patch.motivation = extracted.motivation;\n  if (!deal?.decision_maker && firstNonEmpty(extracted.decision_maker)) patch.decision_maker = extracted.decision_maker;\n  if (!deal?.qualification_status) patch.qualification_status = metadata.profile_complete ? 'morno' : 'incompleto';\n  if (!deal?.deal_stage) patch.deal_stage = 'qualificacao';\n\n  Object.keys(patch).forEach((key) => {\n    if (patch[key] === null || patch[key] === undefined || patch[key] === '') delete patch[key];\n  });\n\n  return patch;\n}\n\nfunction validHttpUrl(value) {\n  const raw = String(value ?? '').trim();\n  if (!/^https?:\\/\\//i.test(raw)) return '';\n  if (/\\s|localhost|127\\.0\\.0\\.1/i.test(raw)) return '';\n  return raw;\n}\n\nfunction pickProfilePictureUrl(payload) {\n  if (!payload) return '';\n  if (typeof payload === 'string') return validHttpUrl(payload);\n  if (Array.isArray(payload)) {\n    for (const item of payload) {\n      const url = pickProfilePictureUrl(item);\n      if (url) return url;\n    }\n    return '';\n  }\n  if (typeof payload !== 'object') return '';\n\n  const candidates = [\n    payload.profilePictureUrl,\n    payload.profilePicture,\n    payload.pictureUrl,\n    payload.picture,\n    payload.url,\n    payload.data?.profilePictureUrl,\n    payload.data?.profilePicture,\n    payload.data?.pictureUrl,\n    payload.data?.picture,\n    payload.data?.url,\n  ];\n\n  for (const candidate of candidates) {\n    const url = pickProfilePictureUrl(candidate);\n    if (url) return url;\n  }\n\n  return '';\n}\n\nasync function fetchLeadAvatar({ evolutionBaseUrl, evolutionApiKey, evolutionInstance, telefone }) {\n  const base = String(evolutionBaseUrl || '').replace(/\\/+$/, '');\n  const instance = String(evolutionInstance || '').trim();\n  const number = String(telefone || '').replace(/\\D/g, '');\n\n  if (!base || !evolutionApiKey || !instance || !number) {\n    return {\n      url: '',\n      status: 'not_configured',\n      warning: 'evolution_profile_picture_not_configured',\n    };\n  }\n\n  try {\n    const response = await n8nHttpRequest.call(this, {\n      method: 'POST',\n      url: `${base}/chat/fetchProfilePictureUrl/${encodeURIComponent(instance)}`,\n      headers: {\n        apikey: evolutionApiKey,\n        'Content-Type': 'application/json',\n      },\n      body: { number },\n      json: true,\n      timeout: 8000,\n    });\n\n    const url = pickProfilePictureUrl(response);\n    if (!url) {\n      return {\n        url: '',\n        status: 'not_available',\n        warning: 'lead_profile_picture_empty',\n      };\n    }\n\n    return {\n      url,\n      status: 'ok',\n      warning: null,\n    };\n  } catch (error) {\n    return {\n      url: '',\n      status: 'error',\n      warning: 'lead_profile_picture_fetch_failed',\n      error: error?.message || String(error),\n    };\n  }\n}\n\nasync function getFirst(args) {\n  const result = await supabaseRequest.call(this, args);\n  return Array.isArray(result) ? result[0] : result;\n}\n\nasync function getMany(args) {\n  const result = await supabaseRequest.call(this, args);\n  return Array.isArray(result) ? result : (result ? [result] : []);\n}\n\nfunction buildRecentMessagesText(messages) {\n  return (messages || [])\n    .map((m) => {\n      const who = m.sender_type === 'agent' || m.direction === 'outbound' ? 'Ju' : 'Cliente';\n      return `${who}: ${m.content || ''}`;\n    })\n    .filter(Boolean)\n    .join('\\n');\n}\n\nfunction buildOperationalContext({ lead, deal, conversation, recentMessages, currentMessage }) {\n  const meta = lead?.metadata || {};\n\n  const collected = {\n    objetivo: deal?.intent || meta.objetivo || meta.finalidade || '',\n    finalidade: deal?.purpose || meta.finalidade || '',\n    bairro_interesse: deal?.location_preference || meta.bairro_interesse || '',\n    faixa_valor: [\n      deal?.budget_min ? `mín ${deal.budget_min}` : '',\n      deal?.budget_max ? `máx ${deal.budget_max}` : '',\n    ].filter(Boolean).join(' / ') || meta.faixa_valor || '',\n    tipo_imovel: deal?.property_type || meta.tipo_imovel || '',\n    timeline: deal?.timeline || meta.timeline || '',\n    pagamento: deal?.payment_method || meta.payment_method || '',\n  };\n\n  const missing = [];\n  if (!collected.objetivo && !collected.finalidade) missing.push('objetivo: morar ou investir');\n  if (!collected.bairro_interesse) missing.push('bairro/região de interesse');\n  if (!collected.faixa_valor) missing.push('faixa de valor');\n  if (!collected.timeline) missing.push('prazo/timeline');\n\n  let ctx = '';\n  ctx += '<estado_atual>\\n';\n  ctx += `tenant_id: ${lead.tenant_id}\\n`;\n  ctx += `lead_id: ${lead.id}\\n`;\n  ctx += `deal_id: ${deal?.id || ''}\\n`;\n  ctx += `conversation_id: ${conversation?.id || ''}\\n`;\n  ctx += `nome: ${lead.name || 'Cliente'}\\n`;\n  ctx += `telefone: ${lead.phone || lead.phone_normalized || ''}\\n`;\n  ctx += `lead_status: ${lead.status || 'new'}\\n`;\n  ctx += `ai_status: ${lead.ai_status || ''}\\n`;\n  ctx += `ai_temperature: ${lead.ai_temperature || ''}\\n`;\n  ctx += `conversation_status: ${conversation?.status || 'open'}\\n`;\n  ctx += `ai_paused: ${conversation?.ai_paused === true ? 'true' : 'false'}\\n`;\n  ctx += '</estado_atual>\\n\\n';\n\n  ctx += '<dados_coletados>\\n';\n  for (const [key, value] of Object.entries(collected)) {\n    ctx += `${key}: ${text(value) || 'não informado'}\\n`;\n  }\n  ctx += '</dados_coletados>\\n\\n';\n\n  ctx += '<campos_faltantes>\\n';\n  ctx += missing.length ? missing.map((m) => `- ${m}`).join('\\n') : 'nenhum campo crítico faltante';\n  ctx += '\\n</campos_faltantes>\\n\\n';\n\n  ctx += '<historico_recente>\\n';\n  ctx += buildRecentMessagesText(recentMessages) || 'sem histórico recente salvo';\n  ctx += '\\n</historico_recente>\\n\\n';\n\n  ctx += '<mensagem_atual>\\n';\n  ctx += currentMessage || '';\n  ctx += '\\n</mensagem_atual>\\n';\n\n  return ctx;\n}\n\nconst items = $input.all();\nconst output = [];\n\nfor (const item of items) {\n  const input = item.json ?? {};\n\n  const tenantId = input.tenant_id || '82cc7aa9-fc6e-4f37-8d8e-8a71c1691361';\n  const nome = input.nome || input.name || 'Lead';\n  const telefone = normalizePhone(input.telefone || input.phone || input.telefoneCompleto || '');\n  const mensagem = String(input.mensagem || '').trim();\n  const messageType = input.messageType || 'text';\n  const remoteJid = input.remoteJid || null;\n  const instance = input.instance || 'Jurema Brokers';\n  const externalMessageId = input.external_message_id || null;\n  let rawPayload = {};\n  try {\n    const webhookOut = $items('Webhook1')[0]?.json?.body;\n    if (webhookOut && typeof webhookOut === 'object') rawPayload = webhookOut;\n  } catch (e) { rawPayload = {}; }\n  const origemLead = input.origemLead || 'WhatsApp Site';\n\n  const baseUrl =\n    input.URL_SUPABASE ||\n    input.SUPABASE_URL ||\n    'https://dwmbklfkrtumfaxrbxio.supabase.co';\n\n  const apiKey =\n    input.SUPABASE_SECRET_KEY ||\n    input.SUPABASE_SERVICE_ROLE_KEY ||\n    input.SUPABASE_ANON_KEY ||\n    '';\n\n  const evolutionBaseUrl =\n    input.EVOLUTION_API_URL ||\n    input.SERVER_URL ||\n    '';\n\n  const evolutionApiKey =\n    input.EVOLUTION_API_KEY ||\n    input.AUTHENTICATION_API_KEY ||\n    '';\n\n  const evolutionInstance =\n    input.EVOLUTION_INSTANCE ||\n    rawPayload.instance ||\n    instance ||\n    'Jurema Brokers';\n\n  if (!apiKey) throw new Error('Chave Supabase ausente no node dados do banco.');\n  if (!telefone) throw new Error('Telefone não normalizado; não é possível criar lead/conversa.');\n\n  const avatarResult = await fetchLeadAvatar.call(this, {\n    evolutionBaseUrl,\n    evolutionApiKey,\n    evolutionInstance,\n    telefone,\n  });\n\n  const avatarMetadata = {\n    lead_avatar_url: avatarResult.url || null,\n    lead_avatar_status: avatarResult.status,\n    lead_avatar_warning: avatarResult.warning || null,\n    lead_avatar_checked_at: new Date().toISOString(),\n  };\n  if (avatarResult.error) avatarMetadata.lead_avatar_error = avatarResult.error;\n\n  // 1) Lead: buscar/criar sem duplicar por tenant_id + phone_normalized/phone.\n  let lead = await getFirst.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'GET',\n    path: '/rest/v1/leads',\n    qs: {\n      select: '*',\n      tenant_id: `eq.${tenantId}`,\n      phone_normalized: `eq.${telefone}`,\n      limit: 1,\n    },\n  });\n\n  if (!lead) {\n    lead = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'GET',\n      path: '/rest/v1/leads',\n      qs: {\n        select: '*',\n        tenant_id: `eq.${tenantId}`,\n        phone: `eq.${telefone}`,\n        limit: 1,\n      },\n    });\n  }\n\n  if (!lead) {\n    lead = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'POST',\n      path: '/rest/v1/leads',\n      body: {\n        tenant_id: tenantId,\n        name: nome || `Cliente ${telefone.slice(-4)}`,\n        phone: telefone,\n        phone_normalized: telefone,\n        source: 'whatsapp',\n        status: 'new',\n        score: 0,\n        metadata: mergeMetadata({\n          origem: origemLead,\n          primeira_mensagem: mensagem,\n        }, avatarMetadata),\n        ai_status: 'novo',\n        ai_temperature: 'frio',\n      },\n      prefer: 'return=representation',\n    });\n  } else {\n    const patch = {\n      phone_normalized: lead.phone_normalized || telefone,\n      source: lead.source || 'whatsapp',\n      metadata: mergeMetadata(lead.metadata, avatarMetadata),\n      updated_at: new Date().toISOString(),\n    };\n    if ((!lead.name || lead.name === 'Lead') && nome) patch.name = nome;\n\n    const updatedLead = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'PATCH',\n      path: '/rest/v1/leads',\n      qs: { id: `eq.${lead.id}` },\n      body: patch,\n      prefer: 'return=representation',\n    });\n    if (updatedLead) lead = updatedLead;\n  }\n\n  // 2) Deal Jurema: buscar/criar por tenant_id + lead_id.\n  let deal = await getFirst.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'GET',\n    path: '/rest/v1/jurema_deals',\n    qs: {\n      select: '*',\n      tenant_id: `eq.${tenantId}`,\n      lead_id: `eq.${lead.id}`,\n      limit: 1,\n    },\n  });\n\n  if (!deal) {\n    const nowForDealCreate = new Date().toISOString();\n    const createDealBody = {\n      tenant_id: tenantId,\n      lead_id: lead.id,\n      ...buildOperationalDealPatch({\n        lead,\n        deal: {},\n        mensagem,\n        origemLead,\n        telefone,\n        nome,\n        now: nowForDealCreate,\n      }),\n    };\n\n    deal = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'POST',\n      path: '/rest/v1/jurema_deals',\n      body: createDealBody,\n      prefer: 'return=representation',\n    });\n  } else {\n    const nowForDealSync = new Date().toISOString();\n    const operationalDealPatch = buildOperationalDealPatch({\n      lead,\n      deal,\n      mensagem,\n      origemLead,\n      telefone,\n      nome,\n      now: nowForDealSync,\n    });\n\n    const updatedDeal = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'PATCH',\n      path: '/rest/v1/jurema_deals',\n      qs: { id: `eq.${deal.id}` },\n      body: operationalDealPatch,\n      prefer: 'return=representation',\n    });\n    if (updatedDeal) deal = updatedDeal;\n  }\n\n  // 3) Conversation: buscar/criar por tenant_id + phone_normalized.\n  let conversation = await getFirst.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'GET',\n    path: '/rest/v1/conversations',\n    qs: {\n      select: '*',\n      tenant_id: `eq.${tenantId}`,\n      phone_normalized: `eq.${telefone}`,\n      limit: 1,\n    },\n  });\n\n  if (!conversation) {\n    conversation = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'POST',\n      path: '/rest/v1/conversations',\n      body: {\n        tenant_id: tenantId,\n        lead_id: lead.id,\n        deal_id: deal?.id || null,\n        phone: telefone,\n        phone_normalized: telefone,\n        channel: 'whatsapp',\n        status: 'open',\n        ai_paused: false,\n        last_message: mensagem || null,\n        last_message_at: new Date().toISOString(),\n        last_inbound_at: new Date().toISOString(),\n        raw_payload: rawPayload,\n        metadata: mergeMetadata({\n          instance,\n          origem: origemLead,\n        }, avatarMetadata),\n      },\n      prefer: 'return=representation',\n    });\n  } else {\n    const updatedConversation = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'PATCH',\n      path: '/rest/v1/conversations',\n      qs: { id: `eq.${conversation.id}` },\n      body: {\n        lead_id: conversation.lead_id || lead.id,\n        deal_id: conversation.deal_id || deal?.id || null,\n        last_message: mensagem || conversation.last_message || null,\n        last_message_at: new Date().toISOString(),\n        last_inbound_at: new Date().toISOString(),\n        metadata: mergeMetadata(conversation.metadata, avatarMetadata),\n        updated_at: new Date().toISOString(),\n      },\n      prefer: 'return=representation',\n    });\n    if (updatedConversation) conversation = updatedConversation;\n  }\n\n  // 4) Salvar inbound, idempotente por external_message_id quando existir.\n  let inboundAlreadyExists = false;\n  if (externalMessageId) {\n    const existingInbound = await getFirst.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'GET',\n      path: '/rest/v1/conversation_messages',\n      qs: {\n        select: 'id',\n        tenant_id: `eq.${tenantId}`,\n        external_message_id: `eq.${externalMessageId}`,\n        limit: 1,\n      },\n    });\n    inboundAlreadyExists = !!existingInbound;\n  }\n\n  if (!inboundAlreadyExists) {\n    await supabaseRequest.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'POST',\n      path: '/rest/v1/conversation_messages',\n      body: {\n        tenant_id: tenantId,\n        conversation_id: conversation.id,\n        lead_id: lead.id,\n        deal_id: deal?.id || null,\n        direction: 'inbound',\n        sender_type: 'lead',\n        content: mensagem || `[${messageType}]`,\n        message_type: messageType || 'text',\n        external_message_id: externalMessageId,\n        external_instance: instance,\n        external_remote_jid: remoteJid,\n        raw_payload: rawPayload,\n        metadata: mergeMetadata({\n          origem: origemLead,\n        }, avatarMetadata),\n      },\n      prefer: 'return=minimal',\n    });\n  }\n\n  // 5) Histórico recente oficial para memória curta.\n  const recentDesc = await getMany.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'GET',\n    path: '/rest/v1/conversation_messages',\n    qs: {\n      select: 'direction,sender_type,content,message_type,created_at',\n      conversation_id: `eq.${conversation.id}`,\n      order: 'created_at.desc',\n      limit: 12,\n    },\n  });\n\n  const recentMessages = recentDesc.reverse();\n\n  const context = buildOperationalContext({\n    lead,\n    deal,\n    conversation,\n    recentMessages,\n    currentMessage: mensagem,\n  });\n\n  const leadCompact = {\n    id: lead.id,\n    tenant_id: lead.tenant_id,\n    name: lead.name,\n    phone: lead.phone,\n    phone_normalized: lead.phone_normalized,\n    status: lead.status,\n    score: lead.score,\n    ai_status: lead.ai_status,\n    ai_temperature: lead.ai_temperature,\n    ai_last_intent: lead.ai_last_intent,\n    source: lead.source,\n    metadata: lead.metadata || {},\n  };\n  const dealCompact = deal ? {\n    id: deal.id,\n    tenant_id: deal.tenant_id,\n    lead_id: deal.lead_id,\n    intent: deal.intent,\n    deal_stage: deal.deal_stage,\n    qualification_status: deal.qualification_status,\n    property_type: deal.property_type,\n    location_preference: deal.location_preference,\n    bedrooms: deal.bedrooms,\n    budget_min: deal.budget_min,\n    budget_max: deal.budget_max,\n    timeline: deal.timeline,\n    payment_method: deal.payment_method,\n    decision_maker: deal.decision_maker,\n    motivation: deal.motivation,\n    purpose: deal.purpose,\n    metadata: deal.metadata || {},\n  } : null;\n  const conversationCompact = conversation ? {\n    id: conversation.id,\n    tenant_id: conversation.tenant_id,\n    lead_id: conversation.lead_id,\n    deal_id: conversation.deal_id,\n    status: conversation.status,\n    ai_paused: conversation.ai_paused === true,\n    phone_normalized: conversation.phone_normalized,\n    metadata: conversation.metadata || {},\n  } : null;\n  const recentCompact = recentMessages.map((m) => ({\n    direction: m.direction,\n    sender_type: m.sender_type,\n    content: String(m.content || '').slice(0, 800),\n    message_type: m.message_type,\n    created_at: m.created_at,\n  }));\n\n  output.push({\n    json: {\n      tenant_id: tenantId,\n      lead_id: lead.id,\n      deal_id: deal?.id || null,\n      conversation_id: conversation.id,\n      sessionId: telefone,\n      telefoneCompleto: telefone,\n      remoteJid,\n      phone: lead.phone,\n      lead: leadCompact,\n      deal: dealCompact,\n      conversation: conversationCompact,\n      recent_messages: recentCompact,\n      mensagemCliente: mensagem,\n      messageType,\n      instance,\n      external_message_id: externalMessageId,\n      origemLead,\n      lead_avatar_url: avatarResult.url || lead.metadata?.lead_avatar_url || null,\n      lead_avatar_status: avatarResult.status,\n      lead_avatar_warning: avatarResult.warning || null,\n      _context: context,\n      _status_slug: lead.status || 'new',\n      _skip_ai: conversation.ai_paused === true,\n      _debug: {\n        tenant_id_usado: tenantId,\n        telefone_input: telefone,\n        lead_id: lead.id,\n        deal_id: deal?.id || null,\n        conversation_id: conversation.id,\n        inboundAlreadyExists,\n        ai_paused: conversation.ai_paused === true,\n        lead_avatar_status: avatarResult.status,\n        lead_avatar_warning: avatarResult.warning || null,\n      },\n      // aliases antigos para nao quebrar nodes existentes\n      Telefone: lead.phone,\n      'Status Lead': lead.status,\n      'Score do Lead': lead.score,\n      record_id_guardiao: lead.id,\n      nome_cliente: lead.name,\n    },\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6896,
+        1696
+      ],
+      "id": "4336556b-f831-433a-b116-3e84583384b0",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "=Jurema Brokers",
+        "remoteJid": "={{ $json.remoteJid || $json.telefoneCompleto }}",
+        "messageText": "={{ $json.resposta }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        11840,
+        1584
+      ],
+      "id": "00682d7a-1d92-4c6f-99b9-6a2fcfa1348f",
+      "name": "Evolution API",
+      "credentials": {
+        "evolutionApi": {
+          "id": "sX2Z4jQVEwbEivqP",
+          "name": "Evolution YZIHUB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "534f802b-b2e7-4ae5-ba4f-faaa645e579c",
+              "leftValue": "={{ $json._skip_ai }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b75e4f0d-4d82-4676-8925-a41d7d10876c",
+      "name": "IF IA Pausada Supabase",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        7120,
+        1696
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "305d341e-3e75-44f5-baa6-4df39e89eda9",
+              "name": "ok",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "d4a99db4-b170-4dfa-b9c4-661f40fb6606",
+              "name": "reason",
+              "value": "ai_paused_true",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5a65ab81-f5dc-44ca-8903-d40838781e4b",
+      "name": "IA Pausada - Encerrar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        7344,
+        1600
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "async function n8nHttpRequest(options) {\n  if (this && this.helpers && typeof this.helpers.httpRequest === 'function') {\n    return await this.helpers.httpRequest(options);\n  }\n  if (this && this.helpers && typeof this.helpers.request === 'function') {\n    return await this.helpers.request(options);\n  }\n  throw new Error('Nenhum helper HTTP disponível no Code node.');\n}\n\nasync function supabaseRequest({ baseUrl, apiKey, method, path, qs = {}, body, prefer }) {\n  const cleanBase = String(baseUrl).replace(/\\/+$/, '');\n  const cleanPath = String(path).startsWith('/') ? path : `/${path}`;\n\n  const headers = {\n    apikey: apiKey,\n    Authorization: `Bearer ${apiKey}`,\n    'Content-Type': 'application/json',\n  };\n\n  if (prefer) headers.Prefer = prefer;\n\n  const options = {\n    method,\n    url: `${cleanBase}${cleanPath}`,\n    qs,\n    headers,\n    json: true,\n  };\n\n  if (body !== undefined) options.body = body;\n\n  return await n8nHttpRequest.call(this, options);\n}\n\nconst agentOutput = String($json.output || '').trim();\n\nfunction optionalNodeJson(name) {\n  try {\n    return $items(name)[0]?.json || {};\n  } catch (error) {\n    return {};\n  }\n}\n\n// Build Context ja consolidou todos os ids no $json local.\n// dados do banco mantemos como fallback para credenciais (env-driven).\nconst state = $json || {};\nconst db = optionalNodeJson('dados do banco');\n\nconst conversationId = state.conversation_id || state.conversation?.id || null;\nconst tenantId = state.tenant_id || state.lead?.tenant_id || null;\nconst leadId = state.lead_id || state.lead?.id || null;\nconst dealId = state.deal_id || state.deal?.id || null;\n\nif (!conversationId) throw new Error('conversation_id ausente.');\nif (!tenantId) throw new Error('tenant_id ausente.');\n\nconst baseUrl =\n  db.URL_SUPABASE ||\n  db.SUPABASE_URL ||\n  'https://dwmbklfkrtumfaxrbxio.supabase.co';\n\nconst apiKey =\n  db.SUPABASE_SECRET_KEY ||\n  db.SUPABASE_SERVICE_ROLE_KEY ||\n  $env.SUPABASE_SERVICE_ROLE_KEY ||\n  db.SUPABASE_ANON_KEY ||\n  $env.SUPABASE_ANON_KEY;\n\nif (!apiKey) throw new Error('Chave Supabase ausente para salvar outbound.');\n\nif (agentOutput) {\n  await supabaseRequest.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'POST',\n    path: '/rest/v1/conversation_messages',\n    body: {\n      tenant_id: tenantId,\n      conversation_id: conversationId,\n      lead_id: leadId,\n      deal_id: dealId,\n      direction: 'outbound',\n      sender_type: 'agent',\n      content: agentOutput,\n      message_type: 'text',\n      external_instance: state.instance || db.instance || 'Jurema Brokers',\n      external_remote_jid: state.remoteJid || null,\n      metadata: {\n        agent: 'ju',\n        source: state.runtime_fallback === true\n          ? 'runtime_fallback'\n          : (state.event_type === 'followup_resume' ? 'n8n_followup' : 'n8n'),\n        event_type: state.event_type || null,\n        followup_task_id: state.followup_task_id || null,\n        runtime_fallback: state.runtime_fallback === true,\n        runtime_fallback_reason: state.runtime_fallback_reason || null,\n        runtime_trace_id: state.runtime_trace_id || null,\n        runtime_ok: state.runtime_ok === true\n      }\n    },\n    prefer: 'return=minimal'\n  });\n\n  await supabaseRequest.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'PATCH',\n    path: '/rest/v1/conversations',\n    qs: { id: `eq.${conversationId}` },\n    body: {\n      last_message: agentOutput,\n      last_message_at: new Date().toISOString(),\n      last_outbound_at: new Date().toISOString(),\n      updated_at: new Date().toISOString()\n    },\n    prefer: 'return=minimal'\n  });\n}\n\nreturn [{\n  json: {\n    ...$json,\n    output: agentOutput,\n    saved_outbound: Boolean(agentOutput),\n    conversation_id: conversationId,\n    lead_id: leadId,\n    deal_id: dealId,\n    event_type: state.event_type || null,\n    followup_task_id: state.followup_task_id || null,\n    followup_task: state.followup_task || null,\n    remoteJid: state.remoteJid || state.telefoneCompleto || null,\n    telefoneCompleto: state.telefoneCompleto || state.remoteJid || null,\n    sessionId: state.sessionId || state.telefoneCompleto || state.remoteJid || null\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        10944,
+        1648
+      ],
+      "id": "36bd835d-d27a-42d1-a475-cfe7814f9c62",
+      "name": "Salvar Outbound Supabase"
+    },
+    {
+      "parameters": {
+        "path": "83a0625b-2879-463f-a704-5f49946be59b",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        5056,
+        2160
+      ],
+      "id": "ac0ba079-5ee7-46f4-9d37-2a483fd2aff2",
+      "name": "Webhook",
+      "webhookId": "83a0625b-2879-463f-a704-5f49946be59b"
+    },
+    {
+      "parameters": {
+        "jsCode": "function clean(value) {\n  return String(value ?? '').trim();\n}\n\nfunction firstText(...values) {\n  return values.map(clean).find(Boolean) || '';\n}\n\nfunction normalizeBaseUrl(value) {\n  return clean(value).replace(/\\/+$/, '');\n}\n\nfunction stripDataUrl(value) {\n  const raw = clean(value);\n  const match = raw.match(/^data:([^;]+);base64,(.+)$/i);\n  return match ? { mimeType: match[1], base64: match[2] } : { mimeType: '', base64: raw };\n}\n\nfunction looksLikeBase64(value) {\n  const raw = clean(value).replace(/\\s+/g, '');\n  return raw.length >= 80 && raw.length % 4 === 0 && /^[A-Za-z0-9+/]+={0,2}$/.test(raw);\n}\n\nfunction isOggBase64(value) {\n  if (!looksLikeBase64(value)) return false;\n  const buffer = Buffer.from(clean(value).replace(/\\s+/g, ''), 'base64');\n  return buffer.length >= 16 && buffer.subarray(0, 4).toString('ascii') === 'OggS';\n}\n\nfunction buildWebhookMessage(webhookData) {\n  return {\n    key: webhookData.key,\n    pushName: webhookData.pushName,\n    message: webhookData.message,\n    messageType: webhookData.messageType || 'audioMessage',\n    messageTimestamp: webhookData.messageTimestamp,\n    source: webhookData.source,\n  };\n}\n\nfunction formBody(fields) {\n  return Object.entries(fields)\n    .filter(([, value]) => value !== undefined && value !== null && String(value) !== '')\n    .map(([key, value]) => encodeURIComponent(key) + '=' + encodeURIComponent(String(value)))\n    .join('&');\n}\n\nasync function fetchEvolutionDecryptedMedia({ baseUrl, apiKey, instance, message }) {\n  const response = await this.helpers.httpRequest({\n    method: 'POST',\n    url: baseUrl + '/chat/getBase64FromMediaMessage/' + encodeURIComponent(instance),\n    headers: {\n      apikey: apiKey,\n      'Content-Type': 'application/json',\n    },\n    body: {\n      message,\n      convertToMp4: false,\n    },\n    json: true,\n    timeout: 30000,\n  });\n\n  const base64 = firstText(response?.base64, response?.data?.base64, response?.media?.base64);\n  if (!looksLikeBase64(base64)) {\n    throw new Error('Evolution media decrypt returned no valid base64: ' + JSON.stringify(response).slice(0, 500));\n  }\n\n  return {\n    base64: base64.replace(/\\s+/g, ''),\n    mimetype: firstText(response?.mimetype, response?.mimeType, response?.data?.mimetype),\n    source: 'evolution_getBase64FromMediaMessage',\n  };\n}\n\nasync function convertAudioToOgg({ converterUrl, apiKey, base64, language }) {\n  const response = await this.helpers.httpRequest({\n    method: 'POST',\n    url: converterUrl + '/process-audio',\n    headers: {\n      apikey: apiKey,\n      'Content-Type': 'application/x-www-form-urlencoded',\n    },\n    body: formBody({\n      base64,\n      format: 'ogg',\n      transcribe: 'false',\n      language: language || 'pt',\n    }),\n    json: true,\n    timeout: 60000,\n  });\n\n  const converted = firstText(response?.audio, response?.data?.audio, response?.base64);\n  if (!looksLikeBase64(converted)) {\n    throw new Error('Audio converter returned no valid audio base64: ' + JSON.stringify(response).slice(0, 500));\n  }\n\n  const buffer = Buffer.from(converted.replace(/\\s+/g, ''), 'base64');\n  if (buffer.length < 16 || buffer.subarray(0, 4).toString('ascii') !== 'OggS') {\n    throw new Error('Audio converter output is not a valid OGG file');\n  }\n\n  return {\n    base64: converted.replace(/\\s+/g, ''),\n    duration: response?.duration ?? null,\n    format: response?.format || 'ogg',\n  };\n}\n\nconst items = $input.all();\nconst output = [];\n\nfor (const item of items) {\n  const source = item.json || {};\n  const webhook = $items('Webhook1')[0].json || {};\n  const body = webhook.body || {};\n  const data = body.data || {};\n  const message = data.message || {};\n  const audio = message.audioMessage || message.pttMessage || {};\n  const messageId = data.key?.id || source.external_message_id || 'audio';\n\n  const fallbackJson = {\n    ...source,\n    audioValid: false,\n    audioSource: 'audio_converter_failed',\n    data: '',\n    mimetype: 'audio/ogg',\n    path: 'audio.ogg',\n    audioText: '[audio recebido, mas a midia nao estava disponivel para transcricao]',\n    media_warning: 'audio_converter_normalization_failed',\n    audio_normalization_policy: 'evolution_audio_converter_process_audio_v1',\n  };\n\n  try {\n    const inline = firstText(message.base64, audio.base64, source.base64, source.data);\n    const inlineParsed = stripDataUrl(inline);\n\n    let decrypted;\n    if (looksLikeBase64(inlineParsed.base64)) {\n      decrypted = {\n        base64: inlineParsed.base64.replace(/\\s+/g, ''),\n        mimetype: firstText(inlineParsed.mimeType, audio.mimetype, audio.mimeType, 'audio/ogg'),\n        source: 'webhook_base64',\n      };\n    } else {\n      const evolutionBaseUrl = normalizeBaseUrl(firstText(\n        body.server_url,\n        source.EVOLUTION_API_URL,\n        source.evolution_api_url,\n        $vars.EVOLUTION_API_URL,\n        $vars.SERVER_URL,\n        'https://evo.yzihub.com'\n      ));\n      const evolutionApiKey = firstText(\n        body.apikey,\n        source.EVOLUTION_API_KEY,\n        source.evolution_api_key,\n        $vars.EVOLUTION_API_KEY,\n        $vars.AUTHENTICATION_API_KEY\n      );\n      const instance = firstText(source.EVOLUTION_INSTANCE, source.instance, body.instance, data.instance, 'Jurema Brokers');\n\n      if (!audio.url && !audio.mediaKey) {\n        throw new Error('audioMessage sem url/mediaKey para decrypt de midia WhatsApp');\n      }\n      if (!evolutionBaseUrl || !evolutionApiKey || !instance) {\n        throw new Error('Evolution decrypt is missing baseUrl, apiKey or instance');\n      }\n\n      decrypted = await fetchEvolutionDecryptedMedia.call(this, {\n        baseUrl: evolutionBaseUrl,\n        apiKey: evolutionApiKey,\n        instance,\n        message: buildWebhookMessage(data),\n      });\n    }\n\n    let converted;\n    let converterEndpoint = 'direct_decrypted_ogg';\n\n    if (isOggBase64(decrypted.base64)) {\n      converted = {\n        base64: decrypted.base64,\n        duration: null,\n        format: 'ogg',\n      };\n    } else {\n      const converterUrl = normalizeBaseUrl(firstText(\n        source.EVOLUTION_AUDIO_CONVERTER_URL,\n        source.AUDIO_CONVERTER_URL,\n        $vars.EVOLUTION_AUDIO_CONVERTER_URL,\n        $vars.AUDIO_CONVERTER_URL,\n        'http://evolution-audio-converter:4040'\n      ));\n      const converterApiKey = firstText(\n        source.EVOLUTION_AUDIO_CONVERTER_API_KEY,\n        source.AUDIO_CONVERTER_API_KEY,\n        $vars.EVOLUTION_AUDIO_CONVERTER_API_KEY,\n        $vars.AUDIO_CONVERTER_API_KEY,\n        $vars.AUDIO_CONVERTER_KEY,\n        body.apikey,\n        source.EVOLUTION_API_KEY,\n        $vars.EVOLUTION_API_KEY,\n        $vars.AUTHENTICATION_API_KEY\n      );\n\n      if (!converterUrl || !converterApiKey) {\n        throw new Error('Evolution Audio Converter missing URL or API key');\n      }\n\n      converted = await convertAudioToOgg.call(this, {\n        converterUrl,\n        apiKey: converterApiKey,\n        base64: decrypted.base64,\n        language: 'pt',\n      });\n      converterEndpoint = '/process-audio';\n    }\n\n    output.push({\n      json: {\n        ...source,\n        audioValid: true,\n        audioSource: decrypted.source,\n        audio_converter_endpoint: converterEndpoint,\n        audio_normalization_policy: 'evolution_audio_converter_process_audio_v1',\n        audio_media_url: audio.url || source.audioUrl || null,\n        audio_media_key_present: Boolean(audio.mediaKey),\n        audio_media_size: Buffer.from(converted.base64, 'base64').length,\n        audio_duration: converted.duration,\n        audio: converted.base64,\n        data: converted.base64,\n        format: 'ogg',\n        mimetype: 'audio/ogg',\n        path: 'audio.ogg',\n        media_warning: null,\n      },\n    });\n  } catch (error) {\n    output.push({\n      json: {\n        ...fallbackJson,\n        media_error: error?.message || String(error),\n      },\n      binary: item.binary,\n    });\n  }\n}\n\nreturn output;"
+      },
+      "id": "normalize-audio-payload-jurema",
+      "name": "Normalize Audio Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6704,
+        2144
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "audio-valid-condition",
+              "leftValue": "={{ $json.audioValid === true && !!$json.data }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "audio-media-valid-jurema",
+      "name": "Audio Media Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        6928,
+        2144
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "function clean(value) {\n  return String(value ?? '').trim();\n}\n\nfunction firstText(...values) {\n  return values.map(clean).find(Boolean) || '';\n}\n\nfunction normalizeBaseUrl(value) {\n  return clean(value).replace(/\\/+$/, '');\n}\n\nasync function httpRequest(options) {\n  if (this.helpers?.httpRequest) return await this.helpers.httpRequest(options);\n  if (this.helpers?.request) return await this.helpers.request(options);\n  throw new Error('HTTP helper indisponivel para persistir transcript de audio');\n}\n\nasync function patchInboundTranscript({ baseUrl, apiKey, conversationId, externalMessageId, transcript }) {\n  if (!baseUrl || !apiKey || !conversationId || !externalMessageId || !transcript) return null;\n\n  return await httpRequest.call(this, {\n    method: 'PATCH',\n    url: normalizeBaseUrl(baseUrl) + '/rest/v1/conversation_messages',\n    qs: {\n      conversation_id: 'eq.' + conversationId,\n      external_message_id: 'eq.' + externalMessageId,\n      direction: 'eq.inbound',\n    },\n    headers: {\n      apikey: apiKey,\n      Authorization: 'Bearer ' + apiKey,\n      'Content-Type': 'application/json',\n      Prefer: 'return=minimal',\n    },\n    body: {\n      content: transcript,\n      message_type: 'audio',\n    },\n    json: true,\n    timeout: 30000,\n  });\n}\n\nconst items = $input.all();\nconst output = [];\n\nfor (const item of items) {\n  const source = item.json || {};\n  const base = $items('Code in JavaScript')[0].json || {};\n  const config = $items('dados do banco')[0].json || {};\n  const transcript = firstText(\n    source.text,\n    source.transcription,\n    source.transcript,\n    source.audioText\n  );\n  const fallbackAudioText = '[audio recebido, mas a transcricao falhou temporariamente]';\n  const inboundText = transcript || fallbackAudioText;\n\n  const enriched = {\n    ...base,\n    ...source,\n    audioText: inboundText,\n    transcript,\n    mensagemCliente: inboundText,\n    normalized_inbound_message: inboundText,\n    messageType: 'audio',\n    audio_operational_policy: 'audio_as_normal_inbound_message_v1',\n    audio_transcript_persisted: false,\n  };\n\n  if (!transcript) {\n    output.push({\n      json: {\n        ...enriched,\n        audio_transcript_warning: 'empty_transcript',\n      },\n      binary: item.binary,\n    });\n    continue;\n  }\n\n  try {\n    await patchInboundTranscript.call(this, {\n      baseUrl: firstText(config.URL_SUPABASE, base.URL_SUPABASE, $vars.SUPABASE_URL),\n      apiKey: firstText(config.SUPABASE_SERVICE_ROLE_KEY, base.SUPABASE_SERVICE_ROLE_KEY, $vars.SUPABASE_SERVICE_ROLE_KEY),\n      conversationId: base.conversation?.id || base.conversation_id,\n      externalMessageId: base.external_message_id,\n      transcript,\n    });\n\n    output.push({\n      json: {\n        ...enriched,\n        audio_transcript_persisted: true,\n      },\n      binary: item.binary,\n    });\n  } catch (error) {\n    output.push({\n      json: {\n        ...enriched,\n        audio_transcript_persisted: false,\n        audio_transcript_warning: error?.message || String(error),\n      },\n      binary: item.binary,\n    });\n  }\n}\n\nreturn output;"
+      },
+      "id": "persist-audio-transcript-jurema",
+      "name": "Persist Audio Transcript",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7600,
+        2240
+      ],
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3f92debc-c2c0-4831-a1e3-29ccf2a8bb51",
+              "name": "resposta",
+              "value": "={{ $json.output.split(\"\\n\\n\") }}",
+              "type": "array"
+            },
+            {
+              "id": "followup-task-id-array",
+              "name": "followup_task_id",
+              "value": "={{ $json.followup_task_id }}",
+              "type": "string"
+            },
+            {
+              "id": "followup-task-array",
+              "name": "followup_task",
+              "value": "={{ $json.followup_task }}",
+              "type": "object"
+            },
+            {
+              "id": "followup-event-type-array",
+              "name": "event_type",
+              "value": "={{ $json.event_type }}",
+              "type": "string"
+            },
+            {
+              "id": "followup-remotejid-array",
+              "name": "remoteJid",
+              "value": "={{ $json.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "followup-phone-array",
+              "name": "telefoneCompleto",
+              "value": "={{ $json.telefoneCompleto }}",
+              "type": "string"
+            },
+            {
+              "id": "followup-session-array",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        11168,
+        1648
+      ],
+      "id": "18dcac87-6d8b-4d32-8e7a-d169d362ef83",
+      "name": "ArrayResposta1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "resposta",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        11392,
+        1648
+      ],
+      "id": "3821c97b-77ff-4e52-a799-db72d610ce60",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ======================================\n// YZI IMOB — Build Context v3\n// Cognitive Runtime Hydration\n// ======================================\n\n// ======================================\n// EXPLICIT NODE REFERENCES (N8N SAFE)\n// ======================================\n\nfunction optionalNodeJson(name) {\n  try {\n    return $items(name)[0]?.json || {};\n  } catch (error) {\n    return {};\n  }\n}\n\nconst input =\n  $json || {};\n\nconst dadosDoLead =\n  optionalNodeJson('Dados do Lead');\n\nconst syncNodeData =\n  optionalNodeJson('Sync Operational Context');\n\nconst leadData =\n  Object.keys(dadosDoLead).length\n    ? dadosDoLead\n    : input;\n\nconst syncData =\n  Object.keys(syncNodeData).length\n    ? syncNodeData\n    : input;\n\n// ======================================\n// CORE ENTITIES\n// ======================================\n\nconst lead =\n  leadData.lead || {};\n\nconst deal =\n  leadData.deal || {};\n\nconst conversation =\n  leadData.conversation || {};\n\nconst recent =\n  Array.isArray(leadData.recent_messages)\n    ? leadData.recent_messages\n    : [];\n\n// ======================================\n// OPERATIONAL STATE\n// ======================================\n\nconst operational =\n  syncData.operational_context || {};\n\nconst runtime =\n  syncData.runtime_memory || {};\n\n// ======================================\n// CURRENT MESSAGE\n// ======================================\n\nconst mensagemCliente =\n  input.mensagemCliente ||\n  leadData.mensagemCliente ||\n  input.mensagem ||\n  leadData.mensagem ||\n  '';\n\n// ======================================\n// HELPERS\n// ======================================\n\nfunction normalize(value) {\n  return String(value || '')\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase();\n}\n\n// ======================================\n// TOOL GOVERNANCE\n// ======================================\n\nconst toolRevalidationTriggers = [\n  'manda de novo',\n  'manda novamente',\n  'reenvia',\n  'link deu erro',\n  'link falhou',\n  'qual era aquele imovel',\n  'qual era aquele imóvel',\n  'abre mais aquele apartamento',\n  'detalhes do imovel anterior',\n  'aquele que voce falou',\n  'tinha comentado',\n  'ainda faz sentido',\n  'voltei aqui',\n];\n\nconst normalizedMessage =\n  normalize(mensagemCliente);\n\nconst requiresToolRevalidation =\n  toolRevalidationTriggers.some((trigger) =>\n    normalizedMessage.includes(\n      normalize(trigger)\n    )\n  );\n\nconst propertyIntentTriggers = [\n  'imovel',\n  'imoveis',\n  'opcao',\n  'opcoes',\n  'sugestao',\n  'sugestoes',\n  'recomendacao',\n  'recomendacoes',\n  'link',\n  'visita',\n  'visitar',\n  'disponivel',\n  'disponiveis',\n  'pode mandar',\n  'manda uma',\n  'me manda',\n  'se tiver',\n  'tem algo',\n];\n\nconst regionIntentTriggers = [\n  'bessa',\n  'jardim oceania',\n  'cabo branco',\n  'tambau',\n  'manaira',\n  'intermares',\n  'ponta de campina',\n  'altiplano',\n];\n\nconst hasPropertyIntent =\n  propertyIntentTriggers.some((trigger) =>\n    normalizedMessage.includes(\n      normalize(trigger)\n    )\n  );\n\nconst hasRegionContext =\n  Boolean(\n    operational.preferred_regions?.length ||\n    deal.location_preference ||\n    regionIntentTriggers.some((trigger) =>\n      normalizedMessage.includes(\n        normalize(trigger)\n      )\n    )\n  );\n\nconst hasBudgetContext =\n  Boolean(\n    operational.budget_min ||\n    operational.budget_max ||\n    deal.budget_min ||\n    deal.budget_max ||\n    /(?:r\\$|\\b\\d+\\s*(?:mil|k)\\b)/i.test(mensagemCliente)\n  );\n\nconst hasTypeContext =\n  Boolean(\n    operational.property_type ||\n    deal.property_type ||\n    /\\b(?:apartamento|apto|ape|flat|studio|casa|cobertura|terreno|\\d+\\s*quartos?)\\b/i.test(mensagemCliente)\n  );\n\nconst hasObjectiveContext =\n  Boolean(\n    operational.objective ||\n    deal.intent ||\n    lead.ai_last_intent ||\n    /\\b(?:morar|investir|investimento|alugar|familia|temporada|short stay)\\b/i.test(mensagemCliente)\n  );\n\nconst propertyPresentationDue =\n  requiresToolRevalidation ||\n  (\n    hasPropertyIntent &&\n    (\n      hasRegionContext ||\n      hasBudgetContext ||\n      hasTypeContext ||\n      hasObjectiveContext\n    )\n  );\n\nconst orchestratedNextBestAction =\n  propertyPresentationDue\n    ? 'apresentar_opcoes_aderentes'\n    : (\n      runtime.next_best_action ||\n      'descobrir_contexto'\n    );\n\n// ======================================\n// CONTEXT\n// ======================================\n\nconst context = [\n  '<yzi_operational_runtime>',\n\n  'AI_FIRST_RUNTIME: true',\n  'SUPABASE_IS_SOURCE_OF_TRUTH: true',\n  'REDIS_IS_SHORT_MEMORY: true',\n  'NEVER_RECONSTRUCT_PROPERTY_URL: true',\n  'CONSULTAR_IMOVEIS_IS_TRUTH: true',\n\n  '</yzi_operational_runtime>',\n\n  '',\n\n  '<estado_operacional>',\n\n  'tenant_id: ' + (\n    lead.tenant_id ||\n    leadData.tenant_id ||\n    ''\n  ),\n\n  'lead_id: ' + (\n    lead.id ||\n    leadData.lead_id ||\n    ''\n  ),\n\n  'deal_id: ' + (\n    deal.id ||\n    leadData.deal_id ||\n    ''\n  ),\n\n  'conversation_id: ' + (\n    conversation.id ||\n    leadData.conversation_id ||\n    ''\n  ),\n\n  'lead_nome: ' + (\n    lead.name ||\n    'Cliente'\n  ),\n\n  'lead_status: ' + (\n    lead.status ||\n    'new'\n  ),\n\n  'ai_status: ' + (\n    lead.ai_status ||\n    'ativo'\n  ),\n\n  'conversation_status: ' + (\n    conversation.status ||\n    'open'\n  ),\n\n  'ai_paused: ' + (\n    conversation.ai_paused === true\n      ? 'true'\n      : 'false'\n  ),\n\n  '</estado_operacional>',\n\n  '',\n\n  '<funnel_runtime>',\n\n  'funnel_stage: ' + (\n    operational.funnel_stage ||\n    'lead_novo'\n  ),\n\n  'decision_style: ' + (\n    operational.decision_style ||\n    'desconhecido'\n  ),\n\n  'objective: ' + (\n    operational.objective ||\n    'nao identificado'\n  ),\n\n  'next_best_action: ' + orchestratedNextBestAction,\n\n  'qualification_depth: ' + (\n    runtime.qualification_depth ||\n    0\n  ),\n\n  'inventory_fatigue: ' + (\n    runtime.inventory_fatigue === true\n      ? 'true'\n      : 'false'\n  ),\n\n  'followup_enabled: ' + (\n    operational.followup_enabled === true\n      ? 'true'\n      : 'false'\n  ),\n\n  'properties_sent_count: ' + (\n    runtime.properties_sent_count ||\n    0\n  ),\n\n  '</funnel_runtime>',\n\n  '',\n\n  '<preferencias_cliente>',\n\n  'bairro_interesse: ' + (\n    operational.preferred_regions?.join(', ') ||\n    deal.location_preference ||\n    'nao informado'\n  ),\n\n  'tipo_imovel: ' + (\n    operational.property_type ||\n    deal.property_type ||\n    'nao informado'\n  ),\n\n  'quartos: ' + (\n    operational.bedrooms ||\n    deal.bedrooms ||\n    'nao informado'\n  ),\n\n  'orcamento_min: ' + (\n    operational.budget_min ||\n    'nao informado'\n  ),\n\n  'orcamento_max: ' + (\n    operational.budget_max ||\n    deal.budget_max ||\n    'nao informado'\n  ),\n\n  'beach_interest: ' + (\n    operational.beach_interest === true\n      ? 'true'\n      : 'false'\n  ),\n\n  'favorite_property: ' + (\n    operational.favorite_property ||\n    'nao identificado'\n  ),\n\n  'financing_signal: ' + (\n    operational.financing_signal === true\n      ? 'true'\n      : 'false'\n  ),\n\n  'fgts_signal: ' + (\n    operational.fgts_signal === true\n      ? 'true'\n      : 'false'\n  ),\n\n  '</preferencias_cliente>',\n\n  '',\n\n  '<governanca_comportamental>',\n\n  'NAO_EMPURRAR_IMOVEIS_EM_LOOP: true',\n  'MAXIMO_RECOMENDACOES_POR_INTERACAO: 3',\n  'SE_FUNNEL_STAGE_FOLLOWUP_REDUZIR_PRESSAO: true',\n  'SE_DECISION_STYLE_CASAL_RESPEITAR_TIMING: true',\n  'SE_INVENTORY_FATIGUE_TRUE_PARAR_ENVIO_MASSIVO: true',\n  'PROPERTY_PRESENTATION_DUE: ' + (\n    propertyPresentationDue\n      ? 'true'\n      : 'false'\n  ),\n  'BLOCK_APROFUNDAR_CRITERIOS: ' + (\n    propertyPresentationDue\n      ? 'true'\n      : 'false'\n  ),\n  'PRESENTAR_ANTES_DE_PERGUNTAR: ' + (\n    propertyPresentationDue\n      ? 'true'\n      : 'false'\n  ),\n\n  '</governanca_comportamental>',\n\n  '',\n\n  '<historico_curto>',\n\n  recent\n    .slice(-10)\n    .map((m) => {\n      const prefix =\n        (\n          m.direction === 'outbound' ||\n          m.sender_type === 'agent'\n        )\n          ? 'Ju: '\n          : 'Cliente: ';\n\n      return prefix + (m.content || '');\n    })\n    .join('\\n'),\n\n  '</historico_curto>',\n\n  '',\n\n  input.event_type\n    ? '<internal_behavioral_event>'\n    : '',\n\n  input.event_type\n    ? JSON.stringify(input.internal_behavioral_event || {}, null, 2)\n    : '',\n\n  input.event_type\n    ? '</internal_behavioral_event>'\n    : '',\n\n  '',\n\n  '<mensagem_atual>',\n  mensagemCliente,\n  '</mensagem_atual>',\n\n  '',\n\n  '<tool_revalidation>',\n\n  'requires_consultar_imoveis: ' + (\n    requiresToolRevalidation\n      ? 'true'\n      : 'false'\n  ),\n\n  'url_truth: consultar_imoveis',\n  'never_reconstruct_property_url: true',\n\n  '</tool_revalidation>',\n]\n.join('\\n');\n\n// ======================================\n// OUTPUT - PROJECAO ESTRITA\n// Sem spread amplification.\n// Preserva contrato cognitivo completo.\n// ======================================\n\nconst leadOut = leadData.lead || {};\nconst dealOut = leadData.deal || {};\nconst conversationOut = leadData.conversation || {};\n\nreturn [{\n  json: {\n    // identidade operacional\n    tenant_id: leadData.tenant_id || leadOut.tenant_id || input.tenant_id || null,\n    lead_id: leadOut.id || leadData.lead_id || input.lead_id || null,\n    deal_id: dealOut.id || leadData.deal_id || input.deal_id || null,\n    conversation_id: conversationOut.id || leadData.conversation_id || input.conversation_id || null,\n    // identidade canal\n    sessionId: leadData.sessionId || input.sessionId || leadData.telefoneCompleto || input.telefoneCompleto || null,\n    telefoneCompleto: leadData.telefoneCompleto || input.telefoneCompleto || leadData.phone || null,\n    remoteJid: leadData.remoteJid || input.remoteJid || null,\n    phone: leadOut.phone || leadData.phone || input.phone || null,\n    // entidades compactas (preservadas para tools)\n    lead: leadOut,\n    deal: dealOut,\n    conversation: conversationOut,\n    // mensagem atual\n    mensagemCliente,\n    messageType: leadData.messageType || input.messageType || null,\n    instance: leadData.instance || input.instance || null,\n    external_message_id: leadData.external_message_id || input.external_message_id || null,\n    origemLead: leadData.origemLead || input.origemLead || null,\n    // contexto cognitivo (string montada)\n    _context: context,\n    runtime_context_source: 'yzi_cognitive_runtime',\n    // runtime state behavioral\n    runtime_state: {\n      property_presentation_due: propertyPresentationDue,\n      funnel_stage: operational.funnel_stage || 'lead_novo',\n      qualification_depth: runtime.qualification_depth || 0,\n      inventory_fatigue: runtime.inventory_fatigue || false,\n      favorite_detected: Boolean(operational.favorite_property),\n      visit_intent: runtime.visit_intent_signal || false,\n      spouse_decision_signal: runtime.spouse_decision_signal || false,\n    },\n    objective_state: { next_best_action: orchestratedNextBestAction },\n    next_action: orchestratedNextBestAction,\n    required_tools: propertyPresentationDue ? ['consultar_imoveis'] : [],\n    retrieval_policy: propertyPresentationDue ? 'tool_required' : 'minimal',\n    blocked_questions: [],\n    loop_risk: runtime.inventory_fatigue ? 'medium' : 'low',\n    tool_revalidation_required: requiresToolRevalidation,\n    property_presentation_due: propertyPresentationDue,\n    block_aprofundar_criterios: propertyPresentationDue,\n    // operational + runtime mem (consumidos por Salvar Outbound e telemetria)\n    operational_context: syncData.operational_context || {},\n    runtime_memory: syncData.runtime_memory || {},\n    // aliases legacy\n    nome_cliente: leadData.nome_cliente || leadOut.name || 'Lead',\n    record_id_guardiao: leadData.record_id_guardiao || leadOut.id || '',\n    Telefone: leadOut.phone || null,\n    'Status Lead': leadOut.status || null,\n    'Score do Lead': leadOut.score || null,\n    _status_slug: leadData._status_slug || leadOut.status || 'new',\n    _skip_ai: leadData._skip_ai === true,\n    // followup passthrough\n    event_type: input.event_type || leadData.event_type || null,\n    internal_behavioral_event: input.internal_behavioral_event || leadData.internal_behavioral_event || null,\n    followup_task_id: input.followup_task_id || leadData.followup_task_id || null,\n    followup_task: input.followup_task || leadData.followup_task || null,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        10032,
+        1504
+      ],
+      "id": "8d5fc504-222e-403c-b87f-3effb623df1c",
+      "name": "Build Context"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =======================================================\n// DADOS DO LEAD v2 - PROJECAO ESTRITA\n// Sem spread amplification. Sem duplicacao de lead.\n// Preserva contrato cognitivo: lead, deal, conversation,\n// recent_messages, operational_context, runtime_memory,\n// _context, mensagemCliente, sessionId, telefoneCompleto.\n// =======================================================\n\nconst input = $json || {};\n\nconst lead = input.lead || {};\nconst deal = input.deal || {};\nconst conversation = input.conversation || {};\nconst operationalContext = input.operational_context || {};\nconst recentMessages = Array.isArray(input.recent_messages) ? input.recent_messages : [];\n\nconst leadMeta = lead.metadata || {};\nconst dealMeta = deal.metadata || {};\nconst conversationMeta = conversation.metadata || {};\nconst opMeta = operationalContext.metadata || {};\n\nconst metadataUnificada = {\n  ...leadMeta,\n  ...dealMeta,\n  ...conversationMeta,\n  ...opMeta,\n};\n\nconst runtimeMemory = {\n  funnel_stage: operationalContext.funnel_stage || null,\n  favorite_property: operationalContext.favorite_property || null,\n  properties_sent_count: operationalContext.properties_sent_count || 0,\n  visit_interest_score: operationalContext.visit_interest_score || 0,\n  followup_enabled: operationalContext.followup_enabled || false,\n};\n\nreturn [{\n  json: {\n    tenant_id: input.tenant_id || lead.tenant_id || null,\n    lead_id: lead.id || input.lead_id || null,\n    deal_id: deal.id || input.deal_id || null,\n    conversation_id: conversation.id || input.conversation_id || null,\n    sessionId: input.sessionId || input.telefoneCompleto || null,\n    telefoneCompleto: input.telefoneCompleto || input.phone || null,\n    remoteJid: input.remoteJid || null,\n    phone: lead.phone || input.phone || null,\n    lead,\n    deal,\n    conversation,\n    recent_messages: recentMessages,\n    operational_context: operationalContext,\n    runtime_memory: runtimeMemory,\n    metadata_unificada: metadataUnificada,\n    mensagemCliente: input.mensagemCliente || input.mensagem || '',\n    messageType: input.messageType || null,\n    instance: input.instance || null,\n    external_message_id: input.external_message_id || null,\n    origemLead: input.origemLead || null,\n    lead_avatar_url: input.lead_avatar_url || null,\n    _context: input._context || '',\n    _status_slug: lead.status || 'new',\n    _skip_ai: input._skip_ai === true || conversation.ai_paused === true,\n    // aliases (legacy compat)\n    nome_cliente: lead.name || 'Lead',\n    record_id_guardiao: lead.id || '',\n    Telefone: lead.phone || null,\n    'Status Lead': lead.status || null,\n    'Score do Lead': lead.score || null,\n    // followup passthrough (cron path)\n    event_type: input.event_type || null,\n    internal_behavioral_event: input.internal_behavioral_event || null,\n    followup_task_id: input.followup_task_id || null,\n    followup_task: input.followup_task || null,\n    followup_delay_seconds: input.followup_delay_seconds || null,\n    followup_due_at: input.followup_due_at || null,\n    followup_priority: input.followup_priority || null,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7344,
+        1792
+      ],
+      "id": "8ebf3e9e-54fb-4b29-86f5-508db464a05b",
+      "name": "Dados do Lead"
+    },
+    {
+      "parameters": {
+        "jsCode": "// =============================\n// DETECTA FINALIZAÇÃO — v4\n// Agora detecta envio completo e confirmação de pagamento\n// =============================\n\n// 1) Pega mensagem consolidada se existir\nlet mensagem = $json.mensagemCliente;\n\n// 2) Se não existir, tenta pegar do webhook (texto curto)\nif (!mensagem || mensagem.trim() === \"\") {\n  const raw = $json.body?.data?.message;\n\n  mensagem =\n    raw?.extendedTextMessage?.text ||\n    raw?.conversation ||\n    null;\n}\n\n// 3) Como último fallback, usa Redis2 (última mensagem)\nif (!mensagem || mensagem.trim() === \"\") {\n  const r2 = $json.Redis2;\n  if (typeof r2 === \"string\" && r2.trim() !== \"\") {\n    mensagem = r2;\n  }\n}\n\n// 4) Se mesmo assim nada, define como vazio\nmensagem = (mensagem || \"\").trim().toLowerCase();\n\n// ===============\n// Gatilhos de finalização de envio\n// ===============\nconst gatilhosEnvio = [\n  \"pronto\",\n  \"acabei\",\n  \"finalizei\",\n  \"terminei\",\n  \"enviei tudo\",\n  \"acho que terminei\",\n  \"prontinho\",\n  \"acho que foi tudo\",\n  \"pode olhar\",\n  \"acho que acabou\",\n  \"concluí\"\n];\n\n// ===============\n// Gatilhos de pagamento confirmado\n// ===============\nconst gatilhosPagamento = [\n  \"paguei\",\n  \"efetuei o pagamento\",\n  \"já paguei\",\n  \"comprovante\",\n  \"pix enviado\",\n  \"enviei o comprovante\",\n  \"pix feito\",\n  \"acabei de pagar\"\n];\n\n// Lista de negações (pra evitar falso positivo)\nconst negacoes = [\n  \"ainda\",\n  \"mais\",\n  \"vou mandar\",\n  \"enviar mais\",\n  \"enviando\",\n  \"falta\",\n  \"continuar\",\n  \"vou pagar\",\n  \"vou fazer o pix\",\n  \"ainda não paguei\"\n];\n\n// Função pra checar se contém negação\nfunction contemNegacao(t) {\n  return negacoes.some(n => t.includes(n));\n}\n\n// Verifica se é gatilho de envio ou pagamento\nconst ehEnvio = gatilhosEnvio.some(g => mensagem === g || mensagem.includes(g));\nconst ehPagamento = gatilhosPagamento.some(g => mensagem.includes(g));\n\n// =============================\n// OUTPUT FINAL DO NODE\n// =============================\n\nif ((ehEnvio || ehPagamento) && !contemNegacao(mensagem)) {\n  return [\n    {\n      json: {\n        finalizar: true,\n        tipo: ehPagamento ? \"pagamento\" : \"envio\",\n        motivo: ehPagamento\n          ? \"Gatilho de confirmação de pagamento detectado\"\n          : \"Gatilho de finalização de envio detectado\",\n        mensagemCliente: mensagem\n      }\n    }\n  ];\n}\n\nreturn [\n  {\n    json: {\n      finalizar: false,\n      motivo: \"Mensagem comum\",\n      mensagemCliente: mensagem\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        9584,
+        2080
+      ],
+      "id": "798c01c7-666f-45cb-8da1-574a89811055",
+      "name": "Detecta Finalização"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// YZI IMOB — Sync Operational Context\n// Cognitive Funnel Runtime Engine v2\n// ============================================\n\nfunction normalize(value) {\n  return String(value || '')\n    .normalize('NFD')\n    .replace(/[\\u0300-\\u036f]/g, '')\n    .toLowerCase()\n    .trim();\n}\n\nfunction compactArray(arr = []) {\n  return arr\n    .filter(Boolean)\n    .map((v) => String(v).trim())\n    .filter(Boolean);\n}\n\nconst input = $json || {};\n\nconst lead =\n  input.lead ||\n  {};\n\nconst deal =\n  input.deal ||\n  {};\n\nconst conversation =\n  input.conversation ||\n  {};\n\nconst recentMessages =\n  Array.isArray(input.recent_messages)\n    ? input.recent_messages\n    : [];\n\nconst existingOperationalContext =\n  input.operational_context ||\n  {};\n\nconst tenantId =\n  lead?.tenant_id ||\n  input?.tenant_id ||\n  input?.lead?.tenant_id ||\n  input?.conversation?.tenant_id ||\n  null;\n\nconst conversationId =\n  conversation?.id ||\n  input?.conversation_id ||\n  input?.conversation?.id ||\n  null;\n\nconst leadId =\n  lead?.id ||\n  input?.lead_id ||\n  input?.lead?.id ||\n  null;\n\n// ============================================\n// FAIL SAFE\n// ============================================\n\nif (!tenantId || !conversationId) {\n  return [{\n    json: {\n      tenant_id: input.tenant_id || null,\n      lead_id: input.lead_id || null,\n      deal_id: input.deal_id || null,\n      conversation_id: input.conversation_id || null,\n      sessionId: input.sessionId || input.telefoneCompleto || null,\n      telefoneCompleto: input.telefoneCompleto || null,\n      remoteJid: input.remoteJid || null,\n      phone: input.phone || null,\n      lead: input.lead || {},\n      deal: input.deal || {},\n      conversation: input.conversation || {},\n      recent_messages: recentMessages,\n      operational_context: {},\n      runtime_memory: {\n        sync_skipped: true,\n        reason: 'missing_operational_ids',\n      },\n      mensagemCliente: input.mensagemCliente || '',\n      messageType: input.messageType || null,\n      instance: input.instance || null,\n      external_message_id: input.external_message_id || null,\n      origemLead: input.origemLead || null,\n      _context: input._context || '',\n      _status_slug: input._status_slug || null,\n      _skip_ai: input._skip_ai === true,\n      Telefone: input.Telefone || null,\n      'Status Lead': input['Status Lead'] || null,\n      'Score do Lead': input['Score do Lead'] || null,\n      nome_cliente: input.nome_cliente || null,\n      record_id_guardiao: input.record_id_guardiao || null,\n      event_type: input.event_type || null,\n      internal_behavioral_event: input.internal_behavioral_event || null,\n      followup_task_id: input.followup_task_id || null,\n      followup_task: input.followup_task || null,\n      followup_delay_seconds: input.followup_delay_seconds || null,\n    }\n  }];\n}\n\n// ============================================\n// INPUT MESSAGE\n// ============================================\n\nconst mensagemCliente =\n  input.mensagemCliente ||\n  input.mensagem ||\n  '';\n\nconst normalizedMessage =\n  normalize(mensagemCliente);\n\nconst latestInboundMessages =\n  recentMessages\n    .filter((m) =>\n      m.direction === 'inbound' ||\n      m.sender_type === 'lead'\n    )\n    .slice(-12);\n\nconst allConversationText =\n  [\n    mensagemCliente,\n    ...latestInboundMessages.map((m) => m.content || ''),\n  ]\n    .join(' ')\n    .trim();\n\nconst normalizedConversation =\n  normalize(allConversationText);\n\n// ============================================\n// SIGNAL DETECTION\n// ============================================\n\nconst beachInterest =\n  normalizedConversation.includes('praia') ||\n  normalizedConversation.includes('beira mar') ||\n  normalizedConversation.includes('beira-mar') ||\n  normalizedConversation.includes('cabo branco') ||\n  normalizedConversation.includes('tambau') ||\n  normalizedConversation.includes('bessa');\n\nconst financingSignal =\n  normalizedConversation.includes('financiamento') ||\n  normalizedConversation.includes('financiar');\n\nconst fgtsSignal =\n  normalizedConversation.includes('fgts');\n\nconst creditLetterSignal =\n  normalizedConversation.includes('carta de credito') ||\n  normalizedConversation.includes('carta contemplada');\n\nconst spouseDecisionSignal =\n  normalizedConversation.includes('minha esposa') ||\n  normalizedConversation.includes('meu marido') ||\n  normalizedConversation.includes('falar com ela') ||\n  normalizedConversation.includes('esperando ela') ||\n  normalizedConversation.includes('casal');\n\nconst revisitInventorySignal =\n  normalizedConversation.includes('manda de novo') ||\n  normalizedConversation.includes('manda novamente') ||\n  normalizedConversation.includes('reenvia') ||\n  normalizedConversation.includes('aquele apartamento') ||\n  normalizedConversation.includes('qual era aquele') ||\n  normalizedConversation.includes('me manda aquele') ||\n  normalizedConversation.includes('aquele que voce falou') ||\n  normalizedConversation.includes('tinha comentado') ||\n  normalizedConversation.includes('ainda faz sentido') ||\n  normalizedConversation.includes('voltei aqui');\n\nconst favoriteSignal =\n  normalizedConversation.includes('gostei mais desse') ||\n  normalizedConversation.includes('esse ficou melhor') ||\n  normalizedConversation.includes('esse fez mais sentido') ||\n  normalizedConversation.includes('esse me agradou') ||\n  normalizedConversation.includes('preferi esse') ||\n  normalizedConversation.includes('curti esse');\n\nconst visitIntentSignal =\n  normalizedConversation.includes('visitar') ||\n  normalizedConversation.includes('visita') ||\n  normalizedConversation.includes('agendar visita') ||\n  normalizedConversation.includes('marcar visita') ||\n  normalizedConversation.includes('ver pessoalmente') ||\n  normalizedConversation.includes('quero conhecer');\n\nconst propertyIntentSignal =\n  normalizedConversation.includes('imovel') ||\n  normalizedConversation.includes('imoveis') ||\n  normalizedConversation.includes('opcao') ||\n  normalizedConversation.includes('opcoes') ||\n  normalizedConversation.includes('sugestao') ||\n  normalizedConversation.includes('sugestoes') ||\n  normalizedConversation.includes('recomendacao') ||\n  normalizedConversation.includes('recomendacoes') ||\n  normalizedConversation.includes('link') ||\n  normalizedConversation.includes('pode mandar') ||\n  normalizedConversation.includes('manda uma') ||\n  normalizedConversation.includes('me manda') ||\n  normalizedConversation.includes('se tiver') ||\n  normalizedConversation.includes('tem algo') ||\n  normalizedConversation.includes('disponivel') ||\n  normalizedConversation.includes('disponiveis') ||\n  visitIntentSignal ||\n  revisitInventorySignal;\n\nconst followupSignal =\n  spouseDecisionSignal ||\n  normalizedConversation.includes('vou pensar') ||\n  normalizedConversation.includes('depois eu vejo') ||\n  normalizedConversation.includes('vou analisar');\n\n// ============================================\n// INVENTORY GOVERNANCE\n// ============================================\n\nconst outboundPropertyMessages =\n  recentMessages.filter((m) => {\n    const text =\n      normalize(m.content || '');\n\n    return (\n      (\n        m.direction === 'outbound' ||\n        m.sender_type === 'agent'\n      ) &&\n      (\n        text.includes('https://jurema.app/imovel') ||\n        text.includes('https://juremabksimoveis.com.br/imoveis')\n      )\n    );\n  });\n\nconst propertiesSentCount =\n  outboundPropertyMessages.length;\n\nconst inventoryFatigue =\n  propertiesSentCount >= 6;\n\n// ============================================\n// FAVORITE PROPERTY\n// ============================================\n\nlet favoriteProperty =\n  existingOperationalContext.favorite_property ||\n  null;\n\nconst propertyMatch =\n  allConversationText.match(\n    /(cabo branco|tambau|bessa|manaira|jardim oceania|intermares|ponta de campina|altiplano)/i\n  );\n\nif (propertyMatch) {\n  favoriteProperty =\n    propertyMatch[1];\n}\n\n// ============================================\n// QUALIFICATION DEPTH\n// ============================================\n\nlet qualificationDepth = 0;\n\nif (lead.name) {\n  qualificationDepth += 1;\n}\n\nif (\n  deal.location_preference ||\n  beachInterest\n) {\n  qualificationDepth += 1;\n}\n\nif (deal.property_type) {\n  qualificationDepth += 1;\n}\n\nif (\n  deal.budget_min ||\n  deal.budget_max\n) {\n  qualificationDepth += 2;\n}\n\nif (deal.bedrooms) {\n  qualificationDepth += 1;\n}\n\nif (deal.timeline) {\n  qualificationDepth += 1;\n}\n\nif (\n  financingSignal ||\n  fgtsSignal\n) {\n  qualificationDepth += 1;\n}\n\nconst hasRegionContext =\n  Boolean(\n    deal.location_preference ||\n    propertyMatch?.[1] ||\n    beachInterest\n  );\n\nconst hasBudgetContext =\n  Boolean(\n    deal.budget_min ||\n    deal.budget_max ||\n    /(?:r\\$|\\b\\d+\\s*(?:mil|k)\\b)/i.test(mensagemCliente)\n  );\n\nconst hasTypeContext =\n  Boolean(\n    deal.property_type ||\n    /\\b(?:apartamento|apto|ape|flat|studio|casa|cobertura|terreno|\\d+\\s*quartos?)\\b/i.test(mensagemCliente)\n  );\n\nconst hasObjectiveContext =\n  Boolean(\n    deal.intent ||\n    lead.ai_last_intent ||\n    /\\b(?:morar|investir|investimento|alugar|familia|temporada|short stay)\\b/i.test(mensagemCliente)\n  );\n\nconst propertyPresentationDue =\n  propertyIntentSignal &&\n  (\n    hasRegionContext ||\n    hasBudgetContext ||\n    hasTypeContext ||\n    hasObjectiveContext ||\n    revisitInventorySignal\n  );\n\n// ============================================\n// FUNNEL ENGINE\n// ============================================\n\nlet funnelStage =\n  'lead_novo';\n\nif (\n  qualificationDepth >= 4\n) {\n  funnelStage =\n    'qualificando';\n}\n\nif (\n  propertiesSentCount >= 2\n) {\n  funnelStage =\n    'matching';\n}\n\nif (\n  spouseDecisionSignal ||\n  revisitInventorySignal ||\n  favoriteSignal\n) {\n  funnelStage =\n    'comparando';\n}\n\nif (\n  visitIntentSignal\n) {\n  funnelStage =\n    'visita';\n}\n\nif (\n  followupSignal &&\n  !visitIntentSignal\n) {\n  funnelStage =\n    'followup';\n}\n\n// ============================================\n// DECISION STYLE\n// ============================================\n\nlet decisionStyle =\n  existingOperationalContext.decision_style ||\n  null;\n\nif (\n  spouseDecisionSignal ||\n  deal.decision_maker === 'casal'\n) {\n  decisionStyle =\n    'casal';\n}\n\n// ============================================\n// VISIT INTEREST SCORE\n// ============================================\n\nlet visitInterestScore =\n  Number(\n    existingOperationalContext.visit_interest_score || 0\n  );\n\nif (visitIntentSignal) {\n  visitInterestScore += 2;\n}\n\nif (favoriteSignal) {\n  visitInterestScore += 1;\n}\n\nif (revisitInventorySignal) {\n  visitInterestScore += 1;\n}\n\nvisitInterestScore =\n  Math.min(10, visitInterestScore);\n\n// ============================================\n// FOLLOWUP\n// ============================================\n\nconst followupEnabled =\n  funnelStage === 'followup' ||\n  spouseDecisionSignal;\n\n// ============================================\n// NEXT BEST ACTION\n// ============================================\n\nlet nextBestAction =\n  'descobrir_contexto';\n\nif (inventoryFatigue) {\n  nextBestAction =\n    'reduzir_inventory';\n}\n\nswitch (funnelStage) {\n  case 'lead_novo':\n    nextBestAction =\n      'descobrir_contexto';\n    break;\n\n  case 'qualificando':\n    nextBestAction =\n      'aprofundar_criterios';\n    break;\n\n  case 'matching':\n    nextBestAction =\n      'apresentar_opcoes_aderentes';\n    break;\n\n  case 'comparando':\n    nextBestAction =\n      spouseDecisionSignal\n        ? 'acompanhar_decisao_casal'\n        : 'consolidar_favorito';\n    break;\n\n  case 'visita':\n    nextBestAction =\n      'facilitar_agendamento';\n    break;\n\n  case 'followup':\n    nextBestAction =\n      'manter_radar_contextual';\n    break;\n}\n\nif (propertyPresentationDue) {\n  nextBestAction =\n    'apresentar_opcoes_aderentes';\n}\n\n// ============================================\n// REGIONS\n// ============================================\n\nconst preferredRegions =\n  compactArray([\n    deal.location_preference,\n    propertyMatch?.[1] || null,\n    beachInterest ? 'praia' : null,\n  ]);\n\n// ============================================\n// METADATA\n// ============================================\n\nconst metadata = {\n  source:\n    'yzi_operational_runtime',\n\n  updated_at:\n    new Date().toISOString(),\n\n  updated_from_message:\n    mensagemCliente,\n\n  behavioral_signals: {\n    beach_interest:\n      beachInterest,\n\n    financing_signal:\n      financingSignal,\n\n    fgts_signal:\n      fgtsSignal,\n\n    credit_letter_signal:\n      creditLetterSignal,\n\n    spouse_decision_signal:\n      spouseDecisionSignal,\n\n    revisit_inventory_signal:\n      revisitInventorySignal,\n\n    favorite_signal:\n      favoriteSignal,\n\n    visit_intent_signal:\n      visitIntentSignal,\n\n    property_intent_signal:\n      propertyIntentSignal,\n\n    property_presentation_due:\n      propertyPresentationDue,\n  },\n\n  runtime: {\n    qualification_depth:\n      qualificationDepth,\n\n    inventory_fatigue:\n      inventoryFatigue,\n\n    properties_sent_count:\n      propertiesSentCount,\n\n    next_best_action:\n      nextBestAction,\n\n    property_presentation_due:\n      propertyPresentationDue,\n  }\n};\n\n// ============================================\n// FINAL OPERATIONAL CONTEXT\n// ============================================\n\nconst operationalContext = {\n  tenant_id:\n    tenantId,\n\n  conversation_id:\n    conversationId,\n\n  lead_id:\n    leadId,\n\n  lead_name:\n    lead.name || null,\n\n  funnel_stage:\n    funnelStage,\n\n  decision_style:\n    decisionStyle,\n\n  objective:\n    deal.intent ||\n    lead.ai_last_intent ||\n    null,\n\n  preferred_regions:\n    preferredRegions,\n\n  property_type:\n    deal.property_type ||\n    null,\n\n  bedrooms:\n    deal.bedrooms ||\n    null,\n\n  budget_min:\n    deal.budget_min ||\n    null,\n\n  budget_max:\n    deal.budget_max ||\n    null,\n\n  beach_interest:\n    beachInterest,\n\n  financing_signal:\n    financingSignal,\n\n  fgts_signal:\n    fgtsSignal,\n\n  credit_letter_signal:\n    creditLetterSignal,\n\n  favorite_property:\n    favoriteProperty,\n\n  visit_interest_score:\n    visitInterestScore,\n\n  followup_enabled:\n    followupEnabled,\n\n  property_presentation_due:\n    propertyPresentationDue,\n\n  metadata,\n};\n\n// ============================================\n// OUTPUT - PROJECAO ESTRITA\n// ============================================\n\nreturn [{\n  json: {\n    tenant_id: input.tenant_id || tenantId || null,\n    lead_id: input.lead_id || leadId || null,\n    deal_id: input.deal_id || deal?.id || null,\n    conversation_id: input.conversation_id || conversationId || null,\n    sessionId: input.sessionId || input.telefoneCompleto || null,\n    telefoneCompleto: input.telefoneCompleto || input.phone || null,\n    remoteJid: input.remoteJid || null,\n    phone: input.phone || lead?.phone || null,\n    lead: input.lead || {},\n    deal: input.deal || {},\n    conversation: input.conversation || {},\n    recent_messages: recentMessages,\n    operational_context: operationalContext,\n    runtime_memory: {\n      sync_skipped: false,\n      funnel_stage: funnelStage,\n      qualification_depth: qualificationDepth,\n      next_best_action: nextBestAction,\n      inventory_fatigue: inventoryFatigue,\n      properties_sent_count: propertiesSentCount,\n      spouse_decision_signal: spouseDecisionSignal,\n      revisit_inventory_signal: revisitInventorySignal,\n      favorite_signal: favoriteSignal,\n      visit_intent_signal: visitIntentSignal,\n      property_intent_signal: propertyIntentSignal,\n      property_presentation_due: propertyPresentationDue,\n    },\n    mensagemCliente: input.mensagemCliente || mensagemCliente || '',\n    messageType: input.messageType || null,\n    instance: input.instance || null,\n    external_message_id: input.external_message_id || null,\n    origemLead: input.origemLead || null,\n    _context: input._context || '',\n    _status_slug: input._status_slug || null,\n    _skip_ai: input._skip_ai === true,\n    // aliases legacy\n    Telefone: input.Telefone || null,\n    'Status Lead': input['Status Lead'] || null,\n    'Score do Lead': input['Score do Lead'] || null,\n    nome_cliente: input.nome_cliente || null,\n    record_id_guardiao: input.record_id_guardiao || null,\n    // followup passthrough\n    event_type: input.event_type || null,\n    internal_behavioral_event: input.internal_behavioral_event || null,\n    followup_task_id: input.followup_task_id || null,\n    followup_task: input.followup_task || null,\n    followup_delay_seconds: input.followup_delay_seconds || null,\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7584,
+        1792
+      ],
+      "id": "317a011e-54d2-4ea4-bc7e-b1ada9512cca",
+      "name": "Sync Operational Context"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        6672,
+        1248
+      ],
+      "id": "followup-cron-trigger-local-001",
+      "name": "Cron Follow-up Tasks"
+    },
+    {
+      "parameters": {
+        "jsCode": "async function n8nHttpRequest(options) {\n  if (this && this.helpers && typeof this.helpers.httpRequest === 'function') {\n    return await this.helpers.httpRequest(options);\n  }\n  if (this && this.helpers && typeof this.helpers.request === 'function') {\n    return await this.helpers.request(options);\n  }\n  throw new Error('Nenhum helper HTTP disponivel no Code node.');\n}\n\nasync function supabaseRequest({ baseUrl, apiKey, method, path, qs = {}, body, prefer }) {\n  const cleanBase = String(baseUrl).replace(/\\/+$/, '');\n  const cleanPath = String(path).startsWith('/') ? path : '/' + path;\n  const headers = {\n    apikey: apiKey,\n    Authorization: 'Bearer ' + apiKey,\n    'Content-Type': 'application/json',\n  };\n  if (prefer) headers.Prefer = prefer;\n  const options = { method, url: cleanBase + cleanPath, qs, headers, json: true };\n  if (body !== undefined) options.body = body;\n  return await n8nHttpRequest.call(this, options);\n}\n\nfunction asObject(value) {\n  return value && typeof value === 'object' && !Array.isArray(value) ? value : {};\n}\n\nfunction firstText(...values) {\n  for (const value of values) {\n    const text = String(value ?? '').trim();\n    if (text) return text;\n  }\n  return '';\n}\n\nfunction normalizePhone(value) {\n  return String(value ?? '').replace(/\\D/g, '');\n}\n\nfunction recentText(messages) {\n  return (messages || [])\n    .map((m) => (m.direction === 'outbound' || m.sender_type === 'agent' ? 'Ju: ' : 'Cliente: ') + (m.content || ''))\n    .filter(Boolean)\n    .join('\\n');\n}\n\nfunction pickDelaySeconds(metadata) {\n  const strategy = asObject(metadata.strategy);\n  const goal = String(strategy.goal || metadata.followup_type || '').toLowerCase();\n  const emotional = goal.includes('emoc') || goal.includes('retomar_interesse');\n  const curation = goal.includes('curadoria') || goal.includes('opcao') || goal.includes('imovel');\n  const min = emotional ? 5 : curation ? 4 : 2;\n  const max = emotional ? 9 : curation ? 7 : 4;\n  return Math.floor(Math.random() * (max - min + 1)) + min;\n}\n\nconst baseUrl = 'https://dwmbklfkrtumfaxrbxio.supabase.co';\nconst apiKey = $env.SUPABASE_SERVICE_ROLE_KEY || $env.JUREMA_SUPABASE_SERVICE_ROLE_KEY;\nif (!apiKey) throw new Error('SUPABASE_SERVICE_ROLE_KEY nao configurada no ambiente n8n.');\nconst tenantId = '82cc7aa9-fc6e-4f37-8d8e-8a71c1691361';\nconst now = new Date().toISOString();\n\nconst dueTasks = await supabaseRequest.call(this, {\n  baseUrl,\n  apiKey,\n  method: 'GET',\n  path: '/rest/v1/follow_up_tasks',\n  qs: {\n    select: '*',\n    due_at: 'lte.' + now,\n    status: 'eq.pendente',\n    order: 'priority.desc,due_at.asc',\n    limit: 5,\n  },\n});\n\nconst tasks = Array.isArray(dueTasks) ? dueTasks : [];\nconst output = [];\n\nfor (const task of tasks) {\n  const metadata = asObject(task.metadata);\n  const leadId = firstText(task.lead_id, metadata.lead_id);\n  if (!leadId) continue;\n\n  let lead = null;\n  try {\n    const leads = await supabaseRequest.call(this, {\n      baseUrl,\n      apiKey,\n      method: 'GET',\n      path: '/rest/v1/leads',\n      qs: { select: '*', id: 'eq.' + leadId, limit: 1 },\n    });\n    lead = Array.isArray(leads) ? leads[0] : leads;\n  } catch (error) {\n    lead = null;\n  }\n  if (!lead) continue;\n\n  const conversations = await supabaseRequest.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'GET',\n    path: '/rest/v1/conversations',\n    qs: {\n      select: '*',\n      lead_id: 'eq.' + lead.id,\n      order: 'updated_at.desc',\n      limit: 1,\n    },\n  });\n  const conversation = Array.isArray(conversations) ? conversations[0] : conversations;\n  if (conversation?.ai_paused === true) continue;\n\n  const deals = await supabaseRequest.call(this, {\n    baseUrl,\n    apiKey,\n    method: 'GET',\n    path: '/rest/v1/jurema_deals',\n    qs: {\n      select: '*',\n      lead_id: 'eq.' + lead.id,\n      order: 'updated_at.desc',\n      limit: 1,\n    },\n  });\n  const deal = Array.isArray(deals) ? deals[0] : deals;\n\n  const recentDesc = conversation?.id\n    ? await supabaseRequest.call(this, {\n        baseUrl,\n        apiKey,\n        method: 'GET',\n        path: '/rest/v1/conversation_messages',\n        qs: {\n          select: 'direction,sender_type,content,message_type,created_at',\n          conversation_id: 'eq.' + conversation.id,\n          order: 'created_at.desc',\n          limit: 12,\n        },\n      })\n    : [];\n  const recentMessages = (Array.isArray(recentDesc) ? recentDesc : []).reverse();\n\n  const conversationContext = asObject(metadata.conversation_context);\n  const behavioralState = asObject(metadata.behavioral_state);\n  const strategy = asObject(metadata.strategy);\n  const telefone = normalizePhone(firstText(conversation?.phone_normalized, conversation?.phone, lead.phone, lead.phone_normalized));\n  if (!telefone) continue;\n\n  const internalEvent = {\n    event_type: 'followup_resume',\n    followup_type: firstText(metadata.followup_type, task.trigger_reason, 'momentum_recovery'),\n    lead_id: lead.id,\n    task_id: task.id,\n    context: {\n      bairro: firstText(conversationContext.bairro, deal?.location_preference, lead.metadata?.bairro_interesse),\n      ultimo_imovel: firstText(conversationContext.property_reference, conversationContext.ultimo_imovel, metadata.property_reference),\n      motivo: firstText(task.trigger_reason, strategy.goal, 'retomar_contexto'),\n    },\n    behavioral_state: behavioralState,\n    strategy,\n  };\n\n  const eventText = [\n    '[EVENTO_INTERNO_FOLLOWUP]',\n    JSON.stringify(internalEvent),\n    'Retome a conversa em uma mensagem curta, natural e consultiva. Nao diga que e automacao. Nao peca permissao para retomar. Use o historico e, se houver imovel/contexto suficiente, apresente ou reancore antes de perguntar.',\n  ].join('\\n');\n\n  output.push({\n    json: {\n      tenant_id: lead.tenant_id || tenantId,\n      lead_id: lead.id,\n      deal_id: deal?.id || null,\n      conversation_id: conversation?.id || null,\n      lead,\n      deal: deal || {},\n      conversation: conversation || {},\n      recent_messages: recentMessages,\n      mensagemCliente: eventText,\n      messageType: 'internal_followup',\n      event_type: 'followup_resume',\n      internal_behavioral_event: internalEvent,\n      followup_task_id: task.id,\n      followup_task: task,\n      followup_delay_seconds: pickDelaySeconds(metadata),\n      followup_due_at: task.due_at,\n      followup_priority: task.priority,\n      remoteJid: telefone,\n      telefoneCompleto: telefone,\n      sessionId: telefone,\n      instance: firstText(conversation?.metadata?.instance, metadata.instance, 'Jurema Brokers'),\n      origemLead: firstText(lead.source, lead.metadata?.origem, 'follow_up_task'),\n      operational_context: {\n        ...(asObject(conversation?.metadata?.operational_context)),\n        followup_enabled: true,\n        funnel_stage: 'followup',\n        objective: firstText(strategy.goal, deal?.intent, lead.ai_last_intent, 'retomar_interesse'),\n        preferred_regions: [firstText(conversationContext.bairro, deal?.location_preference)].filter(Boolean),\n        favorite_property: firstText(conversationContext.property_reference, conversationContext.ultimo_imovel),\n        metadata: {\n          behavioral_state: behavioralState,\n          conversation_context: conversationContext,\n          strategy,\n        },\n      },\n      runtime_memory: {\n        event_type: 'followup_resume',\n        next_best_action: firstText(strategy.goal, '').includes('imovel') ? 'apresentar_opcoes_aderentes' : 'retomar_contexto_consultivo',\n        followup_task_id: task.id,\n        followup_type: internalEvent.followup_type,\n        recent_context: recentText(recentMessages),\n      },\n      _skip_ai: false,\n    },\n  });\n}\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6896,
+        1248
+      ],
+      "id": "followup-fetch-due-tasks-local-001",
+      "name": "Buscar Follow-ups Vencidos"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.followup_delay_seconds || 3 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        7120,
+        1248
+      ],
+      "id": "followup-human-delay-local-001",
+      "name": "Delay Humano Follow-up",
+      "webhookId": "followup-human-delay-local-001"
+    },
+    {
+      "parameters": {
+        "jsCode": "async function n8nHttpRequest(options) {\n  if (this && this.helpers && typeof this.helpers.httpRequest === 'function') {\n    return await this.helpers.httpRequest(options);\n  }\n  if (this && this.helpers && typeof this.helpers.request === 'function') {\n    return await this.helpers.request(options);\n  }\n  throw new Error('Nenhum helper HTTP disponivel no Code node.');\n}\n\nasync function supabaseRequest({ baseUrl, apiKey, method, path, qs = {}, body, prefer }) {\n  const cleanBase = String(baseUrl).replace(/\\/+$/, '');\n  const cleanPath = String(path).startsWith('/') ? path : '/' + path;\n  const headers = {\n    apikey: apiKey,\n    Authorization: 'Bearer ' + apiKey,\n    'Content-Type': 'application/json',\n  };\n  if (prefer) headers.Prefer = prefer;\n  const options = { method, url: cleanBase + cleanPath, qs, headers, json: true };\n  if (body !== undefined) options.body = body;\n  return await n8nHttpRequest.call(this, options);\n}\n\nfunction nodeJson(name) {\n  try { return $items(name)[0]?.json || {}; } catch (error) { return {}; }\n}\n\nconst source = nodeJson('Split Out1');\nconst build = nodeJson('Build Context');\nconst taskId = source.followup_task_id || build.followup_task_id || $json.followup_task_id || null;\n\nif (!taskId) {\n  return [{ json: $json }];\n}\n\nconst baseUrl = 'https://dwmbklfkrtumfaxrbxio.supabase.co';\nconst apiKey = $env.SUPABASE_SERVICE_ROLE_KEY || $env.JUREMA_SUPABASE_SERVICE_ROLE_KEY;\nif (!apiKey) throw new Error('SUPABASE_SERVICE_ROLE_KEY nao configurada no ambiente n8n.');\nconst previousMetadata = source.followup_task?.metadata && typeof source.followup_task.metadata === 'object'\n  ? source.followup_task.metadata\n  : {};\n\nawait supabaseRequest.call(this, {\n  baseUrl,\n  apiKey,\n  method: 'PATCH',\n  path: '/rest/v1/follow_up_tasks',\n  qs: { id: 'eq.' + taskId },\n  body: {\n    status: 'automatizado',\n    metadata: {\n      ...previousMetadata,\n      automation: {\n        status: 'automatizado',\n        workflow: 'workflow-jurema-main.final-hardened',\n        sent_at: new Date().toISOString(),\n      },\n    },\n  },\n  prefer: 'return=minimal',\n});\n\nreturn [{ json: { ...$json, followup_task_id: taskId, followup_task_status: 'automatizado' } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        12064,
+        1456
+      ],
+      "id": "followup-mark-resolved-local-001",
+      "name": "Marcar Follow-up Resolvido"
+    },
+    {
+      "parameters": {
+        "jsCode": "function digits(value) {\n  return String(value ?? '').replace(/\\D/g, '');\n}\n\nfunction firstText(...values) {\n  for (const value of values) {\n    const text = String(value ?? '').trim();\n    if (text) return text;\n  }\n  return '';\n}\n\nconst context = $json || {};\nconst messageId = firstText(\n  context.external_message_id,\n  context.message_id,\n  context.data?.key?.id,\n  context.conversation_id ? context.conversation_id + ':' + Date.now() : '',\n  $execution.id,\n);\nconst remoteJid = firstText(\n  context.remoteJid,\n  context.conversation_id && String(context.conversation_id).includes('@') ? context.conversation_id : '',\n  context.telefoneCompleto ? digits(context.telefoneCompleto) + '@s.whatsapp.net' : '',\n);\nconst phone = digits(firstText(\n  context.phone,\n  context.telefoneCompleto,\n  remoteJid ? remoteJid.split('@')[0] : '',\n));\nconst message = firstText(context.mensagemCliente, context.mensagem, context.current_message);\n\nconst payload = {\n  message_id: messageId,\n  conversation_id: firstText(context.conversation_id, remoteJid),\n  tenant_id: firstText(context.tenant_id, context.lead?.tenant_id),\n  phone,\n  message,\n  mensagemCliente: message,\n  remoteJid,\n  sessionId: firstText(context.sessionId, phone, remoteJid),\n  instance: firstText(context.instance, 'Jurema Brokers'),\n  lead_id: context.lead_id || context.lead?.id || null,\n  deal_id: context.deal_id || context.deal?.id || null,\n  messageType: context.messageType || 'text',\n  event_type: context.event_type || null,\n  internal_behavioral_event: context.internal_behavioral_event || null,\n  operational_context: context.operational_context || {},\n  runtime_memory: context.runtime_memory || {},\n  runtime_state: context.runtime_state || {},\n  next_action: context.next_action || null,\n  required_tools: context.required_tools || [],\n  property_presentation_due: context.property_presentation_due === true,\n  tool_revalidation_required: context.tool_revalidation_required === true,\n  context: context._context || '',\n  lead: context.lead || {},\n  deal: context.deal || {},\n  conversation: context.conversation || {},\n  dry_run: false,\n  source: 'n8n:cognitive-runtime-bridge',\n  n8n: {\n    execution_id: $execution.id,\n    workflow_name: $workflow.name,\n    node: 'Preparar Runtime Payload',\n  },\n  // Compatibilidade com extracao Evolution do runtime atual.\n  data: {\n    key: {\n      id: messageId,\n      fromMe: false,\n      remoteJid,\n    },\n    pushName: firstText(context.nome_cliente, context.lead?.name, 'Cliente'),\n    messageType: context.messageType || 'conversation',\n    message: {\n      conversation: message,\n    },\n    messageTimestamp: Math.floor(Date.now() / 1000),\n    source: 'n8n:cognitive-runtime-bridge',\n    contextInfo: {\n      tenant_id: firstText(context.tenant_id, context.lead?.tenant_id),\n      lead_id: context.lead_id || context.lead?.id || null,\n      deal_id: context.deal_id || context.deal?.id || null,\n      sourceChannel: context.origemLead || 'whatsapp',\n    },\n  },\n};\n\nif (!payload.message_id) throw new Error('Runtime payload sem message_id.');\nif (!payload.conversation_id) throw new Error('Runtime payload sem conversation_id.');\nif (!payload.tenant_id) throw new Error('Runtime payload sem tenant_id.');\nif (!payload.message) throw new Error('Runtime payload sem message.');\n\n// UUID guard — runtime persiste ju_runtime_states (conversation_id UUID).\n// Falha cedo se Build Context nao trouxer UUIDs validos, evita drift silencioso.\nconst UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;\nif (!UUID_RE.test(String(payload.conversation_id))) {\n  throw new Error('Runtime payload conversation_id nao e UUID valido: ' + payload.conversation_id);\n}\nif (!UUID_RE.test(String(payload.tenant_id))) {\n  throw new Error('Runtime payload tenant_id nao e UUID valido: ' + payload.tenant_id);\n}\n\nreturn [{\n  json: {\n    ...context,\n    runtime_payload: payload,\n    runtime_bridge: {\n      enabled: true,\n      fallback_policy: 'safe_text_and_manual_rollback',\n      created_at: new Date().toISOString(),\n    },\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        10304,
+        1504
+      ],
+      "id": "runtime-bridge-prepare-payload-v3",
+      "name": "Preparar Runtime Payload"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.YZI_COGNITIVE_RUNTIME_URL || $vars.YZI_COGNITIVE_RUNTIME_URL || 'https://runtime.yzihub.com/cognitive/turn' }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "x-webhook-secret",
+              "value": "={{ $vars.JUREMA_TOOL_WEBHOOK_SECRET || $vars.RUNTIME_COGNITIVE_WEBHOOK_SECRET || $vars.EVOLUTION_WEBHOOK_SECRET || $env.JUREMA_TOOL_WEBHOOK_SECRET || $env.RUNTIME_COGNITIVE_WEBHOOK_SECRET || $env.EVOLUTION_WEBHOOK_SECRET || '' }}"
+            },
+            {
+              "name": "x-request-id",
+              "value": "={{ $json.runtime_payload.message_id || $execution.id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.runtime_payload) }}",
+        "options": {
+          "timeout": 45000,
+          "allowUnauthorizedCerts": true
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        10544,
+        1504
+      ],
+      "id": "runtime-bridge-http-cognitive-turn-v3",
+      "name": "Runtime Cognitivo",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "function nodeJson(name) {\n  try { return $(name).first().json || {}; } catch (error) { return {}; }\n}\n\nfunction firstText(...values) {\n  for (const value of values) {\n    const text = String(value ?? '').trim();\n    if (text) return text;\n  }\n  return '';\n}\n\nfunction validHttpUrl(value) {\n  const text = String(value ?? '').trim();\n  if (!/^https?:\\/\\//i.test(text)) return '';\n  if (/localhost|127\\.0\\.0\\.1/i.test(text)) return '';\n  return text;\n}\n\nfunction collectCardUrls(value, seen = new Set()) {\n  const urls = [];\n  const visit = (entry) => {\n    if (!entry) return;\n    if (typeof entry === 'string') {\n      const url = validHttpUrl(entry);\n      if (url && !seen.has(url)) {\n        seen.add(url);\n        urls.push(url);\n      }\n      return;\n    }\n    if (Array.isArray(entry)) {\n      for (const item of entry) visit(item);\n      return;\n    }\n    if (typeof entry !== 'object') return;\n    const candidates = [\n      entry.url,\n      entry.link,\n      entry.link_do_imovel,\n      entry.link_sanitizado,\n      entry.public_url,\n      entry.publicUrl,\n      entry.property_url,\n      entry.propertyUrl,\n      entry.card_url,\n      entry.cardUrl,\n      entry.media_url,\n      entry.thumbnail_url,\n      entry.href,\n    ];\n    for (const candidate of candidates) visit(candidate);\n    for (const key of ['cards', 'properties', 'imoveis', 'items', 'results', 'matches', 'tool_output', 'output']) {\n      if (entry[key]) visit(entry[key]);\n    }\n  };\n  visit(value);\n  return urls;\n}\n\nfunction collectToolResultOutputs(runtime) {\n  const buckets = [\n    runtime.llm?.tool_results,\n    runtime.result?.llm?.tool_results,\n    runtime.tool_results,\n    runtime.result?.tool_results,\n  ];\n  const outputs = [];\n  for (const bucket of buckets) {\n    if (!Array.isArray(bucket)) continue;\n    for (const entry of bucket) {\n      if (entry && entry.ok !== false && entry.output !== undefined && entry.output !== null) {\n        outputs.push(entry.output);\n      }\n    }\n  }\n  return outputs;\n}\n\nconst build = nodeJson('Build Context');\nconst prepared = nodeJson('Preparar Runtime Payload');\nconst runtime = $json || {};\nconst executionError = runtime.error || runtime.message?.error || runtime.cause || null;\nconst duplicate = runtime.duplicate === true || runtime.webhook?.duplicate === true;\n\nconst output = firstText(\n  runtime.response_to_send,\n  runtime.output,\n  runtime.response,\n  runtime.message,\n  runtime.result?.response_to_send,\n  runtime.result?.output,\n  runtime.result?.llm?.output,\n  runtime.llm?.output,\n  runtime.decision?.output,\n);\n\nconst toolOutputs = collectToolResultOutputs(runtime);\nconst cardUrls = collectCardUrls([\n  runtime.messages,\n  runtime.result?.messages,\n  runtime.cards,\n  runtime.result?.cards,\n  ...toolOutputs,\n]);\n\nlet finalOutput = output;\nlet fallbackReason = null;\n\nif (duplicate) {\n  finalOutput = '';\n  fallbackReason = 'duplicate_message_dropped';\n} else if (!finalOutput && cardUrls.length) {\n  finalOutput = cardUrls.join('\\n\\n');\n} else if (finalOutput && cardUrls.length) {\n  const missingUrls = cardUrls.filter((url) => !finalOutput.includes(url));\n  if (missingUrls.length) finalOutput = [finalOutput, ...missingUrls].join('\\n\\n');\n} else if (!finalOutput) {\n  fallbackReason = executionError ? 'runtime_error' : 'empty_runtime_output';\n  finalOutput = 'Tive uma oscilacao aqui para processar sua mensagem. Vou retomar com seguranca: me confirma em uma frase o que voce quer priorizar agora?';\n}\n\nreturn [{\n  json: {\n    ...build,\n    ...prepared,\n    output: finalOutput,\n    runtime_response: runtime,\n    runtime_ok: runtime.ok === true && !executionError && Boolean(output || cardUrls.length),\n    runtime_duplicate: duplicate,\n    runtime_fallback: Boolean(fallbackReason),\n    runtime_fallback_reason: fallbackReason,\n    runtime_trace_id: runtime.trace_id || runtime.result?.trace_id || null,\n    runtime_card_urls: cardUrls,\n    response_to_send: runtime.response_to_send || null,\n    conversation_id: firstText(build.conversation_id, prepared.conversation_id, runtime.conversation_id, runtime.runtime_payload?.conversation_id),\n    tenant_id: firstText(build.tenant_id, prepared.tenant_id, runtime.tenant_id),\n    lead_id: firstText(build.lead_id, prepared.lead_id, runtime.lead_id),\n    deal_id: firstText(build.deal_id, prepared.deal_id, runtime.deal_id),\n    remoteJid: firstText(build.remoteJid, prepared.remoteJid, prepared.runtime_payload?.remoteJid, prepared.runtime_payload?.conversation_id),\n    telefoneCompleto: firstText(build.telefoneCompleto, prepared.telefoneCompleto, prepared.runtime_payload?.phone),\n    sessionId: firstText(build.sessionId, prepared.sessionId, prepared.runtime_payload?.sessionId),\n    event_type: build.event_type || prepared.event_type || null,\n    followup_task_id: build.followup_task_id || prepared.followup_task_id || null,\n    followup_task: build.followup_task || prepared.followup_task || null,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        10752,
+        1504
+      ],
+      "id": "runtime-bridge-normalize-output-v3",
+      "name": "Normaliza Runtime Output"
+    }
+  ],
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "api.yzihub.com",
+            "user-agent": "axios/1.13.2",
+            "content-length": "1828",
+            "accept": "application/json, text/plain, */*",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "content-type": "application/json",
+            "x-forwarded-for": "172.18.0.1",
+            "x-forwarded-host": "api.yzihub.com",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "8b58d912c6cc",
+            "x-real-ip": "172.18.0.1"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "Jurema Brokers",
+            "data": {
+              "key": {
+                "remoteJid": "558381681119@s.whatsapp.net",
+                "remoteJidAlt": "558381681119@s.whatsapp.net",
+                "fromMe": false,
+                "id": "3EB016F0DA2589C9E2BEA1",
+                "participant": "",
+                "addressingMode": "lid"
+              },
+              "pushName": "Eric",
+              "status": "DELIVERY_ACK",
+              "message": {
+                "messageContextInfo": {
+                  "threadId": [],
+                  "deviceListMetadata": {
+                    "senderKeyIndexes": [],
+                    "recipientKeyIndexes": [],
+                    "senderKeyHash": {
+                      "0": 15,
+                      "1": 188,
+                      "2": 64,
+                      "3": 141,
+                      "4": 247,
+                      "5": 136,
+                      "6": 41,
+                      "7": 193,
+                      "8": 198,
+                      "9": 13
+                    },
+                    "senderTimestamp": {
+                      "low": 1778941195,
+                      "high": 0,
+                      "unsigned": true
+                    },
+                    "senderAccountType": 0,
+                    "receiverAccountType": 0,
+                    "recipientKeyHash": {
+                      "0": 79,
+                      "1": 122,
+                      "2": 207,
+                      "3": 243,
+                      "4": 69,
+                      "5": 78,
+                      "6": 47,
+                      "7": 28,
+                      "8": 49,
+                      "9": 148
+                    },
+                    "recipientTimestamp": {
+                      "low": 1777695420,
+                      "high": 0,
+                      "unsigned": true
+                    }
+                  },
+                  "deviceListMetadataVersion": 2,
+                  "messageSecret": {
+                    "0": 185,
+                    "1": 72,
+                    "2": 251,
+                    "3": 126,
+                    "4": 225,
+                    "5": 85,
+                    "6": 169,
+                    "7": 152,
+                    "8": 161,
+                    "9": 204,
+                    "10": 121,
+                    "11": 82,
+                    "12": 128,
+                    "13": 73,
+                    "14": 58,
+                    "15": 108,
+                    "16": 105,
+                    "17": 122,
+                    "18": 47,
+                    "19": 39,
+                    "20": 205,
+                    "21": 165,
+                    "22": 157,
+                    "23": 51,
+                    "24": 109,
+                    "25": 242,
+                    "26": 159,
+                    "27": 192,
+                    "28": 71,
+                    "29": 29,
+                    "30": 159,
+                    "31": 53
+                  },
+                  "limitSharingV2": {
+                    "trigger": 0,
+                    "initiatedByMe": false
+                  }
+                },
+                "conversation": "esperando ela chegar em casa, só pra te avisa que ainda não conversei com ela. Mulher é braba, tem que ir devagar!"
+              },
+              "contextInfo": {
+                "mentionedJid": [],
+                "groupMentions": [],
+                "statusAttributions": [],
+                "ephemeralSettingTimestamp": {
+                  "low": 1779391056,
+                  "high": 0,
+                  "unsigned": false
+                },
+                "disappearingMode": {
+                  "initiator": 0,
+                  "trigger": 1,
+                  "initiatedByMe": false
+                }
+              },
+              "messageType": "conversation",
+              "messageTimestamp": 1779563918,
+              "instanceId": "4a97e0e8-9860-4774-b444-e45075f2abbf",
+              "source": "web"
+            },
+            "destination": "https://api.yzihub.com/webhook/ju",
+            "date_time": "2026-05-23T16:18:38.730Z",
+            "sender": "558396969364@s.whatsapp.net",
+            "server_url": "https://evo.yzihub.com",
+            "apikey": "8A3DA24F3CF0-4E17-A2D5-8B8C6063E5CC"
+          },
+          "webhookUrl": "https://api.yzihub.com/webhook/ju",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "REDIS3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI1": {
+      "main": [
+        [
+          {
+            "node": "Persist Audio Transcript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to audio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to audio1": {
+      "main": [
+        [
+          {
+            "node": "OpenAI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Memory1": {
+      "main": [
+        [
+          {
+            "node": "REDIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Texto curto Memory1": {
+      "main": [
+        [
+          {
+            "node": "REDIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Normaliza Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Dados da Imagem1": {
+      "main": [
+        [
+          {
+            "node": "Convert to imagens1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to imagens1": {
+      "main": [
+        [
+          {
+            "node": "Upload Imagem no imgbb1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "urls2": {
+      "main": [
+        [
+          {
+            "node": "uploads_esperados2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "uploads_esperados2": {
+      "main": [
+        [
+          {
+            "node": "redis2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "redis2": {
+      "main": [
+        [
+          {
+            "node": "Wait5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait5": {
+      "main": [
+        [
+          {
+            "node": "Redis6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis6": {
+      "main": [
+        [
+          {
+            "node": "memoria_redis2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "urls3": {
+      "main": [
+        [
+          {
+            "node": "uploads_esperados3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "uploads_esperados3": {
+      "main": [
+        [
+          {
+            "node": "redis3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "redis3": {
+      "main": [
+        [
+          {
+            "node": "Wait6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait6": {
+      "main": [
+        [
+          {
+            "node": "Redis7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis7": {
+      "main": [
+        [
+          {
+            "node": "memoria_redis3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Montar Dados do video1": {
+      "main": [
+        [
+          {
+            "node": "Convert to vídeo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "memoria_redis2": {
+      "main": [
+        [
+          {
+            "node": "Redis9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "memoria_redis3": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to vídeo1": {
+      "main": [
+        [
+          {
+            "node": "Upload Video no Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Video no Supabase1": {
+      "main": [
+        [
+          {
+            "node": "urls3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Redis8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload Imagem no imgbb1": {
+      "main": [
+        [
+          {
+            "node": "urls2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch7": {
+      "main": [
+        [
+          {
+            "node": "Texto curto Memory1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Texto curto Memory1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Normalize Audio Payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar Dados da Imagem1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar Dados do video1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Montar Dados do video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Evolution API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Block1": {
+      "main": [
+        [
+          {
+            "node": "dados do banco",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "dados do banco",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Atendimento1": {
+      "main": [
+        [
+          {
+            "node": "Switch Block1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "PARA IA1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Verificar Atendimento1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "REDIS": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "REDIS3": {
+      "main": [
+        [
+          {
+            "node": "UNIFICA REDIS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF-COMPARA": {
+      "main": [
+        [
+          {
+            "node": "Detecta Finalização",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Tratamento de erros1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UNIFICA REDIS": {
+      "main": [
+        [
+          {
+            "node": "IF-COMPARA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliza Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dados do banco": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "IF IA Pausada Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evolution API": {
+      "main": [
+        [
+          {
+            "node": "Marcar Follow-up Resolvido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF IA Pausada Supabase": {
+      "main": [
+        [
+          {
+            "node": "IA Pausada - Encerrar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dados do Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salvar Outbound Supabase": {
+      "main": [
+        [
+          {
+            "node": "ArrayResposta1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Audio Payload": {
+      "main": [
+        [
+          {
+            "node": "Audio Media Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Audio Media Valid?": {
+      "main": [
+        [
+          {
+            "node": "Convert to audio1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Audio Memory1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Persist Audio Transcript": {
+      "main": [
+        [
+          {
+            "node": "Audio Memory1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ArrayResposta1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Context": {
+      "main": [
+        [
+          {
+            "node": "Preparar Runtime Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados do Lead": {
+      "main": [
+        [
+          {
+            "node": "Sync Operational Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detecta Finalização": {
+      "main": [
+        [
+          {
+            "node": "Build Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync Operational Context": {
+      "main": [
+        [
+          {
+            "node": "Switch7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cron Follow-up Tasks": {
+      "main": [
+        [
+          {
+            "node": "Buscar Follow-ups Vencidos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Follow-ups Vencidos": {
+      "main": [
+        [
+          {
+            "node": "Delay Humano Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delay Humano Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Build Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Marcar Follow-up Resolvido": {
+      "main": [
+        [
+          {
+            "node": "Wait7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Runtime Payload": {
+      "main": [
+        [
+          {
+            "node": "Runtime Cognitivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Runtime Cognitivo": {
+      "main": [
+        [
+          {
+            "node": "Normaliza Runtime Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normaliza Runtime Output": {
+      "main": [
+        [
+          {
+            "node": "Salvar Outbound Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "8bd2bb6b9a6a92c283af80074f257998ad4a0dd70a16e43b7a9e260295cf0e19"
+  },
+  "id": "cj4V6DW0Qy6el0PM",
+  "tags": []
+}

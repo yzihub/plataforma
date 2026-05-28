@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Tenho interesse em algo em Cabo Branco pensando em valorizacao e retorno. Quero entender se faz sentido financeiramente.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "investment_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\investor_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/investor_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3298,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pode estar sim, viu. No anúncio que você clicou aparecia algum código JP ou valor aproximado? Isso me ajuda a achar exatamente o mesmo apartamento pra te confirmar a disponibilidade e já te dizer os prós e contras pra sua mãe.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 21,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 11,
+    "tool_calls": 11
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 41,
+      "line_count": 1,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3298
+    }
+  }
+}

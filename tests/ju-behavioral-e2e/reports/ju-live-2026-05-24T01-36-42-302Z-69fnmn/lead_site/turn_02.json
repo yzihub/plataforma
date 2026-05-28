@@ -1,0 +1,42 @@
+{
+  "turn_index": 1,
+  "input": "Meu foco seria algo pra morar, com rotina boa e perto de servicos.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\lead_site\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/lead_site/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3521,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Oi, que bom que você já deu uma olhada no site 😊 Bessa e Jardim Oceania são ótimas escolhas.\nPra eu te mandar opcoes mais certeiras: você pensa em comprar pra morar ou pra investir? E até mais ou menos qual valor você imagina ficar (pode ser uma faixa, tipo “até 500 mil”, “até 800 mil”…)?",
+  "persistence": {
+    "lead_id": "b5a9dec4-4b2b-415c-9490-50bcd02db790",
+    "conversation_id": "10408ddb-565b-413d-9f05-649b8f26d3bc",
+    "messages": 3,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 1,
+    "tool_calls": 1
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 56,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3521
+    }
+  }
+}

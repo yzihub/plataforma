@@ -1,0 +1,48 @@
+{
+  "turn_index": 2,
+  "input": "Manda uma opcao que faca sentido pra familia.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\family_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/family_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3971,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pra eu conseguir te dizer algo mais pé no chão de parcela, me fala só: hoje, até quanto por mês você imagina que conseguiria pagar sem apertar? Tipo, uma faixa que você olharia e pensaria “ok, isso cabe” — algo mais perto de 2 mil, 3 mil, 4 mil?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 13,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 33,
+    "tool_calls": 33
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 49,
+      "line_count": 1,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3971
+    }
+  }
+}

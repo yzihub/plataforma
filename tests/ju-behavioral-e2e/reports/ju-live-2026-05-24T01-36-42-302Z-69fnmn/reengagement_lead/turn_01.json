@@ -1,0 +1,57 @@
+{
+  "turn_index": 0,
+  "input": "Oi Ju, voltei aqui. Aquele apartamento que voce tinha comentado ainda faz sentido pra mim?",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "memory_revalidation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\reengagement_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/reengagement_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3692,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, então vamos tratar como algo pra morar, sem pressa e sem pressão, até porque você ainda está sentindo o mercado.\nComo você curte essa pegada mais exclusiva e diferente, eu posso te mostrar 1 exemplo bem escolhido em orla (tipo Ponta de Campina / Cabo Branco / Intermares) só pra você ter noção real de planta, prédio e faixa de valor, sem compromisso nenhum.\nPra eu usar um “norte” mínimo e não errar muito, hoje você se sente mais confortável imaginando algo até em torno de 800–900 mil, ou prefere que eu comece com um exemplo mais enxuto, tipo até uns 700 mil, e daí a gente calibra?",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 39,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 25,
+    "tool_calls": 25
+  },
+  "behavior": {
+    "score": 70,
+    "violations": [
+      {
+        "id": "permission_posso_te_mostrar",
+        "severity": "critical",
+        "weight": 10
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      },
+      {
+        "id": "asked_permission_instead_of_presenting",
+        "severity": "critical",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 109,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3692
+    }
+  }
+}

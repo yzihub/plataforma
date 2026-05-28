@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "O que pesa mais: vista, metragem ou localizacao?",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "consultative_comparison"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\investor_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/investor_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 729,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Boa, faz bastante sentido olhar Cabo Branco com esse olhar de valorização e retorno, principalmente pensando em algo bem localizado, perto da orla e com boa liquidez depois.\nTe mandei esse do Bessa porque ele conversa bem com o que você descreveu e está numa faixa abaixo dos 700 mil, o que ajuda no custo/benefício também:\nhttps://juremabksimoveis.com.br/imoveis/apartamento-para-venda-no-bessa/\n\nPra eu te dizer com mais precisão se vale mais a pena Cabo Branco ou algo nesse eixo Bessa/Manaíra em termos de valorização e locação, me conta só: você pensa mais em usar agora e talvez vender no futuro, ou focar em investimento/locação (tipo temporada/airbnb ou aluguel fixo)?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 22,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 9,
+    "tool_calls": 9
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "property_url_present",
+        "weight": 4
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 105,
+      "line_count": 4,
+      "question_count": 1,
+      "url_count": 1,
+      "latency_ms": 729
+    }
+  }
+}

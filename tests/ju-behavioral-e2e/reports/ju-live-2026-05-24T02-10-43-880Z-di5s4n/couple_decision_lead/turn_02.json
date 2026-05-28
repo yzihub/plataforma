@@ -1,0 +1,42 @@
+{
+  "turn_index": 1,
+  "input": "A gente quer decidir em ate uns 60 dias.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "high_intent"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\couple_decision_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/couple_decision_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4416,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, a dúvida de vocês é bem comum nesses dois bairros.\nFalando de forma bem direta:\nTambaú costuma ganhar em “praia na porta” e vocação mais turística, com vida de orla, passeio a pé, restaurantes e aquela pegada de quem quer usar muito a praia.\nManaíra geralmente entrega mais praticidade no dia a dia: mais comércio, serviços, shoppings e facilidades, ainda perto da praia, mas com um pezinho a mais no “cidade” do que no “praia”.\nPra eu te orientar melhor, me conta só uma coisa: vocês pensam em usar esse apê mais como moradia do dia a dia ou como algo misto (usar um pouco e também pensar em aluguel/valorização)? E até quanto hoje faria sentido investir nesse projeto a dois?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 30,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 15,
+    "tool_calls": 15
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 122,
+      "line_count": 5,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4416
+    }
+  }
+}

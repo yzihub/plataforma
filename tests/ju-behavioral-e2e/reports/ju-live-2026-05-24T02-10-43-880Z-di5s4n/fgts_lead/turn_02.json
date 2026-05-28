@@ -1,0 +1,48 @@
+{
+  "turn_index": 1,
+  "input": "Seria meu primeiro imovel e eu queria algo ate uns 500 mil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\fgts_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/fgts_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3447,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Consegue sim, tá? A gente trabalha com compra usando FGTS normalmente, desde que o banco aprove e o imovel se enquadre nas regras (registro ok, valor dentro do limite da Caixa/região, não ter outro imovel na cidade em seu nome etc.).\nCom esses 120 mil de entrada, dá pra montar uma estratégia juntando entrada + FGTS + financiamento pra deixar a parcela mais leve.\nPra eu te orientar mais “pé no chão”, me conta em qual cidade/bairro você pensa em comprar e se hoje você já tem FGTS disponível em alguma conta ativa ou só em contas antigas?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 7,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 30,
+    "tool_calls": 30
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 98,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3447
+    }
+  }
+}

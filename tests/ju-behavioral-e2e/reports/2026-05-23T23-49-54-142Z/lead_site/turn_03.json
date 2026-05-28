@@ -1,0 +1,34 @@
+{
+  "turn_index": 2,
+  "input": "Se tiver algo com 2 quartos ate mais ou menos 650 mil, pode mandar o que fizer sentido.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\payloads\\lead_site\\turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/payloads/lead_site/turn_03.json",
+  "http_status": 200,
+  "latency_ms": 696,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Workflow was started",
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 3,
+      "line_count": 1,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 696
+    }
+  }
+}

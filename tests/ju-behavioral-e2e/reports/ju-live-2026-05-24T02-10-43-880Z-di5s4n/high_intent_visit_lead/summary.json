@@ -1,0 +1,40 @@
+{
+  "scenario_id": "high_intent_visit_lead",
+  "scenario_name": "High Intent Visit Lead",
+  "score": 95,
+  "pass": true,
+  "violations": [
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 1
+    },
+    {
+      "id": "latency_high",
+      "severity": "warning",
+      "detail": "67907ms",
+      "weight": 4,
+      "turn_index": 1
+    }
+  ],
+  "positives": [
+    {
+      "id": "property_url_present",
+      "weight": 4
+    },
+    {
+      "id": "direct_property_presentation",
+      "weight": 8
+    },
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    },
+    {
+      "id": "no_pressure",
+      "weight": 4
+    }
+  ]
+}

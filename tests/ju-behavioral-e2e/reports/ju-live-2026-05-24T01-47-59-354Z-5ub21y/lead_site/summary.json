@@ -1,0 +1,37 @@
+{
+  "scenario_id": "lead_site",
+  "scenario_name": "Lead Site",
+  "score": 90,
+  "pass": false,
+  "violations": [
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 0
+    },
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 1
+    },
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 2
+    },
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 2
+    }
+  ],
+  "positives": []
+}

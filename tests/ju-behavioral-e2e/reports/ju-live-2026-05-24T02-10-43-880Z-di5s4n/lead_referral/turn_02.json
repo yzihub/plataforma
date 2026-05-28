@@ -1,0 +1,35 @@
+{
+  "turn_index": 1,
+  "input": "Ela quer algo facil, seguro, sem depender tanto de carro.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\lead_referral\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/lead_referral/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4227,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Entendi bem o que você curte: apê claro, varanda boa e sem ficar longe da orla.\nOu a gente:\n– mantém a ideia de ficar pertinho da praia e considera Bessa também\nou\n– mantém Jardim Oceania e flexibiliza um pouco o valor (acima de 650 mil)\nO que faz mais sentido pra você ajustar primeiro: abrir para Bessa ou subir um pouco o teto de valor?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 14,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 6,
+    "tool_calls": 6
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 67,
+      "line_count": 6,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4227
+    }
+  }
+}

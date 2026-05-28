@@ -1,0 +1,40 @@
+{
+  "turn_index": 0,
+  "input": "Eu e minha esposa estamos tentando decidir entre Manaira e Tambau. Ela quer praticidade, eu queria algo mais perto da praia.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "tradeoff"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\couple_decision_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/couple_decision_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3387,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pensando em moradia pra sua mãe e também em valorização, eu colocaria assim na prática: Localização vem primeiro: bairro consolidado, rua boa, serviços perto e uma região com oferta e demanda fortes (tipo Cabo Branco / Jardim Oceania). Isso pesa muito na liquidez e na segurança do investimento e Vista é um plus: ajuda a vender mais rápido e, em alguns casos, agrega valor, mas não costuma ser o fator principal de retorno. Às vezes você paga bem mais pela vista e esse “extra” não volta na mesma proporção.\nPro teu caso específico (mãe usando e você pensando em retorno), eu focaria em: localização muito boa + planta funcional. Se dentro disso aparecer uma unidade com boa vista por um delta de preço que faça sentido, aí vale pegar.",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 27,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 13,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 129,
+      "line_count": 2,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 3387
+    }
+  }
+}

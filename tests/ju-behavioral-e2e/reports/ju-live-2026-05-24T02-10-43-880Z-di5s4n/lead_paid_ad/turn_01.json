@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "Cliquei num anuncio de apartamento 2 quartos no Bessa. Ainda esta disponivel?",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "transactional_lookup"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\lead_paid_ad\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/lead_paid_ad/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3424,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido pra ela nessa fase ter uma vida mais prática mesmo.\nPensando nisso, pra sua mãe eu focaria em um apê em rua bem nivelada, perto de mercado, farmácia e banco, com portaria/controle de acesso e, se possível, perto de ponto de ônibus ou com tudo a poucos minutos a pé.\nMe ajuda só num ponto: você imagina algo mais perto da orla mesmo (tipo Jardim Oceania/Bessa) ou toparia um bairro um pouco mais “cidade”, mas com tudo na porta, desde que continue sendo fácil e seguro pra ela?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 17,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 8,
+    "tool_calls": 8
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 92,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3424
+    }
+  }
+}

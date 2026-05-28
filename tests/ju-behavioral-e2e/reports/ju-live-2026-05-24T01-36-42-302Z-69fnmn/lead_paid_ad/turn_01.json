@@ -1,0 +1,57 @@
+{
+  "turn_index": 0,
+  "input": "Cliquei num anuncio de apartamento 2 quartos no Bessa. Ainda esta disponivel?",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "transactional_lookup"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\lead_paid_ad\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/lead_paid_ad/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3381,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, já entendi bem o perfil dela.\nPensando nisso, acho que faz sentido focar em uma região mais estruturada, com mercado, farmácia, banco e médico por perto, onde ela consiga resolver a vida quase toda a pé.\nPra eu afinar essa busca pra tua mãe: vocês já têm em mente algum bairro ou uma referência? Tipo perto de onde ela mora hoje, perto de você, ou alguma região que ela já esteja acostumada a ir? E em que faixa de valor vocês estão confortáveis para esse apartamento?",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 6,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 8,
+    "tool_calls": 8
+  },
+  "behavior": {
+    "score": 90,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "3 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 87,
+      "line_count": 3,
+      "question_count": 3,
+      "url_count": 0,
+      "latency_ms": 3381
+    }
+  }
+}

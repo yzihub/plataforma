@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "Precisaria de 3 quartos se possivel.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\family_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/family_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4612,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido vocês pensarem assim, ainda mais com a família crescendo.\nBessa e entorno atendem super bem essa rotina que você descreveu: é bairro mais residencial, perto de boas escolas, com serviço por perto e sensação de segurança melhor que em áreas mais centrais.\nComo hoje vocês têm em mente até 500 mil, com 120 mil de entrada e usando financiamento, eu consigo te mostrar opcoes de apartamento nesse eixo Bessa e proximidades que façam sentido pra família de vocês.",
+  "persistence": {
+    "lead_id": "713a45b3-a656-4195-892e-914686241571",
+    "conversation_id": "e30a331c-9d32-4d50-b6ae-48a0b26bba1a",
+    "messages": 11,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 32,
+    "tool_calls": 32
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 82,
+      "line_count": 3,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 4612
+    }
+  }
+}

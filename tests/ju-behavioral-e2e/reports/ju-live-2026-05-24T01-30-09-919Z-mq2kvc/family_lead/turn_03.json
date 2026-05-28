@@ -1,0 +1,51 @@
+{
+  "turn_index": 2,
+  "input": "Manda uma opcao que faca sentido pra familia.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\family_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/family_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3872,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pra eu conseguir te dizer uma faixa de parcela que realmente encaixe no teu bolso, me ajuda só com esse ponto: hoje, pensando na sua renda e rotina, em torno de quanto você imagina uma parcela confortável por mês, sem apertar? Tipo “até 2 mil”, “até 3 mil”, “até 4 mil”…",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 13,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 33,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 96,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 51,
+      "line_count": 1,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3872
+    }
+  }
+}

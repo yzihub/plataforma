@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "Nao precisa ser enorme, mas queria algo gostoso de morar.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "preference_refinement"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\beach_lifestyle_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/beach_lifestyle_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3160,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Total. E faz todo sentido você puxar isso pro centro da decisão agora.\nPelo que vocês falaram até aqui, eu vejo muito vocês em algo tipo “Manaíra bem localizado perto da orla” ou um pedaço mais tranquilo de Tambaú/Cabo Branco: dá pra caminhar pro mar, mas ainda ter serviço por perto, sem virar aquele trânsito pesado todo dia.\nPra eu conseguir te mandar opcoes que realmente entreguem essa rotina mais leve, me conta só até quanto vocês estão confortáveis de investir hoje nesse apê perto da praia. Aí eu já direciono bem o tipo de prédio, metragem e localização.",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 24,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 18,
+    "tool_calls": 18
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 99,
+      "line_count": 3,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 3160
+    }
+  }
+}

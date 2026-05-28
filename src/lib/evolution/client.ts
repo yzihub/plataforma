@@ -17,9 +17,9 @@ import type {
 
 function readEnv() {
   return {
-    baseUrl: process.env.EVOLUTION_BASE_URL ?? "",
+    baseUrl: process.env.EVOLUTION_API_URL ?? process.env.EVOLUTION_BASE_URL ?? "",
     apiKey: process.env.EVOLUTION_API_KEY ?? "",
-    instance: process.env.EVOLUTION_INSTANCE_NAME ?? "",
+    instance: process.env.EVOLUTION_INSTANCE ?? process.env.EVOLUTION_INSTANCE_NAME ?? "",
   };
 }
 
@@ -237,9 +237,9 @@ export async function getInstanceWebhook(): Promise<EvolutionWebhookResponse> {
 
   const { baseUrl, apiKey, instance } = (function readEnvLocal() {
     return {
-      baseUrl: process.env.EVOLUTION_BASE_URL ?? "",
+      baseUrl: process.env.EVOLUTION_API_URL ?? process.env.EVOLUTION_BASE_URL ?? "",
       apiKey: process.env.EVOLUTION_API_KEY ?? "",
-      instance: process.env.EVOLUTION_INSTANCE_NAME ?? "",
+      instance: process.env.EVOLUTION_INSTANCE ?? process.env.EVOLUTION_INSTANCE_NAME ?? "",
     };
   })();
 

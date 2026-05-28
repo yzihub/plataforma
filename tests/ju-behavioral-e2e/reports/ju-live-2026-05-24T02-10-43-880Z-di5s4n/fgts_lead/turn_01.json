@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "Consigo usar FGTS pra comprar um apartamento com voces?",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "fgts_question"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\fgts_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/fgts_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 4021,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, 120 mil de entrada já é uma base muito boa, isso ajuda bastante a segurar a parcela.\nPara eu conseguir te dar uma noção bem realista de valor de imovel e de parcela, preciso alinhar só mais dois pontos com você em cima da sua realidade: Hoje, qual seria mais ou menos a faixa de parcela que você imagina como “leve”, que não aperte? Tipo até quanto por mês? e Você pensa em comprar em qual região/bairro da cidade?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 5,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 29,
+    "tool_calls": 29
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "3 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 80,
+      "line_count": 2,
+      "question_count": 3,
+      "url_count": 0,
+      "latency_ms": 4021
+    }
+  }
+}

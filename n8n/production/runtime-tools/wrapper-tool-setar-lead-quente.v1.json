@@ -1,0 +1,241 @@
+{
+  "name": "Ju Runtime Tool Wrapper - setar_lead_quente",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tool-setar-lead-quente",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "wrapper-setar-lead-quente-webhook",
+      "name": "Webhook Runtime",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "webhookId": "wrapper-setar-lead-quente"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate auth + payload. Fail-closed.\nconst started = Date.now();\nconst item = $input.first().json;\nconst body = item.body || item;\nconst headers = item.headers || {};\n\nconst expected = (\n  $vars.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $vars.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $vars.EVOLUTION_WEBHOOK_SECRET ||\n  $env.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $env.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $env.EVOLUTION_WEBHOOK_SECRET ||\n  ''\n).trim();\nif (!expected) {\n  throw new Error('wrapper config error: JUREMA_TOOL_WEBHOOK_SECRET nao configurado em n8n');\n}\n\nconst provided = (\n  headers['x-n8n-api-key'] ||\n  headers['X-N8N-API-KEY'] ||\n  headers['x-webhook-secret'] ||\n  headers['X-Webhook-Secret'] ||\n  ''\n).toString().trim();\n\nif (provided !== expected) {\n  throw new Error('unauthorized: x-n8n-api-key ausente ou invalido');\n}\n\nconst clean = (v) => String(v ?? '').trim();\nconst tenant_id = clean(body.tenant_id);\nconst phone = clean(body.phone || body.telefoneCompleto);\nconst lead_id = clean(body.lead_id);\nconst deal_id = clean(body.deal_id);\n\nif (!tenant_id) throw new Error('payload invalido: tenant_id ausente');\nif (!phone) throw new Error('payload invalido: phone ausente');\nif (!lead_id && !deal_id) throw new Error('payload invalido: lead_id ou deal_id obrigatorio');\n\nreturn [{\n  json: {\n    __started_at: started,\n    tenant_id,\n    phone,\n    lead_id,\n    deal_id,\n    motivo: clean(body.motivo) || 'visit_or_coffee_acceptance',\n    localizacao_visita: clean(body.localizacao_visita),\n    observacao: clean(body.observacao)\n  }\n}];"
+      },
+      "id": "wrapper-setar-lead-quente-validate",
+      "name": "Validate Auth + Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QZ3VcIrxE6BRtCpj",
+          "mode": "list",
+          "cachedResultName": "setar_lead_quente"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tenant_id": "={{ $json.tenant_id }}",
+            "phone": "={{ $json.phone }}",
+            "lead_id": "={{ $json.lead_id }}",
+            "deal_id": "={{ $json.deal_id }}",
+            "motivo": "={{ $json.motivo }}",
+            "localizacao_visita": "={{ $json.localizacao_visita }}",
+            "observacao": "={{ $json.observacao }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tenant_id",
+              "displayName": "tenant_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "lead_id",
+              "displayName": "lead_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "deal_id",
+              "displayName": "deal_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "localizacao_visita",
+              "displayName": "localizacao_visita",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "observacao",
+              "displayName": "observacao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "wrapper-setar-lead-quente-execute",
+      "name": "Execute setar_lead_quente",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const started = $('Validate Auth + Payload').first().json.__started_at;\nconst inner = $input.first().json || {};\n\nreturn [{\n  json: {\n    ok: true,\n    tool: 'setar_lead_quente',\n    latency_ms: Date.now() - started,\n    output: {\n      success: inner.success !== false,\n      lead_id: inner.lead_id || null,\n      deal_id: inner.deal_id || null,\n      ai_temperature: inner.ai_temperature || 'quente',\n      deal_stage: inner.deal_stage || 'corretor',\n      broker_status: inner.broker_status || 'aguardando_corretor',\n      handoff_dispatched: Boolean(inner.handoff_dispatched ?? true),\n      details: inner\n    }\n  }\n}];"
+      },
+      "id": "wrapper-setar-lead-quente-format",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "wrapper-setar-lead-quente-respond",
+      "name": "Respond to Runtime",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Runtime": {
+      "main": [
+        [
+          {
+            "node": "Validate Auth + Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Auth + Payload": {
+      "main": [
+        [
+          {
+            "node": "Execute setar_lead_quente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute setar_lead_quente": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Runtime",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "tags": []
+}

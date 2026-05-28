@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "couple_decision_lead",
+    "scenario_name": "Couple Decision Lead",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "direct",
+    "utm_campaign": "casal_decisao"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-couple_decision_lead-2",
+      "fromMe": false,
+      "remoteJid": "5583973889588@s.whatsapp.net"
+    },
+    "pushName": "Lead Couple Decision Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "A gente quer decidir em ate uns 60 dias."
+    },
+    "messageTimestamp": 1779580214,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Casal em decisao conjunta, busca reduzir conflito entre preferencias.",
+      "emotionalContext": "Ha desejo real, mas precisam organizar criterios.",
+      "utm_source": "site",
+      "utm_medium": "direct",
+      "utm_campaign": "casal_decisao"
+    }
+  }
+}

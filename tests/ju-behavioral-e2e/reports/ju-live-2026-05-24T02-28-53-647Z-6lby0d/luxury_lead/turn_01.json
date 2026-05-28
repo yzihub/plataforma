@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "A gente busca algo mais exclusivo, com estetica muito boa e sensacao diferente. Ponta de Campina chamou atencao.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "luxury_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\luxury_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/luxury_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 1216,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, vou na mesma linha de Manaíra, perto do mar e com cara de “gostoso de morar”, sem exagerar na metragem.\nSó pra eu não errar na mão: vocês imaginam algo mais até uns 600 mil ou até uns 800 mil pra essa compra agora? Com isso te mando uma opção bem redondinha nesse meio-termo entre praia e praticidade.",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 38,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 18,
+    "tool_calls": 18
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 59,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 1216
+    }
+  }
+}

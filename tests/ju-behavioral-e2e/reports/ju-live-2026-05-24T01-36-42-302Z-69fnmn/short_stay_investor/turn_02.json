@@ -1,0 +1,47 @@
+{
+  "turn_index": 1,
+  "input": "Queria algo mais facil de alugar e administrar.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "operational_investment"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\short_stay_investor\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/short_stay_investor/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3306,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Faz sim, tá? Short stay em João Pessoa ainda tem boa demanda, principalmente perto da praia, mas o jogo mudou um pouco.\nHoje o que pesa mais é:\n– localização muito bem posicionada (praia boa + serviços por perto)\n– prédio com estrutura pensada pra temporada (portaria, limpeza, gestão de locação, etc.)\n– número real de dias ocupados por mês, não só a “promessa” de renda.\nComo você falou em short stay: tua ideia é usar mais como investimento mesmo, ou pensa em usar às vezes com a família também? E até quanto você imagina investir nesse flat, mais ou menos, pra eu saber em qual faixa de produtos te orientar?",
+  "persistence": {
+    "lead_id": "713a45b3-a656-4195-892e-914686241571",
+    "conversation_id": "e30a331c-9d32-4d50-b6ae-48a0b26bba1a",
+    "messages": 17,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 35,
+    "tool_calls": 35
+  },
+  "behavior": {
+    "score": 98,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "3 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 111,
+      "line_count": 6,
+      "question_count": 3,
+      "url_count": 0,
+      "latency_ms": 3306
+    }
+  }
+}

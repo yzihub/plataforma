@@ -223,8 +223,16 @@ function requiredToolsFor(objectiveState: JuObjectiveState, nextAction: JuNextAc
 }
 
 function retrievalPolicyFor(objectiveState: JuObjectiveState, nextAction: JuNextAction) {
-  if (objectiveState === "qualificar_bairro" || objectiveState === "responder_duvida") return "lazy" as const;
-  if (objectiveState === "apresentar_imoveis" || nextAction === "apresentar_imoveis") return "disabled" as const;
+  if (objectiveState === "apresentar_imoveis" || nextAction === "apresentar_imoveis") return "required" as const;
+  if (
+    objectiveState === "qualificar_bairro" ||
+    objectiveState === "qualificar_budget" ||
+    objectiveState === "responder_duvida" ||
+    objectiveState === "agendar_visita" ||
+    objectiveState === "followup_visita"
+  ) {
+    return "lazy" as const;
+  }
   return "disabled" as const;
 }
 

@@ -1,0 +1,51 @@
+{
+  "turn_index": 2,
+  "input": "Se tiver algo que equilibre essas duas coisas, manda.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\couple_decision_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/couple_decision_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 939,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Manaíra e Tambaú são bem “briga boa” mesmo, porque os dois entregam muita coisa.\nColocando de forma prática: Tambaú tende a te deixar um pouco mais “pé na areia” e com um clima mais de orla mesmo. Manaíra ainda é muito perto da praia, mas ganha ponto em praticidade de dia a dia: mais opcoes de serviço, mercado, acesso, trânsito um pouco mais amigável dependendo da rua.\nPensando no que vocês querem, eu iria buscando algo em Manaíra mais bem posicionado em relação à praia, justamente pra equilibrar: ela com rotina mais fácil e você com sensação de praia perto.\nTe ajuda se eu te mandar 1 ou 2 opcoes de Manaíra que tenham esse meio-termo (bom de andar a pé e ainda assim perto da praia) dentro dos 700 mil?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 30,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 13,
+    "tool_calls": 13
+  },
+  "behavior": {
+    "score": 96,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 131,
+      "line_count": 4,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 939
+    }
+  }
+}

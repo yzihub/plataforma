@@ -1,0 +1,35 @@
+{
+  "turn_index": 1,
+  "input": "O que pesa mais: vista, metragem ou localizacao?",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "consultative_comparison"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\investor_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/investor_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4540,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pra não ficar te mandando coisa “mais ou menos”, posso abrir um pouquinho a mão em um ponto e te trago opcoes reais: você prefere que eu busque:\n– algo bem perto da orla, mesmo que o prédio seja mais simples\nou\n– algo um pouco mais pra dentro, mas num prédio melhor, rua tranquila e com comércio bem perto pra ela fazer tudo a pé?\nMe diz qual dos dois faz mais sentido pra vocês que eu já separo o que encaixa melhor nesse orçamento.",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 23,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 11,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 86,
+      "line_count": 5,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4540
+    }
+  }
+}

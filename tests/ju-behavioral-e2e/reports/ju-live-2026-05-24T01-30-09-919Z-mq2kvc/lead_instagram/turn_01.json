@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "Vi um story de voces de um ap perto da praia. Achei bonito, queria saber se tem algo nesse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\lead_instagram\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/lead_instagram/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3516,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, então vamos focar em algo bem prático pra morar mesmo, com dia a dia fácil.\nPra eu te sugerir opcoes certeiras no Bessa / Jardim Oceania, me ajuda com duas coisinhas:\naté que faixa de valor você pretende ficar hoje? E está pensando em comprar pra quando mais ou menos (já agora, em até 6 meses, ou mais pra frente)?",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 6,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 2,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 61,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3516
+    }
+  }
+}

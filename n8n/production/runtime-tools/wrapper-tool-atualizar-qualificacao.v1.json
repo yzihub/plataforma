@@ -1,0 +1,918 @@
+{
+  "updatedAt": "2026-05-27T21:51:38.902Z",
+  "createdAt": "2026-05-27T18:57:54.304Z",
+  "id": "Qi1lut9fEQJUNZd6",
+  "name": "Ju Runtime Tool Wrapper - atualizar_qualificacao",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tool-atualizar-qualificacao",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "ab78e034-aaf0-4d0e-b026-6ac41f0958e1",
+      "name": "Webhook Runtime",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "wrapper-atualizar-qualificacao"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate auth + payload. Fail-closed while preserving canonical runtime context.\nconst started = Date.now();\nconst item = $input.first().json || {};\nconst body = item.body || item;\nconst headers = item.headers || {};\nconst input = body.input && typeof body.input === 'object' ? body.input : {};\nconst context = {\n  ...(body.context && typeof body.context === 'object' ? body.context : {}),\n  ...(body.runtime_context && typeof body.runtime_context === 'object' ? body.runtime_context : {}),\n  ...(body.metadata && typeof body.metadata === 'object' ? body.metadata : {})\n};\n\nconst expected = (\n  $vars.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $vars.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $vars.EVOLUTION_WEBHOOK_SECRET ||\n  $env.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $env.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $env.EVOLUTION_WEBHOOK_SECRET ||\n  ''\n).trim();\nif (!expected) {\n  throw new Error('wrapper config error: JUREMA_TOOL_WEBHOOK_SECRET nao configurado em n8n');\n}\n\nconst provided = (\n  headers['x-n8n-api-key'] ||\n  headers['X-N8N-API-KEY'] ||\n  headers['x-webhook-secret'] ||\n  headers['X-Webhook-Secret'] ||\n  ''\n).toString().trim();\n\nif (provided !== expected) {\n  throw new Error('unauthorized: x-n8n-api-key ausente ou invalido');\n}\n\nconst clean = (v) => String(v ?? '').trim();\nconst pick = (...values) => {\n  for (const value of values) {\n    const cleaned = clean(value);\n    if (cleaned) return cleaned;\n  }\n  return '';\n};\n\nconst canonical = {\n  tenant_id: pick(body.tenant_id, input.tenant_id, context.tenant_id),\n  phone: pick(body.phone, body.telefoneCompleto, input.phone, input.telefoneCompleto, context.phone, context.telefoneCompleto),\n  lead_id: pick(body.lead_id, input.lead_id, context.lead_id),\n  deal_id: pick(body.deal_id, input.deal_id, context.deal_id),\n  conversation_id: pick(body.conversation_id, input.conversation_id, context.conversation_id),\n  tool_call_id: pick(body.tool_call_id, input.tool_call_id, context.tool_call_id),\n  runtime_trace_id: pick(body.runtime_trace_id, input.runtime_trace_id, context.runtime_trace_id)\n};\n\nif (!canonical.tenant_id) throw new Error('payload invalido: tenant_id ausente');\nif (!canonical.phone) throw new Error('payload invalido: phone ausente');\n\nconst temperatura = pick(input.temperatura, body.temperatura, body.ai_temperature);\nconst qualificacao_status = pick(input.qualificacao_status, body.qualificacao_status, body.qualification_status, body.status_lead, body['Status Lead']);\nconst motivo = pick(input.motivo, body.motivo);\nconst observacao = pick(input.observacao, body.observacao);\n\nreturn [{\n  json: {\n    ...body,\n    ...input,\n    ...canonical,\n    __started_at: started,\n    __original_payload: body,\n    __payload_preserved: true,\n    temperatura,\n    qualificacao_status,\n    motivo,\n    observacao,\n    objetivo: pick(input.objetivo, body.objetivo, body.intent),\n    faixa_valor: pick(input.faixa_valor, body.faixa_valor, body.budget_max),\n    'Perfil Resumido': pick(input['Perfil Resumido'], input.perfil_resumido, input.perfil, body['Perfil Resumido'], body.perfil_resumido, body.perfil),\n    'Bairro / Regiao de Interesse': pick(input['Bairro / Regiao de Interesse'], input['Bairro / Região de Interesse'], input.bairro, input.location_preference, body['Bairro / Regiao de Interesse'], body['Bairro / Região de Interesse'], body.bairro, body.location_preference),\n    'Interesse Principal': pick(input['Interesse Principal'], input.interesse_principal, body['Interesse Principal'], body.interesse_principal),\n    'Score do Lead': pick(input['Score do Lead'], input.score_lead, input.lead_score, body['Score do Lead'], body.score_lead, body.lead_score),\n    'Status Lead': qualificacao_status || pick(input['Status Lead'], body['Status Lead']),\n    Finalidade: pick(input.Finalidade, input.finalidade, input.purpose, body.Finalidade, body.finalidade, body.purpose),\n    'Como chegou ate a Jurema': pick(input['Como chegou ate a Jurema'], input['Como chegou até a Jurema'], input.origem_lead, input.source, body['Como chegou ate a Jurema'], body['Como chegou até a Jurema'], body.origem_lead, body.source),\n    tipo_imovel: pick(input.tipo_imovel, input.property_type, body.tipo_imovel, body.property_type),\n    quartos: pick(input.quartos, input.bedrooms, body.quartos, body.bedrooms),\n    prazo: pick(input.prazo, input.timeline, body.prazo, body.timeline),\n    forma_pagamento: pick(input.forma_pagamento, input.payment_method, body.forma_pagamento, body.payment_method)\n  }\n}];"
+      },
+      "id": "af7253dc-0756-45c1-82d4-54e47303e3a9",
+      "name": "Validate Auth + Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QKFhZQJRz8rczaYE",
+          "mode": "list",
+          "cachedResultName": "atualizar_qualificacao"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tenant_id": "={{ $json.tenant_id }}",
+            "phone": "={{ $json.phone }}",
+            "lead_id": "={{ $json.lead_id }}",
+            "deal_id": "={{ $json.deal_id }}",
+            "conversation_id": "={{ $json.conversation_id }}",
+            "tool_call_id": "={{ $json.tool_call_id }}",
+            "runtime_trace_id": "={{ $json.runtime_trace_id }}",
+            "temperatura": "={{ $json.temperatura }}",
+            "qualificacao_status": "={{ $json.qualificacao_status }}",
+            "motivo": "={{ $json.motivo }}",
+            "observacao": "={{ $json.observacao }}",
+            "objetivo": "={{ $json.objetivo }}",
+            "faixa_valor": "={{ $json.faixa_valor }}",
+            "Perfil Resumido": "={{ $json['Perfil Resumido'] }}",
+            "Bairro / Regiao de Interesse": "={{ $json['Bairro / Regiao de Interesse'] }}",
+            "Interesse Principal": "={{ $json['Interesse Principal'] }}",
+            "Score do Lead": "={{ $json['Score do Lead'] }}",
+            "Status Lead": "={{ $json['Status Lead'] }}",
+            "Finalidade": "={{ $json.Finalidade }}",
+            "Como chegou ate a Jurema": "={{ $json['Como chegou ate a Jurema'] }}",
+            "tipo_imovel": "={{ $json.tipo_imovel }}",
+            "quartos": "={{ $json.quartos }}",
+            "prazo": "={{ $json.prazo }}",
+            "forma_pagamento": "={{ $json.forma_pagamento }}",
+            "original_payload": "={{ JSON.stringify($json.__original_payload || {}) }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tenant_id",
+              "displayName": "tenant_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "lead_id",
+              "displayName": "lead_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "deal_id",
+              "displayName": "deal_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tool_call_id",
+              "displayName": "tool_call_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "runtime_trace_id",
+              "displayName": "runtime_trace_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "temperatura",
+              "displayName": "temperatura",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "qualificacao_status",
+              "displayName": "qualificacao_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "motivo",
+              "displayName": "motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "observacao",
+              "displayName": "observacao",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "objetivo",
+              "displayName": "objetivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "faixa_valor",
+              "displayName": "faixa_valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Perfil Resumido",
+              "displayName": "Perfil Resumido",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Bairro / Regiao de Interesse",
+              "displayName": "Bairro / Regiao de Interesse",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Interesse Principal",
+              "displayName": "Interesse Principal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Score do Lead",
+              "displayName": "Score do Lead",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Status Lead",
+              "displayName": "Status Lead",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Finalidade",
+              "displayName": "Finalidade",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "Como chegou ate a Jurema",
+              "displayName": "Como chegou ate a Jurema",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_imovel",
+              "displayName": "tipo_imovel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "quartos",
+              "displayName": "quartos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "prazo",
+              "displayName": "prazo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "forma_pagamento",
+              "displayName": "forma_pagamento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "original_payload",
+              "displayName": "original_payload",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "ecd4f81d-8d9c-4ef9-a3fd-df0c9e3aabd4",
+      "name": "Execute atualizar_qualificacao",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const validated = $('Validate Auth + Payload').first().json || {};\nconst started = validated.__started_at || Date.now();\nconst inner = $input.first().json || {};\n\nreturn [{\n  json: {\n    ok: true,\n    tool: 'atualizar_qualificacao',\n    latency_ms: Date.now() - started,\n    payload_preserved: validated.__payload_preserved === true,\n    context: {\n      tenant_id: validated.tenant_id,\n      phone: validated.phone,\n      lead_id: validated.lead_id || inner.lead_id || null,\n      deal_id: validated.deal_id || inner.deal_id || null,\n      conversation_id: validated.conversation_id || null,\n      tool_call_id: validated.tool_call_id || null,\n      runtime_trace_id: validated.runtime_trace_id || null\n    },\n    output: {\n      success: inner.success !== false,\n      lead_id: inner.lead_id || validated.lead_id || null,\n      deal_id: inner.deal_id || validated.deal_id || null,\n      temperatura: inner.temperatura || inner.ai_temperature || validated.temperatura || null,\n      qualificacao_status: inner.qualificacao_status || inner.qualification_status || inner['Status Lead'] || validated.qualificacao_status || null,\n      motivo: inner.motivo || validated.motivo || null,\n      observacao: inner.observacao || validated.observacao || null,\n      qualification_status: inner.qualification_status || inner.qualificacao_status || inner['Status Lead'] || validated.qualificacao_status || null,\n      lead_score: inner.lead_score ?? inner['Score do Lead'] ?? null,\n      deal_stage: inner.deal_stage || null,\n      missing_fields: Array.isArray(inner.missing_fields) ? inner.missing_fields : [],\n      details: inner\n    }\n  }\n}];"
+      },
+      "id": "40c2b6d0-4ded-4f89-b5d1-bac2d44a5106",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f71a0da0-947a-47f5-9a15-80f17e251263",
+      "name": "Respond to Runtime",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Runtime": {
+      "main": [
+        [
+          {
+            "node": "Validate Auth + Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Auth + Payload": {
+      "main": [
+        [
+          {
+            "node": "Execute atualizar_qualificacao",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute atualizar_qualificacao": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Runtime",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": {},
+  "meta": null,
+  "pinData": {},
+  "versionId": "37102190-a96d-4db8-abf0-0a1898639131",
+  "activeVersionId": "37102190-a96d-4db8-abf0-0a1898639131",
+  "versionCounter": 7,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-05-27T18:57:54.304Z",
+      "createdAt": "2026-05-27T18:57:54.304Z",
+      "role": "workflow:owner",
+      "workflowId": "Qi1lut9fEQJUNZd6",
+      "projectId": "YciKigkBmmSXkYot",
+      "project": {
+        "updatedAt": "2026-02-20T18:51:55.007Z",
+        "createdAt": "2026-02-20T18:50:59.444Z",
+        "id": "YciKigkBmmSXkYot",
+        "name": "YZI HUB <yzihub.ia@gmail.com>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "6da334f5-ee8d-4ce3-83dc-e466c16251ce"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-05-27T21:51:38.904Z",
+    "createdAt": "2026-05-27T21:51:38.904Z",
+    "versionId": "37102190-a96d-4db8-abf0-0a1898639131",
+    "workflowId": "Qi1lut9fEQJUNZd6",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "tool-atualizar-qualificacao",
+          "responseMode": "responseNode",
+          "options": {
+            "rawBody": false
+          }
+        },
+        "id": "ab78e034-aaf0-4d0e-b026-6ac41f0958e1",
+        "name": "Webhook Runtime",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "webhookId": "wrapper-atualizar-qualificacao"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Validate auth + payload. Fail-closed while preserving canonical runtime context.\nconst started = Date.now();\nconst item = $input.first().json || {};\nconst body = item.body || item;\nconst headers = item.headers || {};\nconst input = body.input && typeof body.input === 'object' ? body.input : {};\nconst context = {\n  ...(body.context && typeof body.context === 'object' ? body.context : {}),\n  ...(body.runtime_context && typeof body.runtime_context === 'object' ? body.runtime_context : {}),\n  ...(body.metadata && typeof body.metadata === 'object' ? body.metadata : {})\n};\n\nconst expected = (\n  $vars.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $vars.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $vars.EVOLUTION_WEBHOOK_SECRET ||\n  $env.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $env.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $env.EVOLUTION_WEBHOOK_SECRET ||\n  ''\n).trim();\nif (!expected) {\n  throw new Error('wrapper config error: JUREMA_TOOL_WEBHOOK_SECRET nao configurado em n8n');\n}\n\nconst provided = (\n  headers['x-n8n-api-key'] ||\n  headers['X-N8N-API-KEY'] ||\n  headers['x-webhook-secret'] ||\n  headers['X-Webhook-Secret'] ||\n  ''\n).toString().trim();\n\nif (provided !== expected) {\n  throw new Error('unauthorized: x-n8n-api-key ausente ou invalido');\n}\n\nconst clean = (v) => String(v ?? '').trim();\nconst pick = (...values) => {\n  for (const value of values) {\n    const cleaned = clean(value);\n    if (cleaned) return cleaned;\n  }\n  return '';\n};\n\nconst canonical = {\n  tenant_id: pick(body.tenant_id, input.tenant_id, context.tenant_id),\n  phone: pick(body.phone, body.telefoneCompleto, input.phone, input.telefoneCompleto, context.phone, context.telefoneCompleto),\n  lead_id: pick(body.lead_id, input.lead_id, context.lead_id),\n  deal_id: pick(body.deal_id, input.deal_id, context.deal_id),\n  conversation_id: pick(body.conversation_id, input.conversation_id, context.conversation_id),\n  tool_call_id: pick(body.tool_call_id, input.tool_call_id, context.tool_call_id),\n  runtime_trace_id: pick(body.runtime_trace_id, input.runtime_trace_id, context.runtime_trace_id)\n};\n\nif (!canonical.tenant_id) throw new Error('payload invalido: tenant_id ausente');\nif (!canonical.phone) throw new Error('payload invalido: phone ausente');\n\nconst temperatura = pick(input.temperatura, body.temperatura, body.ai_temperature);\nconst qualificacao_status = pick(input.qualificacao_status, body.qualificacao_status, body.qualification_status, body.status_lead, body['Status Lead']);\nconst motivo = pick(input.motivo, body.motivo);\nconst observacao = pick(input.observacao, body.observacao);\n\nreturn [{\n  json: {\n    ...body,\n    ...input,\n    ...canonical,\n    __started_at: started,\n    __original_payload: body,\n    __payload_preserved: true,\n    temperatura,\n    qualificacao_status,\n    motivo,\n    observacao,\n    objetivo: pick(input.objetivo, body.objetivo, body.intent),\n    faixa_valor: pick(input.faixa_valor, body.faixa_valor, body.budget_max),\n    'Perfil Resumido': pick(input['Perfil Resumido'], input.perfil_resumido, input.perfil, body['Perfil Resumido'], body.perfil_resumido, body.perfil),\n    'Bairro / Regiao de Interesse': pick(input['Bairro / Regiao de Interesse'], input['Bairro / Região de Interesse'], input.bairro, input.location_preference, body['Bairro / Regiao de Interesse'], body['Bairro / Região de Interesse'], body.bairro, body.location_preference),\n    'Interesse Principal': pick(input['Interesse Principal'], input.interesse_principal, body['Interesse Principal'], body.interesse_principal),\n    'Score do Lead': pick(input['Score do Lead'], input.score_lead, input.lead_score, body['Score do Lead'], body.score_lead, body.lead_score),\n    'Status Lead': qualificacao_status || pick(input['Status Lead'], body['Status Lead']),\n    Finalidade: pick(input.Finalidade, input.finalidade, input.purpose, body.Finalidade, body.finalidade, body.purpose),\n    'Como chegou ate a Jurema': pick(input['Como chegou ate a Jurema'], input['Como chegou até a Jurema'], input.origem_lead, input.source, body['Como chegou ate a Jurema'], body['Como chegou até a Jurema'], body.origem_lead, body.source),\n    tipo_imovel: pick(input.tipo_imovel, input.property_type, body.tipo_imovel, body.property_type),\n    quartos: pick(input.quartos, input.bedrooms, body.quartos, body.bedrooms),\n    prazo: pick(input.prazo, input.timeline, body.prazo, body.timeline),\n    forma_pagamento: pick(input.forma_pagamento, input.payment_method, body.forma_pagamento, body.payment_method)\n  }\n}];"
+        },
+        "id": "af7253dc-0756-45c1-82d4-54e47303e3a9",
+        "name": "Validate Auth + Payload",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          240,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "QKFhZQJRz8rczaYE",
+            "mode": "list",
+            "cachedResultName": "atualizar_qualificacao"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "tenant_id": "={{ $json.tenant_id }}",
+              "phone": "={{ $json.phone }}",
+              "lead_id": "={{ $json.lead_id }}",
+              "deal_id": "={{ $json.deal_id }}",
+              "conversation_id": "={{ $json.conversation_id }}",
+              "tool_call_id": "={{ $json.tool_call_id }}",
+              "runtime_trace_id": "={{ $json.runtime_trace_id }}",
+              "temperatura": "={{ $json.temperatura }}",
+              "qualificacao_status": "={{ $json.qualificacao_status }}",
+              "motivo": "={{ $json.motivo }}",
+              "observacao": "={{ $json.observacao }}",
+              "objetivo": "={{ $json.objetivo }}",
+              "faixa_valor": "={{ $json.faixa_valor }}",
+              "Perfil Resumido": "={{ $json['Perfil Resumido'] }}",
+              "Bairro / Regiao de Interesse": "={{ $json['Bairro / Regiao de Interesse'] }}",
+              "Interesse Principal": "={{ $json['Interesse Principal'] }}",
+              "Score do Lead": "={{ $json['Score do Lead'] }}",
+              "Status Lead": "={{ $json['Status Lead'] }}",
+              "Finalidade": "={{ $json.Finalidade }}",
+              "Como chegou ate a Jurema": "={{ $json['Como chegou ate a Jurema'] }}",
+              "tipo_imovel": "={{ $json.tipo_imovel }}",
+              "quartos": "={{ $json.quartos }}",
+              "prazo": "={{ $json.prazo }}",
+              "forma_pagamento": "={{ $json.forma_pagamento }}",
+              "original_payload": "={{ JSON.stringify($json.__original_payload || {}) }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "tenant_id",
+                "displayName": "tenant_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "phone",
+                "displayName": "phone",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "lead_id",
+                "displayName": "lead_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "deal_id",
+                "displayName": "deal_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "conversation_id",
+                "displayName": "conversation_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tool_call_id",
+                "displayName": "tool_call_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "runtime_trace_id",
+                "displayName": "runtime_trace_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "temperatura",
+                "displayName": "temperatura",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "qualificacao_status",
+                "displayName": "qualificacao_status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "motivo",
+                "displayName": "motivo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "observacao",
+                "displayName": "observacao",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "objetivo",
+                "displayName": "objetivo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "faixa_valor",
+                "displayName": "faixa_valor",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "Perfil Resumido",
+                "displayName": "Perfil Resumido",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "Bairro / Regiao de Interesse",
+                "displayName": "Bairro / Regiao de Interesse",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "Interesse Principal",
+                "displayName": "Interesse Principal",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "Score do Lead",
+                "displayName": "Score do Lead",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "Status Lead",
+                "displayName": "Status Lead",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "Finalidade",
+                "displayName": "Finalidade",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "Como chegou ate a Jurema",
+                "displayName": "Como chegou ate a Jurema",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_imovel",
+                "displayName": "tipo_imovel",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "quartos",
+                "displayName": "quartos",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "prazo",
+                "displayName": "prazo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "forma_pagamento",
+                "displayName": "forma_pagamento",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "original_payload",
+                "displayName": "original_payload",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {
+            "waitForSubWorkflow": true
+          }
+        },
+        "id": "ecd4f81d-8d9c-4ef9-a3fd-df0c9e3aabd4",
+        "name": "Execute atualizar_qualificacao",
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.2,
+        "position": [
+          480,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const validated = $('Validate Auth + Payload').first().json || {};\nconst started = validated.__started_at || Date.now();\nconst inner = $input.first().json || {};\n\nreturn [{\n  json: {\n    ok: true,\n    tool: 'atualizar_qualificacao',\n    latency_ms: Date.now() - started,\n    payload_preserved: validated.__payload_preserved === true,\n    context: {\n      tenant_id: validated.tenant_id,\n      phone: validated.phone,\n      lead_id: validated.lead_id || inner.lead_id || null,\n      deal_id: validated.deal_id || inner.deal_id || null,\n      conversation_id: validated.conversation_id || null,\n      tool_call_id: validated.tool_call_id || null,\n      runtime_trace_id: validated.runtime_trace_id || null\n    },\n    output: {\n      success: inner.success !== false,\n      lead_id: inner.lead_id || validated.lead_id || null,\n      deal_id: inner.deal_id || validated.deal_id || null,\n      temperatura: inner.temperatura || inner.ai_temperature || validated.temperatura || null,\n      qualificacao_status: inner.qualificacao_status || inner.qualification_status || inner['Status Lead'] || validated.qualificacao_status || null,\n      motivo: inner.motivo || validated.motivo || null,\n      observacao: inner.observacao || validated.observacao || null,\n      qualification_status: inner.qualification_status || inner.qualificacao_status || inner['Status Lead'] || validated.qualificacao_status || null,\n      lead_score: inner.lead_score ?? inner['Score do Lead'] ?? null,\n      deal_stage: inner.deal_stage || null,\n      missing_fields: Array.isArray(inner.missing_fields) ? inner.missing_fields : [],\n      details: inner\n    }\n  }\n}];"
+        },
+        "id": "40c2b6d0-4ded-4f89-b5d1-bac2d44a5106",
+        "name": "Format Response",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          720,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={{ JSON.stringify($json) }}",
+          "options": {
+            "responseCode": 200,
+            "responseHeaders": {
+              "entries": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                }
+              ]
+            }
+          }
+        },
+        "id": "f71a0da0-947a-47f5-9a15-80f17e251263",
+        "name": "Respond to Runtime",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          960,
+          0
+        ]
+      }
+    ],
+    "connections": {
+      "Webhook Runtime": {
+        "main": [
+          [
+            {
+              "node": "Validate Auth + Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Validate Auth + Payload": {
+        "main": [
+          [
+            {
+              "node": "Execute atualizar_qualificacao",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Execute atualizar_qualificacao": {
+        "main": [
+          [
+            {
+              "node": "Format Response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format Response": {
+        "main": [
+          [
+            {
+              "node": "Respond to Runtime",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "YZI HUB",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-05-27T21:51:39.018Z",
+        "id": 1657,
+        "workflowId": "Qi1lut9fEQJUNZd6",
+        "versionId": "37102190-a96d-4db8-abf0-0a1898639131",
+        "event": "deactivated",
+        "userId": "6da334f5-ee8d-4ce3-83dc-e466c16251ce"
+      },
+      {
+        "createdAt": "2026-05-27T21:51:39.051Z",
+        "id": 1658,
+        "workflowId": "Qi1lut9fEQJUNZd6",
+        "versionId": "37102190-a96d-4db8-abf0-0a1898639131",
+        "event": "activated",
+        "userId": "6da334f5-ee8d-4ce3-83dc-e466c16251ce"
+      }
+    ]
+  }
+}

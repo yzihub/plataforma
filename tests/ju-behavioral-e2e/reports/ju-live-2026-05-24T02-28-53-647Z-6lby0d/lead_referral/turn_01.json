@@ -1,0 +1,44 @@
+{
+  "turn_index": 0,
+  "input": "Oi, a Ana me indicou voces. Estou procurando um apartamento pra minha mae em Joao Pessoa.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\lead_referral\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/lead_referral/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 761,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, esse é um perfil ótimo pra região.\nhttps://juremabksimoveis.com.br/imoveis/apartamento-para-venda-no-bessa/",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 10,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 3,
+    "tool_calls": 3
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "property_url_present",
+        "weight": 4
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 9,
+      "line_count": 2,
+      "question_count": 0,
+      "url_count": 1,
+      "latency_ms": 761
+    }
+  }
+}

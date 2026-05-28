@@ -1,0 +1,35 @@
+{
+  "turn_index": 1,
+  "input": "Nao queremos algo comum. Preferimos ver poucas opcoes, mas bem escolhidas.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "curation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\luxury_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/luxury_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 735,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, Ponta de Campina já muda bem a sensação mesmo: é mais exclusivo, prédio mais “caprichado” e um clima mais calmo de praia.\nPensando nessa estética mais diferenciada e algo gostoso de morar, vocês imaginam investir mais na linha de até uns 700–800 mil ou já consideram passar disso se o projeto for realmente especial (boa arquitetura, área comum bonita, sensação mais boutique)?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 40,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 19,
+    "tool_calls": 19
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 63,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 735
+    }
+  }
+}

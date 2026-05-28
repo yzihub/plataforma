@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "Gosto de coisa mais clara, varanda boa e que nao fique longe da orla.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "preference_refinement"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\lead_instagram\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/lead_instagram/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3135,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Boa, ajuda demais ter essa faixa.\nDá uma olhada nesse aqui e me conta o que acha, pra eu saber se é essa linha mesmo que faz sentido pra você:\nhttps://juremabksimoveis.com.br/imoveis/apartamento-para-venda-no-bessa/",
+  "persistence": {
+    "lead_id": "b5a9dec4-4b2b-415c-9490-50bcd02db790",
+    "conversation_id": "10408ddb-565b-413d-9f05-649b8f26d3bc",
+    "messages": 8,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 3,
+    "tool_calls": 3
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "property_url_present",
+        "weight": 4
+      },
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 31,
+      "line_count": 3,
+      "question_count": 0,
+      "url_count": 1,
+      "latency_ms": 3135
+    }
+  }
+}

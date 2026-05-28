@@ -1,0 +1,35 @@
+{
+  "turn_index": 1,
+  "input": "Acho que seria mais pra morar, mas estou no comeco mesmo.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "light_qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\cold_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/cold_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 972,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Vou ser bem sincera com você: com o filtro bem certinho em Ponta de Campina, apartamento, mais exclusivo e perto do mar, o sistema hoje não me trouxe nada realmente aderente pra eu te mandar de olho fechado.\nPosso fazer dois caminhos pra acertar na mão com poucas opcoes, como você pediu: ou eu abro um pouco o raio (interligando Ponta de Campina com Intermares/Cabo Branco em prédios mais boutique) ou ajusto faixa de valor pra pegar aqueles empreendimentos mais autorais, de arquitetura e estética bem acima da média.\nMe conta só numa linha o que faz mais sentido pra vocês agora: manter Ponta de Campina a qualquer custo ou abrir pra “irmãs” dela (tipo Intermares e um Cabo Branco mais selecionado) desde que a sensação e a estética sejam especiais?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 45,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 21,
+    "tool_calls": 21
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 131,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 972
+    }
+  }
+}

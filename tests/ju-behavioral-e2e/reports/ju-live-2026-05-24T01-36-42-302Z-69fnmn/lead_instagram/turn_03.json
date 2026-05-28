@@ -1,0 +1,47 @@
+{
+  "turn_index": 2,
+  "input": "Pode me mandar uma opcao que combine com isso.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\lead_instagram\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/lead_instagram/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3293,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Boa, esse perfil é exatamente a sua faixa de busca.",
+  "persistence": {
+    "lead_id": "b5a9dec4-4b2b-415c-9490-50bcd02db790",
+    "conversation_id": "10408ddb-565b-413d-9f05-649b8f26d3bc",
+    "messages": 10,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 5,
+    "tool_calls": 5
+  },
+  "behavior": {
+    "score": 92,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 10,
+      "line_count": 1,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 3293
+    }
+  }
+}

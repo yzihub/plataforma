@@ -300,13 +300,19 @@ async function writeRuntimeTrace(
   }
 }
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export function validateRuntimeGatewayBody(body: RuntimeStateRequest) {
   const errors: string[] = [];
   const tenantId = clean(body.tenant_id ?? body.lead?.tenant_id ?? body.deal?.tenant_id ?? body.conversation?.tenant_id);
   const conversationId = clean(body.conversation_id ?? body.conversation?.id);
 
   if (!tenantId) errors.push("tenant_id is required");
+  else if (!UUID_REGEX.test(tenantId)) errors.push("tenant_id must be a canonical UUID");
+
   if (!conversationId) errors.push("conversation.id or conversation_id is required");
+  else if (!UUID_REGEX.test(conversationId)) errors.push("conversation_id must be a canonical UUID");
+
   if (!clean(body.channel ?? body.entry_profile ?? "whatsapp")) errors.push("channel is required");
 
   return {

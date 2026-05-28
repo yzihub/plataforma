@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "couple_decision_lead",
+    "scenario_name": "Couple Decision Lead",
+    "turn_index": 2,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "direct",
+    "utm_campaign": "casal_decisao",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-28-53-647Z-6lby0d-couple_decision_lead-3",
+      "fromMe": false,
+      "remoteJid": "5583919976995@s.whatsapp.net"
+    },
+    "pushName": "Lead Couple Decision Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Se tiver algo que equilibre essas duas coisas, manda."
+    },
+    "messageTimestamp": 1779589823,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Casal em decisao conjunta, busca reduzir conflito entre preferencias.",
+      "emotionalContext": "Ha desejo real, mas precisam organizar criterios.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+      "qa_audit": true,
+      "utm_source": "site",
+      "utm_medium": "direct",
+      "utm_campaign": "casal_decisao"
+    }
+  }
+}

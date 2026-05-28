@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "lead_referral",
+    "scenario_name": "Lead Referral / Indicacao",
+    "turn_index": 2,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "indicacao",
+    "utm_medium": "referral",
+    "utm_campaign": "cliente_indicou"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-lead_referral-3",
+      "fromMe": false,
+      "remoteJid": "5583973889588@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Referral / Indicacao",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Pode ser 2 quartos, ate uns 700 mil, se tiver algo bom pra esse perfil."
+    },
+    "messageTimestamp": 1779580205,
+    "source": "curl-behavioral-audit:referral",
+    "contextInfo": {
+      "sourceChannel": "referral",
+      "persona": "Lead indicado por conhecido, chega com confianca inicial e espera atendimento mais pessoal.",
+      "emotionalContext": "Menos desconfiado, mas quer sentir cuidado e criterio.",
+      "utm_source": "indicacao",
+      "utm_medium": "referral",
+      "utm_campaign": "cliente_indicou"
+    }
+  }
+}

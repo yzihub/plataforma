@@ -1,0 +1,47 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma que voce ache realmente alinhada.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\luxury_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/luxury_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3458,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, é exatamente assim que eu gosto de trabalhar: pouco volume e muita curadoria.\nPelo que entendi até agora: apê mais compacto, bem pensado, estética forte, clima de refúgio e lifestyle, com Ponta de Campina já chamando atenção de vocês. Isso já desenha um perfil bem específico.\nPra eu não errar na mão e realmente ir atrás dessas poucas opcoes bem escolhidas, eu preciso só alinhar esse último ponto: hoje, pensando nesse projeto a dois, faz mais sentido pra vocês investir até quanto, mais ou menos? Pode ser em faixa mesmo, tipo “até 800k”, “até 1M” ou “1M+”. Com isso eu já filtro só o que é realmente especial dentro desse universo mais exclusivo que vocês estão buscando.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 45,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 22,
+    "tool_calls": 22
+  },
+  "behavior": {
+    "score": 92,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 118,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3458
+    }
+  }
+}

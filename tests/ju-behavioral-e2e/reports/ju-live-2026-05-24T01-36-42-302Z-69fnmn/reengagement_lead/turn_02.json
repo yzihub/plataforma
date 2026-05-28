@@ -1,0 +1,58 @@
+{
+  "turn_index": 1,
+  "input": "Era algo perto do Cabo Branco, pensando em investir.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_revalidation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\reengagement_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/reengagement_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4218,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Oi, que bom te ver de volta por aqui 🙂\nNa época eu ainda não tinha te mandado um apê específico, tava justamente calibrando contigo antes de puxar 1 exemplo bem escolhido pra te dar esse “norte” de planta e valor.\nPosso fazer isso agora: te mando 1 opção bem curada nesse perfil mais exclusivo/estético em orla (Ponta de Campina / Cabo Branco / Intermares) pra você sentir se ainda conversa com o que você quer hoje.\nMe conta só: nesse meio tempo, tua cabeça mudou em alguma coisa? Tipo faixa de valor que imagina investir ou região da orla que está fazendo mais sentido agora?",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 41,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 26,
+    "tool_calls": 26
+  },
+  "behavior": {
+    "score": 74,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      },
+      {
+        "id": "asked_permission_instead_of_presenting",
+        "severity": "critical",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 106,
+      "line_count": 4,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4218
+    }
+  }
+}

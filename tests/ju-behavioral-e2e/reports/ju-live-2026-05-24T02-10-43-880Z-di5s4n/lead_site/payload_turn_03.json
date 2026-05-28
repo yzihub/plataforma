@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "lead_site",
+    "scenario_name": "Lead Site",
+    "turn_index": 2,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "organic",
+    "utm_campaign": "imoveis_jp_site",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-10-43-880Z-di5s4n-lead_site-3",
+      "fromMe": false,
+      "remoteJid": "5583912662611@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Site",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Se tiver algo com 2 quartos ate mais ou menos 650 mil, pode mandar o que fizer sentido."
+    },
+    "messageTimestamp": 1779588671,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Comprador direto do site, ja navegou por imoveis e quer orientacao sem recomecar qualificacao.",
+      "emotionalContext": "Curioso, com interesse real, mas ainda comparando regioes.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+      "qa_audit": true,
+      "utm_source": "site",
+      "utm_medium": "organic",
+      "utm_campaign": "imoveis_jp_site"
+    }
+  }
+}

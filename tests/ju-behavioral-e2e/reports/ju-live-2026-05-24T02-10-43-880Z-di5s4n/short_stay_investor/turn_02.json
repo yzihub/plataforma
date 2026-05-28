@@ -1,0 +1,47 @@
+{
+  "turn_index": 1,
+  "input": "Queria algo mais facil de alugar e administrar.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "operational_investment"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\short_stay_investor\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/short_stay_investor/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 2886,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Faz sentido sim, principalmente se for um flat em região bem consolidada de demanda turística e corporativa, tipo Cabo Branco, Manaíra, Tambaú, Bessa mais pertinho do mar.\nPra eu te orientar direito, me conta rapidinho: esse short stay seria mais foco em investimento pra renda (Airbnb/temporada) ou pra você usar às vezes e alugar no restante do tempo? E dentro desse cenário, você pensaria em qual faixa de valor pro flat hoje?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 16,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 34,
+    "tool_calls": 34
+  },
+  "behavior": {
+    "score": 98,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 72,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 2886
+    }
+  }
+}

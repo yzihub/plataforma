@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "A gente busca algo mais exclusivo, com estetica muito boa e sensacao diferente. Ponta de Campina chamou atencao.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "luxury_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\luxury_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/luxury_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3689,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, isso ajuda muito. Um lugar bem resolvido, com planta boa e sensação de aconchego faz toda a diferença, mais ainda perto do mar.\nPra eu já começar a filtrar certinho pra você: em qual cidade/região você se imagina morando perto da praia? E, pensando em compra, até mais ou menos quanto você pretende investir?",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 6,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 20,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 55,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3689
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "turn_index": 1,
+  "input": "Era algo perto do Cabo Branco, pensando em investir.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_revalidation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\reengagement_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/reengagement_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3365,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Que bom que você voltou 😊\nVocê diz “aquele apartamento” pensando mais naquele conceito que eu tinha comentado (mais exclusivo, estética forte, clima de refúgio em Ponta de Campina / Jardim Oceania), ou de algum prédio específico que a gente chegou a falar e ficou na sua cabeça?\nTe pergunto isso porque de lá pra cá o cenário de oferta muda um pouco, mas o “tipo de produto” que eu tinha desenhado pra você ainda faz bastante sentido sim, principalmente pensando em morar bem e não em algo comum.\nSe você lembrar mais ou menos o que te marcou (vista, tamanho, localização, algo do prédio), me conta em uma frase que eu já te digo se ainda é a melhor linha pra você agora ou se eu ajustaria a bússola.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 52,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 26,
+    "tool_calls": 26
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 130,
+      "line_count": 4,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3365
+    }
+  }
+}

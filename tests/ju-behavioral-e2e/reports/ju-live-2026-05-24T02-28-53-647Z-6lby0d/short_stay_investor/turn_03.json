@@ -1,0 +1,42 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma opcao com esse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\short_stay_investor\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/short_stay_investor/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 718,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido você buscar algo mais “redondo” pra renda.\nPra short stay em João Pessoa, o caminho mais fácil de alugar e administrar costuma ser: flat bem localizado perto da praia, em prédio com operação de temporada já estruturada (recepção, enxoval, limpeza, check‑in/check‑out) ou com administradora parceira. Assim você basicamente acompanha resultado e não vira “síndico” do imovel.\nPra eu te direcionar melhor, você pensa em algo nessa mesma faixa de até 500 mil ou, para investimento/short stay, gostaria de trabalhar com um ticket menor?",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 19,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 34,
+    "tool_calls": 34
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 87,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 718
+    }
+  }
+}

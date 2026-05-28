@@ -1,0 +1,48 @@
+{
+  "turn_index": 2,
+  "input": "Manda uma opcao que faca sentido pra familia.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\family_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/family_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 707,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pra eu conseguir te dizer com mais segurança o que o financiamento aguenta sem pesar, ainda ficou pendente só aquela parte da parcela: em qual faixa, sendo bem pé no chão, você se sente confortável hoje? Algo tipo até uns 1.500, 2.000, 2.500 ou 3.000 por mês?",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 12,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 31,
+    "tool_calls": 31
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 47,
+      "line_count": 1,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 707
+    }
+  }
+}

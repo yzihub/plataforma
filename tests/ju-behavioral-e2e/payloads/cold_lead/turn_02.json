@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "cold_lead",
+    "scenario_name": "Cold Lead",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "google",
+    "utm_medium": "organic",
+    "utm_campaign": "apartamento_joao_pessoa"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-cold_lead-2",
+      "fromMe": false,
+      "remoteJid": "5583973889589@s.whatsapp.net"
+    },
+    "pushName": "Lead Cold Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Acho que seria mais pra morar, mas estou no comeco mesmo."
+    },
+    "messageTimestamp": 1779580226,
+    "source": "curl-behavioral-audit:google",
+    "contextInfo": {
+      "sourceChannel": "google",
+      "persona": "Lead inicial, sem clareza de bairro, valor ou prazo.",
+      "emotionalContext": "Curioso e inseguro, pode sumir se pressionado.",
+      "utm_source": "google",
+      "utm_medium": "organic",
+      "utm_campaign": "apartamento_joao_pessoa"
+    }
+  }
+}

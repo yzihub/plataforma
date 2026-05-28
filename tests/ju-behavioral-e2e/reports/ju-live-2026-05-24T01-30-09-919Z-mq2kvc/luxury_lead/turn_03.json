@@ -1,0 +1,42 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma que voce ache realmente alinhada.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\luxury_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/luxury_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3718,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, Ponta de Campina conversa muito com essa proposta mais exclusiva mesmo, é uma praia que tem essa “vibe” diferente.\nPra eu acertar bem a mão nas opcoes e não te mandar nada genérico: até mais ou menos quanto vocês pensam em investir hoje e em quanto tempo imaginam estar morando aí (coisa de meses, 1 ano, mais longo prazo)?",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 10,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 21,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 60,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3718
+    }
+  }
+}

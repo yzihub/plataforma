@@ -1,0 +1,48 @@
+{
+  "turn_index": 1,
+  "input": "Seria meu primeiro imovel e eu queria algo ate uns 500 mil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\fgts_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/fgts_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 808,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Consegue sim, a gente trabalha com compra usando FGTS normalmente 👍\nO que vai mandar são mais as regras da Caixa/Banco do que da imobiliária: você precisa ter carteira assinada ou FGTS ativo, não ter outro financiamento habitacional no seu nome na mesma cidade e o imovel precisa se encaixar nos parâmetros do banco (valor, tipo, documentação ok etc).\nEsse FGTS pode entrar como parte da entrada ou até para reduzir o valor financiado/parcela. Como você já tem uns 120 mil, dá pra montar uma estrutura bem interessante.\nMe conta só duas coisas pra eu te orientar melhor:\n– Você já sacou FGTS alguma vez pra moradia?\n– Pensa em comprar em qual cidade/bairro mais ou menos?",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 7,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 28,
+    "tool_calls": 28
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 117,
+      "line_count": 6,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 808
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma que voce ache realmente alinhada.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\payloads\\luxury_lead\\turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/payloads/luxury_lead/turn_03.json",
+  "http_status": 0,
+  "latency_ms": 0,
+  "raw_body": "",
+  "response_text": "",
+  "behavior": {
+    "score": 28,
+    "violations": [
+      {
+        "id": "http_non_2xx",
+        "severity": "critical",
+        "detail": "HTTP 0",
+        "weight": 30
+      },
+      {
+        "id": "empty_response",
+        "severity": "critical",
+        "detail": "No textual response detected",
+        "weight": 30
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 0,
+      "line_count": 0,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 0
+    }
+  }
+}

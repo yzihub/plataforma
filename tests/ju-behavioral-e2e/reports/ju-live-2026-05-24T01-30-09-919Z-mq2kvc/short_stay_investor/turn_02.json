@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "Queria algo mais facil de alugar e administrar.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "operational_investment"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\short_stay_investor\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/short_stay_investor/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3833,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Boa, dá pra pensar em coisa bem legal pra vocês com esse cenário.\nUma coisa: você prefere algo mais próximo de praia e movimento (restaurantes, orla) ou um trecho mais residencialzinho, silencioso, perto de escola e mercadinho? Te pergunto isso só pra não te mandar algo que faça sentido no papel, mas não na rotina da família.",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 16,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 34,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 57,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3833
+    }
+  }
+}

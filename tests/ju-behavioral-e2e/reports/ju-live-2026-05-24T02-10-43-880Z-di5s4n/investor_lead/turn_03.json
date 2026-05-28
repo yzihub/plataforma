@@ -1,0 +1,52 @@
+{
+  "turn_index": 2,
+  "input": "Pode separar uma opcao com perfil de liquidez boa.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\investor_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/investor_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4104,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pra investimento, quase sempre a ordem é: localização > produto (planta/metragem) > vista.\nLocalização boa resolve 3 coisas: facilidade de alugar, valor do aluguel e liquidez na revenda. Em Cabo Branco isso é rua, entorno imediato, fluxo de pessoas, serviços por perto e distância real da areia.\nVista pesa, mas é “cereja do bolo”: ótima pra revenda em unidades mais top e ajuda no ticket, mas se você pagar caro demais só pela vista e errar rua/prédio, o retorno pode não fechar tão bem.\nSe você quiser, me fala: em Cabo Branco você pensaria em investir até quanto hoje? Aí te mostro 1–2 cenários comparando justamente isso: um apê com melhor localização x um com melhor vista, pra ver em números o impacto no aluguel e na valorização.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 27,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 13,
+    "tool_calls": 13
+  },
+  "behavior": {
+    "score": 87,
+    "violations": [
+      {
+        "id": "hype_language",
+        "severity": "warning",
+        "weight": 5
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 128,
+      "line_count": 4,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4104
+    }
+  }
+}

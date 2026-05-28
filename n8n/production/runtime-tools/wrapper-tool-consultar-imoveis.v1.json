@@ -1,0 +1,241 @@
+{
+  "name": "Ju Runtime Tool Wrapper - consultar_imoveis",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tool-consultar-imoveis",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "wrapper-consultar-imoveis-webhook",
+      "name": "Webhook Runtime",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "webhookId": "wrapper-consultar-imoveis"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate auth + payload. Fail-closed: any missing/invalid input throws.\nconst started = Date.now();\nconst item = $input.first().json;\nconst body = item.body || item;\nconst headers = item.headers || {};\n\nconst expected = (\n  $vars.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $vars.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $vars.EVOLUTION_WEBHOOK_SECRET ||\n  $env.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $env.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $env.EVOLUTION_WEBHOOK_SECRET ||\n  ''\n).trim();\nif (!expected) {\n  throw new Error('wrapper config error: JUREMA_TOOL_WEBHOOK_SECRET nao configurado em n8n');\n}\n\nconst provided = (\n  headers['x-n8n-api-key'] ||\n  headers['X-N8N-API-KEY'] ||\n  headers['x-webhook-secret'] ||\n  headers['X-Webhook-Secret'] ||\n  ''\n).toString().trim();\n\nif (provided !== expected) {\n  throw new Error('unauthorized: x-n8n-api-key ausente ou invalido');\n}\n\nconst clean = (v) => String(v ?? '').trim();\nconst tenant_id = clean(body.tenant_id);\nconst phone = clean(body.phone || body.telefoneCompleto);\n\nif (!tenant_id) throw new Error('payload invalido: tenant_id ausente');\nif (!phone) throw new Error('payload invalido: phone ausente');\n\nreturn [{\n  json: {\n    __started_at: started,\n    tenant_id,\n    phone,\n    codigo_ref: clean(body.codigo_ref),\n    bairro: clean(body.bairro || body.location_preference),\n    tipo_imovel: clean(body.tipo_imovel || body.property_type),\n    quartos: clean(body.quartos || body.bedrooms),\n    valor_max: clean(body.valor_max || body.budget_max)\n  }\n}];"
+      },
+      "id": "wrapper-consultar-imoveis-validate",
+      "name": "Validate Auth + Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0udn6N4YelE6F2Ws",
+          "mode": "list",
+          "cachedResultName": "consultar_imoveis"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tenant_id": "={{ $json.tenant_id }}",
+            "phone": "={{ $json.phone }}",
+            "codigo_ref": "={{ $json.codigo_ref }}",
+            "bairro": "={{ $json.bairro }}",
+            "tipo_imovel": "={{ $json.tipo_imovel }}",
+            "quartos": "={{ $json.quartos }}",
+            "valor_max": "={{ $json.valor_max }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "tenant_id",
+              "displayName": "tenant_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "codigo_ref",
+              "displayName": "codigo_ref",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "bairro",
+              "displayName": "bairro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_imovel",
+              "displayName": "tipo_imovel",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "quartos",
+              "displayName": "quartos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "valor_max",
+              "displayName": "valor_max",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "id": "wrapper-consultar-imoveis-execute",
+      "name": "Execute consultar_imoveis",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format inner tool output into runtime contract.\nconst started = $('Validate Auth + Payload').first().json.__started_at;\nconst inner = $input.first().json || {};\nconst cards = Array.isArray(inner.cards) ? inner.cards : [];\n\nreturn [{\n  json: {\n    ok: true,\n    tool: 'consultar_imoveis',\n    latency_ms: Date.now() - started,\n    output: {\n      success: inner.success !== false,\n      total: inner.total ?? cards.length,\n      total_received: inner.total_received ?? null,\n      total_filtered: inner.total_filtered ?? null,\n      total_ranked: inner.total_ranked ?? null,\n      payload_policy: inner.payload_policy || 'ju_minimal_operational_cards_v1',\n      filters_used: inner.filters_used || null,\n      ranking_profile: inner.ranking_profile || null,\n      cards,\n      warning: inner.warning || null,\n      fallback_message: inner.fallback_message || null\n    }\n  }\n}];"
+      },
+      "id": "wrapper-consultar-imoveis-format",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "wrapper-consultar-imoveis-respond",
+      "name": "Respond to Runtime",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Runtime": {
+      "main": [
+        [
+          {
+            "node": "Validate Auth + Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Auth + Payload": {
+      "main": [
+        [
+          {
+            "node": "Execute consultar_imoveis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute consultar_imoveis": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Runtime",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "tags": []
+}

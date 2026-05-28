@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Estou so olhando apartamento em Joao Pessoa ainda. Nao tenho muita ideia de valor nem prazo.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "cold_discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\cold_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/cold_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 775,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, estamos bem alinhados então. Melhor ver pouco e bom do que um monte de coisa comum.\nPela linha que você descreveu (estética forte, sensação diferente, mais exclusivo e com esse clima de Ponta de Campina), eu consigo montar um shortlist bem enxuto. Só preciso desse ajuste fino pra não errar na mão: hoje vocês imaginam investir mais até uns 800 mil ou já consideram passar disso se for um projeto realmente especial, daqueles que marcam a diferença no dia a dia?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 43,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 20,
+    "tool_calls": 20
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 82,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 775
+    }
+  }
+}

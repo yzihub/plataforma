@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "financing_concern_lead",
+    "scenario_name": "Financing Concern Lead",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "organic",
+    "utm_campaign": "financiamento_imovel",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T01-30-09-919Z-mq2kvc-financing_concern_lead-1",
+      "fromMe": false,
+      "remoteJid": "5583951223101@s.whatsapp.net"
+    },
+    "pushName": "Lead Financing Concern Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Tenho vontade de comprar, mas fico inseguro com financiamento e parcela. Nao sei se cabe."
+    },
+    "messageTimestamp": 1779586406,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Comprador com receio de financiamento e parcelas.",
+      "emotionalContext": "Quer comprar, mas sente risco financeiro.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+      "qa_audit": true,
+      "utm_source": "site",
+      "utm_medium": "organic",
+      "utm_campaign": "financiamento_imovel"
+    }
+  }
+}

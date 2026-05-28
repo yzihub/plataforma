@@ -1,0 +1,135 @@
+{
+  "run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+  "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+  "endpoint": "https://api.yzihub.com/webhook/ju",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "dry_run": false,
+  "started_at": "2026-05-24T02:28:53.649Z",
+  "finished_at": "2026-05-24T02:34:02.644Z",
+  "scenarios": [
+    {
+      "scenario_id": "lead_site",
+      "scenario_name": "Lead Site",
+      "score": 90,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 3
+    },
+    {
+      "scenario_id": "lead_instagram",
+      "scenario_name": "Lead Instagram",
+      "score": 93,
+      "pass": false,
+      "critical_violations": 2,
+      "warning_violations": 1
+    },
+    {
+      "scenario_id": "lead_referral",
+      "scenario_name": "Lead Referral / Indicacao",
+      "score": 94,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 1
+    },
+    {
+      "scenario_id": "lead_paid_ad",
+      "scenario_name": "Lead Paid Ad",
+      "score": 92,
+      "pass": false,
+      "critical_violations": 2,
+      "warning_violations": 0
+    },
+    {
+      "scenario_id": "investor_lead",
+      "scenario_name": "Investor Lead",
+      "score": 97,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 0
+    },
+    {
+      "scenario_id": "couple_decision_lead",
+      "scenario_name": "Couple Decision Lead",
+      "score": 98,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 1
+    },
+    {
+      "scenario_id": "beach_lifestyle_lead",
+      "scenario_name": "Beach Lifestyle Lead",
+      "score": 97,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 0
+    },
+    {
+      "scenario_id": "luxury_lead",
+      "scenario_name": "Luxury Lead",
+      "score": 96,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 0
+    },
+    {
+      "scenario_id": "cold_lead",
+      "scenario_name": "Cold Lead",
+      "score": 100,
+      "pass": true,
+      "critical_violations": 0,
+      "warning_violations": 0
+    },
+    {
+      "scenario_id": "reengagement_lead",
+      "scenario_name": "Re-engagement Lead",
+      "score": 88,
+      "pass": false,
+      "critical_violations": 3,
+      "warning_violations": 0
+    },
+    {
+      "scenario_id": "financing_concern_lead",
+      "scenario_name": "Financing Concern Lead",
+      "score": 100,
+      "pass": true,
+      "critical_violations": 0,
+      "warning_violations": 2
+    },
+    {
+      "scenario_id": "fgts_lead",
+      "scenario_name": "FGTS Lead",
+      "score": 91,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 2
+    },
+    {
+      "scenario_id": "family_lead",
+      "scenario_name": "Family Lead",
+      "score": 94,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 2
+    },
+    {
+      "scenario_id": "short_stay_investor",
+      "scenario_name": "Short Stay Investor",
+      "score": 94,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 1
+    },
+    {
+      "scenario_id": "high_intent_visit_lead",
+      "scenario_name": "High Intent Visit Lead",
+      "score": 93,
+      "pass": false,
+      "critical_violations": 1,
+      "warning_violations": 1
+    }
+  ],
+  "regression": {
+    "available": false,
+    "regressions": []
+  }
+}

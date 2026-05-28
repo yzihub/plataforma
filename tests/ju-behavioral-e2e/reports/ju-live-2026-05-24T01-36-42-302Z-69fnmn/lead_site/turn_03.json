@@ -1,0 +1,48 @@
+{
+  "turn_index": 2,
+  "input": "Se tiver algo com 2 quartos ate mais ou menos 650 mil, pode mandar o que fizer sentido.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\lead_site\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/lead_site/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3278,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, então vamos focar em algo bem prático pro dia a dia mesmo.\nTanto no Bessa quanto no Jardim Oceania dá pra pensar em ficar mais perto de padarias, mercados, farmácias e academia, em vez de ficar “escondido” mais dentro do bairro.\nPra eu já ir filtrando direitinho pra você: até mais ou menos qual valor você pretende investir hoje? E você pensa em comprar agora ou ainda está se organizando pra daqui a alguns meses?",
+  "persistence": {
+    "lead_id": "b5a9dec4-4b2b-415c-9490-50bcd02db790",
+    "conversation_id": "10408ddb-565b-413d-9f05-649b8f26d3bc",
+    "messages": 4,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 2,
+    "tool_calls": 2
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 76,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3278
+    }
+  }
+}

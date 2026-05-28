@@ -1,0 +1,40 @@
+{
+  "turn_index": 1,
+  "input": "Eu teria uns 120 mil de entrada, mas nao queria uma parcela pesada.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "financial_qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\financing_concern_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/financing_concern_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3557,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Entendo bem essa dúvida, é super comum mesmo. Vamos deixar isso mais leve e com número na mão, sem surpresa.\nPra eu te ajudar de verdade, me conta só uma coisa primeiro: em qual faixa de valor você imagina o imovel hoje (tipo “até 300 mil”, “até 400 mil”…)?\nCom isso eu já te dou uma simulação aproximada de parcela e entrada, explicando como funciona o financiamento e até onde faz sentido pra não apertar seu orçamento.",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 3,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 28,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 77,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3557
+    }
+  }
+}

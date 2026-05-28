@@ -1,0 +1,53 @@
+{
+  "turn_index": 2,
+  "input": "Se tiver algo que equilibre essas duas coisas, manda.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\couple_decision_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/couple_decision_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4201,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, esse prazo é ótimo pra fazer uma escolha bem pensada sem correr demais.\nPra eu já separar opcoes certeiras pra vocês em Manaíra/Tambaú (e uma em Cabo Branco com boa liquidez), em que faixa de valor vocês estão mirando hoje? Algo até uns 700 mil ou pensam em subir um pouco esse ticket?",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 21,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 16,
+    "tool_calls": 16
+  },
+  "behavior": {
+    "score": 86,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 54,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4201
+    }
+  }
+}

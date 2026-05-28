@@ -1,0 +1,47 @@
+{
+  "turn_index": 1,
+  "input": "Era algo perto do Cabo Branco, pensando em investir.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_revalidation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\reengagement_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/reengagement_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3913,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido estar no começo e ir sentindo o mercado com calma, ainda mais pra morar e escolher algo com mais personalidade.\nPra eu conseguir te mostrar pelo menos 1 ou 2 apartamentos realmente dentro do que vocês imaginam, consigo te colocar um cenário e você me diz com qual se identifica mais? Tipo: algo mais “até uns 700k”, “até uns 1M” ou “acima de 1M” se fizer muito sentido. Não precisa ser número exato, só a “caixinha” que mais parece com vocês hoje.",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 18,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 26,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 92,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 86,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3913
+    }
+  }
+}

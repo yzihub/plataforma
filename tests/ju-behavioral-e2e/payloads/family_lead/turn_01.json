@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "family_lead",
+    "scenario_name": "Family Lead",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "indicacao",
+    "utm_medium": "referral",
+    "utm_campaign": "familia_bessa"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-family_lead-1",
+      "fromMe": false,
+      "remoteJid": "5583914309359@s.whatsapp.net"
+    },
+    "pushName": "Lead Family Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "A familia esta crescendo e a gente queria algo no Bessa ou perto, com rotina boa, escola por perto e seguranca."
+    },
+    "messageTimestamp": 1779580234,
+    "source": "curl-behavioral-audit:referral",
+    "contextInfo": {
+      "sourceChannel": "referral",
+      "persona": "Familia crescendo, prioriza escola, seguranca, rotina e conforto.",
+      "emotionalContext": "Busca estabilidade e qualidade de vida.",
+      "utm_source": "indicacao",
+      "utm_medium": "referral",
+      "utm_campaign": "familia_bessa"
+    }
+  }
+}

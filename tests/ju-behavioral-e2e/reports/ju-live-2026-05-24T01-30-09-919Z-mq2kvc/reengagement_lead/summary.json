@@ -1,0 +1,40 @@
+{
+  "scenario_id": "reengagement_lead",
+  "scenario_name": "Re-engagement Lead",
+  "score": 79,
+  "pass": false,
+  "violations": [
+    {
+      "id": "permission_posso_te_mostrar",
+      "severity": "critical",
+      "weight": 10,
+      "turn_index": 0
+    },
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 0
+    },
+    {
+      "id": "asked_permission_instead_of_presenting",
+      "severity": "critical",
+      "weight": 12,
+      "turn_index": 0
+    },
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 1
+    }
+  ],
+  "positives": [
+    {
+      "id": "no_pressure",
+      "weight": 4
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Estou so olhando apartamento em Joao Pessoa ainda. Nao tenho muita ideia de valor nem prazo.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "cold_discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\cold_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/cold_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3398,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, era exatamente isso que eu queria entender de vocês: poucas opcoes, mas bem especiais.\nEm Ponta de Campina, com esse recorte mais exclusivo e estético, hoje eu não tenho nada realmente bom pra te mandar dentro dos filtros que usei agora. Em vez de te empurrar algo “mais ou menos”, eu prefiro ajustar a rota com você.\nA gente pode seguir por dois caminhos bem alinhados com o que você descreveu:\n– Ou abrimos um pouco o raio para algo na mesma vibe (Intermares / Cabo Branco, por exemplo, ainda com essa pegada mais autoral e diferente);\n– Ou mantemos Ponta de Campina, mas você me dá só uma noção de teto de investimento para eu abrir outros produtos que não apareceram nesse primeiro recorte.\nO que faz mais sentido pra você: manter Ponta de Campina a todo custo ou topar olhar 1 opção nessa mesma estética em outro ponto especial da orla?",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 35,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 23,
+    "tool_calls": 23
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 154,
+      "line_count": 6,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3398
+    }
+  }
+}

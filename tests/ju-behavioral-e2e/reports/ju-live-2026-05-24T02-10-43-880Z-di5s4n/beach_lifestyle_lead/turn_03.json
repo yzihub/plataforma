@@ -1,0 +1,42 @@
+{
+  "turn_index": 2,
+  "input": "Me manda uma opcao nesse estilo.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\beach_lifestyle_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/beach_lifestyle_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3595,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, isso ajuda muito a afinar a busca: algo mais compacto, mas com sensação boa de morar, circulação agradável e entorno que faça diferença no dia a dia.\nPelo que você já falou, eu imagino um apê de metragem confortável, perto do mar, rua boa pra caminhar e com praticidade por perto (mercadinho, padaria, serviços básicos).\nPra eu conseguir separar opcoes que realmente tenham essa “pegada gostosa de morar” em Manaíra/Tambaú dentro desse prazo de 60 dias, ainda ficou pendendo só um ponto: até quanto, mais ou menos, vocês pensam em investir nesse apartamento hoje? Pode ser em faixa, tipo “até X” ou “entre X e Y”.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 39,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 19,
+    "tool_calls": 19
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 107,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3595
+    }
+  }
+}

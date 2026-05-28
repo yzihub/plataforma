@@ -1,0 +1,17 @@
+{
+  "scenario_id": "financing_concern_lead",
+  "scenario_name": "Financing Concern Lead",
+  "score": 100,
+  "pass": true,
+  "violations": [],
+  "positives": [
+    {
+      "id": "emotional_alignment",
+      "weight": 6
+    },
+    {
+      "id": "emotional_alignment",
+      "weight": 6
+    }
+  ]
+}

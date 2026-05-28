@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "lead_referral",
+    "scenario_name": "Lead Referral / Indicacao",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "indicacao",
+    "utm_medium": "referral",
+    "utm_campaign": "cliente_indicou",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T01-36-42-302Z-69fnmn-lead_referral-2",
+      "fromMe": false,
+      "remoteJid": "5583949087411@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Referral / Indicacao",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Ela quer algo facil, seguro, sem depender tanto de carro."
+    },
+    "messageTimestamp": 1779586668,
+    "source": "curl-behavioral-audit:referral",
+    "contextInfo": {
+      "sourceChannel": "referral",
+      "persona": "Lead indicado por conhecido, chega com confianca inicial e espera atendimento mais pessoal.",
+      "emotionalContext": "Menos desconfiado, mas quer sentir cuidado e criterio.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+      "qa_audit": true,
+      "utm_source": "indicacao",
+      "utm_medium": "referral",
+      "utm_campaign": "cliente_indicou"
+    }
+  }
+}

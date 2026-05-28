@@ -1,0 +1,44 @@
+{
+  "turn_index": 0,
+  "input": "Vi um story de voces de um ap perto da praia. Achei bonito, queria saber se tem algo nesse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\lead_instagram\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/lead_instagram/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3719,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, então vamos mirar em um cantinho pra você realmente viver o dia a dia, não só “ter o imovel”.\nTanto no Bessa quanto no Jardim Oceania dá pra te deixar perto de mercado, farmácia, café, academia e praia, então isso ajuda bastante.\nPra eu já começar a filtrar coisa que faça sentido pra essa rotina, me conta em uma frase:\naté que valor você pretende investir hoje e se você pensa em comprar mais pra agora ou algo pra daqui a alguns meses?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 6,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 2,
+    "tool_calls": 2
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 84,
+      "line_count": 4,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3719
+    }
+  }
+}

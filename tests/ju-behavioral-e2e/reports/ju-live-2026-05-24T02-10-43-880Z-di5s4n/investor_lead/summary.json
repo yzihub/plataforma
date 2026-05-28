@@ -1,0 +1,35 @@
+{
+  "scenario_id": "investor_lead",
+  "scenario_name": "Investor Lead",
+  "score": 96,
+  "pass": false,
+  "violations": [
+    {
+      "id": "hype_language",
+      "severity": "warning",
+      "weight": 5,
+      "turn_index": 2
+    },
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 2
+    }
+  ],
+  "positives": [
+    {
+      "id": "emotional_alignment",
+      "weight": 6
+    },
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    },
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    }
+  ]
+}

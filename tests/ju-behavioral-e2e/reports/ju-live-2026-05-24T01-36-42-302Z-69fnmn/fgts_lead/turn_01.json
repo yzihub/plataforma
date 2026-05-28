@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Consigo usar FGTS pra comprar um apartamento com voces?",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "fgts_question"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\fgts_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/fgts_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 4234,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, 120 mil de entrada já é uma base muito boa, viu.\nPra eu conseguir te dizer com mais precisão até onde a parcela pode ficar leve, preciso de dois nortes teus: em qual cidade/bairro você pensa em comprar hoje e, sendo bem sincero, quanto você se sentiria confortável de pagar por mês na parcela, mais ou menos?",
+  "persistence": {
+    "lead_id": "713a45b3-a656-4195-892e-914686241571",
+    "conversation_id": "e30a331c-9d32-4d50-b6ae-48a0b26bba1a",
+    "messages": 5,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 29,
+    "tool_calls": 29
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 58,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4234
+    }
+  }
+}

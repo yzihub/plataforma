@@ -1,0 +1,40 @@
+{
+  "scenario_id": "financing_concern_lead",
+  "scenario_name": "Financing Concern Lead",
+  "score": 100,
+  "pass": true,
+  "violations": [
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 0
+    },
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 1
+    }
+  ],
+  "positives": [
+    {
+      "id": "emotional_alignment",
+      "weight": 6
+    },
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    },
+    {
+      "id": "emotional_alignment",
+      "weight": 6
+    },
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    }
+  ]
+}

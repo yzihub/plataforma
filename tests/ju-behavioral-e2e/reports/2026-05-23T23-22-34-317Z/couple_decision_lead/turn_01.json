@@ -1,0 +1,40 @@
+{
+  "turn_index": 0,
+  "input": "Eu e minha esposa estamos tentando decidir entre Manaira e Tambau. Ela quer praticidade, eu queria algo mais perto da praia.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "tradeoff"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\payloads\\couple_decision_lead\\turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/payloads/couple_decision_lead/turn_01.json",
+  "http_status": 0,
+  "latency_ms": 0,
+  "raw_body": "",
+  "response_text": "",
+  "behavior": {
+    "score": 40,
+    "violations": [
+      {
+        "id": "http_non_2xx",
+        "severity": "critical",
+        "detail": "HTTP 0",
+        "weight": 30
+      },
+      {
+        "id": "empty_response",
+        "severity": "critical",
+        "detail": "No textual response detected",
+        "weight": 30
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 0,
+      "line_count": 0,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 0
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "scenario_id": "luxury_lead",
+  "scenario_name": "Luxury Lead",
+  "score": 36,
+  "pass": false,
+  "violations": [
+    {
+      "id": "http_non_2xx",
+      "severity": "critical",
+      "detail": "HTTP 0",
+      "weight": 30,
+      "turn_index": 0
+    },
+    {
+      "id": "empty_response",
+      "severity": "critical",
+      "detail": "No textual response detected",
+      "weight": 30,
+      "turn_index": 0
+    },
+    {
+      "id": "http_non_2xx",
+      "severity": "critical",
+      "detail": "HTTP 0",
+      "weight": 30,
+      "turn_index": 1
+    },
+    {
+      "id": "empty_response",
+      "severity": "critical",
+      "detail": "No textual response detected",
+      "weight": 30,
+      "turn_index": 1
+    },
+    {
+      "id": "http_non_2xx",
+      "severity": "critical",
+      "detail": "HTTP 0",
+      "weight": 30,
+      "turn_index": 2
+    },
+    {
+      "id": "empty_response",
+      "severity": "critical",
+      "detail": "No textual response detected",
+      "weight": 30,
+      "turn_index": 2
+    },
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 2
+    }
+  ],
+  "positives": []
+}

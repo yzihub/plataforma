@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "A familia esta crescendo e a gente queria algo no Bessa ou perto, com rotina boa, escola por perto e seguranca.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "family_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\family_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/family_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3270,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Consegue sim, a gente trabalha com compra usando FGTS 👍\nEm geral dá pra usar o FGTS se:\n– O imovel for residencial e para você morar\n– Estiver dentro do limite de valor da Caixa na sua região\n– Você não tiver outro financiamento ativo no SFH na mesma cidade\n– Você tiver pelo menos 3 anos de trabalho somando carteira/FGTS\nComo você comentou que tem uns 120 mil de entrada: sabe mais ou menos quanto você tem hoje de FGTS? Aí eu já te explico como ele entra na conta (entrada, abatimento de parcela ou saldo devedor) e te dou uma ideia prática de como ficaria sua compra.",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 8,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 30,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 110,
+      "line_count": 7,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3270
+    }
+  }
+}

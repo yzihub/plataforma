@@ -1,0 +1,52 @@
+{
+  "turn_index": 0,
+  "input": "Oi Ju, voltei aqui. Aquele apartamento que voce tinha comentado ainda faz sentido pra mim?",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "memory_revalidation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\reengagement_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/reengagement_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3177,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido você estar só olhando e sentindo a cidade primeiro, sem pressão de número nem de prazo.\nPra te ajudar sem te engessar, posso te mostrar 1 ou 2 apartamentos em João Pessoa que representem bem esse “pacote” que você quer: perto do mar, mais exclusivo e com estética caprichada. Aí você já começa a ter noção de padrão e de valores, sem compromisso nenhum.\nVocê prefere que eu te mande algo já em Ponta de Campina ou posso considerar também outras praias de João Pessoa com essa vibe mais tranquila e bonita, tipo Cabo Branco e Manaíra?",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 16,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 24,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 66,
+    "violations": [
+      {
+        "id": "permission_posso_te_mostrar",
+        "severity": "critical",
+        "weight": 10
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      },
+      {
+        "id": "asked_permission_instead_of_presenting",
+        "severity": "critical",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 101,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3177
+    }
+  }
+}

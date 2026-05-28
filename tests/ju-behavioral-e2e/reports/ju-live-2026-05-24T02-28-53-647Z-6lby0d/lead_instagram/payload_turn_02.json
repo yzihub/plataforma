@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "lead_instagram",
+    "scenario_name": "Lead Instagram",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "instagram",
+    "utm_medium": "social",
+    "utm_campaign": "story_jardim_oceania",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-28-53-647Z-6lby0d-lead_instagram-2",
+      "fromMe": false,
+      "remoteJid": "5583919976995@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Instagram",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Gosto de coisa mais clara, varanda boa e que nao fique longe da orla."
+    },
+    "messageTimestamp": 1779589761,
+    "source": "curl-behavioral-audit:instagram",
+    "contextInfo": {
+      "sourceChannel": "instagram",
+      "persona": "Lead vindo de conteudo visual, responde por impulso a um post ou story.",
+      "emotionalContext": "Quer algo bonito e pratico, mas ainda fala de forma leve.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+      "qa_audit": true,
+      "utm_source": "instagram",
+      "utm_medium": "social",
+      "utm_campaign": "story_jardim_oceania"
+    }
+  }
+}

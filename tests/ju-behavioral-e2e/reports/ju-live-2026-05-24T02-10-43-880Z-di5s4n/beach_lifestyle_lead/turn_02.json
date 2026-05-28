@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "Nao precisa ser enorme, mas queria algo gostoso de morar.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "preference_refinement"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\beach_lifestyle_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/beach_lifestyle_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4182,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Faz todo sentido, esse estilo de vida casa muito com o que Manaíra e Tambaú entregam, principalmente alguns trechos mais “caminháveis” da orla.\nPensando em vocês dois, eu iria buscar algo que ficasse a poucos minutos a pé da praia, mas ainda perto de serviços do dia a dia, pra equilibrar essa rotina leve com praticidade.\nPra eu conseguir te mostrar opcoes que façam sentido de verdade dentro desse cenário, preciso só fechar aquele ponto que ficou pendente: hoje, pensando nesse projeto a dois e nesse prazo de 60 dias, até quanto vocês pretendem investir nesse apartamento? Aí eu já te direciono exatamente pros pedaços de Manaíra/Tambaú que combinam com essa rotina mais leve que vocês querem.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 37,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 18,
+    "tool_calls": 18
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 117,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4182
+    }
+  }
+}

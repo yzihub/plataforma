@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "short_stay_investor",
+    "scenario_name": "Short Stay Investor",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "google",
+    "utm_medium": "cpc",
+    "utm_campaign": "flat_short_stay_jp",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T01-36-42-302Z-69fnmn-short_stay_investor-2",
+      "fromMe": false,
+      "remoteJid": "5583919627717@s.whatsapp.net"
+    },
+    "pushName": "Lead Short Stay Investor",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Queria algo mais facil de alugar e administrar."
+    },
+    "messageTimestamp": 1779586981,
+    "source": "curl-behavioral-audit:paid_ad",
+    "contextInfo": {
+      "sourceChannel": "paid_ad",
+      "persona": "Investidor de locacao curta temporada, foco em demanda e operacao.",
+      "emotionalContext": "Quer tese objetiva e cuidado com risco operacional.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+      "qa_audit": true,
+      "utm_source": "google",
+      "utm_medium": "cpc",
+      "utm_campaign": "flat_short_stay_jp"
+    }
+  }
+}

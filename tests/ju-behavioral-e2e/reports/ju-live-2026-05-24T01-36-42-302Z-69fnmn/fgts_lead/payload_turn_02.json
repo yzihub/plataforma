@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "fgts_lead",
+    "scenario_name": "FGTS Lead",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "google",
+    "utm_medium": "cpc",
+    "utm_campaign": "usar_fgts_imovel",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T01-36-42-302Z-69fnmn-fgts_lead-2",
+      "fromMe": false,
+      "remoteJid": "5583919627717@s.whatsapp.net"
+    },
+    "pushName": "Lead FGTS Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Seria meu primeiro imovel e eu queria algo ate uns 500 mil."
+    },
+    "messageTimestamp": 1779586912,
+    "source": "curl-behavioral-audit:google",
+    "contextInfo": {
+      "sourceChannel": "google",
+      "persona": "Comprador quer usar FGTS e precisa entender viabilidade operacional.",
+      "emotionalContext": "Pratico, busca clareza e reducao de burocracia.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+      "qa_audit": true,
+      "utm_source": "google",
+      "utm_medium": "cpc",
+      "utm_campaign": "usar_fgts_imovel"
+    }
+  }
+}

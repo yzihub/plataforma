@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "beach_lifestyle_lead",
+    "scenario_name": "Beach Lifestyle Lead",
+    "turn_index": 2,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "instagram",
+    "utm_medium": "social",
+    "utm_campaign": "lifestyle_praia",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-10-43-880Z-di5s4n-beach_lifestyle_lead-3",
+      "fromMe": false,
+      "remoteJid": "5583912662611@s.whatsapp.net"
+    },
+    "pushName": "Lead Beach Lifestyle Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Me manda uma opcao nesse estilo."
+    },
+    "messageTimestamp": 1779588833,
+    "source": "curl-behavioral-audit:instagram",
+    "contextInfo": {
+      "sourceChannel": "instagram",
+      "persona": "Comprador lifestyle, compra por rotina, praia e bem-estar.",
+      "emotionalContext": "Busca sensacao de vida melhor, nao so metragem.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+      "qa_audit": true,
+      "utm_source": "instagram",
+      "utm_medium": "social",
+      "utm_campaign": "lifestyle_praia"
+    }
+  }
+}

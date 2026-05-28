@@ -1,0 +1,52 @@
+{
+  "turn_index": 1,
+  "input": "Nao precisa ser enorme, mas queria algo gostoso de morar.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "preference_refinement"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\beach_lifestyle_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/beach_lifestyle_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 786,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Vou te mandar duas em Manaíra que ficam bem nesse meio-termo: dá pra ir a pé pra praia e ainda ter praticidade de dia a dia.\nEssa primeira tem um perfil bem interessante pra investimento e uso, com vista e bem pertinho da praia:\nhttps://juremabksimoveis.com.br/imoveis/apartamento-para-venda-em-manaira-3/\n\nE essa aqui já é um pouquinho maior, boa pra rotina e família, também bem localizada:\nhttps://juremabksimoveis.com.br/imoveis/apartamento-para-venda-em-manaira-2/\n\nVê com calma e me fala qual das duas conversa mais com vocês, que eu aprofundo nos detalhes e faço a conta de retorno em cima dela.",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 34,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 15,
+    "tool_calls": 15
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "property_url_present",
+        "weight": 4
+      },
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      },
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 89,
+      "line_count": 6,
+      "question_count": 0,
+      "url_count": 2,
+      "latency_ms": 786
+    }
+  }
+}

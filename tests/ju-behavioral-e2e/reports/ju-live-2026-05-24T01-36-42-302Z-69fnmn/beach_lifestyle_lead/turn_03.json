@@ -1,0 +1,57 @@
+{
+  "turn_index": 2,
+  "input": "Me manda uma opcao nesse estilo.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\beach_lifestyle_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/beach_lifestyle_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4159,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, isso ajuda muito a afinar a busca.\nPensando nesse apê “gostoso de morar”, perto do mar e com rotina leve em Manaíra/Tambaú, em que faixa de valor vocês estão hoje, mais ou menos? Tipo: até uns 700 mil, até 900 mil, ou pensam em algo acima disso?\nCom essa referência eu já consigo te direcionar pra prédios e plantas que façam sentido pra vocês.",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 27,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 19,
+    "tool_calls": 19
+  },
+  "behavior": {
+    "score": 90,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 65,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4159
+    }
+  }
+}

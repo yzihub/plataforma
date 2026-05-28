@@ -1,0 +1,44 @@
+{
+  "turn_index": 0,
+  "input": "A gente busca algo mais exclusivo, com estetica muito boa e sensacao diferente. Ponta de Campina chamou atencao.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "luxury_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\luxury_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/luxury_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3374,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Te entendi, você já quer ver algo concreto mesmo sem cravar a faixa ainda.\nPra eu não chutar nem pra muito baixo nem pra muito alto, me diz só um “teto” aproximado: hoje vocês se imaginam mais até uns 700 mil, até uns 900 mil ou acima disso?\nCom isso eu já te mando uma opção em Manaíra/Tambaú que entregue esse combo de caminhar pro mar, rotina leve e apê gostoso de morar, sem exagerar no tamanho.",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 29,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 20,
+    "tool_calls": 20
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 77,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3374
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "turn_index": 0,
+  "input": "Queria morar num lugar que desse pra caminhar perto do mar e ter uma rotina mais leve.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "emotional_discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\beach_lifestyle_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/beach_lifestyle_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 780,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Ótimo, esse prazo de até 60 dias é bem tranquilo pra escolher com calma e ainda aproveitar boas oportunidades.\nPra eu já separar o que faz mais sentido entre Manaíra e Tambaú, me conta só em que faixa vocês querem ficar hoje: pensam mais em algo até uns 600 mil, até 800 mil ou já consideram passar um pouco disso se o apartamento for “redondo” em localização e liquidez?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 32,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 14,
+    "tool_calls": 14
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      },
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 69,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 780
+    }
+  }
+}

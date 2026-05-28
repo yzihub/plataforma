@@ -1,0 +1,42 @@
+{
+  "turn_index": 2,
+  "input": "Pode ser 2 quartos, ate uns 700 mil, se tiver algo bom pra esse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\lead_referral\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/lead_referral/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4238,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Oi, que bom que a Ana te indicou, obrigada pela confiança 🙏\nMe conta um pouquinho da sua mãe pra eu acertar na mão: ela prefere ficar mais perto de qual região aí em João Pessoa (Bessa / Jardim Oceania / Manaíra / Tambaú, por exemplo) e até que valor você imagina investir nesse ap pra ela?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 16,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 7,
+    "tool_calls": 7
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 57,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4238
+    }
+  }
+}

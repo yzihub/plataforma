@@ -1,0 +1,48 @@
+{
+  "turn_index": 1,
+  "input": "Pode ser quinta no fim da tarde.",
+  "expects": {
+    "retrieval": false,
+    "tool": false,
+    "stage": "appointment_coordination"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\high_intent_visit_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/high_intent_visit_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 67907,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Que bom que você curtiu um no Jardim Oceania, ótima região pra família também.\nPra eu já tentar encaixar a visita ainda essa semana, me fala duas coisinhas rapidinho: Você lembra o código do anúncio ou me manda o link do apartamento que gostou? e Quais dias/horários dessa semana são melhores pra você (manhã, tarde ou noite)?\nAí eu já confiro a disponibilidade do imovel e do proprietário e te volto com os horários certinhos.",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 21,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 37,
+    "tool_calls": 37
+  },
+  "behavior": {
+    "score": 90,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "latency_high",
+        "severity": "warning",
+        "detail": "67907ms",
+        "weight": 4
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 75,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 67907
+    }
+  }
+}

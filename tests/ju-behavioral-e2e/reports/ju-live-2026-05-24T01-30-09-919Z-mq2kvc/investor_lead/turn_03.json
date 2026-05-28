@@ -1,0 +1,53 @@
+{
+  "turn_index": 2,
+  "input": "Pode separar uma opcao com perfil de liquidez boa.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\investor_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/investor_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4232,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Faz bastante sentido você olhar Cabo Branco com esse olhar de valorização, sim. É um dos bairros mais consolidados da orla, com terreno escasso, perfil mais alto e demanda forte tanto pra moradia quanto pra temporada – isso tende a segurar bem o preço e a liquidez no longo prazo.\nPra te responder com números de verdade (ticket médio, potencial de aluguel mensal/temporada e comparação com Bessa/Jardim Oceania), preciso de um ajuste seu: em Cabo Branco você pensa em investir em qual faixa de valor mais ou menos? Pode ser a mesma lógica de até 700 mil ou aqui você cogita outro teto?",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 25,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 12,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 86,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 103,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4232
+    }
+  }
+}

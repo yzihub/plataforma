@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "lead_site",
+    "scenario_name": "Lead Site",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "organic",
+    "utm_campaign": "imoveis_jp_site"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-lead_site-1",
+      "fromMe": false,
+      "remoteJid": "5583973889588@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Site",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Oi, vi alguns apartamentos no site de voces e queria entender melhor opcoes no Bessa ou Jardim Oceania."
+    },
+    "messageTimestamp": 1779580194,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Comprador direto do site, ja navegou por imoveis e quer orientacao sem recomecar qualificacao.",
+      "emotionalContext": "Curioso, com interesse real, mas ainda comparando regioes.",
+      "utm_source": "site",
+      "utm_medium": "organic",
+      "utm_campaign": "imoveis_jp_site"
+    }
+  }
+}

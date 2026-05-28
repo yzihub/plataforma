@@ -1,0 +1,40 @@
+{
+  "turn_index": 0,
+  "input": "Queria morar num lugar que desse pra caminhar perto do mar e ter uma rotina mais leve.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "emotional_discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\beach_lifestyle_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/beach_lifestyle_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3679,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Entendi, vocês querem o “meio do caminho” entre praticidade e praia, faz todo sentido.\nPra eu te mandar coisa certeira entre Manaíra/Tambaú, preciso só alinhar esse ponto que ficou faltando: hoje, pensando nesse projeto a dois e nesse prazo de 60 dias, até quanto vocês pretendem investir nesse apartamento? Me dando essa faixa, eu já separo opcoes que equilibrem bem uso no dia a dia, facilidade de alugar e boa liquidez futura.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 35,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 17,
+    "tool_calls": 17
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 72,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3679
+    }
+  }
+}

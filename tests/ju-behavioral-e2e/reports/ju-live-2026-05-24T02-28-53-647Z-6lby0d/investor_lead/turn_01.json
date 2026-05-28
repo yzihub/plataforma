@@ -1,0 +1,40 @@
+{
+  "turn_index": 0,
+  "input": "Tenho interesse em algo em Cabo Branco pensando em valorizacao e retorno. Quero entender se faz sentido financeiramente.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "investment_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\investor_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/investor_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 777,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Vou começar por esse aqui que casa bem com o que você comentou, pertinho da praia e com varanda boa:\nhttps://juremabksimoveis.com.br/imoveis/apartamento-para-venda-no-bessa/",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 20,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 8,
+    "tool_calls": 8
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "property_url_present",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 21,
+      "line_count": 2,
+      "question_count": 0,
+      "url_count": 1,
+      "latency_ms": 777
+    }
+  }
+}

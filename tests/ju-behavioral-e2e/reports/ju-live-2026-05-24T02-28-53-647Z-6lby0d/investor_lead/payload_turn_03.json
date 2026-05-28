@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "investor_lead",
+    "scenario_name": "Investor Lead",
+    "turn_index": 2,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "meta_ads",
+    "utm_medium": "paid_social",
+    "utm_campaign": "investimento_cabo_branco",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-28-53-647Z-6lby0d-investor_lead-3",
+      "fromMe": false,
+      "remoteJid": "5583919976995@s.whatsapp.net"
+    },
+    "pushName": "Lead Investor Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Pode separar uma opcao com perfil de liquidez boa."
+    },
+    "messageTimestamp": 1779589804,
+    "source": "curl-behavioral-audit:meta_ads",
+    "contextInfo": {
+      "sourceChannel": "meta_ads",
+      "persona": "Investidor racional, compara retorno, liquidez e valorizacao.",
+      "emotionalContext": "Analitico, quer reduzir risco e entender tese.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-28-53-647Z-6lby0d",
+      "qa_audit": true,
+      "utm_source": "meta_ads",
+      "utm_medium": "paid_social",
+      "utm_campaign": "investimento_cabo_branco"
+    }
+  }
+}

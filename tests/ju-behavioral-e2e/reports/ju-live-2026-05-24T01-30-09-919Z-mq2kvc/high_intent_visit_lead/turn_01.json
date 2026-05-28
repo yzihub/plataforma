@@ -1,0 +1,48 @@
+{
+  "turn_index": 0,
+  "input": "Gostei de um apartamento no Jardim Oceania. Se estiver disponivel, queria visitar ainda essa semana.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "visit_intent"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\high_intent_visit_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/high_intent_visit_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3486,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido você pensar por aí.\nQuando a ideia é short stay e facilidade de aluguel/gestão, geralmente funciona melhor:\num flat ou apê compacto, em prédio com recepção/serviços e bem perto da praia/movimento, porque:\n– tem procura mais constante de turista e trabalho\n– limpeza/entrada/saída ficam mais padronizadas\n– muitas vezes já existe alguém no próprio prédio ou administradora que cuida de tudo pra você\nMe conta só duas coisas pra eu afinar:\nvocê pensa em usar esse imovel às vezes com a família também ou seria 100% investimento? E nesse flat short stay, você imagina investir até quanto hoje (dentro desses até 500 mil)?",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 20,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 36,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 107,
+      "line_count": 8,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3486
+    }
+  }
+}

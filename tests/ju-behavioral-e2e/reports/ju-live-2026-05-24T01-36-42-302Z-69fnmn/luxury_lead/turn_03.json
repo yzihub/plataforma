@@ -1,0 +1,42 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma que voce ache realmente alinhada.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\luxury_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/luxury_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4145,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, é exatamente assim que eu gosto de trabalhar com Ponta de Campina: menos quantidade, mais curadoria.\nPra eu acertar bem a mão nesses poucos projetos “diferentões” e com estética mais autoral, me ajuda só com esse ajuste: hoje vocês se sentem mais confortáveis em investir até uns 900 mil ou é um ticket que pode ir acima disso se o projeto realmente entregar essa sensação especial que vocês querem?",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 32,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 22,
+    "tool_calls": 22
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 70,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4145
+    }
+  }
+}

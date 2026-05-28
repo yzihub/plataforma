@@ -1,0 +1,47 @@
+{
+  "turn_index": 1,
+  "input": "Eu teria uns 120 mil de entrada, mas nao queria uma parcela pesada.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "financial_qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\financing_concern_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/financing_concern_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4436,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Isso que você está sentindo é super comum, tá? Quase todo mundo trava na hora do financiamento justamente por não saber se a parcela vai encaixar no mês.\nO que a gente pode fazer é o contrário do “pular no escuro”: simular com calma dentro da sua realidade, para você ver valor aproximado de parcela, prazo e entrada antes de se comprometer com qualquer coisa.\nMe conta só uma coisa para eu te ajudar melhor: hoje, pensando no seu orçamento, qual seria uma faixa de parcela mensal que você se sentiria confortável em pagar, sem apertar demais?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 3,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 28,
+    "tool_calls": 28
+  },
+  "behavior": {
+    "score": 98,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 97,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4436
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Oi, vi alguns apartamentos no site de voces e queria entender melhor opcoes no Bessa ou Jardim Oceania.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\lead_site\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/lead_site/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3731,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Workflow was started",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 1,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 1,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 3,
+      "line_count": 1,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 3731
+    }
+  }
+}

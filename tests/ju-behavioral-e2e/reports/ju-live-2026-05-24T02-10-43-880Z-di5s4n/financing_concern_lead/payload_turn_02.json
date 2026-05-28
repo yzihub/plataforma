@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "financing_concern_lead",
+    "scenario_name": "Financing Concern Lead",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "organic",
+    "utm_campaign": "financiamento_imovel",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-10-43-880Z-di5s4n-financing_concern_lead-2",
+      "fromMe": false,
+      "remoteJid": "5583959939056@s.whatsapp.net"
+    },
+    "pushName": "Lead Financing Concern Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Eu teria uns 120 mil de entrada, mas nao queria uma parcela pesada."
+    },
+    "messageTimestamp": 1779588944,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Comprador com receio de financiamento e parcelas.",
+      "emotionalContext": "Quer comprar, mas sente risco financeiro.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+      "qa_audit": true,
+      "utm_source": "site",
+      "utm_medium": "organic",
+      "utm_campaign": "financiamento_imovel"
+    }
+  }
+}

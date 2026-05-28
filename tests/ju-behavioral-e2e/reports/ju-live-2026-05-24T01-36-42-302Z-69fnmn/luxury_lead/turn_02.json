@@ -1,0 +1,42 @@
+{
+  "turn_index": 1,
+  "input": "Nao queremos algo comum. Preferimos ver poucas opcoes, mas bem escolhidas.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "curation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\luxury_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/luxury_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4551,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Faz todo sentido Ponta de Campina ter chamado a atenção de vocês, ela realmente tem essa pegada mais exclusiva e uma atmosfera diferente mesmo, mais “refúgio” que cidade.\nComo vocês estão buscando algo mais estético e especial, ali eu consigo olhar prédios mais autorais, com arquitetura mais caprichada e sensação de poucos moradores, sabe?\nPra eu não errar a mão na hora de selecionar os exemplos em Ponta de Campina, me conta só até quanto vocês pensam em investir hoje, mais ou menos: algo até uns 700 mil, até uns 900 mil ou acima disso? Aí eu já te mando 1 ou 2 opcoes bem alinhadas com essa estética e sensação que vocês querem.",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 30,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 21,
+    "tool_calls": 21
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 114,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4551
+    }
+  }
+}

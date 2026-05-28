@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "family_lead",
+    "scenario_name": "Family Lead",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "indicacao",
+    "utm_medium": "referral",
+    "utm_campaign": "familia_bessa",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-10-43-880Z-di5s4n-family_lead-1",
+      "fromMe": false,
+      "remoteJid": "5583959939056@s.whatsapp.net"
+    },
+    "pushName": "Lead Family Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "A familia esta crescendo e a gente queria algo no Bessa ou perto, com rotina boa, escola por perto e seguranca."
+    },
+    "messageTimestamp": 1779588983,
+    "source": "curl-behavioral-audit:referral",
+    "contextInfo": {
+      "sourceChannel": "referral",
+      "persona": "Familia crescendo, prioriza escola, seguranca, rotina e conforto.",
+      "emotionalContext": "Busca estabilidade e qualidade de vida.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+      "qa_audit": true,
+      "utm_source": "indicacao",
+      "utm_medium": "referral",
+      "utm_campaign": "familia_bessa"
+    }
+  }
+}

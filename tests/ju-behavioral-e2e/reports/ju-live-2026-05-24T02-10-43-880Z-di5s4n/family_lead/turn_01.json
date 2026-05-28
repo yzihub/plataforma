@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "A familia esta crescendo e a gente queria algo no Bessa ou perto, com rotina boa, escola por perto e seguranca.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "family_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\family_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/family_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3095,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Ótimo, primeiro imovel até uns 500 mil com 120 mil de entrada é um cenário bem possível, tá?\nCom essa base, dá pra pensar em um financiamento usando entrada + FGTS para segurar bem a parcela, mas ela vai depender muito do prazo e do banco. Se eu considerar um prazo mais longo, costuma deixar a parcela bem mais leve dentro desse valor de imovel que você falou.\nPra eu já te dar uma noção mais pé no chão de valor de parcela e te mostrar opcoes reais, me conta só em qual cidade/bairro você pensa em comprar e, se souber, quanto você imagina hoje de parcela máxima por mês?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 9,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 31,
+    "tool_calls": 31
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 110,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3095
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "scenario_id": "family_lead",
+  "scenario_name": "Family Lead",
+  "score": 99,
+  "pass": false,
+  "violations": [
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 2
+    }
+  ],
+  "positives": [
+    {
+      "id": "emotional_alignment",
+      "weight": 6
+    },
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    }
+  ]
+}

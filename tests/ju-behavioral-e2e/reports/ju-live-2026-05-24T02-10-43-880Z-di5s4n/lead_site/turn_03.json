@@ -1,0 +1,48 @@
+{
+  "turn_index": 2,
+  "input": "Se tiver algo com 2 quartos ate mais ou menos 650 mil, pode mandar o que fizer sentido.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\lead_site\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/lead_site/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4841,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Oi, que bom que você chamou 😊 Bessa e Jardim Oceania são regiões bem queridas, dá pra gente filtrar coisa boa por ali.\nMe conta rapidinho só três pontos pra eu te mandar opcoes mais certeiras:\nVocê pensa em morar ou investir?\nAté que faixa de valor você está buscando hoje?\nVocê pretende comprar mais pra já ou algo pra daqui a alguns meses?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 3,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 1,
+    "tool_calls": 1
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "3 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 64,
+      "line_count": 5,
+      "question_count": 3,
+      "url_count": 0,
+      "latency_ms": 4841
+    }
+  }
+}

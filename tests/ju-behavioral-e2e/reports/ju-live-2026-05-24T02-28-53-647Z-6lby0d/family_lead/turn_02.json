@@ -1,0 +1,51 @@
+{
+  "turn_index": 1,
+  "input": "Precisaria de 3 quartos se possivel.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\family_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/family_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 739,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, Bessa faz muito sentido pra esse momento de família mesmo, tem uma rotina boa e boas opcoes de escola por perto.\nPelo que você me contou, a ideia seria: apartamento no Bessa ou entorno, até uns 500 mil, com 120 mil de entrada, usando FGTS e priorizando segurança e dia a dia mais prático, né?\nPra eu conseguir encaixar isso num financiamento que não aperte, só ficou faltando alinhar uma coisa: até quanto por mês você se sentiria confortável de pagar na parcela hoje, mais ou menos? Me diz uma faixa sincera, tipo: até uns 1.500, 2.000, 2.500 ou 3.000 por mês. Assim eu já te explico o que dá pra buscar dentro desse cenário.",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 11,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 30,
+    "tool_calls": 30
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 116,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 739
+    }
+  }
+}

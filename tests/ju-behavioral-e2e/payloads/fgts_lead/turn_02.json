@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "fgts_lead",
+    "scenario_name": "FGTS Lead",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "google",
+    "utm_medium": "cpc",
+    "utm_campaign": "usar_fgts_imovel"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-fgts_lead-2",
+      "fromMe": false,
+      "remoteJid": "5583914309359@s.whatsapp.net"
+    },
+    "pushName": "Lead FGTS Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Seria meu primeiro imovel e eu queria algo ate uns 500 mil."
+    },
+    "messageTimestamp": 1779580233,
+    "source": "curl-behavioral-audit:google",
+    "contextInfo": {
+      "sourceChannel": "google",
+      "persona": "Comprador quer usar FGTS e precisa entender viabilidade operacional.",
+      "emotionalContext": "Pratico, busca clareza e reducao de burocracia.",
+      "utm_source": "google",
+      "utm_medium": "cpc",
+      "utm_campaign": "usar_fgts_imovel"
+    }
+  }
+}

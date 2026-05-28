@@ -1,0 +1,51 @@
+{
+  "turn_index": 0,
+  "input": "Consigo usar FGTS pra comprar um apartamento com voces?",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "fgts_question"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\fgts_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/fgts_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 714,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Entendo demais, isso trava mesmo muita gente na hora de decidir.\nVamos fazer o caminho inverso: em vez de você “chutar” um imovel e o banco dizer se cabe, eu te ajudo a descobrir primeiro qual parcela faz sentido pra sua realidade, e daí a gente encaixa o imovel dentro disso.\nMe conta numa faixa bem sincera: até quanto por mês você se sentiria confortável em pagar de parcela, sem apertar sua rotina? E você já tem uma ideia de quanto conseguiria dar de entrada, mesmo que aproximado?",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 4,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 27,
+    "tool_calls": 27
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 88,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 714
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "lead_paid_ad",
+    "scenario_name": "Lead Paid Ad",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "google",
+    "utm_medium": "cpc",
+    "utm_campaign": "apartamento_bessa_2_quartos",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T02-10-43-880Z-di5s4n-lead_paid_ad-2",
+      "fromMe": false,
+      "remoteJid": "5583912662611@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Paid Ad",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Se tiver algo parecido nessa faixa, pode mandar tambem."
+    },
+    "messageTimestamp": 1779588738,
+    "source": "curl-behavioral-audit:paid_ad",
+    "contextInfo": {
+      "sourceChannel": "paid_ad",
+      "persona": "Lead de anuncio pago, clicou por oferta e pode ter expectativa de produto especifico.",
+      "emotionalContext": "Interesse rapido, sensivel a preco e aderencia do anuncio.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T02-10-43-880Z-di5s4n",
+      "qa_audit": true,
+      "utm_source": "google",
+      "utm_medium": "cpc",
+      "utm_campaign": "apartamento_bessa_2_quartos"
+    }
+  }
+}

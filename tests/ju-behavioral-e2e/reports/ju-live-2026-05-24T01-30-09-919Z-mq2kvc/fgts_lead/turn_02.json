@@ -1,0 +1,48 @@
+{
+  "turn_index": 1,
+  "input": "Seria meu primeiro imovel e eu queria algo ate uns 500 mil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\fgts_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/fgts_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3699,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, 120 mil de entrada já é uma entrada bem forte, ajuda muito a segurar a parcela.\nPra eu te dar uma noção realista de parcela leve, preciso só alinhar dois pontos com você: hoje você imagina um imovel em qual faixa de valor (tipo “até 300 mil”, “até 400 mil”…)? E em quanto tempo você pensa em comprar, mais pra agora ou algo pra daqui a alguns meses?",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 6,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 29,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 82,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 69,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 3699
+    }
+  }
+}

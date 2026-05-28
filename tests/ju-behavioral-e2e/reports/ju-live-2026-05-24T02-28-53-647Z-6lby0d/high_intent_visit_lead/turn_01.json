@@ -1,0 +1,47 @@
+{
+  "turn_index": 0,
+  "input": "Gostei de um apartamento no Jardim Oceania. Se estiver disponivel, queria visitar ainda essa semana.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "visit_intent"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\high_intent_visit_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/high_intent_visit_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 716,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Hoje com esse perfil de flat pra short stay até 500 mil em João Pessoa eu não tenho nada redondinho em carteira com essas características específicas (perto da praia e fácil de administrar).\nA gente pode ajustar um dos pontos pra achar algo bom: você topa\nconsiderar um ticket um pouco menor (às vezes aparecem studios/flats mais enxutos bem locáveis), ou e abrir um pouquinho o raio de localização (não pé na areia, mas bem perto),.\nou c) olhar também studios/apês compactos, não só “flat” no cadastro?\nMe diz qual desses caminhos faz mais sentido pra você que eu já te mando uma opção real pra analisar.",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 21,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 35,
+    "tool_calls": 35
+  },
+  "behavior": {
+    "score": 92,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 107,
+      "line_count": 5,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 716
+    }
+  }
+}

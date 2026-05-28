@@ -1,0 +1,53 @@
+{
+  "turn_index": 2,
+  "input": "Pode me mandar uma opcao que combine com isso.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\lead_instagram\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/lead_instagram/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4401,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Ah, ótimo você falar isso, porque já ajuda a afinar bem o perfil.\nEsse ap que você viu no story era mais “prédio clube” (com mais lazer, piscina, etc.) ou algo mais compacto/prático? E você faz mais questão de estar bem pertinho da areia ou pode ser um pouco mais recuado, desde que seja em área boa do bairro?",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 10,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 4,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 86,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 59,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4401
+    }
+  }
+}

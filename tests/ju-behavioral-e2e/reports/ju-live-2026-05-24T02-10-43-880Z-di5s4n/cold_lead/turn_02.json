@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "Acho que seria mais pra morar, mas estou no comeco mesmo.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "light_qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\cold_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/cold_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3326,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, e tá tudo bem estar nesse momento de só olhar com calma, sem ter número nem prazo fechado ainda.\nPelo que você já me contou, eu vejo muito mais um trabalho de te ajudar a entender cenário do que “vender um apê” agora. A gente pode ir desenhando juntos o que faz sentido pra vocês, sem pressão.\nPra eu te ajudar direito, eu posso seguir assim: te explico, de forma bem prática, que tipo de apartamento em João Pessoa costuma ficar em cada “degrau” de valor (por exemplo: o que muda de um produto mais comum pra algo mais exclusivo como Ponta de Campina / Jardim Oceania), e aí você vai sentindo em qual faixa se enxerga melhor. Pode ser um passo assim, mais educativo primeiro, antes de falar de número?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 49,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 24,
+    "tool_calls": 24
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 132,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3326
+    }
+  }
+}

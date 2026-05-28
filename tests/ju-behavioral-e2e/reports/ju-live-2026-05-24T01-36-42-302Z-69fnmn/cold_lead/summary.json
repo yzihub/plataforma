@@ -1,0 +1,8 @@
+{
+  "scenario_id": "cold_lead",
+  "scenario_name": "Cold Lead",
+  "score": 100,
+  "pass": true,
+  "violations": [],
+  "positives": []
+}

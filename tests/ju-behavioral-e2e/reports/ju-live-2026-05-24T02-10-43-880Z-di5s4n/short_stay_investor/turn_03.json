@@ -1,0 +1,47 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma opcao com esse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\short_stay_investor\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/short_stay_investor/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4192,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido pensar nisso, principalmente em short stay.\nQuando você fala em “mais fácil de alugar e administrar”, você imagina algo tipo: flat em prédio com operação de pool/hotelaria (que já cuida de recepção, limpeza, check-in) ou você topa cuidar dos anúncios no Airbnb e só quer um lugar com alta demanda e gestão simples de chave/limpeza?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 18,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 35,
+    "tool_calls": 35
+  },
+  "behavior": {
+    "score": 76,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      },
+      {
+        "id": "asked_permission_instead_of_presenting",
+        "severity": "critical",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 59,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4192
+    }
+  }
+}

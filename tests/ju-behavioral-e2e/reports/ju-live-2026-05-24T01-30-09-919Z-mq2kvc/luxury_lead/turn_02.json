@@ -1,0 +1,35 @@
+{
+  "turn_index": 1,
+  "input": "Nao queremos algo comum. Preferimos ver poucas opcoes, mas bem escolhidas.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "curation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\luxury_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/luxury_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4067,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Vou te mandar sim, mas antes preciso só de um norte pra acertar na mosca: você imagina isso mais em qual região/cidade de praia e até que faixa de valor quer considerar na compra?",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 8,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 21,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 34,
+      "line_count": 1,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4067
+    }
+  }
+}

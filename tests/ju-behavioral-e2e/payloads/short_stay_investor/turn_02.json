@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "short_stay_investor",
+    "scenario_name": "Short Stay Investor",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "google",
+    "utm_medium": "cpc",
+    "utm_campaign": "flat_short_stay_jp"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-short_stay_investor-2",
+      "fromMe": false,
+      "remoteJid": "5583914309359@s.whatsapp.net"
+    },
+    "pushName": "Lead Short Stay Investor",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Queria algo mais facil de alugar e administrar."
+    },
+    "messageTimestamp": 1779580240,
+    "source": "curl-behavioral-audit:paid_ad",
+    "contextInfo": {
+      "sourceChannel": "paid_ad",
+      "persona": "Investidor de locacao curta temporada, foco em demanda e operacao.",
+      "emotionalContext": "Quer tese objetiva e cuidado com risco operacional.",
+      "utm_source": "google",
+      "utm_medium": "cpc",
+      "utm_campaign": "flat_short_stay_jp"
+    }
+  }
+}

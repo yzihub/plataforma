@@ -1,0 +1,307 @@
+{
+  "outputPath": "n8n\\production\\workflow-jurema-main.production-stabilized.json",
+  "originalNodeCount": 93,
+  "newNodeCount": 88,
+  "removedNodes": [
+    "Salvar Midias - imagens1",
+    "Salvar Midias - video1",
+    "prepara para Base_dados1",
+    "prepara para Base1",
+    "HTTP Request"
+  ],
+  "expressionChangesCount": 70,
+  "expressionChanges": [
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('OpenAI1').item.json",
+      "to": "$items('OpenAI1')[0].json"
+    },
+    {
+      "from": "$('Build Context').first().json",
+      "to": "$items('Build Context')[0].json"
+    },
+    {
+      "from": "$('Build Context').first().json",
+      "to": "$items('Build Context')[0].json"
+    },
+    {
+      "from": "$('Build Context').first().json",
+      "to": "$items('Build Context')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('Montar Dados da Imagem1').item.json",
+      "to": "$items('Montar Dados da Imagem1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados da Imagem1').item.json",
+      "to": "$items('Montar Dados da Imagem1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados da Imagem1').item.json",
+      "to": "$items('Montar Dados da Imagem1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados do video1').item.json",
+      "to": "$items('Montar Dados do video1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados do video1').item.json",
+      "to": "$items('Montar Dados do video1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados do video1').item.json",
+      "to": "$items('Montar Dados do video1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('redis2').item.json",
+      "to": "$items('redis2')[0].json"
+    },
+    {
+      "from": "$('redis3').item.json",
+      "to": "$items('redis3')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('Dados do Lead').item.json",
+      "to": "$items('Dados do Lead')[0].json"
+    },
+    {
+      "from": "$('Montar Dados do video1').item.json",
+      "to": "$items('Montar Dados do video1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados do video1').item.json",
+      "to": "$items('Montar Dados do video1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados do video1').item.json",
+      "to": "$items('Montar Dados do video1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados do video1').item.json",
+      "to": "$items('Montar Dados do video1')[0].json"
+    },
+    {
+      "from": "$('Montar Dados da Imagem1').item.json",
+      "to": "$items('Montar Dados da Imagem1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('REDIS').item.json",
+      "to": "$items('REDIS')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').item.json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Build Context').first().json",
+      "to": "$items('Build Context')[0].json"
+    },
+    {
+      "from": "$('Build Context').first().json",
+      "to": "$items('Build Context')[0].json"
+    },
+    {
+      "from": "$('Normaliza Webhook1').item.json",
+      "to": "$items('Normaliza Webhook1')[0].json"
+    },
+    {
+      "from": "$('Build Context').item.json",
+      "to": "$items('Build Context')[0].json"
+    },
+    {
+      "from": "$('ArrayResposta').item.json",
+      "to": "$items('ArrayResposta')[0].json"
+    },
+    {
+      "from": "$items('ArrayResposta')[0].json",
+      "to": "$items('ArrayResposta1')[0].json"
+    },
+    {
+      "from": "$('Webhook1').first().json",
+      "to": "$items('Webhook1')[0].json"
+    },
+    {
+      "from": "$('Code in JavaScript').first().json",
+      "to": "$items('Code in JavaScript')[0].json"
+    },
+    {
+      "from": "$('dados do banco').first().json",
+      "to": "$items('dados do banco')[0].json"
+    }
+  ],
+  "hardcodedChanges": [
+    "Supabase service_role JWT em Code node -> $env.SUPABASE_SERVICE_ROLE_KEY / $env.JUREMA_SUPABASE_SERVICE_ROLE_KEY",
+    "Montar Dados da Imagem1.apikey -> $env.SUPABASE_STORAGE_SERVICE_ROLE_KEY / $env.SUPABASE_SERVICE_ROLE_KEY",
+    "Montar Dados do video1.apikey -> $env.SUPABASE_STORAGE_SERVICE_ROLE_KEY / $env.SUPABASE_SERVICE_ROLE_KEY",
+    "Upload Imagem no imgbb1.key -> $env.IMGBB_API_KEY",
+    "dados do banco.SUPABASE_ANON_KEY -> $env.SUPABASE_ANON_KEY",
+    "dados do banco.SUPABASE_SERVICE_ROLE_KEY -> $env.SUPABASE_SERVICE_ROLE_KEY",
+    "dados do banco.URL_SUPABASE -> $env.SUPABASE_URL com fallback de URL publica do projeto",
+    "dados do banco.EVOLUTION_API_URL -> $env.EVOLUTION_API_URL com fallback de URL publica",
+    "dados do banco.EVOLUTION_API_KEY -> $env.EVOLUTION_API_KEY",
+    "Salvar Outbound Supabase service_role fallback -> $env.SUPABASE_SERVICE_ROLE_KEY / $env.SUPABASE_ANON_KEY"
+  ]
+}

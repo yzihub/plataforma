@@ -1,0 +1,42 @@
+{
+  "turn_index": 2,
+  "input": "Pode mandar uma opcao com esse perfil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\short_stay_investor\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/short_stay_investor/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4125,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Faz sim, mas com alguns “poréns” agora em 2026.\nPara short stay em João Pessoa, flat perto da praia ainda funciona bem se:\n– For um prédio bem localizado (Manaíra, Cabo Branco, Tambaú, Bessa) e com gestão/portaria estruturada para temporada\n– O condomínio não estiver proibindo locação por temporada (alguns estão ficando mais rígidos)\n– O valor de compra + condomínio + IPTU fechar uma diária competitiva com o que já tem no Airbnb/Booking\nO que mudou é que a renda não está mais tão “fácil” como há alguns anos: a concorrência aumentou, então o ponto e a qualidade do prédio fazem MUITA diferença.\nAntes de te mostrar opcoes, me conta só: você pensa nesse flat mais como investimento puro (renda de short stay) ou algo híbrido, para usar de vez em quando com a família e alugar no restante do tempo?",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 18,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 36,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 142,
+      "line_count": 7,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 4125
+    }
+  }
+}

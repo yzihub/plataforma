@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "Oi, vi alguns apartamentos no site de voces e queria entender melhor opcoes no Bessa ou Jardim Oceania.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-28-42-825Z-72ox44\\lead_site\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-28-42-825Z-72ox44/lead_site/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 4329,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Oi, que bom que você já deu uma olhada no site 🙂\nConsigo te organizar bem as opcoes no Bessa e Jardim Oceania, mas antes me conta rapidinho: você está pensando em comprar para morar ou para investir? E até que faixa de valor mais ou menos você pretende ficar?",
+  "persistence": {
+    "lead_id": "4d84e0c2-40c9-46cb-b4da-e29b86e9f713",
+    "conversation_id": "7279e441-29ff-4c28-b0ec-09c0575867fb",
+    "messages": 2,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 1,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 50,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4329
+    }
+  }
+}

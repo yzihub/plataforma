@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "high_intent_visit_lead",
+    "scenario_name": "High Intent Visit Lead",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "direct",
+    "utm_campaign": "visita_alta_intencao",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T01-36-42-302Z-69fnmn-high_intent_visit_lead-1",
+      "fromMe": false,
+      "remoteJid": "5583919627717@s.whatsapp.net"
+    },
+    "pushName": "Lead High Intent Visit Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Gostei de um apartamento no Jardim Oceania. Se estiver disponivel, queria visitar ainda essa semana."
+    },
+    "messageTimestamp": 1779587016,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Lead pronto para visitar, com criterio claro e timing curto.",
+      "emotionalContext": "Quer agilidade, mas sem atrito ou perguntas desnecessarias.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T01-36-42-302Z-69fnmn",
+      "qa_audit": true,
+      "utm_source": "site",
+      "utm_medium": "direct",
+      "utm_campaign": "visita_alta_intencao"
+    }
+  }
+}

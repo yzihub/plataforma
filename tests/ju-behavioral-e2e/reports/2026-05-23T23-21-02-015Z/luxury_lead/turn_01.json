@@ -1,0 +1,40 @@
+{
+  "turn_index": 0,
+  "input": "A gente busca algo mais exclusivo, com estetica muito boa e sensacao diferente. Ponta de Campina chamou atencao.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "luxury_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\payloads\\luxury_lead\\turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/payloads/luxury_lead/turn_01.json",
+  "http_status": 0,
+  "latency_ms": 0,
+  "raw_body": "",
+  "response_text": "",
+  "behavior": {
+    "score": 40,
+    "violations": [
+      {
+        "id": "http_non_2xx",
+        "severity": "critical",
+        "detail": "HTTP 0",
+        "weight": 30
+      },
+      {
+        "id": "empty_response",
+        "severity": "critical",
+        "detail": "No textual response detected",
+        "weight": 30
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 0,
+      "line_count": 0,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 0
+    }
+  }
+}

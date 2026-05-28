@@ -1,0 +1,53 @@
+{
+  "turn_index": 1,
+  "input": "Seria meu primeiro imovel e eu queria algo ate uns 500 mil.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\fgts_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/fgts_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 4491,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Consegue sim, a gente trabalha com compra usando FGTS tranquilo.\nO que muda é que o imovel e o teu perfil precisam seguir algumas regrinhas da Caixa (tipo: ser para moradia, não ter outro imovel na cidade, tempo mínimo de FGTS, etc.). Isso a gente checa junto, sem mistério.\nComo você comentou que tem uns 120 mil de entrada, esse valor pode ser uma mistura de FGTS + dinheiro próprio, tá? Me conta só duas coisas pra eu te orientar melhor: em qual cidade/bairro você pensa em comprar e qual parcela, mais ou menos, você imagina que conseguiria pagar sem apertar?",
+  "persistence": {
+    "lead_id": "713a45b3-a656-4195-892e-914686241571",
+    "conversation_id": "e30a331c-9d32-4d50-b6ae-48a0b26bba1a",
+    "messages": 7,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 30,
+    "tool_calls": 30
+  },
+  "behavior": {
+    "score": 86,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 101,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4491
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "scenario_id": "lead_paid_ad",
+  "scenario_name": "Lead Paid Ad",
+  "score": 92,
+  "pass": false,
+  "violations": [
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 0
+    },
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 1
+    }
+  ],
+  "positives": [
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    },
+    {
+      "id": "consultative_tradeoff",
+      "weight": 6
+    }
+  ]
+}

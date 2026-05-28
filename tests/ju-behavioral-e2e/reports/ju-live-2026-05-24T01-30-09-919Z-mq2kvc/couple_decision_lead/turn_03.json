@@ -1,0 +1,42 @@
+{
+  "turn_index": 2,
+  "input": "Se tiver algo que equilibre essas duas coisas, manda.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\couple_decision_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/couple_decision_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 3624,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Manaíra e Tambaú são justamente a “briga boa” de João Pessoa.\nDe forma bem prática: Manaíra costuma ganhar em dia a dia (mais comércio, serviços, shoppings, saída fácil pra BR) e Tambaú tende a ganhar em “sensação de praia” e uso da orla, com tudo mais caminhável e clima mais turístico.\nPra eu te ajudar a decidir com o pé no chão, me conta só uma coisa: vocês imaginam ficar em qual faixa de valor mais ou menos pra esse apartamento? Aí eu consigo te dizer, dentro do teu teto, o que cada bairro “entrega” de localização e de proximidade real da praia.",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 31,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 15,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 103,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3624
+    }
+  }
+}

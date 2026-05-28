@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Queria morar num lugar que desse pra caminhar perto do mar e ter uma rotina mais leve.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "emotional_discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\beach_lifestyle_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/beach_lifestyle_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3423,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Entendi: algo que equilibre bem praticidade do dia a dia com vida de praia, né?\nPelo que vocês falaram, Manaíra tende a ser o meio-termo mais natural: você ainda fica relativamente perto da orla, mas com muito serviço, mercado, médico, shopping e restaurante por perto. Dá pra buscar um ponto que não seja “tão dentro” da confusão comercial e ainda ficar a uma caminhada curta da praia.\nPra eu já te mandar 1 ou 2 exemplos bem certeiros nesse equilíbrio, me fala só até quanto vocês pretendem investir nesse apartamento em Manaíra/Tambaú (mais ou menos a faixa de valor que estão confortáveis hoje).",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 23,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 17,
+    "tool_calls": 17
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 103,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3423
+    }
+  }
+}

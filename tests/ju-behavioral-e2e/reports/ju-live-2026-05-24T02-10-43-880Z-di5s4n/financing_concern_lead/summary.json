@@ -1,0 +1,32 @@
+{
+  "scenario_id": "financing_concern_lead",
+  "scenario_name": "Financing Concern Lead",
+  "score": 98,
+  "pass": true,
+  "violations": [
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 0
+    },
+    {
+      "id": "excessive_questions",
+      "severity": "warning",
+      "detail": "2 questions",
+      "weight": 6,
+      "turn_index": 1
+    }
+  ],
+  "positives": [
+    {
+      "id": "no_pressure",
+      "weight": 4
+    },
+    {
+      "id": "no_pressure",
+      "weight": 4
+    }
+  ]
+}

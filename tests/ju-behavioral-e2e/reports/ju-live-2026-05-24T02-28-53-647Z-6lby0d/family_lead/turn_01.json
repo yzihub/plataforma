@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "A familia esta crescendo e a gente queria algo no Bessa ou perto, com rotina boa, escola por perto e seguranca.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "family_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\family_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/family_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 967,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Maravilha, primeiro imovel até uns 500 mil com 120 mil de entrada é um cenário bem possível, sim.\nPra eu conseguir te mostrar opcoes que realmente façam sentido pra você, me conta só mais uma coisa: em qual cidade/bairro você imagina morar hoje? Pode ser 1 ou 2 regiões que você goste mais.",
+  "persistence": {
+    "lead_id": "00762e3b-a790-4018-8c04-199238e50b7d",
+    "conversation_id": "86746a05-dfd6-4bfb-b7cd-fd3db6a8b459",
+    "messages": 9,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 29,
+    "tool_calls": 29
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 53,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 967
+    }
+  }
+}

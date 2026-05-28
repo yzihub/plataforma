@@ -162,11 +162,8 @@ function softenChatbotPhrases(value) {
     .replace(/\bpor favor[, ]*/gi, '')
     .replace(/\bsegue(m)? (abaixo )?(as )?(opcoes|opções|informacoes|informações)\b/gi, 'separei')
     .replace(/\bqual opção\b/gi, 'qual delas')
-    .replace(/\bqual opcao\b/gi, 'qual delas')
-    .replace(/\bopções\b/g, 'opcoes')
-    .replace(/\binformações\b/g, 'informacoes')
-    .replace(/\bimóvel\b/g, 'imovel')
-    .replace(/\bimóveis\b/g, 'imoveis');
+    .replace(/\bqual opcao\b/gi, 'qual delas');
+  // accent-stripping replaces removed (P0-H): preserve native PT-BR orthography
 }
 
 function normalizeWhitespace(value) {

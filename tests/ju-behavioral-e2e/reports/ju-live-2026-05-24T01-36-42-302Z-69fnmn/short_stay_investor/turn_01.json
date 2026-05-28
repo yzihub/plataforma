@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Estou procurando algo pra short stay em Joao Pessoa. Flat perto da praia ainda faz sentido?",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "investment_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\short_stay_investor\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/short_stay_investor/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3265,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Entendi, faz todo sentido você já querer ver algo concreto.\nA gente pode seguir de dois jeitos, me diz o que faz mais sentido pra vocês:\nCom isso eu já te mando uma opção real que faça sentido pra vocês, não algo “qualquer coisa só pra mostrar”.",
+  "persistence": {
+    "lead_id": "713a45b3-a656-4195-892e-914686241571",
+    "conversation_id": "e30a331c-9d32-4d50-b6ae-48a0b26bba1a",
+    "messages": 15,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 34,
+    "tool_calls": 34
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 47,
+      "line_count": 3,
+      "question_count": 0,
+      "url_count": 0,
+      "latency_ms": 3265
+    }
+  }
+}

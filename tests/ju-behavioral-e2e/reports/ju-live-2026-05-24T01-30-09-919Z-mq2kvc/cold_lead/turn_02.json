@@ -1,0 +1,35 @@
+{
+  "turn_index": 1,
+  "input": "Acho que seria mais pra morar, mas estou no comeco mesmo.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "light_qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\cold_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/cold_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3699,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Vou te mandar sim, mas pra realmente acertar na escolha aí eu vou no escuro se não souber o mínimo da faixa.\nMe dá só um norte: hoje vocês estão olhando algo mais na casa de quanto, aproximadamente? Tipo “até X” já me ajuda muito a separar o que realmente tem essa estética mais exclusiva de Ponta de Campina e não perder tempo com nada comum.",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 14,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 23,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 66,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3699
+    }
+  }
+}

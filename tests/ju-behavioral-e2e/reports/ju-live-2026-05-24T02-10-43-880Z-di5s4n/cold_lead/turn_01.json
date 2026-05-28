@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Estou so olhando apartamento em Joao Pessoa ainda. Nao tenho muita ideia de valor nem prazo.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "cold_discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\cold_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/cold_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3145,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Então vamos fazer assim: pelo nível de exigência de vocês, eu prefiro não te mandar “qualquer coisa” só pra responder rápido.\nCom o filtro exatamente do jeito que você descreveu em Ponta de Campina, não apareceu nada que eu consideraria realmente alinhado a esse conceito mais exclusivo, estética forte e sensação de refúgio.\nEu posso seguir em duas linhas e te mando 1 opção bem escolhida:\n– ou eu amplio um pouco o recorte geográfico (por exemplo: Ponta de Campina + Intermares/Jardim Oceania em pontos específicos com essa mesma pegada)\n– ou eu fico só em Ponta de Campina, mas aí eu preciso ter pelo menos uma noção de faixa de valor pra abrir outras leituras de produto.\nO que faz mais sentido pra vocês agora: abrir um pouco o mapa mantendo a estética/lifestyle, ou segurar em Ponta de Campina e me dar uma faixa de investimento pra eu garimpar melhor?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 47,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 23,
+    "tool_calls": 23
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 151,
+      "line_count": 6,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3145
+    }
+  }
+}

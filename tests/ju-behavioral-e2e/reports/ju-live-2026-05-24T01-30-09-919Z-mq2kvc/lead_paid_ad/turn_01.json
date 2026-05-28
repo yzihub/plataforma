@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "Cliquei num anuncio de apartamento 2 quartos no Bessa. Ainda esta disponivel?",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "transactional_lookup"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\lead_paid_ad\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/lead_paid_ad/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3757,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, então faz todo sentido a gente priorizar uma região mais prática pra ela, com mercado, farmácia e serviços bem perto, além de uma rua tranquila e segura.\nPra eu acertar melhor no tipo de prédio: a ideia é ela ficar mais perto da orla mesmo, ou você prefere algo um pouco mais pra dentro, mas numa rua bem servida de comércio e que ela consiga resolver tudo a pé?",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 18,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 8,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 88,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 70,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3757
+    }
+  }
+}

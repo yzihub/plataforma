@@ -1,0 +1,56 @@
+{
+  "turn_index": 2,
+  "input": "Pode me mandar uma opcao que combine com isso.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-28-53-647Z-6lby0d\\lead_instagram\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-28-53-647Z-6lby0d/lead_instagram/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 1024,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, foco pra morar no dia a dia, bem resolvido de serviços, faz todo sentido.\nA gente tem duas saídas bem práticas: posso 1) ampliar um pouco o valor teto pra ver se surgem opcoes mais interessantes aí na região ou 2) manter o budget de até 650 mil e abrir para bairros vizinhos (tipo Manaíra/Intermares), que também têm boa rotina, mercado, farmácia, etc.\nO que você prefere ajustar primeiro: subir um pouco o valor ou considerar bairros próximos mantendo o teto de 650 mil?",
+  "persistence": {
+    "lead_id": "a61f5dcd-265d-48a0-80f2-342c25005ccb",
+    "conversation_id": "4ddad84a-9f6c-47a1-8726-f745ce5ccc57",
+    "messages": 8,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 3,
+    "tool_calls": 3
+  },
+  "behavior": {
+    "score": 84,
+    "violations": [
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      },
+      {
+        "id": "asked_permission_instead_of_presenting",
+        "severity": "critical",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 85,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 1024
+    }
+  }
+}

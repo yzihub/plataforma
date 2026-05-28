@@ -1,0 +1,40 @@
+{
+  "turn_index": 0,
+  "input": "Eu e minha esposa estamos tentando decidir entre Manaira e Tambau. Ela quer praticidade, eu queria algo mais perto da praia.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "tradeoff"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\couple_decision_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/couple_decision_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3420,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, faz todo sentido você olhar liquidez primeiro.\nPra eu separar algo bem redondo em Cabo Branco com esse perfil, me diz só uma coisa: hoje você pensa em investir até quanto nesse apê lá? Com esse teto definido, eu já te trago uma opção com localização forte, planta fácil de revender/alugar e te explico por que ela tende a ter saída mais rápida no futuro.",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 28,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 14,
+    "tool_calls": 14
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 66,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3420
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "turn_index": 1,
+  "input": "A gente quer decidir em ate uns 60 dias.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "high_intent"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\couple_decision_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/couple_decision_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3463,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Os dois fazem sentido pro que vocês estão buscando, só entregam “praticidade” de jeitos diferentes.\nManaíra tende a ser mais prática no dia a dia: mais comércio de bairro, bancos, serviços, restaurantes, shopping perto, resolve muita coisa a pé ou em poucos minutos de carro. Em várias partes você ainda fica a uma distância razoável da praia, mas não é “pé na areia”.\nTambaú encosta mais na orla turística: praia mais presente no dia a dia, bem gostoso pra caminhar, pedalar, viver a orla. Em algumas ruas internas você ainda tem boa oferta de serviço, mas é um pouco menos “bairro serviço” que Manaíra.\nPensando em vocês dois: ela valoriza mais poder resolver tudo perto (mercado, médico, shopping) ou algo mais de rotina de praia (caminhada cedo, mar à vista, vida mais “orla”)? Me conta isso que eu te digo qual dos dois tende a encaixar melhor pro perfil de vocês e já separo um exemplo dentro da faixa de até 700 mil.",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 19,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 15,
+    "tool_calls": 15
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 163,
+      "line_count": 4,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3463
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Estou so olhando apartamento em Joao Pessoa ainda. Nao tenho muita ideia de valor nem prazo.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "cold_discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\cold_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/cold_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3353,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, é exatamente assim que eu gosto de trabalhar também: poucas opcoes, mas com personalidade e encaixadas no que vocês procuram.\nPra eu acertar a mão nesses achados em Ponta de Campina, me dá só esse norte: até mais ou menos quanto vocês pensam em investir hoje e em quanto tempo imaginam estar mudando de vez pro apê novo?",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 11,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 22,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 59,
+      "line_count": 2,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3353
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "lead_site",
+    "scenario_name": "Lead Site",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "site",
+    "utm_medium": "organic",
+    "utm_campaign": "imoveis_jp_site",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T01-30-09-919Z-mq2kvc-lead_site-1",
+      "fromMe": false,
+      "remoteJid": "5583914019969@s.whatsapp.net"
+    },
+    "pushName": "Lead Lead Site",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Oi, vi alguns apartamentos no site de voces e queria entender melhor opcoes no Bessa ou Jardim Oceania."
+    },
+    "messageTimestamp": 1779586211,
+    "source": "curl-behavioral-audit:site",
+    "contextInfo": {
+      "sourceChannel": "site",
+      "persona": "Comprador direto do site, ja navegou por imoveis e quer orientacao sem recomecar qualificacao.",
+      "emotionalContext": "Curioso, com interesse real, mas ainda comparando regioes.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+      "qa_audit": true,
+      "utm_source": "site",
+      "utm_medium": "organic",
+      "utm_campaign": "imoveis_jp_site"
+    }
+  }
+}

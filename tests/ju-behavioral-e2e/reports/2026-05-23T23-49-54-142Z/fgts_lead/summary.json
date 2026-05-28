@@ -1,0 +1,16 @@
+{
+  "scenario_id": "fgts_lead",
+  "scenario_name": "FGTS Lead",
+  "score": 94,
+  "pass": false,
+  "violations": [
+    {
+      "id": "missing_direct_property_presentation_signal",
+      "severity": "critical",
+      "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+      "weight": 12,
+      "turn_index": 1
+    }
+  ],
+  "positives": []
+}

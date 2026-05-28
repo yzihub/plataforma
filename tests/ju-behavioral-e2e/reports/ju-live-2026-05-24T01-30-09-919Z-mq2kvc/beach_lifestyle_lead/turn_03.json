@@ -1,0 +1,62 @@
+{
+  "turn_index": 2,
+  "input": "Me manda uma opcao nesse estilo.",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "property_presentation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\beach_lifestyle_lead\\payload_turn_03.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/beach_lifestyle_lead/payload_turn_03.json",
+  "http_status": 200,
+  "latency_ms": 4380,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Nossa, faz todo sentido, esse tipo de rotina muda a vida mesmo.\nMe conta um pouco de você pra eu te ajudar direito: você imagina isso em qual região ou cidade? E, pensando em compra, até que faixa de valor você quer considerar e em quanto tempo mais ou menos pretende se mudar?",
+  "persistence": {
+    "lead_id": "941a9cd4-96d1-4d2c-a66a-d1e057bbfd79",
+    "conversation_id": "7346c920-c9bb-4d90-a020-0ef7f38c63b2",
+    "messages": 4,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 19,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 78,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      },
+      {
+        "id": "asked_permission_instead_of_presenting",
+        "severity": "critical",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 53,
+      "line_count": 2,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 4380
+    }
+  }
+}

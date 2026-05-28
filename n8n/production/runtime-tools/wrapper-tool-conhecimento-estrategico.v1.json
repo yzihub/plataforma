@@ -1,0 +1,246 @@
+{
+  "name": "Ju Runtime Tool Wrapper - conhecimento_estrategico_luana1",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tool-conhecimento-estrategico",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "wrapper-conhecimento-webhook",
+      "name": "Webhook Runtime",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "webhookId": "wrapper-conhecimento-estrategico"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate auth + payload. Fail-closed.\nconst started = Date.now();\nconst item = $input.first().json;\nconst body = item.body || item;\nconst headers = item.headers || {};\n\nconst expected = (\n  $vars.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $vars.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $vars.EVOLUTION_WEBHOOK_SECRET ||\n  $env.JUREMA_TOOL_WEBHOOK_SECRET ||\n  $env.RUNTIME_COGNITIVE_WEBHOOK_SECRET ||\n  $env.EVOLUTION_WEBHOOK_SECRET ||\n  ''\n).trim();\nif (!expected) {\n  throw new Error('wrapper config error: JUREMA_TOOL_WEBHOOK_SECRET nao configurado em n8n');\n}\n\nconst provided = (\n  headers['x-n8n-api-key'] ||\n  headers['X-N8N-API-KEY'] ||\n  headers['x-webhook-secret'] ||\n  headers['X-Webhook-Secret'] ||\n  ''\n).toString().trim();\n\nif (provided !== expected) {\n  throw new Error('unauthorized: x-n8n-api-key ausente ou invalido');\n}\n\nconst clean = (v) => String(v ?? '').trim();\nconst tenant_id = clean(body.tenant_id);\nconst query = clean(body.query || body.q || body.message || body.question);\nconst match_count = Math.min(Number(body.match_count) || 4, 8);\n\nif (!tenant_id) throw new Error('payload invalido: tenant_id ausente');\nif (!query) throw new Error('payload invalido: query/q/message ausente');\nif (query.length > 1600) throw new Error('payload invalido: query > 1600 chars');\n\nreturn [{\n  json: {\n    __started_at: started,\n    tenant_id,\n    query,\n    match_count\n  }\n}];"
+      },
+      "id": "wrapper-conhecimento-validate",
+      "name": "Validate Auth + Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/embeddings",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "openAiApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'text-embedding-3-small', input: $json.query }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "wrapper-conhecimento-embed",
+      "name": "OpenAI Embed Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        0
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "W7viCvKb9IkuKdvf",
+          "name": "OpenAi JUREMA"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract embedding vector and forward with query state.\nconst embRes = $input.first().json;\nconst vector = embRes?.data?.[0]?.embedding;\nif (!Array.isArray(vector) || vector.length === 0) {\n  throw new Error('embedding falhou: vetor vazio na resposta da OpenAI');\n}\nconst state = $('Validate Auth + Payload').first().json;\nreturn [{\n  json: {\n    __started_at: state.__started_at,\n    tenant_id: state.tenant_id,\n    query: state.query,\n    match_count: state.match_count,\n    query_embedding: vector\n  }\n}];"
+      },
+      "id": "wrapper-conhecimento-prepare-rpc",
+      "name": "Prepare Vector RPC",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL || 'https://dwmbklfkrtumfaxrbxio.supabase.co' }}/rest/v1/rpc/match_documents",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ query_embedding: $json.query_embedding, match_count: $json.match_count, filter: { tenant_id: $json.tenant_id } }) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "wrapper-conhecimento-vector-rpc",
+      "name": "Supabase match_documents",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "gGltyvCXkSOjWgQh",
+          "name": "Supabase Yzi"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const started = $('Validate Auth + Payload').first().json.__started_at;\nconst state = $('Prepare Vector RPC').first().json;\nconst raw = $input.first().json;\n\nlet rows = [];\nif (Array.isArray(raw)) rows = raw;\nelse if (Array.isArray(raw?.data)) rows = raw.data;\nelse if (Array.isArray(raw?.result)) rows = raw.result;\nelse if (Array.isArray(raw?.body)) rows = raw.body;\n\nconst clean = (v) => String(v ?? '').trim();\nconst chunks = rows.slice(0, state.match_count).map((row, idx) => ({\n  rank: idx + 1,\n  similarity: typeof row.similarity === 'number' ? row.similarity : (typeof row.score === 'number' ? row.score : null),\n  content: clean(row.content || row.text || row.chunk || row.page_content).slice(0, 1800),\n  source: row.metadata?.source || row.source || null,\n  doc_id: row.id || row.metadata?.id || null,\n  metadata: row.metadata || null\n}));\n\nconst combined = chunks.map((c) => c.content).filter(Boolean).join('\\n\\n---\\n\\n').slice(0, 6000);\n\nreturn [{\n  json: {\n    ok: true,\n    tool: 'conhecimento_estrategico_luana1',\n    latency_ms: Date.now() - started,\n    output: {\n      success: chunks.length > 0,\n      query: state.query,\n      tenant_id: state.tenant_id,\n      total: chunks.length,\n      chunks,\n      doctrine: chunks.slice(0, 2),\n      output: combined,\n      warning: chunks.length === 0 ? 'no_match_documents' : null\n    }\n  }\n}];"
+      },
+      "id": "wrapper-conhecimento-format",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "wrapper-conhecimento-respond",
+      "name": "Respond to Runtime",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1680,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Runtime": {
+      "main": [
+        [
+          {
+            "node": "Validate Auth + Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Auth + Payload": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Embed Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Embed Query": {
+      "main": [
+        [
+          {
+            "node": "Prepare Vector RPC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Vector RPC": {
+      "main": [
+        [
+          {
+            "node": "Supabase match_documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase match_documents": {
+      "main": [
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [
+          {
+            "node": "Respond to Runtime",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "staticData": null,
+  "meta": {},
+  "pinData": {},
+  "tags": []
+}

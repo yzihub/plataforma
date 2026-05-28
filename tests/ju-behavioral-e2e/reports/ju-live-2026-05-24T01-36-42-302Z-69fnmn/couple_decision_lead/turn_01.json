@@ -1,0 +1,44 @@
+{
+  "turn_index": 0,
+  "input": "Eu e minha esposa estamos tentando decidir entre Manaira e Tambau. Ela quer praticidade, eu queria algo mais perto da praia.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "tradeoff"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\couple_decision_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/couple_decision_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3106,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Pra investimento, quase sempre localização vem na frente, depois planta/metragem e por último vista.\nLocalização boa segura demanda e revenda/aluguel mais fácil. A metragem e a planta impactam muito em quem vai morar de fato (funcionalidade, conforto). Vista é ótima e ajuda no desejo e no preço, mas sozinha não sustenta liquidez se a localização não for forte.\nPensando na sua mãe no Bessa e em você olhando Cabo Branco como investimento: você quer equilibrar mais retorno financeiro ou conforto pra ela no dia a dia?",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 16,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 13,
+    "tool_calls": 13
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 86,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3106
+    }
+  }
+}

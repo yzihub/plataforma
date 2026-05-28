@@ -1,0 +1,42 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "2026-05-23T23-49-54-142Z",
+    "scenario_id": "reengagement_lead",
+    "scenario_name": "Re-engagement Lead",
+    "turn_index": 1,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "crm",
+    "utm_medium": "reengagement",
+    "utm_campaign": "followup_30d"
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-2026-05-23T23-49-54-142Z-reengagement_lead-2",
+      "fromMe": false,
+      "remoteJid": "5583973889589@s.whatsapp.net"
+    },
+    "pushName": "Lead Re-engagement Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Era algo perto do Cabo Branco, pensando em investir."
+    },
+    "messageTimestamp": 1779580228,
+    "source": "curl-behavioral-audit:database_reactivation",
+    "contextInfo": {
+      "sourceChannel": "database_reactivation",
+      "persona": "Lead antigo retorna apos silencio e espera continuidade.",
+      "emotionalContext": "Nao quer repetir tudo; testa se a Ju lembra do contexto.",
+      "utm_source": "crm",
+      "utm_medium": "reengagement",
+      "utm_campaign": "followup_30d"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "turn_index": 0,
+  "input": "Oi Ju, voltei aqui. Aquele apartamento que voce tinha comentado ainda faz sentido pra mim?",
+  "expects": {
+    "retrieval": true,
+    "tool": true,
+    "stage": "memory_revalidation"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\reengagement_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/reengagement_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3124,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, então vamos olhar tudo com cabeça de “casa pra morar bem”, sem pressa e sem compromisso agora.\nPra não te jogar informação solta, eu posso te mostrar, com 1 ou 2 exemplos reais, o que muda na prática entre:\n– um apê mais “comum” de João Pessoa\n– e um apê com essa pegada mais exclusiva, estética forte e clima de refúgio em Ponta de Campina / Jardim Oceania.\nA partir daí você consegue sentir em qual “degrau” faz mais sentido pra vocês, sem precisar cravar número ainda. Te ajuda mais se eu te mandar primeiro um exemplo de algo mais “comum” ou já de algo mais exclusivo com a estética que vocês gostam?",
+  "persistence": {
+    "lead_id": "bb6cc7e0-3e2d-4710-be8c-348f0046aab1",
+    "conversation_id": "5b9a872b-1c78-4e64-a76f-575b6a9ce1ec",
+    "messages": 51,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 25,
+    "tool_calls": 25
+  },
+  "behavior": {
+    "score": 70,
+    "violations": [
+      {
+        "id": "permission_posso_te_mostrar",
+        "severity": "critical",
+        "weight": 10
+      },
+      {
+        "id": "missing_direct_property_presentation_signal",
+        "severity": "critical",
+        "detail": "Turn expected direct property presentation or tool-backed recommendation.",
+        "weight": 12
+      },
+      {
+        "id": "asked_permission_instead_of_presenting",
+        "severity": "critical",
+        "weight": 12
+      }
+    ],
+    "positives": [
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 115,
+      "line_count": 5,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3124
+    }
+  }
+}

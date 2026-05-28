@@ -1,0 +1,51 @@
+{
+  "turn_index": 1,
+  "input": "Precisaria de 3 quartos se possivel.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T02-10-43-880Z-di5s4n\\family_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T02-10-43-880Z-di5s4n/family_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 5172,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, Bessa faz muito sentido pro que você está buscando, é um bairro bem família, com boa oferta de escolas e sensação de segurança, e ainda tem uma rotina bem prática.\nComo você já falou em algo até 500 mil com 120 mil de entrada, dá pra pensar em um apartamento confortável pra família aí na região. O que vai mandar mesmo na parcela é o prazo que você topar alongar.\nPra eu conseguir te dar uma noção mais realista de parcela por mês, me conta: você imagina algo mais pra perto de quanto de parcela hoje? Tipo, até uns 2 mil, 3 mil, 4 mil… qual faixa faria sentido pra não pesar?",
+  "persistence": {
+    "lead_id": "18d89403-74b3-47db-be29-ba61d1e49896",
+    "conversation_id": "43e9a68b-ce0b-4513-a634-f6f1b9f1d74b",
+    "messages": 11,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 32,
+    "tool_calls": 32
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "2 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [
+      {
+        "id": "emotional_alignment",
+        "weight": 6
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      }
+    ],
+    "response_metrics": {
+      "word_count": 113,
+      "line_count": 3,
+      "question_count": 2,
+      "url_count": 0,
+      "latency_ms": 5172
+    }
+  }
+}

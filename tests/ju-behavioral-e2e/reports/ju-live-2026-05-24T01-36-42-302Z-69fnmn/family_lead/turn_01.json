@@ -1,0 +1,42 @@
+{
+  "turn_index": 0,
+  "input": "A familia esta crescendo e a gente queria algo no Bessa ou perto, com rotina boa, escola por perto e seguranca.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "family_context"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\family_lead\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/family_lead/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3661,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Show, primeiro imovel até 500 mil com 120 mil de entrada é um cenário bem possível, tá?\nCom esses números, dá pra pensar num financiamento em torno de 380–400 mil, dependendo do banco, prazo e renda, e aí a parcela pode ficar em um nível mais confortável. Só preciso encaixar isso na tua realidade.\nMe conta só duas coisas agora pra eu afinar essa conta pra você: Em qual cidade/bairro você pensa em comprar esse apartamento? e Que faixa de parcela por mês você sentiria que “ok, assim eu fico tranquilo”, mais ou menos?",
+  "persistence": {
+    "lead_id": "713a45b3-a656-4195-892e-914686241571",
+    "conversation_id": "e30a331c-9d32-4d50-b6ae-48a0b26bba1a",
+    "messages": 9,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 31,
+    "tool_calls": 31
+  },
+  "behavior": {
+    "score": 94,
+    "violations": [
+      {
+        "id": "excessive_questions",
+        "severity": "warning",
+        "detail": "3 questions",
+        "weight": 6
+      }
+    ],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 94,
+      "line_count": 3,
+      "question_count": 3,
+      "url_count": 0,
+      "latency_ms": 3661
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "turn_index": 1,
+  "input": "O que pesa mais: vista, metragem ou localizacao?",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "consultative_comparison"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-36-42-302Z-69fnmn\\investor_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-36-42-302Z-69fnmn/investor_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3171,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, tem sim opção nesse perfil no Bessa dentro da faixa de até 700 mil. Olha essa aqui para vocês avaliarem com calma:\nhttps://juremabksimoveis.com.br/imoveis/apartamento-para-venda-no-bessa/\n\nMe conta o que você achou desse, que eu ajusto a busca a partir daí (por exemplo: ela faz questão de varanda maior, lazer mais completo, ficar mais perto de serviços, ou algo assim?).",
+  "persistence": {
+    "lead_id": "a45d9616-ad34-4764-8216-b908d2c54aa4",
+    "conversation_id": "5800973a-0c3c-4aae-811e-2b232db50f51",
+    "messages": 12,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 11,
+    "tool_calls": 11
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [
+      {
+        "id": "property_url_present",
+        "weight": 4
+      },
+      {
+        "id": "consultative_tradeoff",
+        "weight": 6
+      },
+      {
+        "id": "no_pressure",
+        "weight": 4
+      }
+    ],
+    "response_metrics": {
+      "word_count": 58,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 1,
+      "latency_ms": 3171
+    }
+  }
+}

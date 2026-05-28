@@ -1,0 +1,35 @@
+{
+  "turn_index": 1,
+  "input": "Precisaria de 3 quartos se possivel.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "qualification"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\family_lead\\payload_turn_02.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/family_lead/payload_turn_02.json",
+  "http_status": 200,
+  "latency_ms": 3716,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Maravilha, primeiro imovel até 500 mil com 120 mil de entrada é um cenário bem possível, dá para montar algo confortável.\nDe forma bem redonda: pensando num apê de 500 mil, com seus 120 mil de entrada + possível uso de FGTS, a parcela tende a ficar num patamar de financiamento padrão de mercado, sem nada absurdo, principalmente se você tiver renda formal e prazo mais longo (tipo 25–30 anos). A gente ajusta valor e prazo justamente para a parcela não pesar.\nPra eu te dar uma simulação mais certeira e te dizer uma faixa de parcela que faça sentido pra você, me conta só: em torno de quanto você se sente confortável de pagar por mês hoje, mais ou menos?",
+  "persistence": {
+    "lead_id": "622166a2-7b70-400d-8039-0c09765acaeb",
+    "conversation_id": "ca877c11-c820-4ee2-89d8-8bae5f0343f7",
+    "messages": 10,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 31,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 121,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3716
+    }
+  }
+}

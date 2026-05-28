@@ -1,0 +1,35 @@
+{
+  "turn_index": 0,
+  "input": "Oi, a Ana me indicou voces. Estou procurando um apartamento pra minha mae em Joao Pessoa.",
+  "expects": {
+    "retrieval": true,
+    "tool": false,
+    "stage": "discovery"
+  },
+  "payload_file": "tests\\ju-behavioral-e2e\\reports\\ju-live-2026-05-24T01-30-09-919Z-mq2kvc\\lead_referral\\payload_turn_01.json",
+  "curl": "curl -sS -X POST https://api.yzihub.com/webhook/ju -H \"Content-Type: application/json\" --data-binary @tests/ju-behavioral-e2e/reports/ju-live-2026-05-24T01-30-09-919Z-mq2kvc/lead_referral/payload_turn_01.json",
+  "http_status": 200,
+  "latency_ms": 3668,
+  "raw_body": "{\"message\":\"Workflow was started\"}",
+  "response_text": "Perfeito, já entendi bem seu gosto então: apê claro, varanda boa e com acesso fácil à orla, sem ficar “escondido” lá pra dentro.\nDentro desses 650 mil, você topa algo um pouco mais compacto, mas bem perto da praia, ou prefere abrir mão de chegar tão coladinho na areia pra ter um ap maior/varanda mais ampla?\nTe pergunto isso só pra eu já ir direto nos prédios que têm varandas mais generosas no Bessa e Jardim Oceania.",
+  "persistence": {
+    "lead_id": "2a3df262-d8f6-45ad-8336-28a5a576d2c3",
+    "conversation_id": "861261c1-943d-4656-a44a-d8a76070b663",
+    "messages": 12,
+    "lead_operational_context": 1,
+    "ai_conversation_audits": 5,
+    "tool_calls": 0
+  },
+  "behavior": {
+    "score": 100,
+    "violations": [],
+    "positives": [],
+    "response_metrics": {
+      "word_count": 77,
+      "line_count": 3,
+      "question_count": 1,
+      "url_count": 0,
+      "latency_ms": 3668
+    }
+  }
+}

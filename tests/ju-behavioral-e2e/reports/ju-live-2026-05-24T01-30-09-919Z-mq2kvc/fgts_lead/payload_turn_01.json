@@ -1,0 +1,52 @@
+{
+  "event": "ju.behavioral.message",
+  "instance": "Jurema Brokers - Curl Behavioral Audit",
+  "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+  "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+  "audit": {
+    "suite": "ju_behavioral_e2e",
+    "run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "scenario_id": "fgts_lead",
+    "scenario_name": "FGTS Lead",
+    "turn_index": 0,
+    "transport": "curl",
+    "provider_sdk": "none",
+    "browser_automation": false,
+    "evolution_client": false
+  },
+  "query": {
+    "utm_source": "google",
+    "utm_medium": "cpc",
+    "utm_campaign": "usar_fgts_imovel",
+    "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+    "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+    "qa_audit": true
+  },
+  "data": {
+    "key": {
+      "id": "ju-behavioral-ju-live-2026-05-24T01-30-09-919Z-mq2kvc-fgts_lead-1",
+      "fromMe": false,
+      "remoteJid": "5583951223101@s.whatsapp.net"
+    },
+    "pushName": "Lead FGTS Lead",
+    "messageType": "conversation",
+    "message": {
+      "conversation": "Consigo usar FGTS pra comprar um apartamento com voces?"
+    },
+    "messageTimestamp": 1779586429,
+    "source": "curl-behavioral-audit:google",
+    "contextInfo": {
+      "sourceChannel": "google",
+      "persona": "Comprador quer usar FGTS e precisa entender viabilidade operacional.",
+      "emotionalContext": "Pratico, busca clareza e reducao de burocracia.",
+      "tenant_id": "82cc7aa9-fc6e-4f37-8d8e-8a71c1691361",
+      "test_run_id": "ju-live-2026-05-24T01-30-09-919Z-mq2kvc",
+      "qa_audit": true,
+      "utm_source": "google",
+      "utm_medium": "cpc",
+      "utm_campaign": "usar_fgts_imovel"
+    }
+  }
+}
