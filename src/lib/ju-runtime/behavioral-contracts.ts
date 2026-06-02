@@ -40,24 +40,36 @@ export function behavioralContractForStage(stage: FunnelStage): BehavioralContra
     return {
       version: BEHAVIORAL_CONTRACT_VERSION,
       stage,
-      objective: "criar confianca, explicar modelo consultivo e obter consentimento contextual",
+      objective: "abrir leve e humano, como conversa real de whatsapp, e descobrir o que a pessoa procura",
       allowed_depth: "opening_trust",
       question_budget_per_stage: questionBudgetForStage(stage),
       max_questions: 1,
       max_consecutive_questions: 1,
-      must_explain_consultive_model: true,
-      must_request_permission_to_continue: true,
+      must_explain_consultive_model: false,
+      must_request_permission_to_continue: false,
       must_generate_value_before_more_questions: true,
-      must_contextualize_relevant_questions: true,
+      // Abertura leve: pedir o nome ou "o que voce procura" NAO precisa de justificativa
+      // consultiva. Forcar contextualizacao aqui transformava a saudacao humana em
+      // abstract_qualification_loop. A contextualizacao volta a valer em QUALIFICACAO_MINIMA.
+      must_contextualize_relevant_questions: false,
       institutional_framing: policy.institutional_framing,
       consultative_pacing: policy.pacing,
       presentation_gate: gate,
       forbidden_topics: ["orcamento", "financiamento"],
-      forbidden_behaviors: [...BASE_FORBIDDEN_BEHAVIORS, "perguntar_budget", "perguntar_financiamento"],
+      forbidden_behaviors: [
+        ...BASE_FORBIDDEN_BEHAVIORS,
+        "perguntar_budget",
+        "perguntar_financiamento",
+        "discurso_institucional",
+        "apresentar_missao",
+        "explicar_modelo_consultivo",
+        "onboarding_corporativo",
+        "pedir_permissao_para_continuar",
+      ],
       response_requirements: [
-        "explicar de forma curta o modelo consultivo",
-        "pedir permissao para continuar",
-        "fazer no maximo uma pergunta",
+        "abrir de forma leve e humana, como conversa real de whatsapp",
+        "nao apresentar missao, nao explicar modelo consultivo, nao pedir permissao",
+        "fazer no maximo uma pergunta (nome ou o que a pessoa procura)",
       ],
     };
   }

@@ -226,6 +226,7 @@ export function cutoverResult(overrides: Partial<CognitiveTurnResult> = {}): Cog
     },
     llm: {
       output: "Separei tres opcoes aderentes no Bessa para voce comparar.",
+      governance_violations: [],
       tool_calls: [{ tool: "consultar_imoveis", input: { bairro: "Bessa" } }],
       tool_results: [{ tool: "consultar_imoveis", ok: true, latency_ms: 120, output: { count: 3 } }],
       token_usage: {

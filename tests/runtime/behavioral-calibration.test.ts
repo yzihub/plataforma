@@ -14,6 +14,7 @@ const context: RenderedContext = {
 function llm(output: string, tools: string[] = []): LlmRuntimeResult {
   return {
     output,
+    governance_violations: [],
     tool_calls: tools.map((tool) => ({ tool: tool as never, input: {} })),
     tool_results: [],
     token_usage: { input_tokens: 1, output_tokens: 1, total_tokens: 2 },

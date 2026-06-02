@@ -1,10 +1,11 @@
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam, ChatCompletionTool } from "openai/resources/chat/completions";
-import type { CanonicalTool } from "@/lib/ju-runtime/cognitive-kernel-contracts";
+import type { CanonicalTool, RuntimeViolation } from "@/lib/ju-runtime/cognitive-kernel-contracts";
 import { assertCanonicalResponseDraft } from "@/lib/ju-runtime/cognitive-kernel-contracts";
 import type { BehavioralRuntimeResult, LlmRuntimeResult, RenderedContext, ToolCallRequest, ToolCallResult } from "./types";
 import type { ToolOrchestrator } from "./tool_orchestrator";
-import { tokenUsage } from "./observability";
+import { governanceViolations as governanceViolationsCounter, logger, tokenUsage } from "./observability";
+import { stripGovernanceSignals } from "./outbound_sanitizer";
 
 const DEFAULT_MAX_TOOL_PASSES = 2;
 const OPENAI_TIMEOUT_MS = 45000;
@@ -137,8 +138,18 @@ function parseArgs(raw: string | undefined): Record<string, unknown> {
 
 function systemPrompt(behavioral: BehavioralRuntimeResult): string {
   return [
-    "A Ju atua como consultora imobiliaria.",
+    "A Ju atua como consultora imobiliaria da Jurema Brokers, em conversa de WhatsApp.",
+    "Tom: leve, humano, natural e consultivo. Mensagens curtas e escaneaveis.",
     "Evite comportamento de SDR, formulario ou triagem fria.",
+    "",
+    "ABERTURA (primeira mensagem / saudacao):",
+    "Entre conversando como gente de verdade no WhatsApp. Curto e leve.",
+    "NAO apresente missao, NAO explique como voce ajuda, NAO faca onboarding, NAO fale como empresa/CRM.",
+    "NAO diga frases como 'sua consultora imobiliaria', 'Meu objetivo e', 'de forma consultiva e personalizada', 'sem pressao', 'com total transparencia', 'para comecar nossa busca'.",
+    "NAO peca permissao para continuar. Apenas puxe a conversa.",
+    "No maximo uma pergunta na abertura (o nome ou o que a pessoa procura).",
+    "Exemplo de tom: 'Oi! Aqui e a Ju, da Jurema Brokers 🙂 Como posso te chamar?' ou 'Oi! Me conta o que voce ta procurando que eu te ajudo.'",
+    "",
     "Quando houver contexto suficiente e o cliente demonstrar intencao de ver opcoes, consultar_imoveis torna-se obrigatorio.",
     "Bairro/regiao + orcamento + tipologia + quartos ja e contexto suficiente para consultar_imoveis.",
     "Nascente, varanda gourmet, suite, andar alto, lazer e estado de conservacao sao refinamentos opcionais depois da shortlist.",
@@ -147,6 +158,22 @@ function systemPrompt(behavioral: BehavioralRuntimeResult): string {
     "Evite: Posso te mostrar, Quer que eu envie, Se quiser eu posso.",
     "Maximo de 1 pergunta por mensagem.",
     "Maximo de 3 imoveis por apresentacao.",
+    "",
+    "RENDERIZACAO DOS IMOVEIS (quando consultar_imoveis retornar cards):",
+    "Monte a conversa a partir dos campos de cada card. NUNCA gere resposta generica/corporativa.",
+    "Para cada imovel use EXATAMENTE estes campos do card:",
+    "- title: abre a conversa citando tipo/bairro de forma leve (ex: 'Tem um aqui em Tambau que acho que vale voce olhar').",
+    "- highlights_operacionais: array de destaques curtos. Renderize um por linha como bullets, prefixo '• '.",
+    "- human_summary: uma frase de contexto humano. Use como veio, sem reescrever em tom corporativo.",
+    "- question_hint: a pergunta de fechamento. Use como veio.",
+    "Formato por imovel: linha de abertura (do title) -> bullets dos highlights_operacionais -> human_summary.",
+    "O card visual (imagem e link) e entregue separadamente pela camada operacional; nao cole URL nem despeje payload tecnico no texto.",
+    "Com mais de um imovel: apresente cada um nesse formato, mas faca APENAS UMA pergunta no final da mensagem inteira (o question_hint do imovel principal). Nunca repita pergunta por card.",
+    "Use somente dados presentes no card. Nao invente metragem, quartos, valores nem caracteristicas. URL e verdade so da tool; nunca reconstrua de memoria.",
+    "Se a tool nao retornar imoveis (fallback_message), responda com transparencia, sem empurrar opcao ruim.",
+    "",
+    "PROIBIDO (linguagem corporativa/SDR): 'opcao alinhada', 'opcoes alinhadas', 'Encontrei uma opcao alinhada ao que voce procura', 'conforme solicitado', 'caso queira', 'fico a disposicao', 'segue abaixo'.",
+    "",
     `next_best_action oficial: ${behavioral.decision.next_best_action}`,
     `property_presentation_due: ${behavioral.decision.property_presentation_due ? "true" : "false"}`,
     `required_tools: ${behavioral.decision.required_tools.join(", ") || "nenhuma"}`,
@@ -226,17 +253,24 @@ export class LlmRuntime {
         .filter((request, index, all) => all.findIndex((candidate) => candidate.tool === request.tool) === index);
 
       if (!toExecute.length) {
-        const violations = assertCanonicalResponseDraft(args.behavioral.decision, {
+        const violations: RuntimeViolation[] = assertCanonicalResponseDraft(args.behavioral.decision, {
           text: output,
           tools_called: toolCalls.map((call) => call.tool),
         });
         if (violations.length) {
-          output = `${output}\n\n[governance_violation:${violations.map((v) => v.code).join(",")}]`.trim();
+          // Audit-only: governance violations go to logs/metrics and the structured
+          // result. They are NEVER concatenated into the customer-facing text.
+          for (const violation of violations) governanceViolationsCounter.labels(violation.code).inc();
+          logger.warn(
+            { governance_violations: violations.map((violation) => violation.code) },
+            "ju.governance_violation_detected",
+          );
         }
         tokenUsage.labels("input").inc(inputTokens);
         tokenUsage.labels("output").inc(outputTokens);
         return {
-          output,
+          output: stripGovernanceSignals(output),
+          governance_violations: violations,
           tool_calls: toolCalls,
           tool_results: toolResults,
           token_usage: { input_tokens: inputTokens, output_tokens: outputTokens, total_tokens: inputTokens + outputTokens },
@@ -267,7 +301,8 @@ export class LlmRuntime {
     tokenUsage.labels("input").inc(inputTokens);
     tokenUsage.labels("output").inc(outputTokens);
     return {
-      output,
+      output: stripGovernanceSignals(output),
+      governance_violations: [],
       tool_calls: toolCalls,
       tool_results: toolResults,
       token_usage: { input_tokens: inputTokens, output_tokens: outputTokens, total_tokens: inputTokens + outputTokens },
