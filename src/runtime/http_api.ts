@@ -321,6 +321,11 @@ export function buildRuntimeServer(config: RuntimeConfig = loadRuntimeConfig()) 
         response_to_send: pilot.response_to_send,
       };
     } catch (error) {
+      // libera a reserva de inbound p/ permitir retry após falha (evita stranded reservation de 7 dias)
+      const failedMessageId = extractWebhookFingerprint(parsed.data).message_id;
+      if (failedMessageId) {
+        await redis.del(`ju:cognitive:inbound:${failedMessageId}`).catch(() => {});
+      }
       reply.code(500);
       return {
         ok: false,
