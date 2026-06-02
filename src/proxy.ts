@@ -3,6 +3,10 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { requireEnv } from '@/lib/env-validation'
 
 const PUBLIC_ROUTES = ['/signin', '/signup', '/reset-password', '/auth/callback', '/unauthorized', '/error-404']
+// Telas de entrada das quais um usuário JÁ autenticado deve ser desviado.
+// /reset-password fica DE FORA: a recuperação de senha cria uma sessão ativa
+// e o usuário precisa permanecer nela para definir a nova senha.
+const AUTH_ENTRY_ROUTES = ['/signin', '/signup']
 const CONTROL_ROUTE = '/control'
 const RUNTIME_ROUTES = ['/api/runtime']
 
@@ -58,10 +62,12 @@ export async function proxy(request: NextRequest) {
   }
 
   const isPublicRoute = PUBLIC_ROUTES.some((r) => pathname.startsWith(r))
+  const isAuthEntryRoute = AUTH_ENTRY_ROUTES.some((r) => pathname.startsWith(r))
   const isControlRoute = pathname.startsWith(CONTROL_ROUTE)
 
-  // Usuário autenticado tentando acessar login/signup → redireciona
-  if (user && isPublicRoute) {
+  // Usuário autenticado tentando acessar login/signup → redireciona.
+  // (Não vale para /reset-password: ver AUTH_ENTRY_ROUTES.)
+  if (user && isAuthEntryRoute) {
     const isGlobalAdmin = user.user_metadata?.role === 'global_admin'
     return NextResponse.redirect(
       new URL(isGlobalAdmin ? '/control' : '/cockpit', request.url)
