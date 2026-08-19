@@ -37,6 +37,12 @@ export const tokenUsage = new client.Counter({
   labelNames: ["kind"],
 });
 
+export const governanceViolations = new client.Counter({
+  name: "ju_runtime_governance_violations_total",
+  help: "Governance violations detected on the response draft (audit-only, never sent to the customer)",
+  labelNames: ["code"],
+});
+
 export const estimatedCost = new client.Counter({
   name: "ju_runtime_estimated_cost_usd_total",
   help: "Estimated OpenAI cost in USD",
