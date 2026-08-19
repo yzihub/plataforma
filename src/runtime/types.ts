@@ -134,6 +134,9 @@ export type ToolCallResult = {
 
 export type LlmRuntimeResult = {
   output: string;
+  // Audit-only governance violations detected on the response draft. NEVER concatenated
+  // into `output` — surfaced here (and to logs/metrics) for auditoria.
+  governance_violations: RuntimeViolation[];
   tool_calls: ToolCallRequest[];
   tool_results: ToolCallResult[];
   token_usage: {
