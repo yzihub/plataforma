@@ -19,6 +19,8 @@ function mapN8nImovelToProperty(row: N8nImovel): Property {
   return {
     id: row.id,
     tenant_id: row.tenant_id,
+    captador_id: null,
+    captador: null,
     title: row.titulo_comercial ?? "Sem titulo",
     photo_url: row.imagem_card ?? row.foto_principal ?? null,
     card_image: row.imagem_card ?? null,
@@ -41,7 +43,11 @@ function mapN8nImovelToProperty(row: N8nImovel): Property {
     ].filter((t): t is string => t !== null),
     neighborhood: row.bairro ?? null,
     purpose: row.finalidade ?? null,
-    external_id: (row.metadata?.codigo_do_imovel as string | undefined) ?? row.id_imovel ?? null,
+    external_id: row.referencia_unica
+      ?? (row.metadata?.referencia_unica as string | undefined)
+      ?? row.id_imovel
+      ?? (row.metadata?.codigo_do_imovel as string | undefined)
+      ?? null,
     source: null,
     description: row.descricao_imovel ?? null,
     images: null,

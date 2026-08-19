@@ -25,13 +25,24 @@ function formatValor(valor: number): string {
   return BRL.format(valor);
 }
 
+function getReference(imovel: N8nImovel): string | null {
+  const metadataReference = imovel.metadata?.referencia_unica;
+  const metadataCode = imovel.metadata?.codigo_do_imovel;
+  return imovel.referencia_unica
+    ?? (typeof metadataReference === "string" ? metadataReference : null)
+    ?? imovel.id_imovel
+    ?? (typeof metadataCode === "string" ? metadataCode : null);
+}
+
 function matchesQuery(imovel: N8nImovel, q: string): boolean {
   const lower = q.toLowerCase();
-  return (
-    imovel.titulo_comercial.toLowerCase().includes(lower) ||
-    (imovel.bairro?.toLowerCase().includes(lower) ?? false) ||
-    (imovel.tipo_de_imovel?.toLowerCase().includes(lower) ?? false)
-  );
+  return [
+    getReference(imovel),
+    imovel.id_imovel,
+    typeof imovel.metadata?.codigo_do_imovel === "string" ? imovel.metadata.codigo_do_imovel : null,
+    imovel.titulo_comercial,
+    imovel.bairro,
+  ].some((value) => value?.toLowerCase().includes(lower));
 }
 
 // ─── Input CSS (matched to LeadDrawer INPUT_CLS) ──────────────────────────────
@@ -45,7 +56,7 @@ export default function ImovelSearchSelect({
   value,
   onChange,
   onResolve,
-  placeholder = "Buscar imóvel por título ou bairro...",
+  placeholder = "Buscar por referência, título ou bairro...",
   className,
 }: ImovelSearchSelectProps) {
   const [imoveis, setImoveis] = useState<N8nImovel[]>([]);
@@ -99,7 +110,9 @@ export default function ImovelSearchSelect({
   const selectedImovel = imoveis.find((i) => i.id === value) ?? null;
 
   const filtered = query
-    ? imoveis.filter((i) => matchesQuery(i, query))
+    ? imoveis
+      .filter((i) => matchesQuery(i, query))
+      .sort((a, b) => Number(getReference(b)?.toLowerCase().includes(query.toLowerCase())) - Number(getReference(a)?.toLowerCase().includes(query.toLowerCase())))
     : imoveis;
 
   // ── Handlers ────────────────────────────────────────────────────────────────
@@ -157,13 +170,12 @@ export default function ImovelSearchSelect({
             <div className="flex-1 min-w-0">
               <span className="text-sm font-medium text-gray-800 dark:text-white/90 truncate block">
                 {selectedImovel
-                  ? selectedImovel.titulo_comercial
+                  ? getReference(selectedImovel) ?? `Ref: ${value.slice(0, 8)}...`
                   : `Ref: ${value.slice(0, 8)}...`}
               </span>
-              {selectedImovel?.bairro && (
+              {selectedImovel && (
                 <span className="text-[11px] text-gray-400 block truncate">
-                  {selectedImovel.bairro}
-                  {selectedImovel.tipo_de_imovel ? ` · ${selectedImovel.tipo_de_imovel}` : ""}
+                  {selectedImovel.titulo_comercial}
                 </span>
               )}
             </div>
@@ -223,6 +235,9 @@ export default function ImovelSearchSelect({
                     }`}
                   >
                     <p className="text-sm font-semibold text-gray-800 dark:text-white/90 truncate">
+                      {getReference(imovel) ?? "Referência não informada"}
+                    </p>
+                    <p className="mt-0.5 text-xs text-gray-600 dark:text-gray-300 truncate">
                       {imovel.titulo_comercial}
                     </p>
                     <div className="flex items-center justify-between mt-0.5">
@@ -230,7 +245,6 @@ export default function ImovelSearchSelect({
                         {[
                           imovel.bairro,
                           imovel.tipo_de_imovel,
-                          imovel.quartos > 0 ? `${imovel.quartos}Q` : null,
                         ]
                           .filter(Boolean)
                           .join(" · ")}

@@ -95,9 +95,10 @@ export default function PropertyCard({ property, onClick }: { property: Property
       {/* Body */}
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-gray-800 dark:text-white/90">
-            {property.title}
+          <h3 className="line-clamp-1 text-sm font-semibold leading-snug text-gray-800 dark:text-white/90">
+            {property.external_id ?? "Referência não informada"}
           </h3>
+          <p className="mt-0.5 line-clamp-2 text-sm text-gray-600 dark:text-gray-300">{property.title}</p>
           {property.neighborhood && (
             <p className="mt-1 flex items-center gap-1 text-xs text-gray-400">
               <svg className="size-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

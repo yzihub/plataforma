@@ -49,6 +49,7 @@ export interface N8nImovel {
   id: string;
   tenant_id: string;
   id_imovel: string | null;
+  referencia_unica: string | null;
   titulo_comercial: string;
   titulo_seo: string | null;
   bairro: string | null;
@@ -154,6 +155,7 @@ export function toN8nImovel(row: any): N8nImovel {
     id: row.id,
     tenant_id: row.tenant_id,
     id_imovel: row.id_imovel ?? null,
+    referencia_unica: row.referencia_unica ?? null,
     titulo_comercial: row.titulo_comercial ?? "",
     titulo_seo: row.titulo_seo ?? null,
     bairro: row.bairro ?? null,

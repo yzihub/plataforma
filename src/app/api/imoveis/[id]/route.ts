@@ -68,7 +68,7 @@ export async function GET(
     const { data: imovel, error } = await supabase
       .from("imoveis")
       .select(
-        "id, tenant_id, id_imovel, referencia_unica, titulo_comercial, bairro, valor, quartos, suites, vagas, metragem, descricao_imovel, foto_principal, tipo_de_imovel, finalidade, link_do_imovel, status_publicacao, metadata, created_at, updated_at"
+        "id, tenant_id, id_imovel, referencia_unica, titulo_comercial, bairro, valor, quartos, suites, vagas, metragem, descricao_imovel, foto_principal, tipo_de_imovel, finalidade, link_do_imovel, status_publicacao, metadata, captador_id, captador:corretores(id,name), created_at, updated_at"
       )
       .eq("tenant_id", tenantId)
       .eq("id", id)
@@ -138,6 +138,13 @@ export async function PATCH(
       if (field in body) updateData[field] = body[field];
     }
 
+    if ("captador_id" in body) {
+      if (body.captador_id !== null && (typeof body.captador_id !== "string" || body.captador_id.trim() === "")) {
+        return NextResponse.json({ error: "captador_id invalido" }, { status: 422 });
+      }
+      updateData.captador_id = body.captador_id;
+    }
+
     if (body.metadata && typeof body.metadata === "object" && !Array.isArray(body.metadata)) {
       const existingMetadata =
         existing.metadata && typeof existing.metadata === "object" && !Array.isArray(existing.metadata)
@@ -155,7 +162,7 @@ export async function PATCH(
       .update(updateData)
       .eq("tenant_id", tenantId)
       .eq("id", id)
-      .select("id, metadata")
+      .select("id, metadata, captador_id, captador:corretores(id,name)")
       .single();
 
     if (updateError) {

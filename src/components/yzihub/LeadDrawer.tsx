@@ -630,8 +630,13 @@ function TabDados({
                   <div>
                     <p className="text-xs text-gray-400 uppercase tracking-wider">Imóvel</p>
                     <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                      {selectedImovel?.titulo_comercial ?? `Ref: ${form.imovel_ref.slice(0, 8)}...`}
+                      {selectedImovel?.referencia_unica
+                        ?? (typeof selectedImovel?.metadata?.referencia_unica === "string" ? selectedImovel.metadata.referencia_unica : null)
+                        ?? selectedImovel?.id_imovel
+                        ?? (typeof selectedImovel?.metadata?.codigo_do_imovel === "string" ? selectedImovel.metadata.codigo_do_imovel : null)
+                        ?? `Ref: ${form.imovel_ref.slice(0, 8)}...`}
                     </p>
+                    {selectedImovel && <p className="text-xs text-gray-600 dark:text-gray-300">{selectedImovel.titulo_comercial}</p>}
                     {selectedImovel?.bairro && (
                       <p className="text-[11px] text-gray-400">{selectedImovel.bairro}</p>
                     )}

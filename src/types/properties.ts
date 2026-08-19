@@ -5,6 +5,8 @@
 export interface Property {
   id: string;
   tenant_id: string;
+  captador_id: string | null;
+  captador: { id: string; name: string } | null;
   title: string;
   photo_url: string | null;
   price: number;

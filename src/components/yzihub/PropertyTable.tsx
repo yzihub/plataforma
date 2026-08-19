@@ -126,17 +126,12 @@ export default function PropertyTable({ properties, onSelect }: PropertyTablePro
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-medium text-gray-800 dark:text-white/90 line-clamp-1">
-                            {property.title}
+                          <p className="text-sm font-semibold text-gray-800 dark:text-white/90 line-clamp-1">
+                            {property.external_id ?? "Referência não informada"}
                           </p>
                           <p className="text-xs text-gray-400 line-clamp-1">
-                            {property.location}
+                            {property.title}
                           </p>
-                          {property.external_id && (
-                            <p className="text-[10px] text-gray-400/70 font-mono mt-0.5">
-                              {property.external_id}
-                            </p>
-                          )}
                         </div>
                       </div>
                     </td>

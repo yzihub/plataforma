@@ -17,6 +17,7 @@ interface PropertyData {
   referencia_unica?: string | null;
   titulo_comercial: string;
   bairro: string | null;
+  tipo_de_imovel?: string | null;
   valor: number;
   descricao_imovel?: string | null;
   descricao?: string | null;
@@ -81,6 +82,8 @@ interface SearchSelectProps<T extends { id: string }> {
   fetchUrl: string;
   getLabel: (item: T) => string;
   getSublabel?: (item: T) => string | null;
+  getSearchText?: (item: T) => string;
+  getContext?: (item: T) => string | null;
   extractItems: (data: unknown) => T[];
   onSelect: (item: T | null) => void;
 }
@@ -91,6 +94,8 @@ function SearchSelect<T extends { id: string }>({
   fetchUrl,
   getLabel,
   getSublabel,
+  getSearchText,
+  getContext,
   extractItems,
   onSelect,
 }: SearchSelectProps<T>) {
@@ -155,7 +160,7 @@ function SearchSelect<T extends { id: string }>({
 
   const filtered = query.trim()
     ? items.filter((item) =>
-        getLabel(item).toLowerCase().includes(query.toLowerCase())
+        (getSearchText?.(item) ?? [getLabel(item), getSublabel?.(item)].filter(Boolean).join(" ")).toLowerCase().includes(query.toLowerCase())
       )
     : items;
 
@@ -188,6 +193,7 @@ function SearchSelect<T extends { id: string }>({
         <ul className="absolute z-10 mt-1 w-full rounded-xl border border-slate-200 bg-white shadow-lg dark:border-[#2A3856] dark:bg-[#111C2F]">
           {filtered.slice(0, 8).map((item) => {
             const sublabel = getSublabel ? getSublabel(item) : null;
+            const context = getContext ? getContext(item) : null;
             return (
               <li
                 key={item.id}
@@ -198,6 +204,7 @@ function SearchSelect<T extends { id: string }>({
                 {sublabel && (
                   <span className="block text-xs text-slate-400 mt-0.5">{sublabel}</span>
                 )}
+                {context && <span className="block text-[11px] text-slate-400 mt-0.5">{context}</span>}
               </li>
             );
           })}
@@ -231,6 +238,16 @@ function extractBrokers(data: unknown): BrokerData[] {
   if (Array.isArray(d?.brokers)) return d.brokers as BrokerData[];
   if (Array.isArray(d?.corretores)) return d.corretores as BrokerData[];
   return [];
+}
+
+function propertyReference(property: PropertyData): string {
+  const metadataReference = property.metadata?.referencia_unica;
+  const metadataCode = property.metadata?.codigo_do_imovel;
+  return property.referencia_unica
+    ?? (typeof metadataReference === "string" ? metadataReference : null)
+    ?? property.id_imovel
+    ?? (typeof metadataCode === "string" ? metadataCode : null)
+    ?? "Referência não informada";
 }
 
 // ─── Componente principal ────────────────────────────────────────────────────
@@ -462,8 +479,10 @@ export default function ContratoEditorSidebar({
                 label="Imovel"
                 value={property}
                 fetchUrl="/api/imoveis?status_publicacao=Publicado"
-                getLabel={(p) => p.titulo_comercial}
-                getSublabel={(p) => p.bairro}
+                getLabel={propertyReference}
+                getSublabel={(p) => p.titulo_comercial}
+                getSearchText={(p) => [propertyReference(p), p.id_imovel, p.metadata?.codigo_do_imovel, p.titulo_comercial, p.bairro].filter(Boolean).join(" ")}
+                getContext={(p) => [p.bairro, p.tipo_de_imovel, formatBRL(p.valor)].filter(Boolean).join(" · ")}
                 extractItems={extractImoveis}
                 onSelect={onSelectProperty}
               />
@@ -472,7 +491,8 @@ export default function ContratoEditorSidebar({
                 <label className={labelCls}>Imovel</label>
                 {property ? (
                   <div className={readonlyCls}>
-                    {property.titulo_comercial}
+                    {propertyReference(property)}
+                    <span className="block text-xs text-slate-400 mt-0.5">{property.titulo_comercial}</span>
                     {property.bairro ? (
                       <span className="block text-xs text-slate-400 mt-0.5">{property.bairro}</span>
                     ) : null}

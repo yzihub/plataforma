@@ -146,7 +146,7 @@ export default function NewContractModal({
           setProperties(
             propsRes.data.map((p: { id: string; titulo_comercial: string | null; id_imovel?: string | null; referencia_unica?: string | null; bairro?: string | null; valor?: number | null }) => ({
               id: p.id,
-              name: [p.titulo_comercial, p.referencia_unica ?? p.id_imovel, p.bairro].filter(Boolean).join(" · ") || p.id,
+              name: [p.referencia_unica ?? p.id_imovel, p.titulo_comercial, p.bairro].filter(Boolean).join(" · ") || p.id,
               valor: p.valor ?? null,
             }))
           );

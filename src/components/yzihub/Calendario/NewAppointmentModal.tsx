@@ -35,6 +35,9 @@ interface BrokerOption {
 
 interface ImovelOption {
   id:               string;
+  referencia_unica: string | null;
+  id_imovel:        string | null;
+  metadata:         Record<string, unknown> | null;
   titulo_seo:       string | null;
   titulo_comercial: string;
   bairro:           string | null;
@@ -79,7 +82,11 @@ function formatValor(valor: number): string {
 
 function imovelLabel(i: ImovelOption): string {
   const titulo = i.titulo_seo || i.titulo_comercial;
-  const parts = [titulo];
+  const reference = i.referencia_unica
+    ?? (typeof i.metadata?.referencia_unica === "string" ? i.metadata.referencia_unica : null)
+    ?? i.id_imovel
+    ?? (typeof i.metadata?.codigo_do_imovel === "string" ? i.metadata.codigo_do_imovel : null);
+  const parts = [reference, titulo];
   if (i.bairro) parts.push(i.bairro);
   parts.push(formatValor(i.valor));
   return parts.join(" — ");
@@ -165,6 +172,9 @@ export default function NewAppointmentModal({
             setImoveis(
               (json.data as N8nImovel[]).map((item) => ({
                 id:               item.id,
+                referencia_unica: item.referencia_unica,
+                id_imovel:        item.id_imovel,
+                metadata:         item.metadata,
                 titulo_seo:       item.titulo_seo ?? null,
                 titulo_comercial: item.titulo_comercial,
                 bairro:           item.bairro ?? null,

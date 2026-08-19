@@ -70,6 +70,7 @@ function cleanMetadataValue(value: string) {
 // ─── Form state type ──────────────────────────────────────────────────────────
 
 interface FormState {
+  captador_id: string;
   title: string;
   priceFormatted: string;
   neighborhood: string;
@@ -97,6 +98,7 @@ function propertyToForm(p: Property): FormState {
   const metadata = p.metadata ?? {};
 
   return {
+    captador_id: p.captador_id ?? "",
     title: p.title,
     priceFormatted: p.price
       ? p.price.toLocaleString("pt-BR", {
@@ -135,6 +137,7 @@ const fieldCls =
 const labelCls = "block text-xs font-medium text-gray-400 mb-1";
 
 const emptyForm: FormState = {
+  captador_id: "",
   title: "",
   priceFormatted: "",
   neighborhood: "",
@@ -166,6 +169,11 @@ interface PropertyDrawerProps {
   onSaved?: (updated: Property) => void;
 }
 
+interface BrokerOption {
+  id: string;
+  name: string;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PropertyDrawer({
@@ -180,12 +188,26 @@ export default function PropertyDrawer({
   );
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(false);
+  const [brokers, setBrokers] = useState<BrokerOption[]>([]);
 
   // Reset form whenever a new property is opened
   useEffect(() => {
     if (property) {
       setForm(propertyToForm(property));
       setSaveError(false);
+      void Promise.all([
+        fetch(`/api/imoveis/${property.id}`).then((res) => res.ok ? res.json() : null),
+        fetch("/api/corretores").then((res) => res.ok ? res.json() : null),
+      ]).then(([detail, brokersResponse]) => {
+        if (detail && typeof detail.captador_id === "string") {
+          setForm((prev) => ({ ...prev, captador_id: detail.captador_id }));
+        }
+        const items = Array.isArray(brokersResponse?.data) ? brokersResponse.data : [];
+        setBrokers(items.map((item: { id: string; name?: string; full_name?: string }) => ({
+          id: item.id,
+          name: item.name ?? item.full_name ?? item.id,
+        })));
+      }).catch(() => undefined);
     }
   }, [property]);
 
@@ -238,6 +260,7 @@ export default function PropertyDrawer({
         descricao_imovel: form.notes || null,
         tipo_de_imovel: form.property_type || null,
         finalidade: form.purpose || null,
+        captador_id: form.captador_id || null,
         metadata: metadataPatch,
       }),
     });
@@ -262,6 +285,8 @@ export default function PropertyDrawer({
         publication_status: form.publication_status || null,
         tags: form.tags.length > 0 ? form.tags : null,
         metadata: nextMetadata,
+        captador_id: form.captador_id || null,
+        captador: brokers.find((broker) => broker.id === form.captador_id) ?? null,
       });
       onClose();
     } else {
@@ -417,6 +442,20 @@ export default function PropertyDrawer({
                 <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Editar Imóvel</p>
 
                 {/* ── Classificação ── */}
+                <div>
+                  <label className={labelCls}>Captador</label>
+                  <select
+                    value={form.captador_id}
+                    onChange={(e) => setField("captador_id", e.target.value)}
+                    className={fieldCls}
+                  >
+                    <option value="">Selecionar corretor...</option>
+                    {brokers.map((broker) => (
+                      <option key={broker.id} value={broker.id}>{broker.name}</option>
+                    ))}
+                  </select>
+                </div>
+
                 <div>
                   <label className={labelCls}>Tipo de Imóvel</label>
                   <select
